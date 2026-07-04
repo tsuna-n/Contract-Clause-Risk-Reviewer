@@ -1,4 +1,7 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends, HTTPException
+from sqlalchemy.orm import Session
+
+from database import *
 
 app = FastAPI()
 
@@ -8,6 +11,10 @@ def read_root():
     return {"Hello": "World"}
 
 
-@app.get("/items/{item_id}")
-def read_item(item_id: int, q: str | None = None):
-    return {"item_id": item_id, "q": q}
+
+@app.get("/health/db")
+def health_check_db():
+    """ตรวจสอบสถานะการเชื่อมต่อ PostgreSQL"""
+    if check_db_connection():
+        return {"status": "ok", "database": "connected"}
+    raise HTTPException(status_code=503, detail="Database not connected")
