@@ -1,0 +1,40 @@
+# ไฟล์ระบบและ Editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# ไฟล์ Environment และ ความลับ (สำคัญมาก)
+.env
+.env.local
+.env.production
+*.pem
+*.key
+
+# โฟลเดอร์ติดตั้ง Library (Dependencies)
+node_modules/
+vendor/
+venv/
+__pycache__/
+
+# ไฟล์ที่สร้างจากการ Build หรือ Compile
+dist/
+build/
+*.o
+*.class
+*.dll
+*.exe
+
+# ไฟล์ Log และ ข้อมูลชั่วคราว
+*.log
+npm-debug.log*
+yarn-debug.log*
+tmp/
+temp/
+
+# ไฟล์อัปโหลดของผู้ใช้หรือฐานข้อมูลท้องถิ่น
+uploads/
+*.sql
+*.sqlite   
