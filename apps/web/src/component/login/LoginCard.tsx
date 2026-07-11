@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { getGoogleLoginUrl } from "../../lib/auth";
 import GoogleButton from "./GoogleButton";
 import SignUpLink from "./SignUpLink";
 
@@ -9,14 +10,11 @@ import SignUpLink from "./SignUpLink";
 export default function LoginCard() {
   const [isLoading, setIsLoading] = useState(false);
 
-  async function handleGoogleSignIn() {
+  function handleGoogleSignIn() {
     setIsLoading(true);
-    try {
-      // TODO: integrate real OAuth / auth provider
-      await new Promise((res) => setTimeout(res, 1200));
-    } finally {
-      setIsLoading(false);
-    }
+    // Full-page redirect into the backend's Google OAuth flow;
+    // it lands back on /auth/callback with a token once Google confirms.
+    window.location.href = getGoogleLoginUrl();
   }
 
   return (

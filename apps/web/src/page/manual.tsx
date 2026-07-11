@@ -1,4 +1,6 @@
+import { useNavigate } from "react-router-dom";
 import { Sidebar } from "../component/sidebar";
+import { clearToken } from "../lib/auth";
 
 /**
  * ManualPage — Welcome/onboarding page with instructions and document example.
@@ -11,6 +13,8 @@ import { Sidebar } from "../component/sidebar";
  *     Bottom: Start button (centered)
  */
 export default function ManualPage() {
+  const navigate = useNavigate();
+
   const menuItems = [
     {
       label: "Dashboard",
@@ -61,6 +65,14 @@ export default function ManualPage() {
       label: "Help",
       icon: "❓",
       onClick: () => console.log("Help clicked"),
+    },
+    {
+      label: "Logout",
+      icon: "🚪",
+      onClick: () => {
+        clearToken();
+        navigate("/login", { replace: true });
+      },
     },
   ];
 

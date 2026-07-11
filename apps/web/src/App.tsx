@@ -1,6 +1,8 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Login from "./page/login";
 import Manual from "./page/manual";
+import AuthCallback from "./page/callback";
+import RequireAuth from "./component/RequireAuth";
 
 
 const router = createBrowserRouter([
@@ -13,8 +15,16 @@ const router = createBrowserRouter([
     element: <Login />,
   },
   {
+    path: "/auth/callback",
+    element: <AuthCallback />,
+  },
+  {
     path: "/manual",
-    element: <Manual />,
+    element: (
+      <RequireAuth>
+        <Manual />
+      </RequireAuth>
+    ),
   },
 ]);
 
