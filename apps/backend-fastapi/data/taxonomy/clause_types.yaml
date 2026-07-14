@@ -1,0 +1,26 @@
+# Clause taxonomy - keep in sync with app/schemas/taxonomy.py::ClauseType
+clause_types:
+  - id: confidentiality
+    description: Obligations to keep shared information secret.
+  - id: indemnification
+    description: One party covers losses/claims incurred by the other.
+  - id: limitation_of_liability
+    description: Caps or excludes a party's liability.
+  - id: termination
+    description: How and when the agreement can be ended.
+  - id: governing_law
+    description: Which jurisdiction's law governs the contract.
+  - id: intellectual_property
+    description: Ownership and licensing of IP.
+  - id: payment_terms
+    description: Amounts, schedule, and conditions of payment.
+  - id: warranty
+    description: Assurances about goods/services provided.
+  - id: non_compete
+    description: Restrictions on competing activities.
+  - id: data_protection
+    description: Handling of personal/sensitive data.
+  - id: force_majeure
+    description: Excused performance due to extraordinary events.
+  - id: other
+    description: Anything not covered by the categories above.
