@@ -5,7 +5,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.api.v1 import health
+from app.api.v1 import contracts, evaluate, health, playbook
 from app.core.config import get_settings
 from app.core.logging import configure_logging
 
@@ -34,7 +34,9 @@ def create_app() -> FastAPI:
     )
 
     app.include_router(health.router)
-    # TODO: mount contracts/playbook/evaluate routers (see api.v1).
+    app.include_router(contracts.router)
+    app.include_router(playbook.router)
+    app.include_router(evaluate.router)
 
     @app.get("/")
     def read_root() -> dict[str, str]:
