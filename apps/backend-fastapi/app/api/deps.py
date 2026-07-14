@@ -30,7 +30,7 @@ def get_db() -> Iterator[Session]:
         db.close()
 
 
-def get_vector_store() -> "VectorStore":
+def get_vector_store() -> VectorStore:
     """Return the configured vector store adapter.
 
     TODO: construct the pgvector/Qdrant adapter from settings.
@@ -38,7 +38,7 @@ def get_vector_store() -> "VectorStore":
     raise NotImplementedError
 
 
-def get_llm_client() -> "LLMClient":
+def get_llm_client() -> LLMClient:
     """Return the shared LLM client wrapper.
 
     TODO: construct :class:`app.llm.client.LLMClient` from settings.

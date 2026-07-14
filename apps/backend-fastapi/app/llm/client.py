@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 
 from app.core.config import get_settings
 
@@ -15,7 +15,7 @@ class Usage:
     output_tokens: int = 0
     cache_read_input_tokens: int = 0
 
-    def add(self, other: "Usage") -> None:
+    def add(self, other: Usage) -> None:
         self.input_tokens += other.input_tokens
         self.output_tokens += other.output_tokens
         self.cache_read_input_tokens += other.cache_read_input_tokens

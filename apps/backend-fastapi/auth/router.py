@@ -6,11 +6,11 @@ from fastapi.responses import RedirectResponse
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from sqlalchemy.orm import Session
 
+from app.api.deps import get_db
 from auth.config import auth_settings
 from auth.jwt import create_access_token, decode_access_token
 from auth.oauth import oauth
 from auth.schemas import UserOut
-from database import get_db
 from models import User
 
 logger = logging.getLogger(__name__)
