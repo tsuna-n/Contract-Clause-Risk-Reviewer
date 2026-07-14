@@ -1,0 +1,37 @@
+# Company playbook positions (sample). Real deployment targets ~30 positions.
+positions:
+  - id: liability-cap-fees
+    clause_type: limitation_of_liability
+    title: Liability capped at fees paid
+    preferred_language: >-
+      Each party's total liability shall not exceed the fees paid under this
+      Agreement in the twelve (12) months preceding the claim.
+    fallback_language: >-
+      Each party's total liability shall not exceed two times (2x) the fees
+      paid under this Agreement in the twelve (12) months preceding the claim.
+    risk_if_absent: high
+    tags: [liability, cap]
+
+  - id: mutual-indemnity
+    clause_type: indemnification
+    title: Mutual, capped indemnity
+    preferred_language: >-
+      Each party shall indemnify the other for third-party claims arising from
+      its own breach or negligence, subject to the liability cap.
+    fallback_language: >-
+      Each party shall indemnify the other for third-party claims arising from
+      its own gross negligence or willful misconduct.
+    risk_if_absent: medium
+    tags: [indemnity]
+
+  - id: termination-for-convenience
+    clause_type: termination
+    title: Termination for convenience with notice
+    preferred_language: >-
+      Either party may terminate for convenience upon thirty (30) days' prior
+      written notice.
+    fallback_language: >-
+      Either party may terminate for convenience upon sixty (60) days' prior
+      written notice.
+    risk_if_absent: medium
+    tags: [termination]
