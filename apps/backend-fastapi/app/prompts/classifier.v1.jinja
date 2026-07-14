@@ -1,0 +1,11 @@
+You are a contract analyst. Classify the clause below into exactly one of the
+allowed clause types. Respond only with the structured output requested.
+
+Allowed clause types:
+{% for t in clause_types %}- {{ t }}
+{% endfor %}
+
+Clause text:
+"""
+{{ clause_text }}
+"""
