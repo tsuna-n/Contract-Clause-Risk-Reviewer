@@ -6,6 +6,7 @@ from collections.abc import Iterator
 from functools import lru_cache
 from typing import TYPE_CHECKING
 
+import redis
 from fastapi import Depends
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session, declarative_base, sessionmaker
@@ -32,6 +33,12 @@ _PLAYBOOK_PATH = "data/playbook/positions.yaml"
 engine = create_engine(_settings.database_url, pool_pre_ping=True, future=True)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
+
+
+@lru_cache
+def get_redis_client() -> redis.Redis:
+    """Return the shared Redis client (contract/report repos, session state)."""
+    return redis.Redis.from_url(_settings.redis_url, decode_responses=True)
 
 
 def get_db() -> Iterator[Session]:
@@ -77,18 +84,18 @@ def get_retriever() -> Retriever:
 
 @lru_cache
 def get_contract_repo() -> ContractRepository:
-    """Return the process-wide in-memory contract store."""
-    from app.repositories.contract_repo import ContractRepository
+    """Return the shared Redis-backed contract store."""
+    from app.repositories.contract_repo import RedisContractRepository
 
-    return ContractRepository()
+    return RedisContractRepository(get_redis_client(), _settings.retention_ttl_seconds)
 
 
 @lru_cache
 def get_report_repo() -> ReportRepository:
-    """Return the process-wide in-memory report store."""
-    from app.repositories.report_repo import ReportRepository
+    """Return the shared Redis-backed report store."""
+    from app.repositories.report_repo import RedisReportRepository
 
-    return ReportRepository()
+    return RedisReportRepository(get_redis_client(), _settings.retention_ttl_seconds)
 
 
 @lru_cache

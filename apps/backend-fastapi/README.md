@@ -8,10 +8,12 @@ Backend สำหรับระบบ **วิเคราะห์ความ
 > + Postgres/pgvector จริงแล้ว: upload → parse → segment → classify → match(RAG) → risk score →
 > grounding judge → report พร้อม citation ที่ verify แล้วว่าอ้างอิงตรงกับ playbook จริง
 > **Alembic migrations** ใช้งานแทน `create_all` แล้ว (ทดสอบ upgrade/downgrade cycle จริงกับ
-> Postgres), และ **auth (`/auth/*`) มี integration test อัตโนมัติแล้ว** ครอบทั้ง JWT flow และ
-> Google OAuth callback (mock ที่ authlib boundary — ดูหมายเหตุในหัวข้อ "ยังไม่ได้ทำ")
-> ส่วนที่เหลือหลัก ๆ คือ frontend upload UI และการคลิกผ่าน Google login จริงในเบราว์เซอร์มือ ๆ
-> อีกครั้งก่อนขึ้น production
+> Postgres), **auth (`/auth/*`) มี integration test อัตโนมัติแล้ว** ครอบทั้ง JWT flow และ
+> Google OAuth callback (mock ที่ authlib boundary — ดูหมายเหตุในหัวข้อ "ยังไม่ได้ทำ"),
+> **contract/report repo ย้ายไป Redis แล้ว** (native TTL, scale ข้าม process/replica ได้จริง),
+> และ **`/contracts/review` + `/contracts/{id}/override` มี integration test อัตโนมัติแล้ว**
+> (mock LLM/orchestrator + auth + DB) ส่วนที่เหลือหลัก ๆ คือ frontend upload UI และการคลิกผ่าน
+> Google login จริงในเบราว์เซอร์มือ ๆ อีกครั้งก่อนขึ้น production
 
 ---
 
@@ -21,7 +23,7 @@ Backend สำหรับระบบ **วิเคราะห์ความ
 |------|-----------|
 | Web framework | FastAPI + Uvicorn |
 | Database | PostgreSQL (`pgvector/pgvector:pg16`) + SQLAlchemy 2.0 (psycopg 3) |
-| Cache / queue | Redis 7 (ยกใน infra แล้ว, ยังไม่ได้ใช้งานในโค้ด — ดูหัวข้อ "ยังไม่ได้ทำ") |
+| Cache / queue | Redis 7 — contract/report repo (session-scoped, native TTL) |
 | LLM | Google GenAI / Gemini (`gemini-3.5-flash` ค่า default, ตั้งผ่าน `LLM_MODEL`) |
 | Embeddings | Gemini (`gemini-embedding-001`, 768 มิติ) |
 | Retrieval | Hybrid: pgvector cosine (dense) + BM25 rerank (`rank-bm25`) |
@@ -53,7 +55,8 @@ apps/backend-fastapi/
 │   ├── rag/                   embedder, retriever, vector_store (pgvector), ingest, citation (ครบ)
 │   ├── agents/                segmenter → classifier → matcher → risk_scorer → judge → orchestrator (ครบ)
 │   ├── services/               review_service, override_service, eval_service (ครบ)
-│   ├── repositories/           contract_repo, report_repo (in-memory), audit_repo (Postgres, ครบ)
+│   ├── repositories/           contract_repo, report_repo (Redis-backed, in-memory fallback for
+│   │                             tests), audit_repo (Postgres, ครบ)
 │   ├── evaluation/             runner, metrics, report (eval harness, ครบ)
 │   ├── guardrails/             grounding, citation_validity, disclaimer, no_invented_fallback (ครบ)
 │   └── prompts/                classifier/judge/risk_scorer .jinja templates + loader (`__init__.py`)
@@ -61,8 +64,9 @@ apps/backend-fastapi/
 ├── models/                    SQLAlchemy ORM models (User)
 ├── scripts/                   ingest_playbook.py, run_eval.py (ครบ, ใช้งานได้จริง)
 ├── data/                      fixtures: taxonomy, playbook positions, gold annotations + contracts/*.txt
-└── tests/                     unit (30 tests), integration (health + auth: JWT + OAuth callback,
-                                 mocked), eval (regression gate skip ไว้ — ต้องมี live LLM)
+└── tests/                     unit (30 tests), integration (health, auth: JWT + OAuth callback
+                                 mocked, contracts: review + override with mocked LLM/DB), eval
+                                 (regression gate skip ไว้ — ต้องมี live LLM)
 ```
 
 ### Review pipeline
@@ -112,7 +116,20 @@ judge บอกว่า ungrounded, และ isolate failure ต่อ clause 
   ตารางตรงกันอยู่แล้ว)
 - **Data fixtures** — taxonomy (12 clause types), playbook positions (3 ตัวอย่าง, ingest แล้ว),
   gold annotations + contract text ที่จับคู่กัน
-- **Tests** — 39 unit/integration tests ผ่านหมด (`pytest tests/`; อีก 1 test เป็น eval regression
+- **Redis-backed contract/report repos** — `RedisContractRepository`/`RedisReportRepository`
+  (`app/repositories/contract_repo.py`, `report_repo.py`) แทนที่ dict ในหน่วยความจำต่อ process
+  แล้ว: serialize เป็น JSON (`ParsedDocument`) / `model_dump_json()` (`ContractReviewReport`),
+  ใช้ native Redis TTL (`SET ... EX`) แทนการ sweep เอง — ทดสอบ round-trip จริงกับ
+  `contract-risk-redis` container แล้ว (save→get→delete ตรง, TTL ถูกตั้งจริง);
+  `ContractRepository`/`ReportRepository` เป็น `Protocol` ตอนนี้ ส่วน
+  `InMemoryContractRepository`/`InMemoryReportRepository` ยังอยู่ (ใช้ในเทสต์เพื่อไม่ต้องพึ่ง Redis
+  จริง)
+- **Integration tests สำหรับ `/contracts/review` และ `/contracts/{id}/override`**
+  (`tests/integration/test_contracts.py`) — mock `Orchestrator`/LLM + auth + repos (in-memory) +
+  audit DB (SQLite): happy path คืน report ถูกต้อง, ต้อง auth (`401` ถ้าไม่ส่ง token), unsupported
+  file type → `422`, override เปลี่ยน risk + re-aggregate `overall_risk` + เขียน audit record
+  ถูกต้อง (`old_risk`/`new_risk`/`actor`), report/clause ไม่มีจริง → `404`
+- **Tests** — 46 unit/integration tests ผ่านหมด (`pytest tests/`; อีก 1 test เป็น eval regression
   gate ที่ skip ไว้เพราะต้องเรียก LLM จริง)
 
 ---
@@ -126,15 +143,12 @@ judge บอกว่า ungrounded, และ isolate failure ต่อ clause 
   consent ของ Google ด้วยบัญชีจริง (automate ไม่ได้และไม่ควร automate) — **ก่อนขึ้น production
   ต้องมีคนรัน `uvicorn` แล้วเปิด `/auth/google/login` ในเบราว์เซอร์จริงอีกครั้งหนึ่งเพื่อ verify
   ว่า Google credentials (`GOOGLE_OAUTH_API`/`GOOGLE_KEY_SECRET`/`GOOGLE_REDIRECT_URI`) ที่ตั้งไว้
-  ใน `.env` ใช้งานได้จริงกับ Google Cloud Console ที่ตั้งไว้**
-- **Redis** — ยกใน `docker-compose` แล้วแต่โค้ดยังไม่ได้ใช้งานจริง (contract/report repo เป็น
-  in-memory ต่อ process — พอสำหรับรันเดี่ยว แต่ไม่ scale ข้าม process/replica)
+  ใน `.env` ใช้งานได้จริงกับ Google Cloud Console ที่ตั้งไว้** — เป็นรายการเดียวที่เหลือในฝั่ง
+  backend ที่ agent ทำเองไม่ได้ (ต้องการคนคลิกจริง)
 - **Frontend**: หน้าอัปโหลดสัญญา, dashboard/reports, risk report view — ยังเป็น stub ฝั่ง `apps/web`
+  (นอก scope ของ backend)
 - **Eval regression gate** (`tests/eval/test_regression.py`) — ยัง skip ไว้เพราะต้องเรียก LLM จริง
   (มี cost + ต้องมี quota); รันเองได้ผ่าน `python -m scripts.run_eval`
-- **Integration tests สำหรับ `/contracts/review` และ `/contracts/{id}/override`** — ยังไม่มี (ต้อง
-  mock auth + DB + LLM ซึ่งใช้เวลาตั้ง fixture มากกว่าที่ทำในรอบนี้); ปัจจุบัน verify ผ่านการรัน
-  live end-to-end ด้วยมือแทน
 
 ---
 
@@ -234,8 +248,8 @@ python -m scripts.run_eval          # data/gold/annotations.jsonl -> metrics rep
 | GET | `/auth/google/callback` | ✅ automated test (mocked authlib); ⚠️ ยังไม่ได้คลิกผ่านจริงกับ Google ในเบราว์เซอร์ |
 | GET | `/auth/me` | ✅ |
 | POST | `/auth/logout` | ✅ |
-| POST | `/contracts/review` | ✅ ต้อง auth (Bearer JWT) |
-| POST | `/contracts/{report_id}/override` | ✅ ต้อง auth (Bearer JWT) |
+| POST | `/contracts/review` | ✅ ต้อง auth (Bearer JWT); automated test (mocked LLM) + ทดสอบ live กับ Gemini จริงแล้ว |
+| POST | `/contracts/{report_id}/override` | ✅ ต้อง auth (Bearer JWT); automated test (mocked LLM) + ทดสอบกับ DB จริงแล้ว |
 | GET | `/playbook/search` | ✅ |
 | POST | `/evaluate` | ✅ |
 
@@ -243,8 +257,9 @@ python -m scripts.run_eval          # data/gold/annotations.jsonl -> metrics rep
 
 ## Roadmap ที่เหลือ
 
-1. **Frontend**: upload UI + report view ต่อกับ `/contracts/review` (งานที่เหลือชิ้นใหญ่ที่สุด)
-2. **Google OAuth** — คลิกผ่าน login จริงในเบราว์เซอร์กับบัญชี Google จริงอีกครั้งก่อน production
-   (automated tests ครอบ contract ของ endpoint ไว้แล้ว แต่ mock ที่ authlib boundary)
-3. **Redis-backed session store** ถ้าต้อง scale ข้าม process/replica
-4. **Integration tests** สำหรับ `/contracts/review` และ `/contracts/{id}/override` (mock auth+LLM+DB)
+**Backend เสร็จหมดแล้วเท่าที่ agent ทำเองได้** — เหลือรายการเดียวที่ต้องการคนจริง:
+
+1. **Google OAuth** — คลิกผ่าน login จริงในเบราว์เซอร์กับบัญชี Google จริงอีกครั้งก่อน production
+   (automated tests ครอบ contract ของ endpoint ไว้แล้ว แต่ mock ที่ authlib boundary เพราะ sandbox
+   ที่ใช้พัฒนาไม่มี outbound internet)
+2. **Frontend**: upload UI + report view ต่อกับ `/contracts/review` (นอก scope ของ backend)

@@ -7,10 +7,12 @@
 > ✅ **สถานะ: Backend core pipeline ทำงานได้จริงแล้ว (end-to-end)** — ทดสอบกับ Gemini API +
 > Postgres/pgvector จริง: upload → parse → segment → classify → match(RAG) → risk score →
 > grounding judge → report พร้อม citation ที่ verify แล้ว ระบบ auth / DB / infra ก็ทำงานได้แล้วเช่นกัน
-> **DB migrations ใช้ Alembic แล้ว** (เลิกใช้ `create_all`) และ **auth มี integration test
-> อัตโนมัติแล้ว** (JWT + Google OAuth callback, mock ที่ authlib boundary)
-> ส่วนที่เหลือหลัก ๆ คือ **frontend upload/report UI** ยังเป็น stub และการคลิกผ่าน Google login
-> จริงในเบราว์เซอร์อีกครั้งก่อนขึ้น production — ดู
+> **DB migrations ใช้ Alembic แล้ว** (เลิกใช้ `create_all`), **auth มี integration test
+> อัตโนมัติแล้ว** (JWT + Google OAuth callback, mock ที่ authlib boundary), **contract/report repo
+> ย้ายไป Redis แล้ว** (native TTL, scale ข้าม process/replica ได้จริง), และ **`/contracts/review` +
+> `/contracts/{id}/override` มี integration test อัตโนมัติแล้ว** — พูดสั้น ๆ คือ **backend เสร็จหมด
+> เท่าที่ agent ทำเองได้แล้ว** ส่วนที่เหลือหลัก ๆ คือ **frontend upload/report UI** ยังเป็น stub และ
+> การคลิกผ่าน Google login จริงในเบราว์เซอร์อีกครั้งก่อนขึ้น production (ต้องการคนจริง) — ดู
 > [README ของ backend](apps/backend-fastapi/README.md) สำหรับรายละเอียด
 
 ## โครงสร้าง repo (monorepo)
@@ -32,15 +34,16 @@
 | Backend | DB layer | SQLAlchemy engine/session/`Base`, `get_db` |
 | Backend | **Alembic migrations** | แทน `create_all` แล้ว — `env.py` ดึง URL จาก app settings, migration แรกครอบ `users`/`playbook_embeddings`(+`CREATE EXTENSION vector`)/`audit_overrides`, ทดสอบ upgrade/downgrade cycle จริงแล้ว |
 | Backend | Auth (OAuth + JWT) | routes `/auth/*` ครบ, User model — **integration test อัตโนมัติแล้ว**: JWT ถูก→คืน user, token ปลอม/ไม่มี user→`401`, OAuth login redirect + callback (create/update user, ออก JWT, error path) — mock ที่ authlib boundary |
-| Backend | **Review pipeline** | `POST /contracts/review` — **ทดสอบ live กับ Gemini + pgvector จริงแล้ว**: parse→segment→classify→match(RAG)→score→judge→report พร้อม citation ที่ grounded |
-| Backend | **Override + audit** | `POST /contracts/{id}/override` — เปลี่ยน risk level, re-aggregate, เขียน audit log ลง Postgres (ทดสอบแล้ว) |
+| Backend | **Review pipeline** | `POST /contracts/review` — **ทดสอบ live กับ Gemini + pgvector จริงแล้ว** + integration test อัตโนมัติ (mocked LLM): parse→segment→classify→match(RAG)→score→judge→report พร้อม citation ที่ grounded |
+| Backend | **Override + audit** | `POST /contracts/{id}/override` — เปลี่ยน risk level, re-aggregate, เขียน audit log ลง Postgres (ทดสอบแล้ว + integration test อัตโนมัติ) |
+| Backend | **Redis-backed repos** | contract/report repo ย้ายจาก in-memory ไป Redis แล้ว (native TTL) — scale ข้าม process/replica ได้ |
 | Backend | **Playbook search + eval** | `GET /playbook/search`, `POST /evaluate` — ใช้งานได้จริง |
 | Backend | LLM client + RAG | Gemini client (structured output), hybrid retrieval (pgvector cosine + BM25) |
 | Backend | Parsers | PDF (PyMuPDF) / DOCX (python-docx) → `ParsedDocument` |
 | Backend | Guardrails | grounding, citation validity, no-invented-fallback — wired เข้า judge แล้ว |
 | Backend | Schemas | Pydantic models: clause, report, taxonomy, playbook, eval |
 | Backend | Data fixtures | taxonomy (12 clause types), playbook positions (ingest แล้ว), gold annotations + contract text ที่ตรงกัน |
-| Backend | Tests | 39 unit/integration tests ผ่านหมด |
+| Backend | Tests | 46 unit/integration tests ผ่านหมด |
 | Frontend | Scaffold | React 19 + Vite + Tailwind + routing (`/login`, `/auth/callback`, `/manual`) |
 | Frontend | Login UI | หน้า login + components (Google button, brand header, card, ฯลฯ) |
 | Frontend | Auth flow | ต่อกับ backend ครบ: login redirect → callback เก็บ token → `fetchCurrentUser` (`/auth/me`), `RequireAuth` guard, logout |
@@ -53,9 +56,7 @@
 
 | ส่วน | รายการ | รายละเอียด |
 |------|--------|------------|
-| Backend | Redis | ยกใน infra แล้วแต่โค้ดยังไม่ได้ใช้ (repo เป็น in-memory ต่อ process) |
-| Backend | Google OAuth — คลิกผ่านจริงในเบราว์เซอร์ | automated test ครอบ contract ของ endpoint ไว้แล้ว (mock ที่ authlib) แต่ยังไม่ได้ login จริงกับบัญชี Google จริงในเบราว์เซอร์ (sandbox ที่พัฒนาไม่มี internet) |
-| Backend | Integration tests | `/contracts/review`, `/contracts/{id}/override` — ยังไม่มี (verify ด้วยการรัน live แทน) |
+| Backend | Google OAuth — คลิกผ่านจริงในเบราว์เซอร์ | automated test ครอบ contract ของ endpoint ไว้แล้ว (mock ที่ authlib) แต่ยังไม่ได้ login จริงกับบัญชี Google จริงในเบราว์เซอร์ (sandbox ที่พัฒนาไม่มี internet — ต้องการคนจริงคลิกผ่าน consent screen) |
 | Frontend | Contract upload UI | ยังไม่มีหน้าอัปโหลด/ส่งสัญญาไป backend |
 | Frontend | Dashboard / Reports | เมนู Sidebar (Upload, Risk Assessment, Reports ฯลฯ) ยังเป็น `console.log` stub |
 | Frontend | Risk report view | ยังไม่มี UI แสดงผลวิเคราะห์ความเสี่ยง / citation |
@@ -87,8 +88,9 @@ pnpm dev                         # http://localhost:5173
 
 ## Roadmap ที่เหลือ
 
-1. **Frontend**: upload UI + report view ต่อกับ `/contracts/review` (งานที่เหลือชิ้นใหญ่ที่สุด)
+Backend เสร็จหมดแล้วเท่าที่ agent ทำเองได้ — เหลือ:
+
+1. **Frontend**: upload UI + report view ต่อกับ `/contracts/review` (นอก scope ของ backend)
 2. **Google OAuth** — คลิกผ่าน login จริงในเบราว์เซอร์กับบัญชี Google จริงอีกครั้งก่อน production
-   (automated tests ครอบ contract ของ endpoint ไว้แล้ว แต่ mock ที่ authlib boundary)
-3. **Redis-backed session store** ถ้าต้อง scale ข้าม process/replica
-4. **Integration tests** สำหรับ `/contracts/review` และ `/contracts/{id}/override`
+   (automated tests ครอบ contract ของ endpoint ไว้แล้ว แต่ mock ที่ authlib boundary เพราะ sandbox
+   ที่ใช้พัฒนาไม่มี outbound internet — ต้องการคนจริงคลิกผ่าน)
