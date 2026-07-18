@@ -19,8 +19,5 @@ class Matcher(Agent[Clause, list[RetrievalHit]]):
         self.retriever = retriever
 
     def run(self, payload: Clause) -> list[RetrievalHit]:
-        """Return playbook positions matching ``payload``.
-
-        TODO: delegate to ``self.retriever.retrieve`` and pass hits downstream.
-        """
-        raise NotImplementedError
+        """Return playbook positions matching ``payload``."""
+        return self.retriever.retrieve(payload)

@@ -47,8 +47,13 @@ class NotFoundError(DomainError):
 
 
 def register_exception_handlers(app) -> None:  # noqa: ANN001 - FastAPI app
-    """Register handlers mapping :class:`DomainError` to JSON responses.
+    """Register handlers mapping :class:`DomainError` to JSON responses."""
+    from fastapi import Request
+    from fastapi.responses import JSONResponse
 
-    TODO: implement with ``app.exception_handler(DomainError)``.
-    """
-    raise NotImplementedError
+    @app.exception_handler(DomainError)
+    async def _handle_domain_error(request: Request, exc: DomainError) -> JSONResponse:
+        return JSONResponse(
+            status_code=exc.status_code,
+            content={"error": exc.code, "message": exc.message},
+        )

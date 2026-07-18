@@ -16,7 +16,7 @@ dependencies = [
     "python-jose[cryptography]>=3.3",
     "itsdangerous>=2.2",
     # --- LLM ---
-    "anthropic>=0.40",
+    "google-genai>=1.20",
     "jinja2>=3.1",
     # --- parsing ---
     "pymupdf>=1.24",
@@ -25,6 +25,7 @@ dependencies = [
     "pgvector>=0.3",
     "redis>=5.1",
     "pyyaml>=6.0",
+    "rank-bm25>=0.2",
     # --- observability ---
     "structlog>=24.4",
 ]
@@ -50,6 +51,9 @@ target-version = "py312"
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP", "B"]
+
+[tool.ruff.lint.flake8-bugbear]
+extend-immutable-calls = ["fastapi.Depends"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
