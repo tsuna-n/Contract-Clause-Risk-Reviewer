@@ -7,8 +7,11 @@ Backend สำหรับระบบ **วิเคราะห์ความ
 > ✅ **สถานะปัจจุบัน: Core review pipeline ทำงานได้จริงแล้ว (end-to-end)** — ทดสอบกับ Gemini API
 > + Postgres/pgvector จริงแล้ว: upload → parse → segment → classify → match(RAG) → risk score →
 > grounding judge → report พร้อม citation ที่ verify แล้วว่าอ้างอิงตรงกับ playbook จริง
-> ส่วนที่เหลือ (ดูหัวข้อ "ยังไม่ได้ทำ" ด้านล่าง) หลัก ๆ คือ Alembic migrations, frontend upload UI,
-> และการทดสอบ Google OAuth ผ่าน browser จริง
+> **Alembic migrations** ใช้งานแทน `create_all` แล้ว (ทดสอบ upgrade/downgrade cycle จริงกับ
+> Postgres), และ **auth (`/auth/*`) มี integration test อัตโนมัติแล้ว** ครอบทั้ง JWT flow และ
+> Google OAuth callback (mock ที่ authlib boundary — ดูหมายเหตุในหัวข้อ "ยังไม่ได้ทำ")
+> ส่วนที่เหลือหลัก ๆ คือ frontend upload UI และการคลิกผ่าน Google login จริงในเบราว์เซอร์มือ ๆ
+> อีกครั้งก่อนขึ้น production
 
 ---
 
@@ -34,6 +37,9 @@ Backend สำหรับระบบ **วิเคราะห์ความ
 
 ```
 apps/backend-fastapi/
+├── alembic/                  # DB migrations (env.py อ่าน DATABASE_URL จาก app settings)
+│   └── versions/              # migration scripts (initial schema: users, playbook_embeddings,
+│                                 audit_overrides + `CREATE EXTENSION vector`)
 ├── app/                      # แพ็กเกจหลัก (entrypoint: app.main:app)
 │   ├── main.py               # FastAPI app factory + lifespan + router wiring
 │   ├── api/
@@ -55,7 +61,8 @@ apps/backend-fastapi/
 ├── models/                    SQLAlchemy ORM models (User)
 ├── scripts/                   ingest_playbook.py, run_eval.py (ครบ, ใช้งานได้จริง)
 ├── data/                      fixtures: taxonomy, playbook positions, gold annotations + contracts/*.txt
-└── tests/                     unit (30 tests), integration, eval (regression gate skip ไว้ — ต้องมี live LLM)
+└── tests/                     unit (30 tests), integration (health + auth: JWT + OAuth callback,
+                                 mocked), eval (regression gate skip ไว้ — ต้องมี live LLM)
 ```
 
 ### Review pipeline
@@ -90,22 +97,38 @@ judge บอกว่า ungrounded, และ isolate failure ต่อ clause 
 - **Health endpoints** — `GET /`, `GET /health`, `GET /health/db`
 - **DB layer** — SQLAlchemy engine/session/`Base`, สร้าง extension `vector` + ตารางทั้งหมดตอน startup
   (non-fatal ถ้า DB ล่ม)
-- **Auth (Google OAuth + JWT)** — routes ครบ, ทดสอบแล้ว: JWT ถูก → คืน user จริง, token ปลอม → `401`;
-  `/contracts/*` ทุก endpoint ต้อง auth แล้ว (session_id = user id, actor = user email)
+- **Auth (Google OAuth + JWT)** — routes ครบ; automated integration tests แล้ว
+  (`tests/integration/test_auth.py`): JWT ถูก → คืน user จริง, token ปลอม/ไม่มี user/ไม่ส่ง token →
+  `401`, `/auth/google/login` ยิง redirect ด้วย `redirect_uri` ที่ตั้งค่าไว้ถูกต้อง,
+  `/auth/google/callback` สร้าง user ใหม่/อัปเดต user เดิมถูกต้อง + ออก JWT + redirect กลับ
+  frontend, error path (`OAuthError`, ไม่มี email) → `400` — ดูหมายเหตุ mock ในหัวข้อ "ยังไม่ได้ทำ"
+  ด้านล่าง; `/contracts/*` ทุก endpoint ต้อง auth แล้ว (session_id = user id, actor = user email)
+- **Database migrations (Alembic)** — แทน `Base.metadata.create_all` แล้ว; `alembic/env.py` ดึง
+  `target_metadata` จาก `Base.metadata` ของแอปเองและ `sqlalchemy.url` จาก `Settings().database_url`
+  (ไม่มี connection string ซ้ำอยู่ใน `alembic.ini`) — migration แรก (`initial schema`) ครอบ
+  `users` + `playbook_embeddings` (+ `CREATE EXTENSION IF NOT EXISTS vector`) + `audit_overrides`;
+  ทดสอบ `upgrade head` → `downgrade base` → `upgrade head` กับ Postgres จริงแล้วว่า schema ตรงกับ
+  ที่ `create_all` เคยสร้างไว้เป๊ะ ก่อน stamp DB dev ปัจจุบันเป็น head (ไม่ต้อง re-run DDL เพราะ
+  ตารางตรงกันอยู่แล้ว)
 - **Data fixtures** — taxonomy (12 clause types), playbook positions (3 ตัวอย่าง, ingest แล้ว),
   gold annotations + contract text ที่จับคู่กัน
-- **Tests** — 30 unit/integration tests ผ่านหมด (`pytest tests/`)
+- **Tests** — 39 unit/integration tests ผ่านหมด (`pytest tests/`; อีก 1 test เป็น eval regression
+  gate ที่ skip ไว้เพราะต้องเรียก LLM จริง)
 
 ---
 
 ## ❌ สิ่งที่ยังไม่ได้ทำ
 
-- **Database migrations** — ยังใช้ `Base.metadata.create_all` ตอน startup; ยังไม่มี Alembic
-  (ใช้ได้กับ MVP แต่ไม่เหมาะกับ schema change ใน production)
+- **Google OAuth: ยังไม่มีการคลิกผ่านจริงในเบราว์เซอร์กับบัญชี Google จริง** — โค้ดต่อสายไว้ครบและ
+  ผ่าน automated test แล้ว (ดูด้านบน) แต่ test เหล่านั้น mock ที่ตัว authlib client
+  (`oauth.google.authorize_redirect` / `authorize_access_token`) เพราะ sandbox ที่ใช้พัฒนารอบนี้
+  ไม่มี outbound internet ให้ยิงไปหา Google จริง และการ login แบบ browser จริงต้องมีคนคลิกผ่านหน้า
+  consent ของ Google ด้วยบัญชีจริง (automate ไม่ได้และไม่ควร automate) — **ก่อนขึ้น production
+  ต้องมีคนรัน `uvicorn` แล้วเปิด `/auth/google/login` ในเบราว์เซอร์จริงอีกครั้งหนึ่งเพื่อ verify
+  ว่า Google credentials (`GOOGLE_OAUTH_API`/`GOOGLE_KEY_SECRET`/`GOOGLE_REDIRECT_URI`) ที่ตั้งไว้
+  ใน `.env` ใช้งานได้จริงกับ Google Cloud Console ที่ตั้งไว้**
 - **Redis** — ยกใน `docker-compose` แล้วแต่โค้ดยังไม่ได้ใช้งานจริง (contract/report repo เป็น
   in-memory ต่อ process — พอสำหรับรันเดี่ยว แต่ไม่ scale ข้าม process/replica)
-- **Google OAuth end-to-end** — โค้ดต่อสายไว้ครบแล้ว แต่ต้องทดสอบผ่าน browser จริงกับ Google
-  credentials จริง (ยังไม่ได้ทำในรอบนี้)
 - **Frontend**: หน้าอัปโหลดสัญญา, dashboard/reports, risk report view — ยังเป็น stub ฝั่ง `apps/web`
 - **Eval regression gate** (`tests/eval/test_regression.py`) — ยัง skip ไว้เพราะต้องเรียก LLM จริง
   (มี cost + ต้องมี quota); รันเองได้ผ่าน `python -m scripts.run_eval`
@@ -151,19 +174,31 @@ JWT_SECRET_KEY=<random-secret>
 docker compose -f ../../infrastructure/docker-compose.yml up -d postgres redis
 ```
 
-### 3) ติดตั้ง dependencies + รัน
+### 3) ติดตั้ง dependencies + migrate DB + รัน
 ```bash
 pip install -e ".[dev]"
+alembic upgrade head             # สร้าง extension `vector` + ตาราง users/playbook_embeddings/audit_overrides
 uvicorn app.main:app --reload --port 8000
 ```
 เปิด API docs ที่ http://localhost:8000/docs
 
 > **หมายเหตุ:** entrypoint คือ `app.main:app` เท่านั้น (ตรงกับ `infrastructure/docker-compose.yml`)
+> ตั้งแต่มี Alembic แล้ว แอปจะ**ไม่**สร้างตารางเองตอน startup อีกต่อไป — ต้องรัน
+> `alembic upgrade head` ก่อนเสมอ (ครั้งแรก หรือหลัง pull migration ใหม่)
 
 ### 4) ingest playbook เข้า vector store (ต้องทำก่อน `/contracts/review` จะ match อะไรได้)
 ```bash
 python -m scripts.ingest_playbook   # data/playbook/positions.yaml -> pgvector
 ```
+
+### DB migrations (Alembic)
+```bash
+alembic upgrade head              # apply ทุก migration ที่ยังไม่ได้ apply
+alembic revision --autogenerate -m "describe change"   # สร้าง migration ใหม่หลังแก้ ORM model
+alembic downgrade -1              # ถอย migration ล่าสุด 1 ขั้น
+```
+`alembic/env.py` ดึง `sqlalchemy.url` จาก `Settings().database_url` (อ่านจาก `.env` เดียวกับแอป)
+เอง ไม่ต้องตั้งซ้ำใน `alembic.ini`
 
 ### รันทั้งหมดด้วย Docker Compose
 ```bash
@@ -195,8 +230,8 @@ python -m scripts.run_eval          # data/gold/annotations.jsonl -> metrics rep
 | GET | `/` | ✅ |
 | GET | `/health` | ✅ |
 | GET | `/health/db` | ✅ |
-| GET | `/auth/google/login` | ⚠️ ต้องมี Google credentials จริง |
-| GET | `/auth/google/callback` | ⚠️ ต้องมี Google credentials จริง |
+| GET | `/auth/google/login` | ✅ automated test (mocked authlib); ⚠️ ยังไม่ได้คลิกผ่านจริงกับ Google ในเบราว์เซอร์ |
+| GET | `/auth/google/callback` | ✅ automated test (mocked authlib); ⚠️ ยังไม่ได้คลิกผ่านจริงกับ Google ในเบราว์เซอร์ |
 | GET | `/auth/me` | ✅ |
 | POST | `/auth/logout` | ✅ |
 | POST | `/contracts/review` | ✅ ต้อง auth (Bearer JWT) |
@@ -208,8 +243,8 @@ python -m scripts.run_eval          # data/gold/annotations.jsonl -> metrics rep
 
 ## Roadmap ที่เหลือ
 
-1. **Alembic migrations** แทน `create_all`
-2. **Frontend**: upload UI + report view ต่อกับ `/contracts/review`
-3. **Google OAuth** — ทดสอบ end-to-end ผ่าน browser จริง
-4. **Redis-backed session store** ถ้าต้อง scale ข้าม process/replica
-5. **Integration tests** สำหรับ `/contracts/review` และ `/contracts/{id}/override` (mock auth+LLM+DB)
+1. **Frontend**: upload UI + report view ต่อกับ `/contracts/review` (งานที่เหลือชิ้นใหญ่ที่สุด)
+2. **Google OAuth** — คลิกผ่าน login จริงในเบราว์เซอร์กับบัญชี Google จริงอีกครั้งก่อน production
+   (automated tests ครอบ contract ของ endpoint ไว้แล้ว แต่ mock ที่ authlib boundary)
+3. **Redis-backed session store** ถ้าต้อง scale ข้าม process/replica
+4. **Integration tests** สำหรับ `/contracts/review` และ `/contracts/{id}/override` (mock auth+LLM+DB)
