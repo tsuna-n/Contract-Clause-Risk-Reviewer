@@ -10,14 +10,15 @@ import sys
 
 
 def main(argv: list[str]) -> int:
-    """Load playbook positions, embed them, and upsert into the vector store.
+    """Load playbook positions, embed them, and upsert into the vector store."""
+    from app.api.deps import get_embedder, get_vector_store
+    from app.rag.ingest import ingest, load_positions
 
-    TODO: wire ``rag.ingest.load_positions`` -> ``rag.ingest.ingest`` with the
-    configured embedder and vector store.
-    """
     path = argv[1] if len(argv) > 1 else "data/playbook/positions.yaml"
-    print(f"[ingest_playbook] would ingest positions from {path}")
-    raise NotImplementedError
+    positions = load_positions(path)
+    count = ingest(positions, get_embedder(), get_vector_store())
+    print(f"[ingest_playbook] ingested {count} position(s) from {path}")
+    return 0
 
 
 if __name__ == "__main__":

@@ -15,9 +15,14 @@ def session_ttl_seconds() -> int:
     return get_settings().retention_ttl_seconds
 
 
-def enforce_retention(session_id: str) -> None:
-    """Purge any session-scoped data older than the TTL.
+def enforce_retention(session_id: str) -> int:
+    """Purge ``session_id``'s reports older than the TTL; return how many were purged.
 
-    TODO: sweep contract/report repositories for expired session data.
+    Uploaded contracts are deleted from :class:`ContractRepository` as soon as
+    their review report is produced (see ``ReviewService``), so the only
+    long-lived session-scoped state left to sweep is the report store.
     """
-    raise NotImplementedError
+    from app.api.deps import get_report_repo
+
+    reports = get_report_repo()
+    return len(reports.purge_expired(session_id, session_ttl_seconds()))

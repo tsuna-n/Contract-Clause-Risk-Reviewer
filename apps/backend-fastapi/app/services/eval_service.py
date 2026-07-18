@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from app.evaluation.runner import run_eval
 from app.schemas.eval import EvalMetrics, EvalRequest
 
 
@@ -9,8 +10,5 @@ class EvalService:
     """Runs the evaluation harness and returns aggregate metrics."""
 
     def run(self, request: EvalRequest) -> EvalMetrics:
-        """Evaluate the pipeline against a gold set.
-
-        TODO: delegate to ``evaluation.runner`` and return EvalMetrics.
-        """
-        raise NotImplementedError
+        """Evaluate the pipeline against a gold set."""
+        return run_eval(request.gold_set_path, request.limit)

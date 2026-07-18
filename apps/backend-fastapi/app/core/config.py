@@ -26,13 +26,14 @@ class Settings(BaseSettings):
     session_secret_key: str | None = None
     jwt_secret_key: str | None = None
 
-    # --- llm ---
-    anthropic_api_key: str | None = None
-    llm_model: str = "claude-opus-4-8"
+    # --- llm (Google GenAI / Gemini) ---
+    gemini_api_key: str | None = None  # read from $GEMINI_API_KEY
+    llm_model: str = "gemini-3.5-flash"
 
     # --- rag / storage ---
     redis_url: str = "redis://localhost:6379/0"
-    embedding_model: str = "text-embedding-3-small"  # TODO: pick embedder
+    embedding_model: str = "gemini-embedding-001"
+    embedding_dim: int = 768
 
     # --- feature flags ---
     enable_judge: bool = True

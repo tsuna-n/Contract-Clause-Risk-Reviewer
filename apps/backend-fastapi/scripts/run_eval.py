@@ -10,14 +10,14 @@ import sys
 
 
 def main(argv: list[str]) -> int:
-    """Run the gold-set evaluation and print the metrics report.
+    """Run the gold-set evaluation and print the metrics report."""
+    from app.evaluation.report import format_report
+    from app.evaluation.runner import run_eval
 
-    TODO: call ``evaluation.runner.run_eval`` and
-    ``evaluation.report.format_report``.
-    """
     path = argv[1] if len(argv) > 1 else "data/gold/annotations.jsonl"
-    print(f"[run_eval] would evaluate against {path}")
-    raise NotImplementedError
+    metrics = run_eval(path)
+    print(format_report(metrics))
+    return 0
 
 
 if __name__ == "__main__":

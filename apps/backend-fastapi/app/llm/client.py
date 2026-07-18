@@ -1,4 +1,4 @@
-"""Anthropic Claude client wrapper: retry, timeout, cost tracking."""
+"""Google GenAI (Gemini) client wrapper: retry, timeout, cost tracking."""
 
 from __future__ import annotations
 
@@ -22,27 +22,41 @@ class Usage:
 
 
 class LLMClient:
-    """Thin wrapper over the Anthropic SDK.
+    """Thin wrapper over the Google GenAI SDK (Gemini models).
 
     Centralizes model selection, retries/timeouts, and usage accounting so the
-    agents don't each re-implement it. The SDK retries 429/5xx automatically;
-    this wrapper adds cost tracking and a single place to set defaults.
+    agents don't each re-implement it. The SDK retries transient errors
+    automatically; this wrapper adds cost tracking and a single place to set
+    defaults.
     """
 
     def __init__(self, model: str | None = None) -> None:
         settings = get_settings()
         self.model = model or settings.llm_model
-        self._api_key = settings.anthropic_api_key
+        self._api_key = settings.gemini_api_key
         self.usage = Usage()
-        self._client = None  # lazily constructed anthropic.Anthropic
+        self._client = None  # lazily constructed google.genai.Client
 
     def _get_client(self):
-        """Lazily construct the underlying ``anthropic.Anthropic`` client."""
+        """Lazily construct the underlying ``google.genai.Client``."""
         if self._client is None:
-            import anthropic
+            from google import genai
 
-            self._client = anthropic.Anthropic(api_key=self._api_key)
+            self._client = genai.Client(api_key=self._api_key)
         return self._client
+
+    def _record_usage(self, response) -> None:
+        """Accumulate ``response.usage_metadata`` into :attr:`usage`."""
+        meta = getattr(response, "usage_metadata", None)
+        if meta is None:
+            return
+        self.usage.add(
+            Usage(
+                input_tokens=meta.prompt_token_count or 0,
+                output_tokens=meta.candidates_token_count or 0,
+                cache_read_input_tokens=meta.cached_content_token_count or 0,
+            )
+        )
 
     def complete(
         self,
@@ -52,9 +66,20 @@ class LLMClient:
         max_tokens: int = 4096,
         effort: str = "high",
     ) -> str:
-        """Run a single completion and return the text.
+        """Run a single completion and return the text."""
+        from google.genai import types
 
-        TODO: call ``client.messages.create`` with adaptive thinking, accumulate
-        ``response.usage`` into ``self.usage``, and return the joined text blocks.
-        """
-        raise NotImplementedError
+        config = types.GenerateContentConfig(
+            system_instruction=system,
+            max_output_tokens=max_tokens,
+            thinking_config=types.ThinkingConfig(thinking_level=effort.upper())
+            if effort
+            else None,
+        )
+        response = self._get_client().models.generate_content(
+            model=self.model,
+            contents=prompt,
+            config=config,
+        )
+        self._record_usage(response)
+        return response.text or ""

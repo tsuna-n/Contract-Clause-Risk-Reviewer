@@ -1,2 +1,2 @@
-{"contract_id": "sample-001", "clauses": [{"span": {"start": 0, "end": 180}, "clause_type": "limitation_of_liability", "risk_level": "high"}, {"span": {"start": 181, "end": 360}, "clause_type": "termination", "risk_level": "medium"}]}
-{"contract_id": "sample-002", "clauses": [{"span": {"start": 0, "end": 210}, "clause_type": "indemnification", "risk_level": "medium"}]}
+{"contract_id": "sample-001", "clauses": [{"span": {"start": 0, "end": 188}, "clause_type": "limitation_of_liability", "risk_level": "high"}, {"span": {"start": 188, "end": 315}, "clause_type": "termination", "risk_level": "medium"}]}
+{"contract_id": "sample-002", "clauses": [{"span": {"start": 0, "end": 209}, "clause_type": "indemnification", "risk_level": "medium"}]}
