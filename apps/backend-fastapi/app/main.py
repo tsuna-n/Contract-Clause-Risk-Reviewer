@@ -4,38 +4,23 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from sqlalchemy import text
 from starlette.middleware.sessions import SessionMiddleware
 
-from app.api.deps import Base, engine
 from app.api.v1 import contracts, evaluate, health, playbook
 from app.core.config import get_settings
 from app.core.exceptions import register_exception_handlers
-from app.core.logging import configure_logging, get_logger
-
-# Import ORM models so they register with ``Base.metadata`` before create_all.
-from app.rag.vector_store import PlaybookEmbedding  # noqa: F401
-from app.repositories.audit_repo import AuditOverride  # noqa: F401
+from app.core.logging import configure_logging
 from auth.config import auth_settings
 from auth.router import router as auth_router
-
-logger = get_logger(__name__)
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Application startup/shutdown hooks."""
     configure_logging()
-    # Create ORM tables (e.g. auth ``users``, ``playbook_embeddings``). Non-fatal
-    # so the app still boots when the database is unavailable; DB-backed routes
-    # fail lazily instead.
-    try:
-        with engine.connect() as connection:
-            connection.execute(text("CREATE EXTENSION IF NOT EXISTS vector"))
-            connection.commit()
-        Base.metadata.create_all(bind=engine)
-    except Exception:  # noqa: BLE001 - startup must not hard-fail on a down DB
-        logger.warning("Skipping table creation: database unavailable")
+    # Schema (tables + the ``vector`` extension) is owned by Alembic now -
+    # run `alembic upgrade head` before starting the app. See
+    # apps/backend-fastapi/README.md.
     yield
 
 
