@@ -26,6 +26,7 @@ const router = createBrowserRouter([
       </RequireAuth>
     ),
   },
+
 ]);
 
 export default function App() {
