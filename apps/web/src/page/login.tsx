@@ -1,6 +1,5 @@
 import { BackgroundOrbs, GridOverlay, BrandHeader, LoginCard } from "../component/login";
 
-
 /**
  * LoginPage — assembles the full-screen login view.
  *
