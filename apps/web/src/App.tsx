@@ -22,8 +22,14 @@ const router = createBrowserRouter([
     element: <AuthCallback />,
   },
   {
+    // Every call this page makes needs a bearer token, so guard it like /manual
+    // rather than letting it render and fail with 401s.
     path: "/contract",
-    element: <ContractPage />,
+    element: (
+      <RequireAuth>
+        <ContractPage />
+      </RequireAuth>
+    ),
   },
   {
     path: "/manual",

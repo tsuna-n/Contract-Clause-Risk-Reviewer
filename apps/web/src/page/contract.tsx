@@ -1,129 +1,193 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { OriginalContract, AIRiskAnalysis } from "../component/contract";
-import { MOCK_CLAUSES } from "../component/contract/OriginalContract";
-import type { Clause, RiskLevel, ContractMetadata } from "../component/contract/types";
-
-// ── Types ──────────────────────────────────────────────────────────────────────
-
-interface ContractData {
-  contractName: string;
-  overallRisk: RiskLevel;
-  contractTitle: string;
-  clauses: Clause[];
-  metadata: ContractMetadata;
-}
-
-// ── Mock Data ──────────────────────────────────────────────────────────────────
-
-const mockContractData: ContractData = {
-  contractName: "Master_Service_Agreement_v2.pdf",
-  overallRisk: "HIGH",
-  contractTitle: "MASTER SERVICE AGREEMENT",
-  clauses: MOCK_CLAUSES,
-  metadata: {
-    contractType: "Master Service Agreement (MSA)",
-    contractTitle: "Master_Service_Agreement_v2.pdf",
-    contractingParties: "บริษัท เทคโซลูชั่น จำกัด (Tech Solution Co., Ltd.) & บริษัท เอคอมเมิร์ซ จำกัด (aCommerce Co., Ltd.)",
-    contractExecutionDate: "18 กรกฎาคม 2026",
-    effectiveDate: "1 สิงหาคม 2026",
-    expirationDate: "31 กรกฎาคม 2029",
-    contractValue: "5,500,000 บาท (THB)",
-    contractTerm: "3 ปี (3 Years)",
-  }
-};
-
-
-// ── Risk badge styles ──────────────────────────────────────────────────────────
-
-const overallRiskStyle: Record<RiskLevel, string> = {
-  LOW: "text-emerald-400",
-  MEDIUM: "text-amber-400",
-  HIGH: "text-red-400",
-  CRITICAL: "text-rose-500",
-};
-
-// ── Page Component ─────────────────────────────────────────────────────────────
+import type { ContractReport, RiskLevel } from "../component/contract/types";
+import { riskAccent } from "../component/contract/riskStyles";
+import { ApiError } from "../lib/api";
+import {
+  ACCEPTED_EXTENSIONS,
+  isSupportedFile,
+  overrideClause,
+  reviewContract,
+} from "../lib/contracts";
 
 export default function ContractPage() {
-  const [selectedClauseId, setSelectedClauseId] = useState<string | null>(
-    MOCK_CLAUSES[0].id
+  const navigate = useNavigate();
+
+  const [report, setReport] = useState<ContractReport | null>(null);
+  const [fileName, setFileName] = useState<string | null>(null);
+  const [selectedClauseId, setSelectedClauseId] = useState<string | null>(null);
+  const [reviewing, setReviewing] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  /** Local review progress — the backend records overrides, not acceptances. */
+  const [acceptedIds, setAcceptedIds] = useState<ReadonlySet<string>>(new Set());
+
+  /** A dead session can't be recovered in-page — send the user back to login. */
+  const handleApiError = useCallback(
+    (err: unknown) => {
+      if (err instanceof ApiError && err.isUnauthorized) {
+        navigate("/login", { replace: true });
+        return;
+      }
+      setError(err instanceof Error ? err.message : "Something went wrong");
+    },
+    [navigate]
   );
 
-  const selectedClause =
-    mockContractData.clauses.find((c) => c.id === selectedClauseId) ?? null;
+  const handleFileSelect = useCallback(
+    async (file: File) => {
+      if (!isSupportedFile(file)) {
+        setError(
+          `${file.name} is not a supported format. Upload ${ACCEPTED_EXTENSIONS.join(" or ")}.`
+        );
+        return;
+      }
+
+      setReviewing(true);
+      setError(null);
+      setFileName(file.name);
+      setAcceptedIds(new Set());
+      try {
+        const result = await reviewContract(file);
+        setReport(result);
+        setSelectedClauseId(result.clauses[0]?.id ?? null);
+      } catch (err) {
+        setReport(null);
+        setSelectedClauseId(null);
+        handleApiError(err);
+      } finally {
+        setReviewing(false);
+      }
+    },
+    [handleApiError]
+  );
+
+  /**
+   * The override endpoint returns the whole updated report, so the response
+   * replaces page state rather than being patched into it.
+   */
+  const handleOverride = useCallback(
+    async (clauseId: string, newRisk: RiskLevel, reason: string) => {
+      if (!report) return;
+      const updated = await overrideClause({
+        reportId: report.reportId,
+        clauseId,
+        newRisk,
+        reason,
+      });
+      setReport(updated);
+      // An overridden clause is no longer "accepted as assessed".
+      setAcceptedIds((prev) => {
+        if (!prev.has(clauseId)) return prev;
+        const next = new Set(prev);
+        next.delete(clauseId);
+        return next;
+      });
+    },
+    [report]
+  );
+
+  const handleAccept = useCallback((clauseId: string) => {
+    setAcceptedIds((prev) => new Set(prev).add(clauseId));
+  }, []);
+
+  const selectedClause = report?.clauses.find((c) => c.id === selectedClauseId) ?? null;
 
   return (
-    <div className="flex flex-col min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
-      {/* ── Warning Banner ──────────────────────────────────────────────────── */}
-      
-
+    <div className="flex flex-col h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
       {/* ── Page Header ─────────────────────────────────────────────────────── */}
-      <header className="flex items-center justify-between px-8 py-5 border-b border-white/10 bg-white/5 backdrop-blur-sm">
-        <div className="space-y-0.5">
+      <header className="flex items-center justify-between px-8 py-5 border-b border-white/10 bg-white/5 backdrop-blur-sm shrink-0">
+        <div className="space-y-0.5 min-w-0">
           <h1 className="text-xl font-bold text-slate-100 tracking-tight">
             Contract Clause Risk Reviewer
           </h1>
-          <p className="text-xs text-slate-500 font-medium tracking-wide">
-            {mockContractData.contractName}
+          <p className="text-xs text-slate-500 font-medium tracking-wide truncate">
+            {fileName ?? "No contract loaded"}
           </p>
         </div>
 
-        <div className="flex items-center gap-4">
-          {/* Overall Risk */}
-          <div className="text-right">
-            <p className="text-[10px] font-bold uppercase tracking-widest text-slate-500">
-              Overall Risk
-            </p>
-            <p
-              className={`text-sm font-extrabold tracking-wide ${
-                overallRiskStyle[mockContractData.overallRisk]
-              }`}
-            >
-              {mockContractData.overallRisk.charAt(0) +
-                mockContractData.overallRisk.slice(1).toLowerCase()}{" "}
-              Risk
-            </p>
-          </div>
+        {report && (
+          <div className="flex items-center gap-6 shrink-0">
+            {/* Risk counts straight from the report summary */}
+            <div className="hidden md:flex items-center gap-4 text-xs">
+              <span className="text-red-400 font-semibold">{report.summary.high} High</span>
+              <span className="text-amber-400 font-semibold">
+                {report.summary.medium} Medium
+              </span>
+              <span className="text-emerald-400 font-semibold">
+                {report.summary.low} Low
+              </span>
+              {report.summary.unknown > 0 && (
+                <span className="text-slate-400 font-semibold">
+                  {report.summary.unknown} Unknown
+                </span>
+              )}
+            </div>
 
-          {/* Export Button */}
-          <button
-            className="
-              flex items-center gap-2 px-5 py-2.5 rounded-xl
-              bg-slate-100 text-slate-900 text-sm font-semibold
-              hover:bg-white transition-all duration-200
-              shadow-lg hover:shadow-xl hover:scale-[1.02] active:scale-95
-            "
-          >
-            <svg
-              className="w-4 h-4"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth={2}
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
-              />
-            </svg>
-            Export Report
-          </button>
-        </div>
+            <div className="text-right">
+              <p className="text-[10px] font-bold uppercase tracking-widest text-slate-500">
+                Overall Risk
+              </p>
+              <p
+                className={`text-sm font-extrabold tracking-wide ${
+                  riskAccent[report.overallRisk]
+                }`}
+              >
+                {report.overallRisk} RISK
+              </p>
+            </div>
+          </div>
+        )}
       </header>
 
+      {/* ── Status strip ────────────────────────────────────────────────────── */}
+      {reviewing && (
+        <div className="flex items-center gap-3 px-8 py-3 border-b border-sky-500/20 bg-sky-950/40 shrink-0">
+          <span className="w-3.5 h-3.5 rounded-full border-2 border-sky-400 border-t-transparent animate-spin" />
+          <p className="text-sm text-sky-200">
+            Reviewing {fileName}… this runs the full pipeline and can take a minute.
+          </p>
+        </div>
+      )}
+
+      {error && (
+        <div className="flex items-start justify-between gap-4 px-8 py-3 border-b border-rose-500/30 bg-rose-950/40 shrink-0">
+          <p className="text-sm text-rose-200">{error}</p>
+          <button
+            type="button"
+            onClick={() => setError(null)}
+            className="text-rose-300/70 hover:text-rose-200 text-sm shrink-0"
+            aria-label="Dismiss error"
+          >
+            ✕
+          </button>
+        </div>
+      )}
+
+      {report?.disclaimer && (
+        <div className="px-8 py-2.5 border-b border-amber-500/20 bg-amber-950/30 shrink-0">
+          <p className="text-xs text-amber-200/90 leading-relaxed">{report.disclaimer}</p>
+        </div>
+      )}
+
       {/* ── Main Content — Two-panel layout ────────────────────────────────── */}
-      <main className="flex-1 grid grid-cols-1 lg:grid-cols-[1fr_1fr] gap-6 p-6 min-h-0">
-        {/* Left: Original Contract */}
+      <main className="flex-1 grid grid-cols-1 lg:grid-cols-2 gap-6 p-6 min-h-0">
         <OriginalContract
-          contractTitle={mockContractData.contractTitle}
-          clauses={mockContractData.clauses}
+          clauses={report?.clauses ?? []}
           selectedClauseId={selectedClauseId}
           onClauseSelect={setSelectedClauseId}
+          onFileSelect={handleFileSelect}
+          busy={reviewing}
+          acceptedIds={acceptedIds}
         />
 
-        {/* Right: AI Risk Analysis */}
-        <AIRiskAnalysis clause={selectedClause} metadata={mockContractData.metadata} />
+        <AIRiskAnalysis
+          clause={selectedClause}
+          reportId={report?.reportId ?? null}
+          onOverride={handleOverride}
+          accepted={selectedClause ? acceptedIds.has(selectedClause.id) : false}
+          onAccept={handleAccept}
+        />
       </main>
     </div>
   );

@@ -151,10 +151,7 @@ export default function ManualPage() {
 
       {/* Start Button */}
       <button
-        onClick={() => {
-          console.log("Starting contract review...");
-          // Navigate to dashboard or upload page
-        }}
+        onClick={() => navigate("/contract")}
         className="mt-8 px-16 py-4 border-2 border-white text-white text-lg font-medium rounded-full hover:bg-white hover:text-black transition-all duration-300 hover:shadow-xl"
       >
         Start
