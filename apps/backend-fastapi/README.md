@@ -35,39 +35,167 @@ Backend สำหรับระบบ **วิเคราะห์ความ
 
 ---
 
-## โครงสร้างไดเรกทอรี
+## โครงสร้างไดเรกทอรีและรายละเอียดไฟล์ (Directory & File Structure)
 
-```
+### 📌 โครงสร้างแบบภาพรวม (Directory Tree)
+
+```text
 apps/backend-fastapi/
-├── alembic/                  # DB migrations (env.py อ่าน DATABASE_URL จาก app settings)
-│   └── versions/              # migration scripts (initial schema: users, playbook_embeddings,
-│                                 audit_overrides + `CREATE EXTENSION vector`)
-├── app/                      # แพ็กเกจหลัก (entrypoint: app.main:app)
-│   ├── main.py               # FastAPI app factory + lifespan + router wiring
-│   ├── api/
-│   │   ├── deps.py           # DI: DB session, LLM client, embedder, vector store,
-│   │   │                       retriever, orchestrator, judge, services (ทั้งหมด wired แล้ว)
-│   │   └── v1/                contracts, playbook, evaluate, health
-│   ├── core/                 # config, logging, exceptions, retention (ครบ)
-│   ├── schemas/               Pydantic models: clause, report, taxonomy, playbook, eval
-│   ├── parsers/               PDF/DOCX → ParsedDocument + normalizer (ครบ)
-│   ├── llm/                   LLM client wrapper (Gemini) + structured output (ครบ)
-│   ├── rag/                   embedder, retriever, vector_store (pgvector), ingest, citation (ครบ)
-│   ├── agents/                segmenter → classifier → matcher → risk_scorer → judge → orchestrator (ครบ)
-│   ├── services/               review_service, override_service, eval_service (ครบ)
-│   ├── repositories/           contract_repo, report_repo (Redis-backed, in-memory fallback for
-│   │                             tests), audit_repo (Postgres, ครบ)
-│   ├── evaluation/             runner, metrics, report (eval harness, ครบ)
-│   ├── guardrails/             grounding, citation_validity, disclaimer, no_invented_fallback (ครบ)
-│   └── prompts/                classifier/judge/risk_scorer .jinja templates + loader (`__init__.py`)
-├── auth/                      Google OAuth + JWT (config, jwt, oauth, router, schemas)
-├── models/                    SQLAlchemy ORM models (User)
-├── scripts/                   ingest_playbook.py, run_eval.py (ครบ, ใช้งานได้จริง)
-├── data/                      fixtures: taxonomy, playbook positions, gold annotations + contracts/*.txt
-└── tests/                     unit (30 tests), integration (health, auth: JWT + OAuth callback
-                                 mocked, contracts: review + override with mocked LLM/DB), eval
-                                 (regression gate skip ไว้ — ต้องมี live LLM)
+├── alembic/                      # Database Migration scripts (Alembic)
+│   ├── versions/                 # ไฟล์ Migration แต่ละเวอร์ชัน (Initial schema ฯลฯ)
+│   ├── env.py                    # Script เชื่อมต่อ DB & SQLAlchemy MetaData
+│   └── script.py.mako            # Template สร้าง Migration script ใหม่
+├── app/                          # แพ็กเกจหลักของแอปพลิเคชัน FastAPI
+│   ├── main.py                   # FastAPI Application Factory, Router wiring & Lifespan
+│   ├── api/                      # API Endpoints และ Dependencies
+│   │   ├── deps.py               # Dependency Injection (DB, Auth, Services, RAG)
+│   │   └── v1/                   # REST API Router (v1)
+│   │       ├── contracts.py      # /contracts (Upload, Review, Override)
+│   │       ├── evaluate.py       # /evaluate (Run evaluation benchmarks)
+│   │       ├── health.py         # /health (Health & Readiness check)
+│   │       └── playbook.py       # /playbook (Search & Manage playbook rules)
+│   ├── core/                     # ระบบพื้นฐาน (Configuration, Logging, Exceptions, Retention)
+│   │   ├── config.py             # App Settings & Pydantic Environment Config
+│   │   ├── exceptions.py         # Custom Exception Classes & Handlers
+│   │   ├── logging.py            # Structured Logging (structlog)
+│   │   └── retention.py          # Data Cleanup / Retention Policy Engine
+│   ├── schemas/                  # Data Transfer Objects (Pydantic Models)
+│   │   ├── clause.py             # Clause, Offset & Clause Type schemas
+│   │   ├── eval.py               # Evaluation Request, Metrics & Summary schemas
+│   │   ├── playbook.py           # Playbook Position & Standard Clause schemas
+│   │   ├── report.py             # Review Report & Risk Summary schemas
+│   │   └── taxonomy.py           # Clause Taxonomy & Category schemas
+│   ├── parsers/                  # Document Parsers & Normalization
+│   │   ├── docx.py               # DOCX Document Parser
+│   │   ├── pdf.py                # PDF Document Parser (PyMuPDF)
+│   │   ├── normalizer.py         # Text Normalization & Clean up
+│   │   └── models.py             # Parsed Document Data Structures
+│   ├── llm/                      # LLM Integration & Structured Output
+│   │   ├── client.py             # Google Gemini API Client Wrapper & Retries
+│   │   └── structured.py         # LLM Structured Output Generator (Pydantic)
+│   ├── prompts/                  # Prompt Templates (Jinja2)
+│   │   ├── classifier.v1.jinja   # Prompt สำหรับ Clause Classification
+│   │   ├── judge.v1.jinja        # Prompt สำหรับ Grounding & Compliance Judge
+│   │   └── risk_scorer.v1.jinja  # Prompt สำหรับ Risk Assessment Scoring
+│   ├── agents/                   # Multi-Agent Workflow Engine
+│   │   ├── base.py               # Base Agent Interface
+│   │   ├── segmenter.py          # Document Segmentation Agent
+│   │   ├── classifier.py         # Clause Classifier Agent
+│   │   ├── matcher.py            # Playbook Rule Matching Agent
+│   │   ├── risk_scorer.py        # Risk Assessment & Scoring Agent
+│   │   ├── judge.py              # Verification & Grounding Judge Agent
+│   │   └── orchestrator.py       # Main Orchestrator Agent (Pipeline Coordinator)
+│   ├── rag/                      # Grounded RAG & Retrieval Engine
+│   │   ├── embedder.py           # Text Embedding Generation (Gemini Embeddings)
+│   │   ├── vector_store.py       # PostgreSQL pgvector Vector Store Wrapper
+│   │   ├── retriever.py          # Hybrid Search (Dense pgvector + BM25 Rerank)
+│   │   ├── citation.py           # Citation Verification & Text Offset Matching
+│   │   └── ingest.py             # Playbook Ingestion & Vector Indexing Pipeline
+│   ├── guardrails/               # Safety & Accuracy Guardrails
+│   │   ├── grounding.py          # Groundedness Check Engine
+│   │   ├── citation_validity.py  # Citation Range & Excerpt Validation
+│   │   ├── no_invented_fallback.py # Hallucination & Invented Rule Protection
+│   │   └── disclaimer.py         # Legal Disclaimer Generator
+│   ├── repositories/             # Data Access Layer (Repositories)
+│   │   ├── contract_repo.py      # Contract Data Repo (Redis-backed / In-memory)
+│   │   ├── report_repo.py        # Review Report Repo (Redis-backed / In-memory)
+│   │   └── audit_repo.py         # Audit Override Logs Repo (PostgreSQL)
+│   ├── services/                 # Business Logic Layer
+│   │   ├── review_service.py     # Main Contract Review Service
+│   │   ├── override_service.py   # Human Override & Re-aggregation Service
+│   │   └── eval_service.py       # Evaluation Runner Service
+│   └── evaluation/               # Evaluation & Benchmarking System
+│       ├── metrics.py            # Precision, Recall, F1, Citation Accuracy Metrics
+│       ├── runner.py             # Benchmark Test Runner
+│       └── report.py             # Evaluation Report Formatter
+├── auth/                         # Authentication System (OAuth & JWT)
+│   ├── config.py                 # Auth Settings (JWT Secrets, OAuth Config)
+│   ├── jwt.py                    # JWT Token Generator & Validator
+│   ├── oauth.py                  # Google OAuth2 Integration (Authlib)
+│   ├── router.py                 # Auth Endpoints (/login, /callback, /me, /logout)
+│   └── schemas.py                # Auth Request/Response Schemas
+├── models/                       # Database ORM Models (SQLAlchemy)
+│   └── uesrs.py                  # User Database Model
+├── scripts/                      # Utility Scripts
+│   ├── ingest_playbook.py        # Script นำเข้า Playbook YAML เข้าสู่ Vector DB
+│   └── run_eval.py               # Script คำสั่งรัน Evaluation Suite
+├── data/                         # Data Fixtures & Datasets
+│   ├── contracts/                # Sample contract text files (sample-001.txt, sample-002.txt)
+│   ├── gold/annotations.jsonl    # Gold annotations ground truth dataset
+│   ├── playbook/positions.yaml   # Standard legal positions & Playbook rules
+│   └── taxonomy/clause_types.yaml # Clause taxonomy classification definitions
+└── tests/                        # Test Suites
+    ├── unit/                     # Unit tests (Guardrails, Parsers, Agents, Metrics)
+    ├── integration/              # Integration tests (Health, Auth, Contracts API)
+    └── eval/                     # Evaluation Regression Gate tests
 ```
+
+### 📑 รายละเอียดหน้าที่ของแต่ละส่วน (File Explanations)
+
+#### 1. Core Application (`app/`)
+* **`app/main.py`** — จุดเริ่มต้นของแอปพลิเคชัน FastAPI กำหนด CORS, Middleware, Lifespan hooks และลงทะเบียน API Routers ทั้งหมด
+* **`app/core/`**:
+  * `config.py`: โหลดและตรวจสอบ Environment Variables ผ่าน Pydantic BaseSettings
+  * `exceptions.py`: นิยาม Custom Exception (เช่น `NotFoundError`, `UngroundedReportError`) และ Exception Handlers
+  * `logging.py`: ตั้งค่า Structured JSON Logging ด้วย `structlog` พร้อม Context Tracking (Trace ID)
+  * `retention.py`: ระบบสลัดลบสัญญาดิบทันทีเมื่อประมวลผลเสร็จ และจัดเก็บรายงานชั่วคราวตาม TTL
+* **`app/api/`**:
+  * `deps.py`: Central Dependency Injector สำหรับ FastAPI (ส่งมอบ DB Session, Redis Repositories, LLM Client, Agents, Services)
+  * `v1/contracts.py`: Endpoint หลักสำหรับ `/contracts/review` (อัปโหลดและประเมินสัญญา) และ `/contracts/{id}/override` (แก้ไขผลประเมิน)
+  * `v1/playbook.py`: Endpoint ค้นหาข้อกำหนดใน Playbook (`/playbook/search`)
+  * `v1/evaluate.py`: Endpoint สำหรับสั่งรัน Evaluation Benchmarks (`/evaluate`)
+  * `v1/health.py`: Endpoint สำหรับเช็กความพร้อมและสุขภาพของระบบ (`/health`, `/health/db`)
+* **`app/schemas/`**: Pydantic Models สำหรับกำหนด Data Transfer Objects (DTO) และ Request/Response Schemas แยกตามโดเมน (`clause.py`, `playbook.py`, `report.py`, `eval.py`, `taxonomy.py`)
+* **`app/parsers/`**:
+  * `pdf.py` & `docx.py`: ตัวแกะและสกัดข้อความจากไฟล์ PDF (ใช้ PyMuPDF) และ DOCX (ใช้ python-docx)
+  * `normalizer.py`: ทำความสะอาดข้อความ ตัดช่องว่างส่วนเกิน จัดระเบียบบรรทัดใหม่ให้เป็นมาตรฐาน
+  * `models.py`: Data structure กลางผลลัพธ์การอ่านเอกสาร (`ParsedDocument`, `ParsedSection`)
+* **`app/llm/` & `app/prompts/`**:
+  * `client.py`: Wrapper สำหรับสื่อสารกับ Google Gemini API พร้อมระบบ Retry และ Cost/Usage Tracking
+  * `structured.py`: ตัวช่วยบังคับ LLM ตอบผลลัพธ์กลับมาเป็น Structured JSON ตาม Pydantic Schema
+  * `prompts/*.jinja`: ไฟล์แม่แบบ Prompt (Jinja2) สำหรับ Classifier, Risk Scorer และ Judge
+* **`app/agents/`**: สถาปัตยกรรม Multi-Agent ทำงานร่วมกันแบบเป็นขั้นตอน:
+  * `segmenter.py`: ตัดแบ่งเอกสารเป็นข้อสัญญาย่อย (Clause Segmentation)
+  * `classifier.py`: จำแนกประเภทของ Clause ตาม Taxonomy
+  * `matcher.py`: ค้นหาและจับคู่ Clause กับนโยบายกฎหมายใน Playbook ผ่าน RAG
+  * `risk_scorer.py`: ประเมินระดับความเสี่ยง (High/Medium/Low) และให้เหตุผลสนับสนุน
+  * `judge.py`: ตรวจสอบความถูกต้อง (Verification/Grounding Check)
+  * `orchestrator.py`: ตัวคุม Pipeline (Orchestration Engine) จัดลำดับการรัน Agent ทั้งหมด
+* **`app/rag/`**:
+  * `embedder.py`: แปลงข้อความเป็น Vector Embedding (`gemini-embedding-001`)
+  * `vector_store.py`: เชื่อมต่อและค้นหาข้อมูลใน PostgreSQL `pgvector`
+  * `retriever.py`: ทำ Hybrid Search (Dense pgvector + BM25 Lexical Rerank)
+  * `citation.py`: ตรวจสอบความสอดคล้องของการอ้างอิง Citation กลับไปยังข้อความตั้งต้น
+  * `ingest.py`: สคริปต์สกัด Playbook YAML แปลงเป็น Embedding ลง Vector Store
+* **`app/guardrails/`**: ระบบ Guardrails ป้องกัน AI มโน (Hallucination) ตรวจสอบว่าคำตอบอ้างอิงจากเนื้อหาจริง (`grounding.py`), ความถูกต้องของ Citation (`citation_validity.py`), ป้องกันการสร้างกฎปลอม (`no_invented_fallback.py`) และแปะคำเตือนทางกฎหมาย (`disclaimer.py`)
+* **`app/repositories/`**: Data Access Layer สำหรับจัดการข้อมูลคงสภาพ:
+  * `contract_repo.py` & `report_repo.py`: จัดเก็บ Parsed Document และ Review Report ลง Redis (พร้อม native TTL) และมี In-memory fallback สำหรับการทดสอบ
+  * `audit_repo.py`: บันทึก Audit Log การ Override แก้ไขผลการประเมินลง PostgreSQL
+* **`app/services/`**: Business Logic Layer สำหรับประมวลผลระบบ:
+  * `review_service.py`: ดำเนินการรีวิวสัญญาแบบ end-to-end
+  * `override_service.py`: จัดการการปรับแก้ไขผลวิเคราะห์โดยมนุษย์ (Human Override)
+  * `eval_service.py`: ประมวลผลระบบทดสอบวัดผล AI
+* **`app/evaluation/`**: ระบบประเมินประสิทธิภาพ AI ประกอบด้วย `metrics.py` (คำนวณ Precision/Recall/F1/Citation Accuracy), `runner.py` (ตัวรัน Benchmark) และ `report.py` (สรุปรายงาน)
+
+#### 2. Authentication System (`auth/` & `models/`)
+* `auth/config.py`: ตั้งค่า JWT Secret Key, Algorithm, Expiry และ OAuth Client settings
+* `auth/jwt.py`: ฟังก์ชันสำหรับ Sign & Decode JSON Web Tokens (JWT)
+* `auth/oauth.py`: ตัวจัดการ Google OAuth2 Authorization Flow (Authlib integration)
+* `auth/router.py`: API Endpoints สำหรับ Login (`/auth/google/login`), OAuth Callback, Get Current User (`/auth/me`), Logout
+* `auth/schemas.py`: Pydantic Schemas ของข้อมูล User และ Authentication Payload
+* `models/uesrs.py`: SQLAlchemy Database ORM Model ของตาราง `users`
+
+#### 3. Database Migration (`alembic/`)
+* `alembic/env.py`: สคริปต์การตั้งค่า Alembic migration โดยอ่าน `DATABASE_URL` จาก `app.core.config` และ `Base.metadata`
+* `alembic/versions/*.py`: ไฟล์ Migration สคริปต์ (ประกอบด้วย Initial Schema สำหรับตาราง `users`, `playbook_embeddings`, `audit_overrides` และ extension `vector`)
+
+#### 4. Scripts & Datasets (`scripts/` & `data/`)
+* `scripts/ingest_playbook.py`: สคริปต์สำหรับอ่าน `positions.yaml` แล้วฝัง Embedding ลง PostgreSQL Vector DB
+* `scripts/run_eval.py`: สคริปต์สำหรับสั่งรัน Benchmark วัดผลระบบ AI ผ่าน CLI
+* `data/playbook/positions.yaml`: ไฟล์กำหนดกฎมาตรฐาน นโยบายทางกฎหมาย และคำแนะนำการปรับแก้สัญญา
+* `data/taxonomy/clause_types.yaml`: ไฟล์กำหนดหมวดหมู่ประเภทของข้อสัญญา 12 ประเภท
+* `data/gold/annotations.jsonl`: ชุดข้อมูล Ground Truth สำหรับวัดผลความแม่นยำของ AI
+
 
 ### Review pipeline
 
