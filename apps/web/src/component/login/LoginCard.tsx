@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { getGoogleLoginUrl } from "../../lib/auth";
+import { useSearchParams } from "react-router-dom";
+import { describeLoginError, getGoogleLoginUrl } from "../../lib/auth";
 import GoogleButton from "./GoogleButton";
 import SignUpLink from "./SignUpLink";
 
@@ -9,6 +10,10 @@ import SignUpLink from "./SignUpLink";
  */
 export default function LoginCard() {
   const [isLoading, setIsLoading] = useState(false);
+  // A failed OAuth round-trip sends the browser back here as
+  // /login?error=<code> rather than leaving it on a raw API error page.
+  const [searchParams] = useSearchParams();
+  const errorMessage = describeLoginError(searchParams.get("error"));
 
   function handleGoogleSignIn() {
     setIsLoading(true);
@@ -29,6 +34,16 @@ export default function LoginCard() {
       <p className="mb-5 text-center text-sm text-zinc-500">
         Sign in to your workspace
       </p>
+
+      {/* Why the last sign-in attempt didn't go through */}
+      {errorMessage && (
+        <p
+          role="alert"
+          className="mb-5 rounded-lg border border-red-500/25 bg-red-500/10 px-4 py-3 text-center text-sm text-red-300"
+        >
+          {errorMessage}
+        </p>
+      )}
 
       {/* Google OAuth button */}
       <GoogleButton onClick={handleGoogleSignIn} isLoading={isLoading} />

@@ -12,6 +12,7 @@ path - which is what's actually ours to verify.
 from __future__ import annotations
 
 import pytest
+from authlib.integrations.base_client.errors import MismatchingStateError
 from authlib.integrations.starlette_client import OAuthError
 from fastapi.testclient import TestClient
 from starlette.responses import RedirectResponse
@@ -141,20 +142,27 @@ def test_google_callback_updates_existing_user(
     assert existing.name == "New Name"
 
 
-def test_google_callback_oauth_error_is_400(
+def test_google_callback_oauth_error_redirects_to_login_with_reason(
     client: TestClient, monkeypatch: pytest.MonkeyPatch
 ) -> None:
+    """A cancelled consent must land the browser back on the login page.
+
+    This endpoint is reached by full-page navigation, so returning a JSON
+    error would strand the user on a raw API response with no way back.
+    """
+
     async def fake_authorize_access_token(request):
         raise OAuthError(error="access_denied", description="user cancelled")
 
     monkeypatch.setattr(oauth.google, "authorize_access_token", fake_authorize_access_token)
 
-    resp = client.get("/auth/google/callback")
+    resp = client.get("/auth/google/callback", follow_redirects=False)
 
-    assert resp.status_code == 400
+    assert resp.status_code in (302, 307)
+    assert resp.headers["location"] == f"{settings.frontend_url}/login?error=access_denied"
 
 
-def test_google_callback_missing_email_is_400(
+def test_google_callback_missing_email_redirects_to_login_with_reason(
     client: TestClient, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     async def fake_authorize_access_token(request):
@@ -162,6 +170,23 @@ def test_google_callback_missing_email_is_400(
 
     monkeypatch.setattr(oauth.google, "authorize_access_token", fake_authorize_access_token)
 
-    resp = client.get("/auth/google/callback")
+    resp = client.get("/auth/google/callback", follow_redirects=False)
 
-    assert resp.status_code == 400
+    assert resp.status_code in (302, 307)
+    assert resp.headers["location"] == f"{settings.frontend_url}/login?error=missing_email"
+
+
+def test_google_callback_lost_session_redirects_with_state_error(
+    client: TestClient, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """A dropped session cookie (CSRF state mismatch) must be recoverable too."""
+
+    async def fake_authorize_access_token(request):
+        raise MismatchingStateError()
+
+    monkeypatch.setattr(oauth.google, "authorize_access_token", fake_authorize_access_token)
+
+    resp = client.get("/auth/google/callback", follow_redirects=False)
+
+    assert resp.status_code in (302, 307)
+    assert resp.headers["location"] == f"{settings.frontend_url}/login?error=mismatching_state"

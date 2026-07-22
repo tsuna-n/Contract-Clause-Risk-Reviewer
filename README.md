@@ -15,9 +15,13 @@
 > **หน้า `/contract` ต่อ backend จริงแล้ว (2026-07-21)** — เลิกใช้ mock data ทั้งหมด: อัปโหลด
 > `.docx`/`.pdf` → เรียก `POST /contracts/review` จริง → แสดง clause/risk/citation จาก report
 > จริง → override risk ผ่าน `POST /contracts/{id}/override` แล้ว summary กับ overall risk คำนวณใหม่
-> ตาม response ทดสอบด้วย Playwright ขับ UI จริงกับ backend จริง (console error = 0) ส่วนที่เหลือคือ
-> **Sidebar menu / dashboard ยังเป็น stub** และการคลิกผ่าน Google login จริงในเบราว์เซอร์อีกครั้ง
-> ก่อนขึ้น production (ต้องการคนจริง) — ดู
+> ตาม response ทดสอบด้วย Playwright ขับ UI จริงกับ backend จริง (console error = 0)
+>
+> **Google login ใช้งานได้จริงแล้ว (ยืนยัน 2026-07-22)** — login ผ่านบัญชี Google จริงสำเร็จ
+> (มี row จริงใน `users`: Google `sub` 21 หลัก + profile photo จาก `lh3.googleusercontent.com`),
+> client id/secret ตรวจสอบกับ Google endpoint จริงแล้วว่าใช้ได้ และทุก error path (ยกเลิกที่หน้า
+> consent / session หลุด) redirect กลับ `/login?error=<code>` พร้อมข้อความที่อ่านรู้เรื่อง
+> ส่วนที่เหลือคือ **Sidebar menu / dashboard ยังเป็น stub** — ดู
 > [README ของ backend](apps/backend-fastapi/README.md) สำหรับรายละเอียด
 
 ## โครงสร้าง repo (monorepo)
@@ -65,7 +69,6 @@
 
 | ส่วน | รายการ | รายละเอียด |
 |------|--------|------------|
-| Backend | Google OAuth — คลิกผ่านจริงในเบราว์เซอร์ | automated test ครอบ contract ของ endpoint ไว้แล้ว (mock ที่ authlib) แต่ยังไม่ได้ login จริงกับบัญชี Google จริงในเบราว์เซอร์ (sandbox ที่พัฒนาไม่มี internet — ต้องการคนจริงคลิกผ่าน consent screen) |
 | Backend | Contract metadata | ยังไม่ดึงคู่สัญญา / วันที่ / มูลค่าสัญญา ออกมาจากเอกสาร — `ContractReviewReport` ไม่มีฟิลด์พวกนี้ (UI จึงไม่แสดง แทนที่จะเดาข้อมูลเอง) |
 | Backend | Accept risk | มีแต่ override + audit log ยังไม่มี endpoint สำหรับ "accept" — ฝั่ง UI จึงเก็บเป็น local review progress เท่านั้น |
 | Backend | Export report | ยังไม่มี endpoint export รายงาน (PDF/CSV) |
@@ -137,13 +140,10 @@ pnpm dev                         # http://localhost:5173
 
 เส้นทางหลัก (login → upload → review → override) ใช้งานได้จริงครบแล้ว — เหลือ:
 
-1. **Google OAuth** — คลิกผ่าน login จริงในเบราว์เซอร์กับบัญชี Google จริงอีกครั้งก่อน production
-   (automated tests ครอบ contract ของ endpoint ไว้แล้ว แต่ mock ที่ authlib boundary เพราะ sandbox
-   ที่ใช้พัฒนาไม่มี outbound internet — ต้องการคนจริงคลิกผ่าน)
-2. **เก็บ/ดูรายงานย้อนหลัง** — เพิ่ม `GET /contracts/{report_id}` ฝั่ง backend แล้วให้ frontend
+1. **เก็บ/ดูรายงานย้อนหลัง** — เพิ่ม `GET /contracts/{report_id}` ฝั่ง backend แล้วให้ frontend
    deep-link เข้ารายงานเดิมได้ (ตอนนี้ refresh แล้ว report หาย)
-3. **Export Report** — ยังไม่มีทั้ง endpoint และปุ่ม
-4. **Accept risk แบบ persist** — ต้องมี endpoint + audit ฝั่ง backend ก่อน ตอนนี้เป็น local state
+2. **Export Report** — ยังไม่มีทั้ง endpoint และปุ่ม
+3. **Accept risk แบบ persist** — ต้องมี endpoint + audit ฝั่ง backend ก่อน ตอนนี้เป็น local state
 5. **Sidebar / dashboard** — เมนูยังเป็น `console.log` stub
 6. **Contract metadata extraction** — ถ้าอยากได้ panel คู่สัญญา/วันที่/มูลค่า ต้องให้ pipeline
    สกัดออกมาใส่ `ContractReviewReport` ก่อน

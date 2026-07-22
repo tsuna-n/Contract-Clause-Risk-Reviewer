@@ -262,17 +262,9 @@ judge บอกว่า ungrounded, และ isolate failure ต่อ clause 
 
 ## ❌ สิ่งที่ยังไม่ได้ทำ
 
-- **Google OAuth: ยังไม่มีการคลิกผ่านจริงในเบราว์เซอร์กับบัญชี Google จริง** — โค้ดต่อสายไว้ครบและ
-  ผ่าน automated test แล้ว (ดูด้านบน) แต่ test เหล่านั้น mock ที่ตัว authlib client
-  (`oauth.google.authorize_redirect` / `authorize_access_token`) เพราะ sandbox ที่ใช้พัฒนารอบนี้
-  ไม่มี outbound internet ให้ยิงไปหา Google จริง และการ login แบบ browser จริงต้องมีคนคลิกผ่านหน้า
-  consent ของ Google ด้วยบัญชีจริง (automate ไม่ได้และไม่ควร automate) — **ก่อนขึ้น production
-  ต้องมีคนรัน `uvicorn` แล้วเปิด `/auth/google/login` ในเบราว์เซอร์จริงอีกครั้งหนึ่งเพื่อ verify
-  ว่า Google credentials (`GOOGLE_OAUTH_API`/`GOOGLE_KEY_SECRET`/`GOOGLE_REDIRECT_URI`) ที่ตั้งไว้
-  ใน `.env` ใช้งานได้จริงกับ Google Cloud Console ที่ตั้งไว้** — เป็นรายการเดียวที่เหลือในฝั่ง
-  backend ที่ agent ทำเองไม่ได้ (ต้องการคนคลิกจริง)
-- **Frontend**: หน้าอัปโหลดสัญญา, dashboard/reports, risk report view — ยังเป็น stub ฝั่ง `apps/web`
+- **Frontend**: dashboard/reports (เมนู Sidebar) — ยังเป็น stub ฝั่ง `apps/web`
   (นอก scope ของ backend)
+- **ประวัติรายงานย้อนหลัง**: ยังไม่มี `GET /contracts/{report_id}` — report อยู่ใน state ของหน้าเท่านั้น
 - **Eval regression gate** (`tests/eval/test_regression.py`) — ยัง skip ไว้เพราะต้องเรียก LLM จริง
   (มี cost + ต้องมี quota); รันเองได้ผ่าน `python -m scripts.run_eval`
 
@@ -369,8 +361,8 @@ python -m scripts.run_eval          # data/gold/annotations.jsonl -> metrics rep
 | GET | `/` | ✅ |
 | GET | `/health` | ✅ |
 | GET | `/health/db` | ✅ |
-| GET | `/auth/google/login` | ✅ automated test (mocked authlib); ⚠️ ยังไม่ได้คลิกผ่านจริงกับ Google ในเบราว์เซอร์ |
-| GET | `/auth/google/callback` | ✅ automated test (mocked authlib); ⚠️ ยังไม่ได้คลิกผ่านจริงกับ Google ในเบราว์เซอร์ |
+| GET | `/auth/google/login` | ✅ automated test + login จริงกับบัญชี Google จริงผ่านแล้ว |
+| GET | `/auth/google/callback` | ✅ automated test + login จริงผ่านแล้ว; ทุก error path redirect กลับ `/login?error=<code>` |
 | GET | `/auth/me` | ✅ |
 | POST | `/auth/logout` | ✅ |
 | POST | `/contracts/review` | ✅ ต้อง auth (Bearer JWT); automated test (mocked LLM) + ทดสอบ live กับ Gemini จริงแล้ว |
@@ -382,9 +374,7 @@ python -m scripts.run_eval          # data/gold/annotations.jsonl -> metrics rep
 
 ## Roadmap ที่เหลือ
 
-**Backend เสร็จหมดแล้วเท่าที่ agent ทำเองได้** — เหลือรายการเดียวที่ต้องการคนจริง:
+**Backend ใช้งานได้ครบทุกเส้นทางหลักแล้ว** (รวม Google OAuth ที่ login จริงผ่านแล้ว) เหลือ:
 
-1. **Google OAuth** — คลิกผ่าน login จริงในเบราว์เซอร์กับบัญชี Google จริงอีกครั้งก่อน production
-   (automated tests ครอบ contract ของ endpoint ไว้แล้ว แต่ mock ที่ authlib boundary เพราะ sandbox
-   ที่ใช้พัฒนาไม่มี outbound internet)
-2. **Frontend**: upload UI + report view ต่อกับ `/contracts/review` (นอก scope ของ backend)
+1. **`GET /contracts/{report_id}`** — ให้ frontend deep-link กลับเข้ารายงานเดิมได้ (ตอนนี้ refresh แล้วหาย)
+2. **Export report (PDF/CSV)** และ **accept-risk แบบ persist** — ยังไม่มี endpoint
