@@ -27,6 +27,23 @@ export class ApiError extends Error {
   }
 }
 
+/**
+ * How long an ordinary call may take before we stop waiting.
+ *
+ * Without a ceiling a stalled connection leaves the UI spinning forever with
+ * no error and no way back. Long-running endpoints pass their own
+ * `timeoutMs` — see REVIEW_TIMEOUT_MS in ./contracts.
+ */
+export const DEFAULT_TIMEOUT_MS = 30_000;
+
+/** "45s" / "25 minutes" — long waits read badly in raw seconds. */
+function formatDuration(ms: number): string {
+  const seconds = Math.round(ms / 1000);
+  if (seconds < 90) return `${seconds}s`;
+  const minutes = Math.round(seconds / 60);
+  return `${minutes} minute${minutes === 1 ? "" : "s"}`;
+}
+
 const TOKEN_KEY = "access_token";
 
 export function getToken(): string | null {
@@ -82,6 +99,8 @@ interface ApiFetchOptions {
   /** Send the stored bearer token. Defaults to true. */
   auth?: boolean;
   signal?: AbortSignal;
+  /** Give up after this long. Defaults to DEFAULT_TIMEOUT_MS. */
+  timeoutMs?: number;
 }
 
 /**
@@ -91,7 +110,7 @@ interface ApiFetchOptions {
  * /login instead of looping on a dead session.
  */
 export async function apiFetch<T>(path: string, options: ApiFetchOptions = {}): Promise<T> {
-  const { method = "GET", body, auth = true, signal } = options;
+  const { method = "GET", body, auth = true, signal, timeoutMs = DEFAULT_TIMEOUT_MS } = options;
 
   const headers: Record<string, string> = {};
   if (auth) {
@@ -100,10 +119,23 @@ export async function apiFetch<T>(path: string, options: ApiFetchOptions = {}): 
     headers.Authorization = `Bearer ${token}`;
   }
 
+  // Kept separate from the caller's signal so that after an abort we can tell
+  // "we ran out of patience" (report it) from "the caller cancelled"
+  // (propagate it, and let the caller stay silent).
+  const timeoutSignal = AbortSignal.timeout(timeoutMs);
+  const abortSignal = signal ? AbortSignal.any([signal, timeoutSignal]) : timeoutSignal;
+
   let res: Response;
   try {
-    res = await fetch(`${API_BASE_URL}${path}`, { method, body, headers, signal });
+    res = await fetch(`${API_BASE_URL}${path}`, { method, body, headers, signal: abortSignal });
   } catch (error) {
+    if (timeoutSignal.aborted) {
+      throw new ApiError(
+        0,
+        "timeout",
+        `The server didn't respond within ${formatDuration(timeoutMs)}. It may still be working — try again in a moment.`
+      );
+    }
     if (error instanceof DOMException && error.name === "AbortError") throw error;
     throw new ApiError(
       0,

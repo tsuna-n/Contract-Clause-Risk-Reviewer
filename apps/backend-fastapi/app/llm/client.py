@@ -30,10 +30,11 @@ class LLMClient:
     defaults.
     """
 
-    def __init__(self, model: str | None = None) -> None:
+    def __init__(self, model: str | None = None, timeout_seconds: int | None = None) -> None:
         settings = get_settings()
         self.model = model or settings.llm_model
         self._api_key = settings.gemini_api_key
+        self._timeout_seconds = timeout_seconds or settings.llm_timeout_seconds
         self.usage = Usage()
         self._client = None  # lazily constructed google.genai.Client
 
@@ -41,8 +42,15 @@ class LLMClient:
         """Lazily construct the underlying ``google.genai.Client``."""
         if self._client is None:
             from google import genai
+            from google.genai import types
 
-            self._client = genai.Client(api_key=self._api_key)
+            self._client = genai.Client(
+                api_key=self._api_key,
+                # HttpOptions.timeout is milliseconds. Set on the client so it
+                # covers every call made through it, including the structured
+                # -output path in app.llm.structured.
+                http_options=types.HttpOptions(timeout=self._timeout_seconds * 1000),
+            )
         return self._client
 
     def _record_usage(self, response) -> None:

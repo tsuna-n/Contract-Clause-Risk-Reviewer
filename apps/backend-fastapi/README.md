@@ -212,13 +212,18 @@ judge บอกว่า ungrounded, และ isolate failure ต่อ clause 
   จริง, `verified=True` (ผ่าน grounding judge)
 - **RAG แบบ hybrid** — dense (pgvector cosine) + BM25 rerank, ทดสอบว่า retrieve ตรง clause type จริง
 - **LLM client (Gemini)** — retry ผ่าน SDK, cost tracking (`Usage`), structured output ผ่าน
-  `response_schema` + fallback validate ด้วย pydantic
+  `response_schema` + fallback validate ด้วย pydantic, **timeout ต่อ call** (`LLM_TIMEOUT_SECONDS`,
+  ค่า default 120s — ส่งเข้า SDK เป็น ms ผ่าน `HttpOptions.timeout`) กัน call ที่ค้างยึด worker ไว้
+  ตลอดกาล; call ที่ timeout จะทำให้ clause นั้นตกเป็น `unknown` + "manual review required"
+  ไม่ทำให้ทั้ง report ล่ม
 - **Guardrails wiring** — judge เช็ค citation validity + excerpt grounding + no-invented-fallback
   แบบ deterministic ก่อน แล้วค่อยถาม LLM เพิ่มสำหรับเช็ค rationale ที่ overreach
 - **Override + audit log** — override เปลี่ยน risk level, re-aggregate summary, เขียน audit log ลง
   Postgres (permanent, ไม่มี TTL) — ทดสอบกับ DB จริงแล้ว
 - **Data retention** — contract ดิบถูกลบทันทีหลัง orchestrator สร้าง report เสร็จ; report ถูก sweep
-  ตาม TTL (`RETENTION_TTL_SECONDS`) ต่อ session ตอนมี upload ใหม่จาก session เดิม
+  ตาม TTL (`RETENTION_TTL_SECONDS`, default 8 ชม.) ต่อ session ตอนมี upload ใหม่จาก session เดิม
+  — ตั้งไว้ **ต่ำกว่า** `ACCESS_TOKEN_EXPIRE_MINUTES` (12 ชม.) เสมอ เพื่อไม่ให้ report หมดอายุช้ากว่า
+  token ที่ใช้ดึงมัน (override ต้องโหลด report ด้วย id ก่อน)
 - **Evaluation harness** — `run_eval` รันทั้ง pipeline จริงต่อ gold contract, คำนวณ
   segmentation F1 / classification accuracy / risk accuracy / citation validity;
   `data/contracts/sample-00{1,2}.txt` สร้างให้ตรงกับ offset ใน `data/gold/annotations.jsonl` แล้ว

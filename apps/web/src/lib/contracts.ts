@@ -183,6 +183,23 @@ export function isSupportedFile(file: File): boolean {
   return ACCEPTED_EXTENSIONS.some((ext) => name.endsWith(ext));
 }
 
+/**
+ * How long to wait for a full review.
+ *
+ * The request stays open for the whole pipeline, which runs serially and makes
+ * roughly four Gemini calls per clause (classify, match, score, judge).
+ * Measured against the real API, one structured call averages ~15s, so a
+ * 20-clause contract lands near 20 minutes. This is set above that worst case
+ * on purpose: aborting a healthy review loses all the work and all the tokens
+ * already spent on it, which is far worse than waiting. It still bounds a
+ * genuinely wedged request instead of spinning forever.
+ *
+ * If this ever needs to come down, the fix is a faster pipeline (run clauses
+ * concurrently, or lower the thinking effort on the cheap classify step) —
+ * not a shorter deadline.
+ */
+export const REVIEW_TIMEOUT_MS = 25 * 60_000;
+
 /** Upload a contract and run the review pipeline. */
 export async function reviewContract(
   file: File,
@@ -195,6 +212,7 @@ export async function reviewContract(
     method: "POST",
     body: formData,
     signal,
+    timeoutMs: REVIEW_TIMEOUT_MS,
   });
   return toContractReport(report);
 }
