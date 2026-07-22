@@ -6,7 +6,6 @@ import uuid
 
 from app.agents.orchestrator import Orchestrator
 from app.core.exceptions import DocumentParseError
-from app.core.retention import enforce_retention
 from app.parsers.docx import parse_docx
 from app.parsers.pdf import parse_pdf
 from app.repositories.contract_repo import ContractRepository
@@ -24,10 +23,12 @@ class ReviewService:
         orchestrator: Orchestrator,
         contracts: ContractRepository,
         reports: ReportRepository,
+        retention_ttl_seconds: int = 3600,
     ) -> None:
         self.orchestrator = orchestrator
         self.contracts = contracts
         self.reports = reports
+        self.retention_ttl_seconds = retention_ttl_seconds
 
     def review_upload(
         self,
@@ -37,7 +38,10 @@ class ReviewService:
         session_id: str,
     ) -> ContractReviewReport:
         """Parse an uploaded file and produce a stored review report."""
-        enforce_retention(session_id)
+        # Uploaded contracts and reports are session-scoped and must not
+        # outlive the retention window; sweep this session's stale reports
+        # before adding another one.
+        self.reports.purge_expired(session_id, self.retention_ttl_seconds)
 
         ext = filename.rsplit(".", 1)[-1].lower() if "." in filename else ""
         parser = _PARSERS.get(ext)

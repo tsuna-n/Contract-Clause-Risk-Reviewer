@@ -3,7 +3,7 @@
 from fastapi import APIRouter, HTTPException
 from sqlalchemy import text
 
-from app.api.deps import engine
+from app.core.db import engine
 
 router = APIRouter(tags=["health"])
 

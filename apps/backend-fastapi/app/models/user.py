@@ -1,10 +1,14 @@
+"""The ``users`` table — one row per Google account that has logged in."""
+
 from sqlalchemy import Column, DateTime, String
 from sqlalchemy.sql import func
 
-from app.api.deps import Base
+from app.core.db import Base
 
 
 class User(Base):
+    """A signed-in user, keyed by their Google identity."""
+
     __tablename__ = "users"
 
     id = Column(String, primary_key=True)  # Google "sub" claim

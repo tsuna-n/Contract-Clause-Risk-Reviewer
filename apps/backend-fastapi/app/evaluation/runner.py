@@ -5,9 +5,15 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
+from app.agents.orchestrator import Orchestrator
+from app.core.logging import get_logger
 from app.evaluation.metrics import accuracy, citation_validity_rate, segmentation_f1, span_iou
+from app.parsers.models import ParsedDocument, TextSpan
+from app.parsers.normalizer import normalize
 from app.schemas.clause import Span
 from app.schemas.eval import EvalMetrics, PerTypeMetrics
+
+logger = get_logger(__name__)
 
 
 def load_gold(path: str | Path) -> list[dict]:
@@ -27,25 +33,22 @@ def _load_contract_text(gold_path: str | Path, contract_id: str) -> str | None:
     return contract_path.read_text() if contract_path.exists() else None
 
 
-def run_eval(gold_path: str | Path, limit: int | None = None) -> EvalMetrics:
-    """Run the pipeline over the gold set and return aggregate metrics.
+def run_eval(
+    gold_path: str | Path,
+    *,
+    orchestrator: Orchestrator,
+    known_position_ids: set[str],
+    limit: int | None = None,
+) -> EvalMetrics:
+    """Run ``orchestrator`` over the gold set and return aggregate metrics.
 
     The eval regression gate requires >= 75% accuracy (see tests/eval). Gold
     records whose ``data/contracts/<contract_id>.txt`` fixture is missing are
     skipped (logged, not failed) so the harness degrades gracefully.
     """
-    from app.api.deps import get_known_positions, get_orchestrator
-    from app.core.logging import get_logger
-    from app.parsers.models import ParsedDocument, TextSpan
-    from app.parsers.normalizer import normalize
-
-    logger = get_logger(__name__)
     records = load_gold(gold_path)
     if limit is not None:
         records = records[:limit]
-
-    orchestrator = get_orchestrator()
-    known_ids = set(get_known_positions())
 
     pred_spans: list[Span] = []
     gold_spans: list[Span] = []
@@ -92,7 +95,7 @@ def run_eval(gold_path: str | Path, limit: int | None = None) -> EvalMetrics:
         for review in report.reviews:
             for citation in review.citations:
                 total_citations += 1
-                if citation.playbook_position_id in known_ids:
+                if citation.playbook_position_id in known_position_ids:
                     valid_citations += 1
 
     per_type_hits: dict[str, list[bool]] = {}

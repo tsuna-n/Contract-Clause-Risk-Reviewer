@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from datetime import datetime, timedelta
+from datetime import UTC, datetime, timedelta
 from typing import Any, Protocol
 
 from app.schemas.report import ContractReviewReport
@@ -34,22 +34,22 @@ class InMemoryReportRepository:
     Fine for a single worker process; does not share state across
     processes/replicas — see :class:`RedisReportRepository` for that. Unlike
     Redis, this store has no expiry of its own, so ``purge_expired`` has to
-    be called (see ``core.retention.enforce_retention``) to actually drop
-    old entries.
+    be called (``ReviewService`` does, on every upload) to actually drop old
+    entries.
     """
 
     def __init__(self) -> None:
         self._store: dict[str, tuple[ContractReviewReport, datetime]] = {}
 
     def save(self, report: ContractReviewReport) -> None:
-        self._store[report.report_id] = (report, datetime.utcnow())
+        self._store[report.report_id] = (report, datetime.now(UTC))
 
     def get(self, report_id: str) -> ContractReviewReport | None:
         entry = self._store.get(report_id)
         return entry[0] if entry else None
 
     def purge_expired(self, session_id: str, ttl_seconds: int) -> list[str]:
-        cutoff = datetime.utcnow() - timedelta(seconds=ttl_seconds)
+        cutoff = datetime.now(UTC) - timedelta(seconds=ttl_seconds)
         expired = [
             report_id
             for report_id, (report, saved_at) in self._store.items()
@@ -68,8 +68,8 @@ class RedisReportRepository:
     sweep ever running again for that session: Redis drops the key on its
     own even if the session is never touched again. ``purge_expired`` is
     kept as a no-op purely to satisfy the shared interface, since
-    ``core.retention.enforce_retention`` calls it unconditionally on every
-    upload regardless of which backend is wired in.
+    ``ReviewService`` calls it unconditionally on every upload regardless of
+    which backend is wired in.
     """
 
     def __init__(self, client: Any, ttl_seconds: int) -> None:

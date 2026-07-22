@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from datetime import datetime
+from datetime import UTC, datetime
 
 from app.agents.orchestrator import aggregate
 from app.core.exceptions import NotFoundError
@@ -52,7 +52,7 @@ class OverrideService:
                 new_risk=new_risk,
                 reason=reason,
                 actor=actor,
-                created_at=datetime.utcnow(),
+                created_at=datetime.now(UTC),
             )
         )
         return report

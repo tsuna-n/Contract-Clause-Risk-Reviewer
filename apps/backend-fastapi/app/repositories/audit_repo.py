@@ -10,11 +10,9 @@ import uuid
 from dataclasses import dataclass
 from datetime import datetime
 
-from sqlalchemy import Column, DateTime, String
 from sqlalchemy.orm import Session
-from sqlalchemy.sql import func
 
-from app.api.deps import Base
+from app.models.audit import AuditOverride
 from app.schemas.taxonomy import RiskLevel
 
 
@@ -29,21 +27,6 @@ class OverrideRecord:
     reason: str
     actor: str
     created_at: datetime
-
-
-class AuditOverride(Base):
-    """ORM model backing :class:`AuditRepository` (table: ``audit_overrides``)."""
-
-    __tablename__ = "audit_overrides"
-
-    id = Column(String, primary_key=True)
-    report_id = Column(String, nullable=False, index=True)
-    clause_id = Column(String, nullable=False)
-    old_risk = Column(String, nullable=False)
-    new_risk = Column(String, nullable=False)
-    reason = Column(String, nullable=False)
-    actor = Column(String, nullable=False)
-    created_at = Column(DateTime(timezone=True), nullable=False, server_default=func.now())
 
 
 class AuditRepository:

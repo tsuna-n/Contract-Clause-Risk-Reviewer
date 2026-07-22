@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from datetime import datetime
+from datetime import UTC, datetime
 
 from pydantic import BaseModel, Field
 
@@ -25,7 +25,7 @@ class ContractReviewReport(BaseModel):
     report_id: str
     contract_id: str
     session_id: str
-    created_at: datetime = Field(default_factory=datetime.utcnow)
+    created_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
     overall_risk: RiskLevel = RiskLevel.UNKNOWN
     summary: RiskSummary = Field(default_factory=RiskSummary)
     reviews: list[ClauseReview] = Field(default_factory=list)

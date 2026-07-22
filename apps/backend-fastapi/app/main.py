@@ -6,12 +6,10 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.middleware.sessions import SessionMiddleware
 
-from app.api.v1 import contracts, evaluate, health, playbook
+from app.api import auth, contracts, evaluate, health, playbook
 from app.core.config import get_settings
 from app.core.exceptions import register_exception_handlers
 from app.core.logging import configure_logging
-from auth.config import auth_settings
-from auth.router import router as auth_router
 
 
 @asynccontextmanager
@@ -30,22 +28,18 @@ def create_app() -> FastAPI:
     app = FastAPI(title="Contract Clause Risk Reviewer", version="0.1.0", lifespan=lifespan)
     register_exception_handlers(app)
 
-    allowed_origins = [settings.frontend_url] if settings.frontend_url else ["*"]
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=allowed_origins,
+        allow_origins=[settings.frontend_url],
         allow_credentials=True,
         allow_methods=["*"],
         allow_headers=["*"],
     )
     # Required by Authlib's OAuth redirect flow to persist state across requests.
-    app.add_middleware(SessionMiddleware, secret_key=auth_settings.session_secret_key)
+    app.add_middleware(SessionMiddleware, secret_key=settings.session_secret_key)
 
-    app.include_router(health.router)
-    app.include_router(contracts.router)
-    app.include_router(playbook.router)
-    app.include_router(evaluate.router)
-    app.include_router(auth_router)
+    for module in (health, auth, contracts, playbook, evaluate):
+        app.include_router(module.router)
 
     @app.get("/")
     def read_root() -> dict[str, str]:

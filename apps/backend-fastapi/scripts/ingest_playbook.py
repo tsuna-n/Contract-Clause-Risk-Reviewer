@@ -8,13 +8,13 @@ from __future__ import annotations
 
 import sys
 
+from app.api.deps import PLAYBOOK_PATH, get_embedder, get_vector_store
+from app.rag.ingest import ingest, load_positions
+
 
 def main(argv: list[str]) -> int:
     """Load playbook positions, embed them, and upsert into the vector store."""
-    from app.api.deps import get_embedder, get_vector_store
-    from app.rag.ingest import ingest, load_positions
-
-    path = argv[1] if len(argv) > 1 else "data/playbook/positions.yaml"
+    path = argv[1] if len(argv) > 1 else PLAYBOOK_PATH
     positions = load_positions(path)
     count = ingest(positions, get_embedder(), get_vector_store())
     print(f"[ingest_playbook] ingested {count} position(s) from {path}")

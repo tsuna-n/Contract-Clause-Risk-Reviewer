@@ -4,13 +4,10 @@ from __future__ import annotations
 
 from typing import Protocol
 
-from pgvector.sqlalchemy import Vector
-from sqlalchemy import Column, String
-from sqlalchemy.dialects.postgresql import JSONB, insert
-from sqlalchemy.orm import Session
+from sqlalchemy.dialects.postgresql import insert
 
-from app.api.deps import Base, SessionLocal
-from app.core.config import get_settings
+from app.core.db import SessionLocal
+from app.models.playbook import PlaybookEmbedding
 from app.schemas.playbook import PlaybookPosition, RetrievalHit
 from app.schemas.taxonomy import ClauseType, RiskLevel
 
@@ -27,31 +24,15 @@ class VectorStore(Protocol):
         ...
 
 
-class PlaybookEmbedding(Base):
-    """ORM model backing :class:`PgVectorStore` (table: ``playbook_embeddings``)."""
-
-    __tablename__ = "playbook_embeddings"
-
-    id = Column(String, primary_key=True)
-    clause_type = Column(String, nullable=False, index=True)
-    title = Column(String, nullable=False)
-    preferred_language = Column(String, nullable=False)
-    fallback_language = Column(String, nullable=False)
-    risk_if_absent = Column(String, nullable=False)
-    tags = Column(JSONB, nullable=False, default=list)
-    embedding = Column(Vector(get_settings().embedding_dim), nullable=False)
-
-
 class PgVectorStore:
     """pgvector-backed :class:`VectorStore` implementation.
 
-    Shares the app's engine/session factory (see ``app.api.deps``) so its
-    table participates in the normal startup ``create_all``.
+    Reads and writes :class:`~app.models.playbook.PlaybookEmbedding` through
+    the app's shared session factory (see ``app.core.db``).
     """
 
-    def __init__(self, dsn: str, session_factory: type[Session] | None = None) -> None:
-        self.dsn = dsn
-        self._session_factory = session_factory or SessionLocal
+    def __init__(self, session_factory=SessionLocal) -> None:  # noqa: ANN001 - sessionmaker
+        self._session_factory = session_factory
 
     def upsert(self, position: PlaybookPosition, vector: list[float]) -> None:
         """Upsert ``position`` and its embedding into ``playbook_embeddings``."""

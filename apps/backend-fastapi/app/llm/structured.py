@@ -2,16 +2,12 @@
 
 from __future__ import annotations
 
-from typing import TypeVar
-
 from pydantic import BaseModel
 
 from app.llm.client import LLMClient
 
-T = TypeVar("T", bound=BaseModel)
 
-
-def parse_structured(
+def parse_structured[T: BaseModel](
     client: LLMClient,
     *,
     system: str,

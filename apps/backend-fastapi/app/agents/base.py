@@ -3,15 +3,11 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import Generic, TypeVar
 
 from app.llm.client import LLMClient
 
-I = TypeVar("I")
-O = TypeVar("O")
 
-
-class Agent(ABC, Generic[I, O]):
+class Agent[InputT, OutputT](ABC):
     """Base class for pipeline agents.
 
     Each agent declares its ``prompt_version`` so runs are reproducible and can
@@ -25,6 +21,6 @@ class Agent(ABC, Generic[I, O]):
         self.llm = llm
 
     @abstractmethod
-    def run(self, payload: I) -> O:
+    def run(self, payload: InputT) -> OutputT:
         """Execute the agent for a single unit of work."""
         raise NotImplementedError

@@ -11,6 +11,11 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d contract_risk_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
 
   redis:
     image: redis:7-alpine
@@ -20,20 +25,57 @@ services:
       - "6379:6379"
     volumes:
       - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
 
   api:
     build:
       context: ../apps/backend-fastapi
     container_name: contract-risk-api
     restart: unless-stopped
-    command: uvicorn app.main:app --host 0.0.0.0 --port 8000
     env_file:
       - ../apps/backend-fastapi/.env
+    # These override whatever .env says: inside the compose network the other
+    # services are reachable by name, not on localhost. Secrets still come
+    # from .env.
+    environment:
+      DATABASE_URL: postgresql+psycopg://postgres:password@postgres:5432/contract_risk_db
+      REDIS_URL: redis://redis:6379/0
+      # The OAuth redirect and the CORS origin are addresses the *browser*
+      # resolves, so they stay on the host's published ports.
+      GOOGLE_REDIRECT_URI: http://localhost:8000/auth/google/callback
+      FRONTEND_URL: http://localhost:5173
     ports:
       - "8000:8000"
     depends_on:
-      - postgres
-      - redis
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/health')\""]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+  web:
+    build:
+      context: ../apps/web
+      args:
+        # Inlined into the bundle at build time — the browser calls the API on
+        # the host's published port, not the compose service name.
+        VITE_API_BASE_URL: http://localhost:8000
+    container_name: contract-risk-web
+    restart: unless-stopped
+    ports:
+      - "5173:80"
+    depends_on:
+      api:
+        condition: service_healthy
 
 volumes:
   postgres_data:

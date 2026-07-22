@@ -4,13 +4,12 @@ from __future__ import annotations
 
 from fastapi import APIRouter, Depends, UploadFile
 
-from app.api.deps import get_override_service, get_review_service
+from app.api.deps import get_current_user, get_override_service, get_review_service
+from app.models import User
 from app.schemas.report import ContractReviewReport
 from app.schemas.taxonomy import RiskLevel
 from app.services.override_service import OverrideService
 from app.services.review_service import ReviewService
-from auth.router import get_current_user
-from models import User
 
 router = APIRouter(prefix="/contracts", tags=["contracts"])
 

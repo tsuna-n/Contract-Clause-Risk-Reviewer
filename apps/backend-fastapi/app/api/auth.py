@@ -1,34 +1,35 @@
+"""Auth endpoints: Google OAuth login/callback + the current-user probe."""
+
+from __future__ import annotations
+
 import logging
 
 from authlib.integrations.starlette_client import OAuthError
 from fastapi import APIRouter, Depends, HTTPException, Request, status
 from fastapi.responses import RedirectResponse
-from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from sqlalchemy.orm import Session
 
-from app.api.deps import get_db
-from auth.config import auth_settings
-from auth.jwt import create_access_token, decode_access_token
-from auth.oauth import oauth
-from auth.schemas import UserOut
-from models import User
+from app.api.deps import get_current_user
+from app.core.config import get_settings
+from app.core.db import get_db
+from app.core.security import create_access_token, oauth
+from app.models import User
+from app.schemas.user import UserOut
 
 logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
-bearer_scheme = HTTPBearer(auto_error=False)
-
 
 @router.get("/google/login")
 async def google_login(request: Request):
-    return await oauth.google.authorize_redirect(
-        request, auth_settings.google_redirect_uri
-    )
+    """Kick off the Google OAuth flow."""
+    return await oauth.google.authorize_redirect(request, get_settings().google_redirect_uri)
 
 
 @router.get("/google/callback")
 async def google_callback(request: Request, db: Session = Depends(get_db)):
+    """Complete the OAuth flow: upsert the user and hand a JWT to the frontend."""
     try:
         token = await oauth.google.authorize_access_token(request)
     except OAuthError as exc:
@@ -36,7 +37,7 @@ async def google_callback(request: Request, db: Session = Depends(get_db)):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=f"Google authentication failed: {exc.error}",
-        )
+        ) from exc
 
     userinfo = token.get("userinfo")
     if not userinfo or not userinfo.get("email"):
@@ -56,35 +57,16 @@ async def google_callback(request: Request, db: Session = Depends(get_db)):
     db.commit()
 
     access_token = create_access_token(subject=user.id)
-    return RedirectResponse(
-        f"{auth_settings.frontend_url}/auth/callback?token={access_token}"
-    )
-
-
-def get_current_user(
-    credentials: HTTPAuthorizationCredentials | None = Depends(bearer_scheme),
-    db: Session = Depends(get_db),
-) -> User:
-    if credentials is None:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Not authenticated",
-        )
-    payload = decode_access_token(credentials.credentials)
-    user = db.get(User, payload.get("sub"))
-    if user is None:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="User not found",
-        )
-    return user
+    return RedirectResponse(f"{get_settings().frontend_url}/auth/callback?token={access_token}")
 
 
 @router.get("/me", response_model=UserOut)
-def read_current_user(current_user: User = Depends(get_current_user)):
+def read_current_user(current_user: User = Depends(get_current_user)) -> User:
+    """Return the signed-in user behind the bearer token."""
     return current_user
 
 
 @router.post("/logout")
-def logout():
+def logout() -> dict[str, str]:
+    """Stateless logout: the client just discards its token."""
     return {"message": "Logged out. Discard the access token client-side."}

@@ -9,8 +9,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import Session, sessionmaker
 from sqlalchemy.pool import StaticPool
 
-from app.api.deps import Base
-from models import User  # noqa: F401 - registers User on Base.metadata
+from app.models import Base, User
 
 
 @pytest.fixture()

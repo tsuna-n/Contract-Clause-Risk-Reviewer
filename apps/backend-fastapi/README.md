@@ -47,24 +47,30 @@ apps/backend-fastapi/
 │   └── script.py.mako            # Template สร้าง Migration script ใหม่
 ├── app/                          # แพ็กเกจหลักของแอปพลิเคชัน FastAPI
 │   ├── main.py                   # FastAPI Application Factory, Router wiring & Lifespan
-│   ├── api/                      # API Endpoints และ Dependencies
-│   │   ├── deps.py               # Dependency Injection (DB, Auth, Services, RAG)
-│   │   └── v1/                   # REST API Router (v1)
-│   │       ├── contracts.py      # /contracts (Upload, Review, Override)
-│   │       ├── evaluate.py       # /evaluate (Run evaluation benchmarks)
-│   │       ├── health.py         # /health (Health & Readiness check)
-│   │       └── playbook.py       # /playbook (Search & Manage playbook rules)
-│   ├── core/                     # ระบบพื้นฐาน (Configuration, Logging, Exceptions, Retention)
-│   │   ├── config.py             # App Settings & Pydantic Environment Config
+│   ├── api/                      # HTTP layer: routers + dependency wiring
+│   │   ├── deps.py               # Dependency Injection ที่เดียวจบ (Auth, Repos, LLM, Agents, Services)
+│   │   ├── auth.py               # /auth (Google login, callback, /me, logout)
+│   │   ├── contracts.py          # /contracts (Upload, Review, Override)
+│   │   ├── evaluate.py           # /evaluate (Run evaluation benchmarks)
+│   │   ├── health.py             # /health (Health & Readiness check)
+│   │   └── playbook.py           # /playbook (Search & Manage playbook rules)
+│   ├── core/                     # ระบบพื้นฐาน (Config, DB, Security, Logging, Exceptions)
+│   │   ├── config.py             # Settings ชุดเดียวของทั้งระบบ (app + auth + llm + rag)
+│   │   ├── db.py                 # SQLAlchemy engine, SessionLocal, Base, get_db
+│   │   ├── security.py           # JWT sign/verify + Google OAuth client (Authlib)
 │   │   ├── exceptions.py         # Custom Exception Classes & Handlers
-│   │   ├── logging.py            # Structured Logging (structlog)
-│   │   └── retention.py          # Data Cleanup / Retention Policy Engine
+│   │   └── logging.py            # Structured Logging (structlog)
+│   ├── models/                   # SQLAlchemy ORM Models — ตารางทั้งหมดอยู่ที่นี่
+│   │   ├── user.py               # ตาราง users
+│   │   ├── audit.py              # ตาราง audit_overrides
+│   │   └── playbook.py           # ตาราง playbook_embeddings (pgvector)
 │   ├── schemas/                  # Data Transfer Objects (Pydantic Models)
 │   │   ├── clause.py             # Clause, Offset & Clause Type schemas
 │   │   ├── eval.py               # Evaluation Request, Metrics & Summary schemas
 │   │   ├── playbook.py           # Playbook Position & Standard Clause schemas
 │   │   ├── report.py             # Review Report & Risk Summary schemas
-│   │   └── taxonomy.py           # Clause Taxonomy & Category schemas
+│   │   ├── taxonomy.py           # Clause Taxonomy & Category schemas
+│   │   └── user.py               # UserOut (response ของ /auth/me)
 │   ├── parsers/                  # Document Parsers & Normalization
 │   │   ├── docx.py               # DOCX Document Parser
 │   │   ├── pdf.py                # PDF Document Parser (PyMuPDF)
@@ -108,22 +114,13 @@ apps/backend-fastapi/
 │       ├── metrics.py            # Precision, Recall, F1, Citation Accuracy Metrics
 │       ├── runner.py             # Benchmark Test Runner
 │       └── report.py             # Evaluation Report Formatter
-├── auth/                         # Authentication System (OAuth & JWT)
-│   ├── config.py                 # Auth Settings (JWT Secrets, OAuth Config)
-│   ├── jwt.py                    # JWT Token Generator & Validator
-│   ├── oauth.py                  # Google OAuth2 Integration (Authlib)
-│   ├── router.py                 # Auth Endpoints (/login, /callback, /me, /logout)
-│   └── schemas.py                # Auth Request/Response Schemas
-├── models/                       # Database ORM Models (SQLAlchemy)
-│   └── uesrs.py                  # User Database Model
 ├── scripts/                      # Utility Scripts
 │   ├── ingest_playbook.py        # Script นำเข้า Playbook YAML เข้าสู่ Vector DB
 │   └── run_eval.py               # Script คำสั่งรัน Evaluation Suite
 ├── data/                         # Data Fixtures & Datasets
 │   ├── contracts/                # Sample contract text files (sample-001.txt, sample-002.txt)
 │   ├── gold/annotations.jsonl    # Gold annotations ground truth dataset
-│   ├── playbook/positions.yaml   # Standard legal positions & Playbook rules
-│   └── taxonomy/clause_types.yaml # Clause taxonomy classification definitions
+│   └── playbook/positions.yaml   # Standard legal positions & Playbook rules
 └── tests/                        # Test Suites
     ├── unit/                     # Unit tests (Guardrails, Parsers, Agents, Metrics)
     ├── integration/              # Integration tests (Health, Auth, Contracts API)
@@ -135,16 +132,19 @@ apps/backend-fastapi/
 #### 1. Core Application (`app/`)
 * **`app/main.py`** — จุดเริ่มต้นของแอปพลิเคชัน FastAPI กำหนด CORS, Middleware, Lifespan hooks และลงทะเบียน API Routers ทั้งหมด
 * **`app/core/`**:
-  * `config.py`: โหลดและตรวจสอบ Environment Variables ผ่าน Pydantic BaseSettings
-  * `exceptions.py`: นิยาม Custom Exception (เช่น `NotFoundError`, `UngroundedReportError`) และ Exception Handlers
+  * `config.py`: `Settings` ชุดเดียวของทั้งระบบ (core / auth / llm / rag / feature flags) โหลดผ่าน Pydantic BaseSettings — ฟิลด์ที่ไม่มี default (`DATABASE_URL`, secrets ของ auth) บังคับต้องมี ไม่งั้นแอปไม่ boot
+  * `db.py`: ทุกอย่างที่คุยกับ Postgres เริ่มที่นี่ — `engine`, `SessionLocal`, `Base`, `get_db`
+  * `security.py`: Sign/Decode JWT + Google OAuth client (Authlib) — ตัว endpoint อยู่ที่ `app/api/auth.py`
+  * `exceptions.py`: นิยาม Custom Exception (เช่น `NotFoundError`, `DocumentParseError`) และ Exception Handlers
   * `logging.py`: ตั้งค่า Structured JSON Logging ด้วย `structlog` พร้อม Context Tracking (Trace ID)
-  * `retention.py`: ระบบสลัดลบสัญญาดิบทันทีเมื่อประมวลผลเสร็จ และจัดเก็บรายงานชั่วคราวตาม TTL
-* **`app/api/`**:
-  * `deps.py`: Central Dependency Injector สำหรับ FastAPI (ส่งมอบ DB Session, Redis Repositories, LLM Client, Agents, Services)
-  * `v1/contracts.py`: Endpoint หลักสำหรับ `/contracts/review` (อัปโหลดและประเมินสัญญา) และ `/contracts/{id}/override` (แก้ไขผลประเมิน)
-  * `v1/playbook.py`: Endpoint ค้นหาข้อกำหนดใน Playbook (`/playbook/search`)
-  * `v1/evaluate.py`: Endpoint สำหรับสั่งรัน Evaluation Benchmarks (`/evaluate`)
-  * `v1/health.py`: Endpoint สำหรับเช็กความพร้อมและสุขภาพของระบบ (`/health`, `/health/db`)
+* **`app/models/`**: SQLAlchemy ORM Models — ตารางทั้งหมดของระบบประกาศไว้ที่นี่ที่เดียว (`users`, `audit_overrides`, `playbook_embeddings`) การ `import app.models` จึงทำให้ `Base.metadata` ครบ ซึ่งเป็นสิ่งที่ Alembic autogenerate ใช้เทียบกับ DB จริง
+* **`app/api/`**: ชั้น HTTP ทั้งหมด — router หนึ่งไฟล์ต่อหนึ่งกลุ่ม endpoint (ไม่มี prefix `/v1` จริง จึงไม่มีโฟลเดอร์ `v1/` หลอกตา)
+  * `deps.py`: ที่เดียวที่ประกอบ object graph ทั้งระบบ — `@lru_cache` = singleton ระดับ process (LLM client, retriever, repos, agent pipeline), ฟังก์ชันธรรมดา = ผูกกับ request (DB session, bearer token → `get_current_user`) การ override ตัวใดตัวหนึ่งใน `app.dependency_overrides` จะสลับทั้ง subtree ซึ่งเป็นวิธีที่เทสต์ใช้แทน LLM/Redis/auth
+  * `auth.py`: `/auth/google/login`, `/auth/google/callback`, `/auth/me`, `/auth/logout`
+  * `contracts.py`: Endpoint หลักสำหรับ `/contracts/review` (อัปโหลดและประเมินสัญญา) และ `/contracts/{id}/override` (แก้ไขผลประเมิน)
+  * `playbook.py`: Endpoint ค้นหาข้อกำหนดใน Playbook (`/playbook/search`)
+  * `evaluate.py`: Endpoint สำหรับสั่งรัน Evaluation Benchmarks (`/evaluate`)
+  * `health.py`: Endpoint สำหรับเช็กความพร้อมและสุขภาพของระบบ (`/health`, `/health/db`)
 * **`app/schemas/`**: Pydantic Models สำหรับกำหนด Data Transfer Objects (DTO) และ Request/Response Schemas แยกตามโดเมน (`clause.py`, `playbook.py`, `report.py`, `eval.py`, `taxonomy.py`)
 * **`app/parsers/`**:
   * `pdf.py` & `docx.py`: ตัวแกะและสกัดข้อความจากไฟล์ PDF (ใช้ PyMuPDF) และ DOCX (ใช้ python-docx)
@@ -172,18 +172,17 @@ apps/backend-fastapi/
   * `contract_repo.py` & `report_repo.py`: จัดเก็บ Parsed Document และ Review Report ลง Redis (พร้อม native TTL) และมี In-memory fallback สำหรับการทดสอบ
   * `audit_repo.py`: บันทึก Audit Log การ Override แก้ไขผลการประเมินลง PostgreSQL
 * **`app/services/`**: Business Logic Layer สำหรับประมวลผลระบบ:
-  * `review_service.py`: ดำเนินการรีวิวสัญญาแบบ end-to-end
+  * `review_service.py`: ดำเนินการรีวิวสัญญาแบบ end-to-end — รวมถึงการบังคับ retention (ลบ contract ดิบทันทีหลังได้ report และ sweep report เก่าของ session นั้นตาม TTL)
   * `override_service.py`: จัดการการปรับแก้ไขผลวิเคราะห์โดยมนุษย์ (Human Override)
   * `eval_service.py`: ประมวลผลระบบทดสอบวัดผล AI
-* **`app/evaluation/`**: ระบบประเมินประสิทธิภาพ AI ประกอบด้วย `metrics.py` (คำนวณ Precision/Recall/F1/Citation Accuracy), `runner.py` (ตัวรัน Benchmark) และ `report.py` (สรุปรายงาน)
+* **`app/evaluation/`**: ระบบประเมินประสิทธิภาพ AI ประกอบด้วย `metrics.py` (คำนวณ Precision/Recall/F1/Citation Accuracy), `runner.py` (ตัวรัน Benchmark — รับ orchestrator เข้ามาเป็นพารามิเตอร์ ไม่ไปดึงเองจาก `deps`) และ `report.py` (สรุปรายงาน)
 
-#### 2. Authentication System (`auth/` & `models/`)
-* `auth/config.py`: ตั้งค่า JWT Secret Key, Algorithm, Expiry และ OAuth Client settings
-* `auth/jwt.py`: ฟังก์ชันสำหรับ Sign & Decode JSON Web Tokens (JWT)
-* `auth/oauth.py`: ตัวจัดการ Google OAuth2 Authorization Flow (Authlib integration)
-* `auth/router.py`: API Endpoints สำหรับ Login (`/auth/google/login`), OAuth Callback, Get Current User (`/auth/me`), Logout
-* `auth/schemas.py`: Pydantic Schemas ของข้อมูล User และ Authentication Payload
-* `models/uesrs.py`: SQLAlchemy Database ORM Model ของตาราง `users`
+#### 2. Authentication (`app/core/security.py` + `app/api/auth.py`)
+* `app/core/config.py`: JWT Secret Key, Algorithm, Expiry และ OAuth Client settings (รวมอยู่ใน `Settings` ชุดเดียวกับ config ที่เหลือ)
+* `app/core/security.py`: Sign & Decode JWT + Google OAuth2 Authorization Flow (Authlib integration)
+* `app/api/auth.py`: API Endpoints สำหรับ Login (`/auth/google/login`), OAuth Callback, Get Current User (`/auth/me`), Logout
+* `app/api/deps.py` → `get_current_user`: dependency ที่แปลง bearer token เป็น `User` (หรือโยน `401`)
+* `app/schemas/user.py` / `app/models/user.py`: Pydantic response schema และ SQLAlchemy ORM Model ของตาราง `users`
 
 #### 3. Database Migration (`alembic/`)
 * `alembic/env.py`: สคริปต์การตั้งค่า Alembic migration โดยอ่าน `DATABASE_URL` จาก `app.core.config` และ `Base.metadata`
@@ -193,7 +192,6 @@ apps/backend-fastapi/
 * `scripts/ingest_playbook.py`: สคริปต์สำหรับอ่าน `positions.yaml` แล้วฝัง Embedding ลง PostgreSQL Vector DB
 * `scripts/run_eval.py`: สคริปต์สำหรับสั่งรัน Benchmark วัดผลระบบ AI ผ่าน CLI
 * `data/playbook/positions.yaml`: ไฟล์กำหนดกฎมาตรฐาน นโยบายทางกฎหมาย และคำแนะนำการปรับแก้สัญญา
-* `data/taxonomy/clause_types.yaml`: ไฟล์กำหนดหมวดหมู่ประเภทของข้อสัญญา 12 ประเภท
 * `data/gold/annotations.jsonl`: ชุดข้อมูล Ground Truth สำหรับวัดผลความแม่นยำของ AI
 
 
@@ -358,7 +356,6 @@ python -m scripts.run_eval          # data/gold/annotations.jsonl -> metrics rep
 
 | ไฟล์ | คำอธิบาย |
 |------|----------|
-| `data/taxonomy/clause_types.yaml` | ประเภท clause 12 แบบ (sync กับ `app/schemas/taxonomy.py`) |
 | `data/playbook/positions.yaml` | จุดยืน/ภาษามาตรฐานของบริษัท (preferred/fallback + `risk_if_absent`) |
 | `data/gold/annotations.jsonl` | gold set สำหรับ evaluation harness |
 | `data/contracts/sample-00{1,2}.txt` | ข้อความสัญญาตัวอย่าง ตรงกับ offset ใน gold annotations |

@@ -12,8 +12,8 @@ from app.parsers.models import ParsedDocument, TextSpan
 class ContractRepository(Protocol):
     """Storage interface for parsed contracts, scoped to a single session.
 
-    Uploaded contracts must not be retained beyond the session TTL (see
-    ``core.retention``). :class:`InMemoryContractRepository` and
+    Uploaded contracts must not be retained beyond the session TTL (enforced
+    by ``ReviewService``). :class:`InMemoryContractRepository` and
     :class:`RedisContractRepository` both satisfy this interface.
     """
 

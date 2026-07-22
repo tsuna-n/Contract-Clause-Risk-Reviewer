@@ -13,14 +13,10 @@ config = context.config
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
-# Import the app's declarative Base *and* every module that defines an ORM
-# model, so Base.metadata is fully populated before autogenerate compares it
-# against the database. app.main does the same thing for create_all.
-from app.api.deps import Base  # noqa: E402
+# Importing app.models registers every table on Base.metadata, which is what
+# autogenerate compares against the live database.
 from app.core.config import get_settings  # noqa: E402
-from app.rag.vector_store import PlaybookEmbedding  # noqa: E402,F401
-from app.repositories.audit_repo import AuditOverride  # noqa: E402,F401
-from models import User  # noqa: E402,F401
+from app.models import Base  # noqa: E402
 
 target_metadata = Base.metadata
 

@@ -16,12 +16,13 @@ from authlib.integrations.starlette_client import OAuthError
 from fastapi.testclient import TestClient
 from starlette.responses import RedirectResponse
 
-from app.api.deps import get_db
+from app.core.config import get_settings
+from app.core.db import get_db
+from app.core.security import create_access_token, decode_access_token, oauth
 from app.main import create_app
-from auth.config import auth_settings
-from auth.jwt import create_access_token, decode_access_token
-from auth.oauth import oauth
-from models import User
+from app.models import User
+
+settings = get_settings()
 
 
 @pytest.fixture()
@@ -81,7 +82,7 @@ def test_google_login_redirects_with_configured_redirect_uri(
     resp = client.get("/auth/google/login", follow_redirects=False)
 
     assert resp.status_code in (302, 307)
-    assert called_with["redirect_uri"] == auth_settings.google_redirect_uri
+    assert called_with["redirect_uri"] == settings.google_redirect_uri
     assert resp.headers["location"].startswith("https://accounts.google.com/")
 
 
@@ -109,7 +110,7 @@ def test_google_callback_creates_new_user_and_issues_jwt(
 
     assert resp.status_code in (302, 307)
     location = resp.headers["location"]
-    assert location.startswith(f"{auth_settings.frontend_url}/auth/callback?token=")
+    assert location.startswith(f"{settings.frontend_url}/auth/callback?token=")
 
     token = location.split("token=", 1)[1]
     payload = decode_access_token(token)
