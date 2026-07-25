@@ -1,8 +1,7 @@
 """Unit tests for citation creation/verification."""
 
-from app.rag.citation import make_citation, verify_citation
-from app.schemas.playbook import PlaybookPosition, RetrievalHit
-from app.schemas.taxonomy import ClauseType
+from app.ai.retrieval import make_citation, verify_citation
+from app.schemas import ClauseType, PlaybookPosition, RetrievalHit
 
 
 def _hit() -> RetrievalHit:

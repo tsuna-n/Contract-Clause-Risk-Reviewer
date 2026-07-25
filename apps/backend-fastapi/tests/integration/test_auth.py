@@ -17,11 +17,11 @@ from authlib.integrations.starlette_client import OAuthError
 from fastapi.testclient import TestClient
 from starlette.responses import RedirectResponse
 
-from app.core.config import get_settings
-from app.core.db import get_db
-from app.core.security import create_access_token, decode_access_token, oauth
+from app.config import get_settings
+from app.database import get_db
 from app.main import create_app
 from app.models import User
+from app.security import create_access_token, decode_access_token, oauth
 
 settings = get_settings()
 

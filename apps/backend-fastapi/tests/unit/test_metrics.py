@@ -1,9 +1,14 @@
 """Unit tests for evaluation metrics."""
 
-from app.evaluation.metrics import accuracy, citation_validity_rate, segmentation_f1, span_iou
-from app.evaluation.report import confusion_matrix, format_report
-from app.schemas.clause import Span
-from app.schemas.eval import EvalMetrics, PerTypeMetrics
+from app.schemas import EvalMetrics, PerTypeMetrics, Span
+from app.services.evaluation import (
+    accuracy,
+    citation_validity_rate,
+    confusion_matrix,
+    format_report,
+    segmentation_f1,
+    span_iou,
+)
 
 
 def test_span_iou_full_overlap() -> None:

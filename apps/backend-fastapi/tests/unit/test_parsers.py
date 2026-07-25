@@ -2,8 +2,7 @@
 
 from io import BytesIO
 
-from app.parsers.docx import parse_docx
-from app.parsers.pdf import parse_pdf
+from app.parsers import parse_docx, parse_pdf
 
 
 def test_parse_pdf_extracts_text_and_page_map() -> None:

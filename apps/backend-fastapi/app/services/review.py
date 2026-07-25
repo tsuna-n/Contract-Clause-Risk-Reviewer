@@ -1,0 +1,64 @@
+"""Review service: upload -> parse -> pipeline -> report."""
+
+from __future__ import annotations
+
+import uuid
+
+from app.ai.pipeline import Orchestrator
+from app.errors import DocumentParseError
+from app.parsers import PARSERS
+from app.repositories.contract import ContractRepository
+from app.repositories.report import ReportRepository
+from app.schemas import ContractReviewReport
+
+
+class ReviewService:
+    """Coordinates parsing an upload and running the review pipeline."""
+
+    def __init__(
+        self,
+        orchestrator: Orchestrator,
+        contracts: ContractRepository,
+        reports: ReportRepository,
+        retention_ttl_seconds: int = 3600,
+    ) -> None:
+        self.orchestrator = orchestrator
+        self.contracts = contracts
+        self.reports = reports
+        self.retention_ttl_seconds = retention_ttl_seconds
+
+    def review_upload(
+        self,
+        *,
+        filename: str,
+        data: bytes,
+        session_id: str,
+    ) -> ContractReviewReport:
+        """Parse an uploaded file and produce a stored review report."""
+        # Uploaded contracts and reports are session-scoped and must not
+        # outlive the retention window; sweep this session's stale reports
+        # before adding another one.
+        self.reports.purge_expired(session_id, self.retention_ttl_seconds)
+
+        ext = filename.rsplit(".", 1)[-1].lower() if "." in filename else ""
+        parser = PARSERS.get(ext)
+        if parser is None:
+            raise DocumentParseError(f"unsupported file type: .{ext or 'unknown'}")
+
+        try:
+            document = parser(data)
+        except Exception as exc:  # noqa: BLE001 - surfaced to the client as 422
+            raise DocumentParseError(f"failed to parse {filename}: {exc}") from exc
+
+        contract_id = uuid.uuid4().hex
+        self.contracts.save(contract_id, document)
+        try:
+            report = self.orchestrator.review(
+                document, contract_id=contract_id, session_id=session_id
+            )
+        finally:
+            # Raw contract text isn't retained beyond producing the report.
+            self.contracts.delete(contract_id)
+
+        self.reports.save(report)
+        return report

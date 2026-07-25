@@ -8,8 +8,8 @@ from __future__ import annotations
 
 import sys
 
-from app.api.deps import PLAYBOOK_PATH, get_embedder, get_vector_store
-from app.rag.ingest import ingest, load_positions
+from app.ai.retrieval import ingest, load_positions
+from app.dependencies import PLAYBOOK_PATH, get_embedder, get_vector_store
 
 
 def main(argv: list[str]) -> int:

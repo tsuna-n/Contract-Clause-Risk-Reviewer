@@ -1,6 +1,6 @@
 """Unit tests for the text normalizer."""
 
-from app.parsers.normalizer import is_heading, normalize, replace_ligatures
+from app.parsers import is_heading, normalize, replace_ligatures
 
 
 def test_normalize_collapses_whitespace() -> None:

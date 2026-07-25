@@ -21,18 +21,24 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import Session, sessionmaker
 from sqlalchemy.pool import StaticPool
 
-from app.api.deps import get_current_user, get_override_service, get_review_service
+from app.dependencies import get_current_user, get_override_service, get_review_service
 from app.main import create_app
 from app.models import AuditOverride, Base, User
-from app.parsers.models import ParsedDocument
-from app.repositories.audit_repo import AuditRepository
-from app.repositories.contract_repo import InMemoryContractRepository
-from app.repositories.report_repo import InMemoryReportRepository
-from app.schemas.clause import Clause, ClauseReview, Span
-from app.schemas.report import ContractReviewReport, RiskSummary
-from app.schemas.taxonomy import ClauseType, RiskLevel
-from app.services.override_service import OverrideService
-from app.services.review_service import ReviewService
+from app.parsers import ParsedDocument
+from app.repositories.audit import AuditRepository
+from app.repositories.contract import InMemoryContractRepository
+from app.repositories.report import InMemoryReportRepository
+from app.schemas import (
+    Clause,
+    ClauseReview,
+    ClauseType,
+    ContractReviewReport,
+    RiskLevel,
+    RiskSummary,
+    Span,
+)
+from app.services.override import OverrideService
+from app.services.review import ReviewService
 
 _DOCX_CONTENT_TYPE = "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
 

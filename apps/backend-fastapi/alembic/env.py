@@ -15,7 +15,7 @@ if config.config_file_name is not None:
 
 # Importing app.models registers every table on Base.metadata, which is what
 # autogenerate compares against the live database.
-from app.core.config import get_settings  # noqa: E402
+from app.config import get_settings  # noqa: E402
 from app.models import Base  # noqa: E402
 
 target_metadata = Base.metadata

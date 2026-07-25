@@ -12,6 +12,8 @@ import { BackgroundOrbs, GridOverlay, BrandHeader, LoginCard } from "../componen
  *     footer        — legal links
  */
 export default function LoginPage() {
+  
+
   return (
     <>
       {/* ── Decorative background layers ── */}

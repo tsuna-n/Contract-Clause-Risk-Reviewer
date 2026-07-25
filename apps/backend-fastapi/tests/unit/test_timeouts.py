@@ -12,10 +12,10 @@ from datetime import UTC, datetime
 
 from jose import jwt
 
-from app.core.config import get_settings
-from app.core.security import create_access_token
-from app.llm.client import LLMClient
-from app.rag.embedder import GeminiEmbedder
+from app.ai.llm import LLMClient
+from app.ai.retrieval import GeminiEmbedder
+from app.config import get_settings
+from app.security import create_access_token
 
 
 class _FakeHttpOptions:

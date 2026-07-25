@@ -2,11 +2,9 @@
 
 import pytest
 
-from app.core.exceptions import GroundingError
-from app.guardrails.grounding import assert_grounded, is_grounded
-from app.guardrails.no_invented_fallback import is_allowed_fallback
-from app.schemas.playbook import PlaybookPosition
-from app.schemas.taxonomy import ClauseType
+from app.ai.guardrails import assert_grounded, is_allowed_fallback, is_grounded
+from app.errors import GroundingError
+from app.schemas import ClauseType, PlaybookPosition
 
 
 def _position() -> PlaybookPosition:

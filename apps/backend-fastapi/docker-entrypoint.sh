@@ -13,7 +13,7 @@ should_ingest() {
     ! python -c "
 import sys
 from sqlalchemy import text
-from app.core.db import SessionLocal
+from app.database import SessionLocal
 
 with SessionLocal() as session:
     count = session.execute(text('SELECT count(*) FROM playbook_embeddings')).scalar_one()

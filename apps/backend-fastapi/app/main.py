@@ -6,10 +6,10 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.middleware.sessions import SessionMiddleware
 
-from app.api import auth, contracts, evaluate, health, playbook
-from app.core.config import get_settings
-from app.core.exceptions import register_exception_handlers
-from app.core.logging import configure_logging
+from app.config import get_settings
+from app.errors import register_exception_handlers
+from app.logger import configure_logging
+from app.routes import api_router
 
 
 @asynccontextmanager
@@ -38,8 +38,7 @@ def create_app() -> FastAPI:
     # Required by Authlib's OAuth redirect flow to persist state across requests.
     app.add_middleware(SessionMiddleware, secret_key=settings.session_secret_key)
 
-    for module in (health, auth, contracts, playbook, evaluate):
-        app.include_router(module.router)
+    app.include_router(api_router)
 
     @app.get("/")
     def read_root() -> dict[str, str]:

@@ -1,8 +1,7 @@
 """Unit tests for report-level risk aggregation."""
 
-from app.agents.orchestrator import aggregate
-from app.schemas.clause import Clause, ClauseReview, Span
-from app.schemas.taxonomy import RiskLevel
+from app.ai.pipeline import aggregate
+from app.schemas import Clause, ClauseReview, RiskLevel, Span
 
 
 def _review(risk: RiskLevel) -> ClauseReview:

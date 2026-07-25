@@ -2,8 +2,8 @@
 
 import pytest
 
-from app.api.deps import get_known_positions, get_orchestrator
-from app.evaluation.runner import run_eval
+from app.dependencies import get_known_positions, get_orchestrator
+from app.services.evaluation import run_eval
 
 MIN_ACCURACY = 0.75
 

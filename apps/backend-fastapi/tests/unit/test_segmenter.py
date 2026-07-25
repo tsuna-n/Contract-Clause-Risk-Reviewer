@@ -1,7 +1,7 @@
 """Unit tests for the clause segmenter."""
 
-from app.agents.segmenter import Segmenter
-from app.parsers.models import ParsedDocument, TextSpan
+from app.ai.agents import Segmenter
+from app.parsers import ParsedDocument, TextSpan
 
 
 def _doc(text: str) -> ParsedDocument:

@@ -8,9 +8,8 @@ from __future__ import annotations
 
 import sys
 
-from app.api.deps import get_known_positions, get_orchestrator
-from app.evaluation.report import format_report
-from app.evaluation.runner import run_eval
+from app.dependencies import get_known_positions, get_orchestrator
+from app.services.evaluation import format_report, run_eval
 
 
 def main(argv: list[str]) -> int:
