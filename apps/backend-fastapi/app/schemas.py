@@ -48,6 +48,18 @@ class RiskLevel(StrEnum):
     UNKNOWN = "unknown"
 
 
+class RetrievalSource(StrEnum):
+    """How a retrieval hit was scored.
+
+    Only the two strategies :class:`~app.ai.retrieval.Retriever` actually
+    emits. BM25 is deliberately absent: it never stands alone, it reranks the
+    dense candidate pool, and that blend is what ``HYBRID`` means.
+    """
+
+    DENSE = "dense"  # Vector similarity alone (hybrid retrieval disabled).
+    HYBRID = "hybrid"  # Dense candidates reranked by a BM25 lexical score.
+
+
 # --- playbook ----------------------------------------------------------------
 
 
@@ -68,7 +80,7 @@ class RetrievalHit(BaseModel):
 
     position: PlaybookPosition
     score: float
-    source: str = "hybrid"  # bm25 | dense | hybrid
+    source: RetrievalSource = RetrievalSource.HYBRID
 
 
 # --- clauses -----------------------------------------------------------------
@@ -128,12 +140,32 @@ class ContractReviewReport(BaseModel):
 
     report_id: str
     contract_id: str
+    # Whose report this is - the signed-in user's Google ``sub``. Internal:
+    # ``ReportRepository.purge_expired`` needs it to scope a session's reports,
+    # but it is an account identifier with no use in the browser, so the routes
+    # strip it from the HTTP response (``response_model_exclude``). It still
+    # round-trips through Redis, which is what purging relies on.
     session_id: str
     created_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
     overall_risk: RiskLevel = RiskLevel.UNKNOWN
     summary: RiskSummary = Field(default_factory=RiskSummary)
     reviews: list[ClauseReview] = Field(default_factory=list)
     disclaimer: str = ""
+
+
+class OverrideRequest(BaseModel):
+    """A reviewer's correction to one clause's risk level.
+
+    A body rather than query params: ``reason`` is free-form text a person
+    types, and a URL is the wrong place for it - it lands in access logs,
+    browser history, and ``Referer`` headers, and the audit trail is exactly
+    the data that shouldn't leak into those. The bounds keep an unbounded
+    string out of the audit table.
+    """
+
+    clause_id: str = Field(min_length=1)
+    new_risk: RiskLevel
+    reason: str = Field(min_length=1, max_length=1000)
 
 
 # --- evaluation --------------------------------------------------------------
@@ -149,7 +181,10 @@ class EvalRequest(BaseModel):
 class PerTypeMetrics(BaseModel):
     """Per-clause-type breakdown of accuracy."""
 
-    clause_type: str
+    # The taxonomy enum, not a bare string: these rows are keyed by labels read
+    # out of the gold-set file, so validating here turns a typo'd annotation
+    # into an error instead of a silent extra category with its own metrics.
+    clause_type: ClauseType
     support: int
     accuracy: float
 

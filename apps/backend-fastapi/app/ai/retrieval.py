@@ -18,7 +18,15 @@ from sqlalchemy.dialects.postgresql import insert
 from app.config import get_settings
 from app.database import SessionLocal
 from app.models import PlaybookEmbedding
-from app.schemas import Citation, Clause, ClauseType, PlaybookPosition, RetrievalHit, RiskLevel
+from app.schemas import (
+    Citation,
+    Clause,
+    ClauseType,
+    PlaybookPosition,
+    RetrievalHit,
+    RetrievalSource,
+    RiskLevel,
+)
 
 # --- embedding ---------------------------------------------------------------
 
@@ -170,7 +178,13 @@ class PgVectorStore:
                 risk_if_absent=RiskLevel(row.risk_if_absent),
                 tags=list(row.tags or []),
             )
-            hits.append(RetrievalHit(position=position, score=1.0 - float(dist), source="dense"))
+            hits.append(
+                RetrievalHit(
+                    position=position,
+                    score=1.0 - float(dist),
+                    source=RetrievalSource.DENSE,
+                )
+            )
         return hits
 
 
@@ -213,7 +227,9 @@ class Retriever:
                 continue
             seen.add(hit.position.id)
             score = 0.5 * (dense / max_dense) + 0.5 * (bm25 / max_bm25)
-            blended.append(RetrievalHit(position=hit.position, score=score, source="hybrid"))
+            blended.append(
+                RetrievalHit(position=hit.position, score=score, source=RetrievalSource.HYBRID)
+            )
 
         blended.sort(key=lambda hit: hit.score, reverse=True)
         return blended[:top_k]

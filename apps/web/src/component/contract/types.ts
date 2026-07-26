@@ -2,7 +2,7 @@
 //
 // These are the UI's shape, not the wire shape — `lib/contracts.ts` owns the
 // translation from the backend's snake_case DTOs. Risk levels mirror the
-// backend taxonomy (app/schemas/taxonomy.py): there is no CRITICAL, and
+// backend taxonomy (app/schemas.py): there is no CRITICAL, and
 // UNKNOWN is a real outcome the pipeline returns when a clause fails review.
 
 export type RiskLevel = "LOW" | "MEDIUM" | "HIGH" | "UNKNOWN";

@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import type { ClauseView, RiskLevel } from "./types";
 import { OVERRIDE_RISK_LEVELS } from "./types";
+import { OVERRIDE_REASON_MAX_CHARS } from "../../lib/contracts";
 import { riskBadge } from "./riskStyles";
 
 interface OverrideSidebarProps {
@@ -205,6 +206,9 @@ export default function OverrideSidebar({
                   rows={5}
                   value={reason}
                   onChange={(e) => setReason(e.target.value)}
+                  /* Backend rejects anything longer; stopping the user here
+                     beats losing a written explanation to a 422. */
+                  maxLength={OVERRIDE_REASON_MAX_CHARS}
                   placeholder="Explain why this risk level is being overridden…"
                   className="
                     w-full bg-slate-800/60 border border-slate-700/50 rounded-xl

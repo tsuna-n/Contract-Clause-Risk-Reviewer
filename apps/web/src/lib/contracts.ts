@@ -2,14 +2,14 @@ import { apiFetch } from "./api";
 import type { ClauseView, ContractReport, RiskLevel } from "../component/contract/types";
 
 // ── Backend DTOs ───────────────────────────────────────────────────────────────
-// These mirror apps/backend-fastapi/app/schemas/*.py exactly, snake_case and
+// These mirror apps/backend-fastapi/app/schemas.py exactly, snake_case and
 // all. Everything the UI actually renders goes through the mappers below, so
 // the shape only has to be right in this one file.
 
-/** Matches `RiskLevel` in app/schemas/taxonomy.py — lowercase, no CRITICAL. */
+/** Matches `RiskLevel` in app/schemas.py — lowercase, no CRITICAL. */
 export type BackendRiskLevel = "low" | "medium" | "high" | "unknown";
 
-/** Matches `ClauseType` in app/schemas/taxonomy.py. */
+/** Matches `ClauseType` in app/schemas.py. */
 export type BackendClauseType =
   | "confidentiality"
   | "indemnification"
@@ -60,10 +60,12 @@ interface BackendRiskSummary {
   unknown: number;
 }
 
+// `session_id` is intentionally absent: the backend keeps it on the report for
+// session-scoped purging but strips it from responses, so declaring it here
+// would promise a field that never arrives.
 export interface BackendContractReviewReport {
   report_id: string;
   contract_id: string;
-  session_id: string;
   created_at: string;
   overall_risk: BackendRiskLevel;
   summary: BackendRiskSummary;
@@ -225,11 +227,18 @@ export interface OverrideRequest {
 }
 
 /**
+ * Longest `reason` the backend will accept — `OverrideRequest.reason` in
+ * app/schemas.py. Mirrored here so the textarea can stop the user at the limit
+ * instead of letting them write past it and lose the text to a 422.
+ */
+export const OVERRIDE_REASON_MAX_CHARS = 1000;
+
+/**
  * Apply a human override to one clause's risk level.
  *
- * The endpoint takes its arguments as query params (they're plain scalars on
- * the FastAPI handler, not a request body) and returns the whole updated
- * report, which becomes the page's new state.
+ * Sent as a JSON body: `reason` is text a reviewer typed, and it's the audit
+ * trail — a query string would copy it into access logs and browser history.
+ * Returns the whole updated report, which becomes the page's new state.
  */
 export async function overrideClause({
   reportId,
@@ -237,15 +246,16 @@ export async function overrideClause({
   newRisk,
   reason,
 }: OverrideRequest): Promise<ContractReport> {
-  const params = new URLSearchParams({
-    clause_id: clauseId,
-    new_risk: toBackendRiskLevel(newRisk),
-    reason,
-  });
-
   const report = await apiFetch<BackendContractReviewReport>(
-    `/contracts/${encodeURIComponent(reportId)}/override?${params}`,
-    { method: "POST" }
+    `/contracts/${encodeURIComponent(reportId)}/override`,
+    {
+      method: "POST",
+      json: {
+        clause_id: clauseId,
+        new_risk: toBackendRiskLevel(newRisk),
+        reason,
+      },
+    }
   );
   return toContractReport(report);
 }

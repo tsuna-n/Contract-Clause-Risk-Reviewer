@@ -132,7 +132,9 @@ def test_review_contract_returns_report(client: TestClient) -> None:
     assert resp.status_code == 200
     body = resp.json()
     assert body["report_id"] == "report-1"
-    assert body["session_id"] == "user-1"
+    # The owning session is the user's Google ``sub``: kept on the model for
+    # purging, withheld from the wire.
+    assert "session_id" not in body
     assert body["overall_risk"] == "medium"
     assert len(body["reviews"]) == 1
     assert body["reviews"][0]["clause"]["clause_type"] == "termination"
@@ -159,7 +161,7 @@ def test_override_changes_risk_and_writes_audit(
 
     resp = client.post(
         f"/contracts/{report['report_id']}/override",
-        params={
+        json={
             "clause_id": report["reviews"][0]["clause"]["id"],
             "new_risk": "high",
             "reason": "escalated by legal",
@@ -184,7 +186,7 @@ def test_override_changes_risk_and_writes_audit(
 def test_override_unknown_report_is_404(client: TestClient) -> None:
     resp = client.post(
         "/contracts/no-such-report/override",
-        params={"clause_id": "clause-1", "new_risk": "high", "reason": "x"},
+        json={"clause_id": "clause-1", "new_risk": "high", "reason": "x"},
     )
     assert resp.status_code == 404
 
@@ -194,7 +196,7 @@ def test_override_unknown_clause_is_404(client: TestClient) -> None:
 
     resp = client.post(
         f"/contracts/{report['report_id']}/override",
-        params={"clause_id": "no-such-clause", "new_risk": "high", "reason": "x"},
+        json={"clause_id": "no-such-clause", "new_risk": "high", "reason": "x"},
     )
     assert resp.status_code == 404
 
@@ -203,6 +205,6 @@ def test_override_requires_auth() -> None:
     client = TestClient(create_app())
     resp = client.post(
         "/contracts/report-1/override",
-        params={"clause_id": "clause-1", "new_risk": "high", "reason": "x"},
+        json={"clause_id": "clause-1", "new_risk": "high", "reason": "x"},
     )
     assert resp.status_code == 401

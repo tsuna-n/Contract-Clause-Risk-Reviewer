@@ -95,7 +95,16 @@ async function toApiError(res: Response): Promise<ApiError> {
 
 interface ApiFetchOptions {
   method?: string;
+  /** Raw body — used for FormData uploads. For JSON, prefer `json`. */
   body?: BodyInit;
+  /**
+   * JSON payload: serialized here and sent with the matching Content-Type.
+   *
+   * Kept out of `body` because the header is the easy half to forget, and
+   * FastAPI answers a body it can't parse with a 422 that reads like a
+   * validation bug rather than a missing header.
+   */
+  json?: unknown;
   /** Send the stored bearer token. Defaults to true. */
   auth?: boolean;
   signal?: AbortSignal;
@@ -110,13 +119,28 @@ interface ApiFetchOptions {
  * /login instead of looping on a dead session.
  */
 export async function apiFetch<T>(path: string, options: ApiFetchOptions = {}): Promise<T> {
-  const { method = "GET", body, auth = true, signal, timeoutMs = DEFAULT_TIMEOUT_MS } = options;
+  const {
+    method = "GET",
+    body,
+    json,
+    auth = true,
+    signal,
+    timeoutMs = DEFAULT_TIMEOUT_MS,
+  } = options;
 
   const headers: Record<string, string> = {};
   if (auth) {
     const token = getToken();
     if (!token) throw new ApiError(401, "not_authenticated", "Not signed in");
     headers.Authorization = `Bearer ${token}`;
+  }
+
+  // FormData declares its own Content-Type, boundary and all, so setting one
+  // here would corrupt the upload. Only the JSON path declares a type.
+  let payload = body;
+  if (json !== undefined) {
+    headers["Content-Type"] = "application/json";
+    payload = JSON.stringify(json);
   }
 
   // Kept separate from the caller's signal so that after an abort we can tell
@@ -127,7 +151,12 @@ export async function apiFetch<T>(path: string, options: ApiFetchOptions = {}): 
 
   let res: Response;
   try {
-    res = await fetch(`${API_BASE_URL}${path}`, { method, body, headers, signal: abortSignal });
+    res = await fetch(`${API_BASE_URL}${path}`, {
+      method,
+      body: payload,
+      headers,
+      signal: abortSignal,
+    });
   } catch (error) {
     if (timeoutSignal.aborted) {
       throw new ApiError(
