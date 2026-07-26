@@ -1,5 +1,5 @@
 import { useState } from "react";
-import Sidebar, { type Infro } from "../../component/sidebar/sidebar";
+import Sidebar, { type Infro } from "../../component/sidebar/Sidebar";
 import FileUploadPage from "../chat";
 import Detail from "../detail";
 

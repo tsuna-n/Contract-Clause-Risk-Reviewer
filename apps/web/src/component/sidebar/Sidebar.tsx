@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 
 export interface Infro {
   id: string;
@@ -34,10 +34,7 @@ function maskEmail(email?: string) {
   return `***@${domain}`;
 }
 
-function Sidebar({ onNewChat, onSelectChat, user, onLogout }: SidebarProps = {}) {
-  const [infros, setInfros] = useState<Infro[]>([]);
-
-  const infroData: Infro[] = [{
+const infroData: Infro[] = [{
     "id": "chat_001",
     "title": "สอบถามเงื่อนไขสัญญาเช่าอาคารสำนักงาน",
     "detail": "ลูกค้าต้องการทราบเงื่อนไขการต่อสัญญาเช่าและอัตราค่าเช่าที่ปรับเพิ่มขึ้นในปีที่ 3",
@@ -101,12 +98,10 @@ function Sidebar({ onNewChat, onSelectChat, user, onLogout }: SidebarProps = {})
     "participants": ["user_654", "agent_22"],
     "messageCount": 20,
     "tags": ["ข้อพิพาท", "ค่าเสียหาย", "เช่ารถ"]
-  }];
+}];
 
-  // โหลดข้อมูลอัตโนมัติเมื่อ component mount
-  useEffect(() => {
-    setInfros(infroData);
-  }, []);
+function Sidebar({ onNewChat, onSelectChat, user, onLogout }: SidebarProps = {}) {
+  const [infros] = useState<Infro[]>(infroData);
 
   const isLoggedIn = user?.isLoggedIn ?? false;
   const displayName = isLoggedIn ? (user?.name || 'ผู้ใช้งาน') : 'Guest';

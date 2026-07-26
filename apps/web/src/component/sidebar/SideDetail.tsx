@@ -1,4 +1,4 @@
-import type { Infro } from './sidebar';
+import type { Infro } from './Sidebar';
 
 interface SideDetailProps {
   infro: Infro;

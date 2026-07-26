@@ -1,11 +1,10 @@
 import { createBrowserRouter, Navigate, RouterProvider } from "react-router-dom";
 import Login from "./page/login";
-<<<<<<< HEAD
-import Manual from "./page/manual";
 import AuthCallback from "./page/callback";
 import RequireAuth from "./component/RequireAuth";
-import ContractPage from "./page/contract";
 import { getToken } from "./lib/auth";
+import Chat from "./page/layout/chat-layout";
+import ContractPage from "./page/contract";
 
 /**
  * "/" is the login screen for signed-out visitors and a shortcut into the app
@@ -20,24 +19,11 @@ import { getToken } from "./lib/auth";
 function RootRoute() {
   return getToken() ? <Navigate to="/manual" replace /> : <Login />;
 }
-=======
-
-import AuthCallback from "./page/callback";
-import Chat from "./page/layout/chat-layout";
-
-
-
-import RequireAuth from "./component/RequireAuth";
->>>>>>> fix-all-f
 
 const router = createBrowserRouter([
   {
     path: "/",
-<<<<<<< HEAD
     element: <RootRoute />,
-=======
-    element: <Login />,
->>>>>>> fix-all-f
   },
   {
     path: "/login",
@@ -48,7 +34,6 @@ const router = createBrowserRouter([
     element: <AuthCallback />,
   },
   {
-<<<<<<< HEAD
     // Every call this page makes needs a bearer token, so guard it like /manual
     // rather than letting it render and fail with 401s.
     path: "/contract",
@@ -57,18 +42,30 @@ const router = createBrowserRouter([
         <ContractPage />
       </RequireAuth>
     ),
-=======
+  },
+  {
     path: "/chat",
-    element: <RequireAuth><Chat /></RequireAuth>,
->>>>>>> fix-all-f
+    element: (
+      <RequireAuth>
+        <Chat />
+      </RequireAuth>
+    ),
   },
   {
     path: "/manual",
-    element: <RequireAuth><Chat /></RequireAuth>,
+    element: (
+      <RequireAuth>
+        <Chat />
+      </RequireAuth>
+    ),
   },
   {
     path: "/layout/chat-layout",
-    element: <RequireAuth><Chat /></RequireAuth>,
+    element: (
+      <RequireAuth>
+        <Chat />
+      </RequireAuth>
+    ),
   },
 ]);
 

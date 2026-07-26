@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import type { Infro } from '../component/sidebar/sidebar';
+import type { Infro } from '../component/sidebar/Sidebar';
 import SideDetail from '../component/sidebar/SideDetail';
 
 interface DetailProps {
