@@ -52,3 +52,24 @@ export function fetchCurrentUser(): Promise<User> {
   // user back at /login via the route guard instead of retrying forever.
   return apiFetch<User>('/auth/me')
 }
+
+/**
+ * Sign out.
+ *
+ * The backend holds no session state, so discarding the token locally is what
+ * actually ends the session — but the call still goes out, both so the server
+ * sees the logout and so this stays the single place to change if tokens ever
+ * become revocable.
+ *
+ * Deliberately not awaited: apiFetch reads the token before it suspends, so
+ * the clear below can't race it, and waiting on the round-trip would leave the
+ * token readable in localStorage for as long as the request hangs.
+ */
+export function logout(): void {
+  void apiFetch<{ message: string }>('/auth/logout', { method: 'POST' }).catch(
+    () => {
+      // Nothing to recover — the session is over on this device either way.
+    },
+  )
+  clearToken()
+}

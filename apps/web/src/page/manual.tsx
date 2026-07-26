@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { Sidebar } from "../component/sidebar";
-import { clearToken } from "../lib/auth";
+import { logout } from "../lib/auth";
 
 /**
  * ManualPage — Welcome/onboarding page with instructions and document example.
@@ -70,7 +70,7 @@ export default function ManualPage() {
       label: "Logout",
       icon: "🚪",
       onClick: () => {
-        clearToken();
+        logout();
         navigate("/login", { replace: true });
       },
     },
