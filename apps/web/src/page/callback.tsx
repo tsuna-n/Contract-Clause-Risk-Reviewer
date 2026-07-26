@@ -12,7 +12,7 @@ export default function AuthCallbackPage() {
 
   useEffect(() => {
     consumeTokenFromUrl();
-    navigate(getToken() ? "/manual" : "/login", { replace: true });
+    navigate(getToken() ? "/layout/chat-layout" : "/login", { replace: true });
   }, [navigate]);
 
   return (
