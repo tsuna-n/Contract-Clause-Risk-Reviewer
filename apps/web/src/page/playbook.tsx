@@ -32,8 +32,15 @@ const RISK_LEVELS: RiskLevel[] = ["low", "medium", "high", "unknown"];
 
 export default function PlaybookPage() {
   const [positions, setPositions] = useState<PlaybookPosition[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  /**
+   * Bumped to ask for the list again after a create/update/delete. It is part
+   * of the request key below, so a reload is one state write from an event
+   * handler rather than a flag the effect has to raise synchronously.
+   */
+  const [generation, setGeneration] = useState<number>(0);
+  /** The request key the list on screen reflects; `null` until the first load. */
+  const [loadedKey, setLoadedKey] = useState<string | null>(null);
 
   // Filters
   const [selectedType, setSelectedType] = useState<string>("");
@@ -60,22 +67,40 @@ export default function PlaybookPage() {
   const [semanticLoading, setSemanticLoading] = useState<boolean>(false);
   const [semanticError, setSemanticError] = useState<string | null>(null);
 
-  const loadData = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      const data = await fetchPlaybookPositions(selectedType || undefined);
-      setPositions(data);
-    } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Failed to load playbook positions");
-    } finally {
-      setLoading(false);
-    }
-  };
+  // What the list *should* show right now. "Loading" is the gap between this
+  // and what it does show — derived rather than stored, so the fetch below can
+  // keep every state write inside a settled-promise callback instead of
+  // raising a flag in the effect body and cascading a render.
+  const requestedKey = `${generation}:${selectedType}`;
+  const loading = loadedKey !== requestedKey;
 
   useEffect(() => {
-    loadData();
-  }, [selectedType]);
+    // A filter change while a request is in flight makes the old answer stale,
+    // and it must not land on top of the new one.
+    let cancelled = false;
+
+    fetchPlaybookPositions(selectedType || undefined).then(
+      (data) => {
+        if (cancelled) return;
+        setPositions(data);
+        setError(null);
+        setLoadedKey(requestedKey);
+      },
+      (err: unknown) => {
+        if (cancelled) return;
+        setError(err instanceof Error ? err.message : "Failed to load playbook positions");
+        // Marked loaded even on failure, or the effect would retry forever.
+        setLoadedKey(requestedKey);
+      }
+    );
+
+    return () => {
+      cancelled = true;
+    };
+  }, [requestedKey, selectedType]);
+
+  /** Re-fetch the list after a write. */
+  const reload = () => setGeneration((n) => n + 1);
 
   const openCreateModal = () => {
     setEditingPosition(null);
@@ -139,7 +164,7 @@ export default function PlaybookPage() {
         await createPlaybookPosition(payload);
       }
       setIsModalOpen(false);
-      await loadData();
+      reload();
     } catch (err: unknown) {
       alert(err instanceof Error ? err.message : "Error saving position");
     } finally {
@@ -151,7 +176,7 @@ export default function PlaybookPage() {
     if (!confirm(`Are you sure you want to delete position "${id}"?`)) return;
     try {
       await deletePlaybookPosition(id);
-      await loadData();
+      reload();
     } catch (err: unknown) {
       alert(err instanceof Error ? err.message : "Error deleting position");
     }

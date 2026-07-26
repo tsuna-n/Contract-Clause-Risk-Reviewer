@@ -1,11 +1,12 @@
-import { useCallback, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useCallback, useEffect, useState } from "react";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { OriginalContract, AIRiskAnalysis } from "../component/contract";
 import type { ContractReport, RiskLevel } from "../component/contract/types";
 import { riskAccent } from "../component/contract/riskStyles";
 import { ApiError } from "../lib/api";
 import {
   ACCEPTED_EXTENSIONS,
+  fetchReport,
   isSupportedFile,
   overrideClause,
   reviewContract,
@@ -13,12 +14,26 @@ import {
 
 export default function ContractPage() {
   const navigate = useNavigate();
+  // `?report=<id>` opens a review the history sidebar already knows about,
+  // instead of forcing the reviewer to re-upload (and re-pay for) a contract
+  // the backend has a report for.
+  const [searchParams] = useSearchParams();
+  const requestedReportId = searchParams.get("report");
 
   const [report, setReport] = useState<ContractReport | null>(null);
   const [fileName, setFileName] = useState<string | null>(null);
   const [selectedClauseId, setSelectedClauseId] = useState<string | null>(null);
   const [reviewing, setReviewing] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  /**
+   * The last `?report=` id the loader below finished with, win or lose.
+   *
+   * "Still loading" is derived from comparing it to the requested id rather
+   * than stored as its own flag: a flag would have to be raised synchronously
+   * inside the effect (a cascading render), and it would go stale the moment
+   * the URL changed to a different report.
+   */
+  const [resolvedReportId, setResolvedReportId] = useState<string | null>(null);
   /** Local review progress — the backend records overrides, not acceptances. */
   const [acceptedIds, setAcceptedIds] = useState<ReadonlySet<string>>(new Set());
 
@@ -33,6 +48,45 @@ export default function ContractPage() {
     },
     [navigate]
   );
+
+  // Opening a stored report fills exactly the state an upload would, so the
+  // rest of the page can't tell the two apart. Every write happens in a
+  // settled-promise callback, never in the effect body — same shape as the
+  // session probe in AuthProvider.
+  useEffect(() => {
+    if (!requestedReportId || requestedReportId === resolvedReportId) return;
+
+    // The fetch outlives this component if the reviewer navigates away
+    // mid-flight, and the flag also stops a slow answer for an old id from
+    // overwriting a newer one.
+    let cancelled = false;
+
+    fetchReport(requestedReportId).then(
+      (loaded) => {
+        if (cancelled) return;
+        setReport(loaded);
+        setFileName(loaded.filename || loaded.contractId);
+        setSelectedClauseId(loaded.clauses[0]?.id ?? null);
+        setAcceptedIds(new Set());
+        setError(null);
+        setResolvedReportId(requestedReportId);
+      },
+      (err: unknown) => {
+        if (cancelled) return;
+        handleApiError(err);
+        // Resolved even though it failed: without this the effect would fire
+        // again on the next render and retry forever.
+        setResolvedReportId(requestedReportId);
+      }
+    );
+
+    return () => {
+      cancelled = true;
+    };
+  }, [requestedReportId, resolvedReportId, handleApiError]);
+
+  const loadingStoredReport = requestedReportId !== null && requestedReportId !== resolvedReportId;
+  const busy = reviewing || loadingStoredReport;
 
   const handleFileSelect = useCallback(
     async (file: File) => {
@@ -98,9 +152,17 @@ export default function ContractPage() {
       {/* ── Page Header ─────────────────────────────────────────────────────── */}
       <header className="flex items-center justify-between px-8 py-5 border-b border-white/10 bg-white/5 backdrop-blur-sm shrink-0">
         <div className="space-y-0.5 min-w-0">
-          <h1 className="text-xl font-bold text-slate-100 tracking-tight">
-            Contract Clause Risk Reviewer
-          </h1>
+          <div className="flex items-center gap-3 min-w-0">
+            <Link
+              to="/manual"
+              className="text-xs text-slate-500 hover:text-slate-300 transition-colors shrink-0"
+            >
+              ← History
+            </Link>
+            <h1 className="text-xl font-bold text-slate-100 tracking-tight truncate">
+              Contract Clause Risk Reviewer
+            </h1>
+          </div>
           <p className="text-xs text-slate-500 font-medium tracking-wide truncate">
             {fileName ?? "No contract loaded"}
           </p>
@@ -141,11 +203,13 @@ export default function ContractPage() {
       </header>
 
       {/* ── Status strip ────────────────────────────────────────────────────── */}
-      {reviewing && (
+      {busy && (
         <div className="flex items-center gap-3 px-8 py-3 border-b border-sky-500/20 bg-sky-950/40 shrink-0">
           <span className="w-3.5 h-3.5 rounded-full border-2 border-sky-400 border-t-transparent animate-spin" />
           <p className="text-sm text-sky-200">
-            Reviewing {fileName}… this runs the full pipeline and can take a minute.
+            {reviewing
+              ? `Reviewing ${fileName}… this runs the full pipeline and can take a minute.`
+              : "Loading the stored report…"}
           </p>
         </div>
       )}
@@ -177,7 +241,7 @@ export default function ContractPage() {
           selectedClauseId={selectedClauseId}
           onClauseSelect={setSelectedClauseId}
           onFileSelect={handleFileSelect}
-          busy={reviewing}
+          busy={busy}
           acceptedIds={acceptedIds}
         />
 

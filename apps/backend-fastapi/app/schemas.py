@@ -179,11 +179,46 @@ class ContractReviewReport(BaseModel):
     # strip it from the HTTP response (``response_model_exclude``). It still
     # round-trips through Redis, which is what purging relies on.
     session_id: str
+    # The uploaded file's name. The only piece of contract metadata the
+    # pipeline knows for certain (it came with the request rather than being
+    # read out of the document), and what the history list is labelled with -
+    # "a report" with no name is not something a reviewer can pick from a list.
+    filename: str = ""
     created_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
     overall_risk: RiskLevel = RiskLevel.UNKNOWN
     summary: RiskSummary = Field(default_factory=RiskSummary)
     reviews: list[ClauseReview] = Field(default_factory=list)
     disclaimer: str = ""
+
+
+class ReportSummary(BaseModel):
+    """One row of review history - a report without its clause reviews.
+
+    The history list renders dozens of these at once and shows none of the
+    clause detail, so sending whole reports would move megabytes to draw a
+    sidebar. ``GET /contracts/{report_id}`` returns the full thing.
+    """
+
+    report_id: str
+    contract_id: str
+    filename: str = ""
+    created_at: datetime
+    overall_risk: RiskLevel = RiskLevel.UNKNOWN
+    summary: RiskSummary = Field(default_factory=RiskSummary)
+    clause_count: int = 0
+
+    @classmethod
+    def of(cls, report: ContractReviewReport) -> ReportSummary:
+        """Summarize a full report for the history list."""
+        return cls(
+            report_id=report.report_id,
+            contract_id=report.contract_id,
+            filename=report.filename,
+            created_at=report.created_at,
+            overall_risk=report.overall_risk,
+            summary=report.summary,
+            clause_count=len(report.reviews),
+        )
 
 
 class OverrideRequest(BaseModel):

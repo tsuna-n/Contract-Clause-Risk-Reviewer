@@ -5,6 +5,7 @@ export type {
   ClauseView,
   Citation,
   ContractReport,
+  ReportSummary,
   RiskLevel,
   RiskSummary,
 } from "./types";

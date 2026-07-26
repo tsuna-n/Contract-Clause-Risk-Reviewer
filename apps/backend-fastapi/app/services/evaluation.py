@@ -142,6 +142,14 @@ def run_eval(
         pred_spans.extend(review.clause.span for review in report.reviews)
 
         for gold_clause, gold_span in zip(gold_clauses, record_gold_spans, strict=True):
+            # A gold clause may carry a boundary but no label: the fixtures are
+            # built from CUAD, whose 41 categories don't span the whole
+            # taxonomy, and inventing a label for the rest would score the
+            # pipeline against guesses. Those clauses still count towards
+            # segmentation - they are real clause boundaries - and are simply
+            # not classification/risk samples.
+            if "clause_type" not in gold_clause:
+                continue
             match = max(
                 report.reviews,
                 key=lambda r: span_iou(r.clause.span, gold_span),

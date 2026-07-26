@@ -1,4 +1,7 @@
-"""Integration tests for ``/contracts/review`` and ``/contracts/{id}/override``.
+"""Integration tests for the ``/contracts`` endpoints.
+
+Covers ``/review``, the history reads (``GET /contracts`` and
+``GET /contracts/{id}``) and ``/{id}/override``.
 
 The LLM/RAG pipeline (``Orchestrator``) and the contract/report repos are
 replaced with fast in-process fakes rather than a real Gemini + Redis, and
@@ -21,7 +24,12 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import Session, sessionmaker
 from sqlalchemy.pool import StaticPool
 
-from app.dependencies import get_current_user, get_override_service, get_review_service
+from app.dependencies import (
+    get_current_user,
+    get_override_service,
+    get_report_service,
+    get_review_service,
+)
 from app.main import create_app
 from app.models import AuditOverride, Base, User
 from app.parsers import ParsedDocument
@@ -38,6 +46,7 @@ from app.schemas import (
     Span,
 )
 from app.services.override import OverrideService
+from app.services.report import ReportService
 from app.services.review import ReviewService
 
 _DOCX_CONTENT_TYPE = "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
@@ -46,9 +55,15 @@ _DOCX_CONTENT_TYPE = "application/vnd.openxmlformats-officedocument.wordprocessi
 class _FakeOrchestrator:
     """Stands in for the real segment -> classify -> match -> score -> judge pipeline."""
 
+    def __init__(self) -> None:
+        # Report ids have to differ across uploads or the history tests would
+        # be asserting against one report saved twice.
+        self._count = 0
+
     def review(
         self, document: ParsedDocument, *, contract_id: str, session_id: str
     ) -> ContractReviewReport:
+        self._count += 1
         clause = Clause(
             id="clause-1",
             text="Either party may terminate this agreement for convenience.",
@@ -62,7 +77,7 @@ class _FakeOrchestrator:
             verified=True,
         )
         return ContractReviewReport(
-            report_id="report-1",
+            report_id=f"report-{self._count}",
             contract_id=contract_id,
             session_id=session_id,
             overall_risk=RiskLevel.MEDIUM,
@@ -108,12 +123,18 @@ def client(audit_db_session: Session, current_user: User) -> TestClient:
     reports = InMemoryReportRepository()
     review_service = ReviewService(_FakeOrchestrator(), InMemoryContractRepository(), reports)
     override_service = OverrideService(reports, AuditRepository(audit_db_session))
+    report_service = ReportService(reports)
 
     app.dependency_overrides[get_current_user] = lambda: current_user
     app.dependency_overrides[get_review_service] = lambda: review_service
     app.dependency_overrides[get_override_service] = lambda: override_service
+    app.dependency_overrides[get_report_service] = lambda: report_service
 
-    return TestClient(app)
+    client = TestClient(app)
+    # The repo is shared with the tests so they can plant another session's
+    # report without going through an upload.
+    client.report_repo = reports  # type: ignore[attr-defined]
+    return client
 
 
 def _upload(client: TestClient, *, filename: str = "contract.docx", content: bytes | None = None):
@@ -138,6 +159,8 @@ def test_review_contract_returns_report(client: TestClient) -> None:
     assert body["overall_risk"] == "medium"
     assert len(body["reviews"]) == 1
     assert body["reviews"][0]["clause"]["clause_type"] == "termination"
+    # Carried over from the upload - it's what the history list is labelled with.
+    assert body["filename"] == "contract.docx"
 
 
 def test_review_contract_requires_auth() -> None:
@@ -149,6 +172,93 @@ def test_review_contract_requires_auth() -> None:
 def test_review_contract_rejects_unsupported_file_type(client: TestClient) -> None:
     resp = _upload(client, filename="contract.txt", content=b"hello world")
     assert resp.status_code == 422
+
+
+# --- GET /contracts (history) ------------------------------------------------
+
+
+def test_history_lists_this_session_newest_first(client: TestClient) -> None:
+    _upload(client, filename="first.docx")
+    _upload(client, filename="second.docx")
+
+    resp = client.get("/contracts")
+
+    assert resp.status_code == 200
+    rows = resp.json()
+    assert [row["filename"] for row in rows] == ["second.docx", "first.docx"]
+    # Summaries, not reports: the clause reviews are what GET /{id} is for.
+    assert rows[0]["clause_count"] == 1
+    assert "reviews" not in rows[0]
+    assert rows[0]["overall_risk"] == "medium"
+
+
+def test_history_is_empty_before_any_upload(client: TestClient) -> None:
+    assert client.get("/contracts").json() == []
+
+
+def test_history_excludes_other_sessions(client: TestClient) -> None:
+    _upload(client, filename="mine.docx")
+    client.report_repo.save(  # type: ignore[attr-defined]
+        ContractReviewReport(
+            report_id="someone-elses",
+            contract_id="c",
+            session_id="user-2",
+            filename="theirs.docx",
+        )
+    )
+
+    rows = client.get("/contracts").json()
+
+    assert [row["filename"] for row in rows] == ["mine.docx"]
+
+
+def test_history_requires_auth() -> None:
+    assert TestClient(create_app()).get("/contracts").status_code == 401
+
+
+# --- GET /contracts/{report_id} ----------------------------------------------
+
+
+def test_get_report_returns_the_full_report(client: TestClient) -> None:
+    report_id = _upload(client).json()["report_id"]
+
+    resp = client.get(f"/contracts/{report_id}")
+
+    assert resp.status_code == 200
+    body = resp.json()
+    assert body["report_id"] == report_id
+    assert len(body["reviews"]) == 1
+    assert "session_id" not in body
+
+
+def test_get_report_survives_an_override(client: TestClient) -> None:
+    report = _upload(client).json()
+    client.post(
+        f"/contracts/{report['report_id']}/override",
+        json={"clause_id": "clause-1", "new_risk": "high", "reason": "escalated"},
+    )
+
+    body = client.get(f"/contracts/{report['report_id']}").json()
+
+    assert body["reviews"][0]["risk_level"] == "high"
+    assert body["overall_risk"] == "high"
+
+
+def test_get_unknown_report_is_404(client: TestClient) -> None:
+    assert client.get("/contracts/no-such-report").status_code == 404
+
+
+def test_get_another_sessions_report_is_404(client: TestClient) -> None:
+    """Not 403: a 403 would confirm the id exists, which is the thing to hide."""
+    client.report_repo.save(  # type: ignore[attr-defined]
+        ContractReviewReport(report_id="someone-elses", contract_id="c", session_id="user-2")
+    )
+
+    assert client.get("/contracts/someone-elses").status_code == 404
+
+
+def test_get_report_requires_auth() -> None:
+    assert TestClient(create_app()).get("/contracts/report-1").status_code == 401
 
 
 # --- POST /contracts/{report_id}/override -----------------------------------
@@ -198,6 +308,20 @@ def test_override_unknown_clause_is_404(client: TestClient) -> None:
         f"/contracts/{report['report_id']}/override",
         json={"clause_id": "no-such-clause", "new_risk": "high", "reason": "x"},
     )
+    assert resp.status_code == 404
+
+
+def test_override_another_sessions_report_is_404(client: TestClient) -> None:
+    """An unguessable report id is not access control - the owner is checked."""
+    client.report_repo.save(  # type: ignore[attr-defined]
+        ContractReviewReport(report_id="someone-elses", contract_id="c", session_id="user-2")
+    )
+
+    resp = client.post(
+        "/contracts/someone-elses/override",
+        json={"clause_id": "clause-1", "new_risk": "high", "reason": "x"},
+    )
+
     assert resp.status_code == 404
 
 

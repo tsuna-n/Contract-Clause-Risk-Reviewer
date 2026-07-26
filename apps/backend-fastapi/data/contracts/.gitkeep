@@ -1,1 +1,12 @@
-# Sample contracts live here (8 fixtures). Kept out of git except this marker.
+# Contract fixtures for the evaluation harness.
+#
+# Every .txt here is a real commercial contract from CUAD v1 (the Contract
+# Understanding Atticus Dataset, https://www.atticusprojectai.org/cuad),
+# reproduced verbatim under CC BY 4.0. They are checked in so `run_eval` works
+# without a CUAD checkout; regenerate them with
+#
+#     python -m scripts.build_cuad_fixtures --cuad ~/project/cuad
+#
+# which also rewrites data/gold/annotations.jsonl. Do not edit a .txt by hand:
+# the gold spans are character offsets into its normalized text, so any edit
+# silently invalidates the annotations.

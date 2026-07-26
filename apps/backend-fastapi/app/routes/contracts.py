@@ -1,13 +1,19 @@
-"""Contract review + override endpoints."""
+"""Contract review, history + override endpoints."""
 
 from __future__ import annotations
 
 from fastapi import APIRouter, Depends, UploadFile
 
-from app.dependencies import get_current_user, get_override_service, get_review_service
+from app.dependencies import (
+    get_current_user,
+    get_override_service,
+    get_report_service,
+    get_review_service,
+)
 from app.models import User
-from app.schemas import ContractReviewReport, OverrideRequest
+from app.schemas import ContractReviewReport, OverrideRequest, ReportSummary
 from app.services.override import OverrideService
+from app.services.report import ReportService
 from app.services.review import ReviewService
 
 router = APIRouter(prefix="/contracts", tags=["contracts"])
@@ -38,6 +44,33 @@ async def review_contract(
     )
 
 
+@router.get("", response_model=list[ReportSummary])
+async def list_reports(
+    current_user: User = Depends(get_current_user),
+    service: ReportService = Depends(get_report_service),
+) -> list[ReportSummary]:
+    """List this session's reviews, newest first.
+
+    Summaries, not whole reports: this is what draws the history sidebar, and
+    a list of full reports would be megabytes of clause text nothing renders.
+    """
+    return service.list_history(current_user.id)
+
+
+@router.get(
+    "/{report_id}",
+    response_model=ContractReviewReport,
+    response_model_exclude=_INTERNAL_REPORT_FIELDS,
+)
+async def get_report(
+    report_id: str,
+    current_user: User = Depends(get_current_user),
+    service: ReportService = Depends(get_report_service),
+) -> ContractReviewReport:
+    """Return one stored report in full."""
+    return service.get_report(report_id, session_id=current_user.id)
+
+
 @router.post(
     "/{report_id}/override",
     response_model=ContractReviewReport,
@@ -56,4 +89,5 @@ async def override_clause(
         new_risk=payload.new_risk,
         reason=payload.reason,
         actor=current_user.email,
+        session_id=current_user.id,
     )

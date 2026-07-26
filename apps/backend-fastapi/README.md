@@ -105,11 +105,13 @@ apps/backend-fastapi/
 │       └── prompts/*.jinja     #    prompt templates (classifier / risk_scorer / judge)
 ├── scripts/
 │   ├── ingest_playbook.py      # positions.yaml → embedding → pgvector
+│   ├── build_cuad_fixtures.py  # CUAD v1 → data/contracts + data/gold + data/samples
 │   └── run_eval.py             # รัน evaluation harness ผ่าน CLI
 ├── data/
-│   ├── contracts/              # ข้อความสัญญาตัวอย่าง (sample-001.txt, sample-002.txt)
-│   ├── gold/annotations.jsonl  # ground truth สำหรับวัดผล
-│   └── playbook/positions.yaml # จุดยืน/ภาษามาตรฐานของบริษัท
+│   ├── contracts/              # สัญญาจริงจาก CUAD 12 ฉบับ (.txt) — input ของ eval
+│   ├── samples/                # 3 ฉบับในนั้นแปลงเป็น .docx ไว้ลองอัปโหลดที่ UI
+│   ├── gold/annotations.jsonl  # ground truth สำหรับวัดผล (span + clause_type + risk)
+│   └── playbook/positions.yaml # จุดยืน/ภาษามาตรฐานของบริษัท (36 ตำแหน่ง ครบ 12 clause type)
 └── tests/
     ├── unit/                   # guardrails, parsers, segmenter, metrics, timeouts
     ├── integration/            # health, auth, contracts API
@@ -161,7 +163,16 @@ judge บอกว่า ungrounded, และ isolate failure ต่อ clause 
   token ที่ใช้ดึงมัน (override ต้องโหลด report ด้วย id ก่อน)
 - **Evaluation harness** — `run_eval` รันทั้ง pipeline จริงต่อ gold contract, คำนวณ
   segmentation F1 / classification accuracy / risk accuracy / citation validity;
-  `data/contracts/sample-00{1,2}.txt` สร้างให้ตรงกับ offset ใน `data/gold/annotations.jsonl` แล้ว
+  fixture ทั้งหมดสร้างด้วย `scripts.build_cuad_fixtures` จึงตรงกับ offset ของ
+  `normalize()` และขอบเขต clause ที่ `Segmenter` ผลิตจริงเสมอ — **รันสคริปต์ใหม่ทุกครั้งที่แก้
+  segmenter หรือ normalizer**
+- **gold clause ที่ไม่มี `clause_type`** — CUAD annotate แค่ 41 หมวด ครอบไม่ครบ taxonomy 12 ตัว
+  (ไม่มี confidentiality / force majeure) clause ที่ CUAD ไม่ได้ทำ label จึงถูกเขียนลง gold
+  แบบมีแค่ `span` `run_eval` จะนับให้ในส่วน segmentation แต่ข้ามในส่วน classification/risk —
+  ถ้าเดา label เองจะกลายเป็นวัด pipeline เทียบกับการเดา
+- **`risk_level` ใน gold เป็น policy ไม่ใช่ข้อมูล** — CUAD บอกได้แค่ว่า clause นี้ *เป็น* liability cap
+  ไม่ได้บอกว่ารับได้หรือไม่ ตาราง `CATEGORY_RISK` ใน `build_cuad_fixtures.py` คือ risk appetite
+  ที่ playbook ยึด แก้ที่ไหนต้องแก้อีกที่ให้ตรงกัน
 - **App factory + entrypoint** `app.main:app` — boot ได้, CORS + `SessionMiddleware` (สำหรับ OAuth),
   DomainError → JSON response ผ่าน `register_exception_handlers`
 - **Health endpoints** — `GET /`, `GET /health`, `GET /health/db`
@@ -282,15 +293,39 @@ docker compose -f ../../infrastructure/docker-compose.yml up -d   # postgres + r
 python -m scripts.run_eval          # data/gold/annotations.jsonl -> metrics report
 ```
 
+> ⚠️ gold set มี 327 clause และ pipeline ยิง LLM ราว 4 ครั้งต่อ clause — เต็มชุดคือ ~1,300 request
+> ลองน้อย ๆ ก่อนด้วย `POST /evaluate` แล้วส่ง `limit` (จำนวน**สัญญา** ไม่ใช่ clause)
+
+### สร้าง data fixtures ใหม่จาก CUAD
+```bash
+python -m scripts.build_cuad_fixtures --cuad ~/project/cuad
+```
+เขียนทับ `data/contracts/`, `data/gold/annotations.jsonl` และ `data/samples/` — ต้องรันใหม่
+ทุกครั้งที่แก้ `Segmenter` หรือ `normalize()` เพราะ gold span ผูกกับผลลัพธ์ของสองอย่างนั้น
+
 ---
 
 ## ข้อมูล (Data fixtures)
 
 | ไฟล์ | คำอธิบาย |
 |------|----------|
-| `data/playbook/positions.yaml` | จุดยืน/ภาษามาตรฐานของบริษัท (preferred/fallback + `risk_if_absent`) |
-| `data/gold/annotations.jsonl` | gold set สำหรับ evaluation harness |
-| `data/contracts/sample-00{1,2}.txt` | ข้อความสัญญาตัวอย่าง ตรงกับ offset ใน gold annotations |
+| `data/playbook/positions.yaml` | จุดยืน/ภาษามาตรฐานของบริษัท 36 ตำแหน่ง ครบทั้ง 12 clause type (preferred/fallback + `risk_if_absent`) — เขียนด้วยมือ อ้างอิงหมวดรีวิว 41 หมวดของ CUAD |
+| `data/contracts/*.txt` | สัญญาการค้าจริง 12 ฉบับจาก CUAD v1 (คัดโดยสคริปต์ ไม่ได้เลือกด้วยมือ) |
+| `data/gold/annotations.jsonl` | gold set: 327 clause span, 91 clause มี `clause_type`/`risk_level` จาก annotation ของ CUAD |
+| `data/samples/*.docx` | 3 ฉบับที่สั้นที่สุดแปลงเป็น `.docx` — เอาไว้ลากใส่หน้าอัปโหลดเพื่อทดสอบ |
+
+ทั้งสามอย่างหลังสร้างใหม่ได้ด้วย:
+
+```bash
+python -m scripts.build_cuad_fixtures --cuad ~/project/cuad   # ต้องมี data.zip ของ CUAD
+```
+
+> ข้อความสัญญามาจาก [CUAD v1](https://www.atticusprojectai.org/cuad) (The Atticus Project,
+> CC BY 4.0) — คัดตามเกณฑ์ในสคริปต์: ยาว 8k–20k ตัวอักษร, มีหัวข้อแบบเลขข้อ ≥ 8 หัวข้อ,
+> มี annotation ≥ 8 หมวด แล้วเลือกแบบ greedy ให้ครอบ clause type ได้กว้างที่สุด
+>
+> **ห้ามแก้ `.txt` ด้วยมือ** — gold span เป็น character offset ของข้อความหลัง `normalize()`
+> แก้ตัวอักษรเดียวก็ทำให้ annotation เพี้ยนทั้งไฟล์โดยไม่มีอะไรเตือน
 
 ---
 
@@ -306,7 +341,10 @@ python -m scripts.run_eval          # data/gold/annotations.jsonl -> metrics rep
 | GET | `/auth/me` | ✅ |
 | POST | `/auth/logout` | ✅ |
 | POST | `/contracts/review` | ✅ ต้อง auth (Bearer JWT); automated test (mocked LLM) + ทดสอบ live กับ Gemini จริงแล้ว |
-| POST | `/contracts/{report_id}/override` | ✅ ต้อง auth (Bearer JWT); automated test (mocked LLM) + ทดสอบกับ DB จริงแล้ว |
+| GET | `/contracts` | ✅ ต้อง auth; คืน `ReportSummary` ของ session ตัวเอง เรียงใหม่→เก่า |
+| GET | `/contracts/{report_id}` | ✅ ต้อง auth; ของ session อื่น → `404` (ไม่ใช่ `403` เพราะ `403` = ยืนยันว่า id นี้มีอยู่จริง) |
+| POST | `/contracts/{report_id}/override` | ✅ ต้อง auth; ตรวจเจ้าของ report ด้วย; automated test (mocked LLM) + ทดสอบกับ DB จริงแล้ว |
+| GET | `/playbook` · `POST /playbook` · `GET/PUT/DELETE /playbook/{id}` | ✅ CRUD ครบ |
 | GET | `/playbook/search` | ✅ |
 | POST | `/evaluate` | ✅ |
 

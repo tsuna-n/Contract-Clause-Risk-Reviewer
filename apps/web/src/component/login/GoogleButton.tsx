@@ -1,6 +1,8 @@
 interface GoogleButtonProps {
   onClick?: () => void;
   isLoading?: boolean;
+  /** Google can't complete the flow from here (see isGoogleLoginAvailable). */
+  disabled?: boolean;
 }
 
 function GoogleIcon() {
@@ -37,14 +39,21 @@ function GoogleIcon() {
 export default function GoogleButton({
   onClick,
   isLoading = false,
+  disabled = false,
 }: GoogleButtonProps) {
+  const inert = isLoading || disabled;
   return (
     <button
       id="google-signin-btn"
       type="button"
-      disabled={isLoading}
+      disabled={inert}
       onClick={onClick}
       aria-label="Continue with Google"
+      title={
+        disabled
+          ? "Unavailable from this address — Google requires localhost or HTTPS"
+          : undefined
+      }
       className={[
         "group relative flex w-full items-center justify-center gap-3",
         "rounded-xl border border-white/10 bg-white/5 px-6 py-3.5",
@@ -54,7 +63,7 @@ export default function GoogleButton({
         "hover:-translate-y-0.5 hover:shadow-lg hover:shadow-black/50",
         "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/20 focus-visible:ring-offset-2 focus-visible:ring-offset-black",
         "active:translate-y-0 active:shadow-none",
-        isLoading ? "cursor-not-allowed opacity-50" : "",
+        inert ? "cursor-not-allowed opacity-50" : "",
       ]
         .filter(Boolean)
         .join(" ")}

@@ -60,5 +60,8 @@ class ReviewService:
             # Raw contract text isn't retained beyond producing the report.
             self.contracts.delete(contract_id)
 
+        # Set here rather than in the orchestrator: the pipeline sees a parsed
+        # document, and the filename belongs to the upload that carried it.
+        report.filename = filename
         self.reports.save(report)
         return report

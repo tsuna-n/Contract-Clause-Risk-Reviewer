@@ -1,5 +1,10 @@
 import { apiFetch } from "./api";
-import type { ClauseView, ContractReport, RiskLevel } from "../component/contract/types";
+import type {
+  ClauseView,
+  ContractReport,
+  ReportSummary,
+  RiskLevel,
+} from "../component/contract/types";
 
 // ── Backend DTOs ───────────────────────────────────────────────────────────────
 // These mirror apps/backend-fastapi/app/schemas.py exactly, snake_case and
@@ -66,11 +71,23 @@ interface BackendRiskSummary {
 export interface BackendContractReviewReport {
   report_id: string;
   contract_id: string;
+  filename: string;
   created_at: string;
   overall_risk: BackendRiskLevel;
   summary: BackendRiskSummary;
   reviews: BackendClauseReview[];
   disclaimer: string;
+}
+
+/** Matches `ReportSummary` in app/schemas.py — a history row, no clause detail. */
+interface BackendReportSummary {
+  report_id: string;
+  contract_id: string;
+  filename: string;
+  created_at: string;
+  overall_risk: BackendRiskLevel;
+  summary: BackendRiskSummary;
+  clause_count: number;
 }
 
 // ── Mapping: backend DTO -> view model ─────────────────────────────────────────
@@ -166,11 +183,24 @@ export function toContractReport(report: BackendContractReviewReport): ContractR
   return {
     reportId: report.report_id,
     contractId: report.contract_id,
+    filename: report.filename,
     createdAt: report.created_at,
     overallRisk: toRiskLevel(report.overall_risk),
     summary: report.summary,
     disclaimer: report.disclaimer,
     clauses: report.reviews.map(toClauseView),
+  };
+}
+
+function toReportSummary(row: BackendReportSummary): ReportSummary {
+  return {
+    reportId: row.report_id,
+    contractId: row.contract_id,
+    filename: row.filename,
+    createdAt: row.created_at,
+    overallRisk: toRiskLevel(row.overall_risk),
+    summary: row.summary,
+    clauseCount: row.clause_count,
   };
 }
 
@@ -216,6 +246,30 @@ export async function reviewContract(
     signal,
     timeoutMs: REVIEW_TIMEOUT_MS,
   });
+  return toContractReport(report);
+}
+
+/**
+ * This session's past reviews, newest first.
+ *
+ * Reports live in Redis under the retention TTL, so this is "recent history",
+ * not an archive — a review the backend has already dropped is gone, and the
+ * list simply comes back shorter.
+ */
+export async function fetchReportHistory(signal?: AbortSignal): Promise<ReportSummary[]> {
+  const rows = await apiFetch<BackendReportSummary[]>("/contracts", { signal });
+  return rows.map(toReportSummary);
+}
+
+/** Load one stored report in full, by id. */
+export async function fetchReport(
+  reportId: string,
+  signal?: AbortSignal
+): Promise<ContractReport> {
+  const report = await apiFetch<BackendContractReviewReport>(
+    `/contracts/${encodeURIComponent(reportId)}`,
+    { signal }
+  );
   return toContractReport(report);
 }
 

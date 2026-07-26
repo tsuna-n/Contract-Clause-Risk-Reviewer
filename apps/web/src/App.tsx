@@ -78,14 +78,8 @@ const router = createBrowserRouter([
     ),
   },
   {
-    path: "/chat",
-    element: (
-      <RequireAuth>
-        <Chat />
-      </RequireAuth>
-    ),
-  },
-  {
+    // The signed-in home: review history on the left, upload or the selected
+    // report on the right.
     path: "/manual",
     element: (
       <RequireAuth>
@@ -93,14 +87,11 @@ const router = createBrowserRouter([
       </RequireAuth>
     ),
   },
-  {
-    path: "/layout/chat-layout",
-    element: (
-      <RequireAuth>
-        <Chat />
-      </RequireAuth>
-    ),
-  },
+  // Earlier names for the same screen. Redirects rather than three routes
+  // rendering one component, so there is a single URL to link to and old
+  // bookmarks still land somewhere.
+  { path: "/chat", element: <Navigate to="/manual" replace /> },
+  { path: "/layout/chat-layout", element: <Navigate to="/manual" replace /> },
 ]);
 
 export default function App() {

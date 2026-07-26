@@ -1,37 +1,616 @@
-# Company playbook positions (sample). Real deployment targets ~30 positions.
+# Company playbook: the position we take on each kind of clause.
+#
+# This is the retrieval corpus. A clause is embedded, matched against these
+# positions, and the winning position is what the risk score has to be argued
+# from - so a clause type with no position here can only ever come back
+# unsupported.
+#
+# The clause types come from ClauseType in app/schemas.py; the *coverage* is
+# modelled on CUAD's 41 review categories (see scripts/build_cuad_fixtures.py),
+# which is what real contract reviewers actually flag. All twelve types have at
+# least one position, including the four CUAD does not annotate
+# (confidentiality, indemnification, data protection, force majeure) - those
+# clauses turn up in contracts whether or not the benchmark labels them.
+#
+# Two fields carry hard requirements:
+#
+#   preferred_language  what we ask for. The judge checks that a rationale's
+#                       quoted excerpt actually appears in this text, so it has
+#                       to read as real clause wording, not a summary.
+#   fallback_language   what we will accept instead. The no-invented-fallback
+#                       guardrail only lets the model suggest a fallback that
+#                       matches one of these *verbatim*, so each one must be a
+#                       complete, droppable-in clause.
+#
+# risk_if_absent is the risk carried by a contract with no clause meeting this
+# position. It mirrors CATEGORY_RISK in scripts/build_cuad_fixtures.py; change
+# the two together or the gold set and the playbook will disagree.
+
 positions:
+  # --- limitation of liability ------------------------------------------------
   - id: liability-cap-fees
     clause_type: limitation_of_liability
     title: Liability capped at fees paid
     preferred_language: >-
-      Each party's total liability shall not exceed the fees paid under this
-      Agreement in the twelve (12) months preceding the claim.
+      Each party's total aggregate liability arising out of or related to this
+      Agreement shall not exceed the fees paid or payable under this Agreement
+      in the twelve (12) months preceding the event giving rise to the claim.
     fallback_language: >-
-      Each party's total liability shall not exceed two times (2x) the fees
-      paid under this Agreement in the twelve (12) months preceding the claim.
+      Each party's total aggregate liability arising out of or related to this
+      Agreement shall not exceed two times (2x) the fees paid or payable under
+      this Agreement in the twelve (12) months preceding the event giving rise
+      to the claim.
     risk_if_absent: high
-    tags: [liability, cap]
+    tags: [liability, cap, cuad-cap-on-liability]
 
+  - id: liability-uncapped-carve-outs
+    clause_type: limitation_of_liability
+    title: Uncapped liability limited to named carve-outs
+    preferred_language: >-
+      The limitations of liability in this Agreement shall not apply to a
+      party's indemnification obligations, breach of confidentiality, or
+      liability arising from its fraud, gross negligence or willful misconduct.
+      No other exclusion from the cap applies.
+    fallback_language: >-
+      The limitations of liability in this Agreement shall not apply to a
+      party's indemnification obligations, breach of confidentiality,
+      infringement of the other party's intellectual property, or liability
+      arising from its fraud, gross negligence or willful misconduct.
+    risk_if_absent: high
+    tags: [liability, carve-out, cuad-uncapped-liability]
+
+  - id: liability-no-consequential-damages
+    clause_type: limitation_of_liability
+    title: Mutual exclusion of consequential damages
+    preferred_language: >-
+      Neither party shall be liable for any indirect, incidental, special,
+      consequential or punitive damages, or for any loss of profits, revenue,
+      goodwill or data, however caused and regardless of the theory of
+      liability, even if advised of the possibility of such damages.
+    fallback_language: >-
+      Neither party shall be liable for any indirect, incidental, special,
+      consequential or punitive damages, or for any loss of profits, revenue,
+      goodwill or data, except in respect of amounts payable to a third party
+      under an indemnity given in this Agreement.
+    risk_if_absent: high
+    tags: [liability, consequential-damages]
+
+  - id: liquidated-damages-none
+    clause_type: limitation_of_liability
+    title: No liquidated damages or termination fee
+    preferred_language: >-
+      Neither party shall owe liquidated damages, a termination fee, or any
+      other pre-agreed sum on termination or expiry of this Agreement; each
+      party's remedy for breach is limited to its actual proven damages,
+      subject to the limitations of liability in this Agreement.
+    fallback_language: >-
+      Any liquidated damages or termination fee payable under this Agreement
+      shall be a genuine pre-estimate of loss, shall not exceed the fees paid
+      in the three (3) months preceding termination, and shall be the paying
+      party's sole liability for the terminated obligations.
+    risk_if_absent: high
+    tags: [liability, liquidated-damages, cuad-liquidated-damages]
+
+  # --- indemnification --------------------------------------------------------
   - id: mutual-indemnity
     clause_type: indemnification
     title: Mutual, capped indemnity
     preferred_language: >-
-      Each party shall indemnify the other for third-party claims arising from
-      its own breach or negligence, subject to the liability cap.
+      Each party shall defend, indemnify and hold harmless the other party
+      against third-party claims to the extent arising from its own breach of
+      this Agreement or its negligence, subject to the limitations of liability
+      set out in this Agreement.
     fallback_language: >-
-      Each party shall indemnify the other for third-party claims arising from
-      its own gross negligence or willful misconduct.
+      Each party shall defend, indemnify and hold harmless the other party
+      against third-party claims to the extent arising from its own gross
+      negligence or willful misconduct, subject to the limitations of liability
+      set out in this Agreement.
     risk_if_absent: medium
-    tags: [indemnity]
+    tags: [indemnity, mutual]
 
+  - id: ip-infringement-indemnity
+    clause_type: indemnification
+    title: Supplier indemnifies for IP infringement
+    preferred_language: >-
+      Supplier shall defend and indemnify Customer against any third-party
+      claim alleging that the Services or Deliverables infringe that third
+      party's intellectual property rights, and shall pay any damages finally
+      awarded or agreed in settlement.
+    fallback_language: >-
+      Supplier shall defend Customer against any third-party claim alleging
+      that the Services or Deliverables infringe that third party's
+      intellectual property rights, and shall at its option procure the right
+      to continue using the affected item, modify it so it is non-infringing,
+      or refund the fees paid for it.
+    risk_if_absent: medium
+    tags: [indemnity, ip-infringement]
+
+  # --- termination ------------------------------------------------------------
   - id: termination-for-convenience
     clause_type: termination
     title: Termination for convenience with notice
     preferred_language: >-
-      Either party may terminate for convenience upon thirty (30) days' prior
-      written notice.
+      Either party may terminate this Agreement for convenience upon thirty
+      (30) days' prior written notice to the other party, without penalty or
+      further liability other than for amounts accrued prior to the effective
+      date of termination.
     fallback_language: >-
-      Either party may terminate for convenience upon sixty (60) days' prior
-      written notice.
+      Either party may terminate this Agreement for convenience upon sixty (60)
+      days' prior written notice to the other party, without penalty or further
+      liability other than for amounts accrued prior to the effective date of
+      termination.
     risk_if_absent: medium
-    tags: [termination]
+    tags: [termination, notice, cuad-termination-for-convenience]
+
+  - id: termination-for-cause-cure
+    clause_type: termination
+    title: Termination for cause after a cure period
+    preferred_language: >-
+      Either party may terminate this Agreement for cause if the other party
+      materially breaches it and fails to cure that breach within thirty (30)
+      days after receiving written notice describing the breach in reasonable
+      detail.
+    fallback_language: >-
+      Either party may terminate this Agreement for cause if the other party
+      materially breaches it and fails to cure that breach within forty-five
+      (45) days after receiving written notice describing the breach in
+      reasonable detail.
+    risk_if_absent: medium
+    tags: [termination, cure-period]
+
+  - id: renewal-opt-in
+    clause_type: termination
+    title: Renewal is opt-in, not automatic
+    preferred_language: >-
+      This Agreement expires at the end of the Initial Term and shall renew
+      only if both parties agree in writing to renew it. Any renewal term shall
+      not exceed twelve (12) months.
+    fallback_language: >-
+      This Agreement shall renew for successive twelve (12) month terms unless
+      either party gives written notice of non-renewal at least thirty (30)
+      days before the end of the then-current term, and the fees for any
+      renewal term shall not increase by more than five percent (5%).
+    risk_if_absent: medium
+    tags: [termination, renewal, cuad-renewal-term]
+
+  - id: post-termination-wind-down
+    clause_type: termination
+    title: Bounded post-termination obligations
+    preferred_language: >-
+      On termination or expiry, each party's obligations cease except for those
+      that expressly survive. Supplier shall provide reasonable transition
+      assistance for up to sixty (60) days at its then-current rates, and shall
+      return or delete the other party's data on request.
+    fallback_language: >-
+      On termination or expiry, Supplier shall provide reasonable transition
+      assistance for up to ninety (90) days at its then-current rates, and
+      shall return or delete the other party's data on request. No other
+      post-termination obligation applies.
+    risk_if_absent: medium
+    tags: [termination, transition, cuad-post-termination-services]
+
+  # --- confidentiality --------------------------------------------------------
+  - id: confidentiality-mutual
+    clause_type: confidentiality
+    title: Mutual confidentiality with standard exclusions
+    preferred_language: >-
+      Each party shall keep the other party's Confidential Information
+      confidential, use it only to perform this Agreement, and protect it with
+      at least the care it uses for its own confidential information. These
+      obligations do not apply to information that is or becomes public through
+      no fault of the receiving party, was already known to it, or is
+      independently developed by it.
+    fallback_language: >-
+      Each party shall keep the other party's Confidential Information
+      confidential and use it only to perform this Agreement, provided that a
+      party may disclose Confidential Information to the extent required by law
+      or court order after giving the other party prompt notice and a
+      reasonable opportunity to seek protective relief.
+    risk_if_absent: high
+    tags: [confidentiality, mutual]
+
+  - id: confidentiality-term
+    clause_type: confidentiality
+    title: Confidentiality survives for a fixed period
+    preferred_language: >-
+      The confidentiality obligations in this Agreement survive for three (3)
+      years after termination or expiry, and indefinitely with respect to trade
+      secrets for so long as they remain trade secrets under applicable law.
+    fallback_language: >-
+      The confidentiality obligations in this Agreement survive for five (5)
+      years after termination or expiry, and indefinitely with respect to trade
+      secrets for so long as they remain trade secrets under applicable law.
+    risk_if_absent: medium
+    tags: [confidentiality, survival]
+
+  # --- intellectual property --------------------------------------------------
+  - id: ip-each-party-keeps-its-own
+    clause_type: intellectual_property
+    title: Each party retains its background IP
+    preferred_language: >-
+      Each party retains all right, title and interest in the intellectual
+      property it owned before this Agreement or develops independently of it.
+      Nothing in this Agreement transfers ownership of a party's intellectual
+      property to the other party.
+    fallback_language: >-
+      Each party retains all right, title and interest in the intellectual
+      property it owned before this Agreement or develops independently of it.
+      Ownership of intellectual property created specifically for Customer
+      under a Statement of Work transfers to Customer on payment in full.
+    risk_if_absent: high
+    tags: [ip, ownership, cuad-ip-ownership-assignment]
+
+  - id: ip-no-joint-ownership
+    clause_type: intellectual_property
+    title: No joint ownership of intellectual property
+    preferred_language: >-
+      The parties shall not jointly own any intellectual property under this
+      Agreement. Any jointly developed work product shall be owned by the party
+      that contributed the underlying background intellectual property, with a
+      licence granted to the other party as set out in this Agreement.
+    fallback_language: >-
+      Where the parties jointly develop intellectual property, each party owns
+      an undivided interest in it and may exploit and licence it without
+      accounting to or obtaining the consent of the other party.
+    risk_if_absent: high
+    tags: [ip, joint-ownership, cuad-joint-ip-ownership]
+
+  - id: licence-scope-limited
+    clause_type: intellectual_property
+    title: Licence grant is limited, revocable and non-transferable
+    preferred_language: >-
+      Supplier grants Customer a non-exclusive, non-transferable,
+      non-sublicensable licence to use the Services during the Term solely for
+      Customer's internal business purposes. The licence terminates
+      automatically on expiry or termination of this Agreement.
+    fallback_language: >-
+      Supplier grants Customer a non-exclusive, non-transferable licence to use
+      the Services during the Term for the internal business purposes of
+      Customer and its Affiliates, sublicensable only to a subcontractor acting
+      on Customer's behalf and bound by equivalent terms. The licence
+      terminates automatically on expiry or termination of this Agreement.
+    risk_if_absent: medium
+    tags: [ip, licence, cuad-license-grant, cuad-non-transferable-license]
+
+  - id: licence-not-perpetual
+    clause_type: intellectual_property
+    title: No perpetual, irrevocable or unlimited licence
+    preferred_language: >-
+      No licence granted under this Agreement is perpetual, irrevocable, or
+      unlimited in volume, territory or field of use. Each licence is
+      co-terminous with this Agreement and bounded by the metrics stated in the
+      applicable Order Form.
+    fallback_language: >-
+      A licence granted under this Agreement may survive termination only for
+      Deliverables already paid for in full, is limited to the volume,
+      territory and field of use stated in the applicable Order Form, and
+      remains revocable on Customer's material breach.
+    risk_if_absent: high
+    tags: [ip, licence, cuad-irrevocable-or-perpetual-license]
+
+  - id: source-code-escrow
+    clause_type: intellectual_property
+    title: Source code escrow on insolvency
+    preferred_language: >-
+      Supplier shall deposit the source code for the Services with a reputable
+      third-party escrow agent and keep it current. The source code shall be
+      released to Customer if Supplier becomes insolvent, ceases to support the
+      Services, or materially breaches its support obligations and fails to
+      cure.
+    fallback_language: >-
+      Supplier shall, on Customer's written request and at Customer's cost,
+      deposit the source code for the Services with a reputable third-party
+      escrow agent, releasable to Customer if Supplier becomes insolvent or
+      ceases to support the Services.
+    risk_if_absent: low
+    tags: [ip, escrow, cuad-source-code-escrow]
+
+  # --- payment terms ----------------------------------------------------------
+  - id: payment-net-30
+    clause_type: payment_terms
+    title: Net 30 payment on undisputed invoices
+    preferred_language: >-
+      Customer shall pay all undisputed invoices within thirty (30) days of
+      receipt. Customer may withhold any amount it disputes in good faith,
+      provided it notifies Supplier of the basis for the dispute before the due
+      date.
+    fallback_language: >-
+      Customer shall pay all undisputed invoices within forty-five (45) days of
+      receipt. Customer may withhold any amount it disputes in good faith,
+      provided it notifies Supplier of the basis for the dispute before the due
+      date.
+    risk_if_absent: medium
+    tags: [payment, invoicing]
+
+  - id: price-increase-capped
+    clause_type: payment_terms
+    title: Price increases capped and noticed in advance
+    preferred_language: >-
+      Fees are fixed for the Initial Term. Supplier may increase fees for a
+      renewal term by no more than five percent (5%) over the fees for the
+      preceding term, on at least sixty (60) days' prior written notice.
+    fallback_language: >-
+      Fees are fixed for the Initial Term. Supplier may increase fees for a
+      renewal term by no more than the increase in the consumer price index
+      over the preceding term, on at least sixty (60) days' prior written
+      notice.
+    risk_if_absent: medium
+    tags: [payment, pricing, cuad-price-restrictions]
+
+  - id: no-minimum-commitment
+    clause_type: payment_terms
+    title: No minimum purchase or volume commitment
+    preferred_language: >-
+      Customer is under no obligation to purchase any minimum quantity, value
+      or share of its requirements under this Agreement, and shall pay only for
+      the Services it actually orders.
+    fallback_language: >-
+      Any minimum purchase commitment under this Agreement shall be stated in
+      the applicable Order Form, shall not exceed the amount Customer committed
+      to in writing, and Customer's sole liability for a shortfall shall be to
+      pay the difference between the committed and the actual volume.
+    risk_if_absent: high
+    tags: [payment, commitment, cuad-minimum-commitment]
+
+  - id: no-most-favoured-nation
+    clause_type: payment_terms
+    title: No most-favoured-nation pricing obligation
+    preferred_language: >-
+      Neither party is obliged to offer the other the best terms it offers to
+      any third party, and neither party is required to disclose or match the
+      pricing, terms or conditions it agrees with any third party.
+    fallback_language: >-
+      If Supplier offers a third party materially better pricing for
+      substantially the same services in substantially the same volumes,
+      Supplier shall on Customer's written request extend those prices to
+      Customer prospectively for the remainder of the then-current term.
+    risk_if_absent: high
+    tags: [payment, mfn, cuad-most-favored-nation]
+
+  - id: revenue-share-defined
+    clause_type: payment_terms
+    title: Revenue share is defined, capped and auditable
+    preferred_language: >-
+      Any revenue or profit share payable under this Agreement shall be
+      calculated on net revenue actually received, at the percentage stated in
+      the Order Form, and shall be payable within thirty (30) days of the end
+      of each calendar quarter together with a statement showing the
+      calculation.
+    fallback_language: >-
+      Any revenue or profit share payable under this Agreement shall be
+      calculated on gross revenue actually received, at the percentage stated
+      in the Order Form, and shall be payable within forty-five (45) days of
+      the end of each calendar quarter together with a statement showing the
+      calculation.
+    risk_if_absent: medium
+    tags: [payment, revenue-share, cuad-revenue-profit-sharing]
+
+  # --- warranty ---------------------------------------------------------------
+  - id: warranty-services-12-months
+    clause_type: warranty
+    title: Twelve-month warranty against defects
+    preferred_language: >-
+      Supplier warrants that the Services will conform in all material respects
+      to the applicable specification for twelve (12) months from delivery, and
+      shall at its cost re-perform or correct any non-conforming Services
+      reported within that period.
+    fallback_language: >-
+      Supplier warrants that the Services will conform in all material respects
+      to the applicable specification for ninety (90) days from delivery, and
+      shall at its cost re-perform or correct any non-conforming Services
+      reported within that period.
+    risk_if_absent: medium
+    tags: [warranty, defects, cuad-warranty-duration]
+
+  - id: warranty-compliance-and-authority
+    clause_type: warranty
+    title: Warranty of authority and legal compliance
+    preferred_language: >-
+      Each party warrants that it has full power and authority to enter into
+      this Agreement, and that it will comply with all laws and regulations
+      applicable to its performance under it, including anti-bribery, sanctions
+      and export control laws.
+    fallback_language: >-
+      Each party warrants that it has full power and authority to enter into
+      this Agreement and that its performance will not violate any law or any
+      agreement by which it is bound.
+    risk_if_absent: medium
+    tags: [warranty, compliance, authority]
+
+  # --- non-compete and restrictive covenants ----------------------------------
+  - id: no-exclusivity
+    clause_type: non_compete
+    title: No exclusive dealing commitment
+    preferred_language: >-
+      This Agreement is non-exclusive. Each party remains free to provide to,
+      procure from, or contract with any third party for services of the same
+      or a similar kind, without restriction and without any obligation to the
+      other party.
+    fallback_language: >-
+      Any exclusivity granted under this Agreement is limited to the named
+      products, the named territory and a period of no more than twelve (12)
+      months, and lapses if the exclusive party fails to meet the minimum
+      performance targets stated in the Order Form.
+    risk_if_absent: high
+    tags: [non-compete, exclusivity, cuad-exclusivity]
+
+  - id: non-compete-bounded
+    clause_type: non_compete
+    title: Non-compete bounded in time, territory and scope
+    preferred_language: >-
+      Neither party is restricted from competing with the other or from
+      operating in any geography, business or technology sector during or after
+      the Term.
+    fallback_language: >-
+      Any non-compete obligation under this Agreement shall be limited to
+      twelve (12) months after termination, to the territory in which the
+      restricted party actually performed, and to services that directly
+      compete with those supplied under this Agreement.
+    risk_if_absent: high
+    tags: [non-compete, restrictive-covenant, cuad-non-compete]
+
+  - id: no-solicit-employees-narrow
+    clause_type: non_compete
+    title: Employee non-solicit is narrow and mutual
+    preferred_language: >-
+      During the Term and for twelve (12) months afterwards, neither party
+      shall knowingly solicit for employment any employee of the other party
+      who was directly involved in performing this Agreement. General
+      advertising and responses to it are not solicitation.
+    fallback_language: >-
+      During the Term and for twelve (12) months afterwards, neither party
+      shall knowingly solicit for employment any employee of the other party.
+      General advertising, recruitment agency searches not directed at the
+      other party, and responses to them are not solicitation.
+    risk_if_absent: medium
+    tags: [non-compete, non-solicit, cuad-no-solicit-of-employees]
+
+  - id: no-customer-non-solicit
+    clause_type: non_compete
+    title: No restriction on serving customers
+    preferred_language: >-
+      Neither party is restricted from contracting with, soliciting or serving
+      any customer, partner or supplier of the other party, whether during the
+      Term or afterwards.
+    fallback_language: >-
+      Any restriction on soliciting the other party's customers shall be
+      limited to twelve (12) months after termination and to customers the
+      restricted party was actually introduced to under this Agreement.
+    risk_if_absent: medium
+    tags: [non-compete, non-solicit, cuad-no-solicit-of-customers]
+
+  # --- governing law ----------------------------------------------------------
+  - id: governing-law-and-venue
+    clause_type: governing_law
+    title: Governing law and exclusive venue are named
+    preferred_language: >-
+      This Agreement is governed by the laws of the State of New York, without
+      regard to its conflict of laws rules, and the parties submit to the
+      exclusive jurisdiction of the state and federal courts located in New
+      York County, New York.
+    fallback_language: >-
+      This Agreement is governed by the laws of the State of Delaware, without
+      regard to its conflict of laws rules, and the parties submit to the
+      exclusive jurisdiction of the state and federal courts located in
+      Delaware.
+    risk_if_absent: low
+    tags: [governing-law, venue, cuad-governing-law]
+
+  # --- data protection --------------------------------------------------------
+  - id: data-processing-terms
+    clause_type: data_protection
+    title: Personal data processed only on instruction
+    preferred_language: >-
+      Supplier shall process personal data only on Customer's documented
+      instructions and only as necessary to provide the Services, shall impose
+      equivalent obligations on any sub-processor, and shall not sell or use
+      that personal data for its own purposes.
+    fallback_language: >-
+      Supplier shall process personal data only as necessary to provide the
+      Services and in accordance with the data processing addendum attached to
+      this Agreement, and shall not sell or use that personal data for its own
+      purposes.
+    risk_if_absent: high
+    tags: [data-protection, processing]
+
+  - id: breach-notification-72h
+    clause_type: data_protection
+    title: Security breach notified within 72 hours
+    preferred_language: >-
+      Supplier shall notify Customer without undue delay and in any event
+      within seventy-two (72) hours of becoming aware of any breach of security
+      leading to the accidental or unlawful destruction, loss, alteration or
+      unauthorised disclosure of personal data, and shall cooperate with
+      Customer's investigation.
+    fallback_language: >-
+      Supplier shall notify Customer without undue delay and in any event
+      within five (5) business days of becoming aware of any breach of security
+      affecting personal data, and shall cooperate with Customer's
+      investigation.
+    risk_if_absent: high
+    tags: [data-protection, breach-notification]
+
+  # --- force majeure ----------------------------------------------------------
+  - id: force-majeure-bounded
+    clause_type: force_majeure
+    title: Force majeure excuses performance but not payment
+    preferred_language: >-
+      Neither party is liable for a failure to perform caused by an event
+      beyond its reasonable control, provided it notifies the other party
+      promptly and resumes performance as soon as practicable. Force majeure
+      does not excuse an obligation to pay amounts already due, and either
+      party may terminate if the event continues for more than thirty (30)
+      days.
+    fallback_language: >-
+      Neither party is liable for a failure to perform caused by an event
+      beyond its reasonable control, provided it notifies the other party
+      promptly and resumes performance as soon as practicable. Force majeure
+      does not excuse an obligation to pay amounts already due, and either
+      party may terminate if the event continues for more than sixty (60) days.
+    risk_if_absent: medium
+    tags: [force-majeure, excused-performance]
+
+  # --- other ------------------------------------------------------------------
+  - id: assignment-change-of-control
+    clause_type: other
+    title: Assignment on consent, free on change of control
+    preferred_language: >-
+      Neither party may assign this Agreement without the other party's prior
+      written consent, except that either party may assign it in its entirety,
+      on notice and without consent, to a successor in connection with a
+      merger, acquisition or sale of all or substantially all of its assets.
+    fallback_language: >-
+      Neither party may assign this Agreement without the other party's prior
+      written consent, such consent not to be unreasonably withheld,
+      conditioned or delayed. A change of control is not an assignment for the
+      purposes of this clause.
+    risk_if_absent: medium
+    tags: [assignment, change-of-control, cuad-anti-assignment]
+
+  - id: audit-rights-bounded
+    clause_type: other
+    title: Audit rights limited in frequency and scope
+    preferred_language: >-
+      A party may audit the other party's records relevant to this Agreement no
+      more than once in any twelve (12) month period, on thirty (30) days'
+      prior written notice, during normal business hours, at the auditing
+      party's cost, and subject to the confidentiality obligations in this
+      Agreement.
+    fallback_language: >-
+      A party may audit the other party's records relevant to this Agreement no
+      more than twice in any twelve (12) month period, on fifteen (15) days'
+      prior written notice, during normal business hours, and subject to the
+      confidentiality obligations in this Agreement. The audited party bears
+      the cost only if the audit reveals an underpayment of more than five
+      percent (5%).
+    risk_if_absent: medium
+    tags: [audit, records, cuad-audit-rights]
+
+  - id: insurance-standard-limits
+    clause_type: other
+    title: Insurance at standard commercial limits
+    preferred_language: >-
+      Each party shall maintain, at its own cost, commercial general liability
+      insurance of at least USD 2,000,000 per occurrence and professional
+      liability insurance of at least USD 2,000,000 in the aggregate, and shall
+      provide a certificate of insurance on request.
+    fallback_language: >-
+      Each party shall maintain, at its own cost, commercial general liability
+      insurance of at least USD 1,000,000 per occurrence, and shall provide a
+      certificate of insurance on request.
+    risk_if_absent: medium
+    tags: [insurance, cuad-insurance]
+
+  - id: no-third-party-beneficiaries
+    clause_type: other
+    title: No third-party beneficiaries
+    preferred_language: >-
+      This Agreement is for the benefit of the parties and their permitted
+      successors and assigns only. No other person has any right to enforce any
+      of its terms.
+    fallback_language: >-
+      This Agreement is for the benefit of the parties, their Affiliates, and
+      their permitted successors and assigns only. No other person has any
+      right to enforce any of its terms.
+    risk_if_absent: low
+    tags: [boilerplate, cuad-third-party-beneficiary]

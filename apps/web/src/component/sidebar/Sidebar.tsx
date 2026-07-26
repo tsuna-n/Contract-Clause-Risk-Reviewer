@@ -1,19 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-
-export interface Infro {
-  id: string;
-  title: string;
-  detail: string;
-  createdAt: string;
-  updatedAt: string;
-  status: string;
-  contractId: string;
-  category: string;
-  participants: string[];
-  messageCount: number;
-  tags: string[];
-}
+import type { ReportSummary } from '../contract/types';
+import { riskAccent, riskBadge } from '../contract/riskStyles';
 
 export interface SidebarUser {
   isLoggedIn: boolean;
@@ -26,8 +14,17 @@ export interface SidebarUser {
 }
 
 interface SidebarProps {
-  onNewChat?: () => void;
-  onSelectChat?: (infro: Infro) => void;
+  /** ประวัติการรีวิวจริงจาก GET /contracts (ใหม่สุดอยู่บน) */
+  reports: ReportSummary[];
+  /** ยังโหลดประวัติไม่เสร็จ — ต่างจาก "โหลดเสร็จแล้วแต่ไม่มีเรื่อง" */
+  loading?: boolean;
+  /** โหลดประวัติไม่สำเร็จ; ข้อความพร้อมแสดง */
+  error?: string | null;
+  /** report ที่เลือกอยู่ตอนนี้ ใช้ไฮไลต์รายการ */
+  selectedReportId?: string | null;
+  onNewReview?: () => void;
+  onSelectReport?: (report: ReportSummary) => void;
+  onRetry?: () => void;
   user?: SidebarUser;
   onLogout?: () => void;
 }
@@ -38,74 +35,36 @@ function initialOf(name?: string, email?: string) {
   return source ? source[0]!.toUpperCase() : '?';
 }
 
-const infroData: Infro[] = [{
-    "id": "chat_001",
-    "title": "สอบถามเงื่อนไขสัญญาเช่าอาคารสำนักงาน",
-    "detail": "ลูกค้าต้องการทราบเงื่อนไขการต่อสัญญาเช่าและอัตราค่าเช่าที่ปรับเพิ่มขึ้นในปีที่ 3",
-    "createdAt": "2026-07-20T09:15:00+07:00",
-    "updatedAt": "2026-07-20T09:40:00+07:00",
-    "status": "resolved",
-    "contractId": "CT-2026-0087",
-    "category": "lease",
-    "participants": ["user_123", "agent_45"],
-    "messageCount": 12,
-    "tags": ["ต่อสัญญา", "อัตราค่าเช่า"]
-  },
-  {
-    "id": "chat_002",
-    "title": "แก้ไขข้อสัญญาซื้อขายสินค้า",
-    "detail": "ขอเปลี่ยนแปลงเงื่อนไขการชำระเงินจากเงินสดเป็นเครดิต 30 วัน",
-    "createdAt": "2026-07-21T13:42:00+07:00",
-    "updatedAt": "2026-07-21T14:10:00+07:00",
-    "status": "pending",
-    "contractId": "CT-2026-0091",
-    "category": "sale",
-    "participants": ["user_456", "agent_12"],
-    "messageCount": 8,
-    "tags": ["เงื่อนไขชำระเงิน", "เครดิต"]
-  },
-  {
-    "id": "chat_003",
-    "title": "ยกเลิกสัญญาบริการรายเดือน",
-    "detail": "ลูกค้าแจ้งยกเลิกสัญญาบริการก่อนกำหนด ต้องตรวจสอบค่าปรับตามข้อตกลง",
-    "createdAt": "2026-07-22T10:05:00+07:00",
-    "updatedAt": "2026-07-22T10:50:00+07:00",
-    "status": "open",
-    "contractId": "CT-2026-0102",
-    "category": "service",
-    "participants": ["user_789", "agent_45"],
-    "messageCount": 15,
-    "tags": ["ยกเลิกสัญญา", "ค่าปรับ"]
-  },
-  {
-    "id": "chat_004",
-    "title": "ต่ออายุสัญญาจ้างพนักงาน",
-    "detail": "ฝ่าย HR สอบถามขั้นตอนการต่อสัญญาจ้างพนักงานที่จะหมดอายุสิ้นเดือนนี้",
-    "createdAt": "2026-07-23T15:30:00+07:00",
-    "updatedAt": "2026-07-23T16:00:00+07:00",
-    "status": "closed",
-    "contractId": "CT-2026-0115",
-    "category": "employment",
-    "participants": ["user_321", "agent_09"],
-    "messageCount": 6,
-    "tags": ["ต่อสัญญาจ้าง", "HR"]
-  },
-  {
-    "id": "chat_005",
-    "title": "ข้อพิพาทเรื่องสัญญาเช่ารถยนต์",
-    "detail": "ลูกค้าโต้แย้งเรื่องค่าเสียหายเมื่อคืนรถยนต์เช่าก่อนกำหนด",
-    "createdAt": "2026-07-24T11:20:00+07:00",
-    "updatedAt": "2026-07-24T12:05:00+07:00",
-    "status": "open",
-    "contractId": "CT-2026-0130",
-    "category": "dispute",
-    "participants": ["user_654", "agent_22"],
-    "messageCount": 20,
-    "tags": ["ข้อพิพาท", "ค่าเสียหาย", "เช่ารถ"]
-}];
+const riskLabel: Record<string, string> = {
+  HIGH: 'เสี่ยงสูง',
+  MEDIUM: 'เสี่ยงปานกลาง',
+  LOW: 'เสี่ยงต่ำ',
+  UNKNOWN: 'ยังไม่ประเมิน',
+};
 
-function Sidebar({ onNewChat, onSelectChat, user, onLogout }: SidebarProps = {}) {
-  const [infros] = useState<Infro[]>(infroData);
+// ชื่อไฟล์ที่อัปโหลดคือชื่อเรื่อง — ตัดนามสกุลออกเพราะซ้ำกับที่รู้อยู่แล้ว
+function titleOf(report: ReportSummary) {
+  return report.filename.replace(/\.(pdf|docx)$/i, '') || report.contractId;
+}
+
+function formatDate(iso: string) {
+  return new Date(iso).toLocaleString('th-TH', {
+    dateStyle: 'medium',
+    timeStyle: 'short',
+  });
+}
+
+function Sidebar({
+  reports,
+  loading = false,
+  error = null,
+  selectedReportId = null,
+  onNewReview,
+  onSelectReport,
+  onRetry,
+  user,
+  onLogout,
+}: SidebarProps) {
   // รูปโปรไฟล์ Google ตอบ 429/403 ได้เมื่อโดน rate limit — ถ้าโหลดไม่ขึ้น
   // ให้ตกกลับไปใช้ตัวย่อ ไม่ปล่อยให้เห็นไอคอนรูปเสีย
   const [avatarFailed, setAvatarFailed] = useState(false);
@@ -133,24 +92,27 @@ function Sidebar({ onNewChat, onSelectChat, user, onLogout }: SidebarProps = {})
           <div>
             <p className="text-xs uppercase tracking-[0.2em] text-amber-500/70 mb-1">Legal desk</p>
             <h1 className="text-2xl font-semibold text-neutral-100" style={{ fontFamily: 'Georgia, "Noto Serif Thai", serif' }}>
-              เรื่องที่ปรึกษา
+              สัญญาที่ตรวจแล้ว
             </h1>
           </div>
-          <span className="text-xs text-neutral-500">{infros.length} เรื่อง</span>
+          {/* ระหว่างโหลดยังไม่รู้จำนวน — เลี่ยงการโชว์ "0 ฉบับ" แล้วกระโดดเป็นเลขจริง */}
+          <span className="text-xs text-neutral-500">
+            {loading ? '' : `${reports.length} ฉบับ`}
+          </span>
         </div>
 
-        {/* ปุ่มเพิ่มปุ่ม (ไม่มีฟังก์ชัน) */}
+        {/* เริ่มตรวจฉบับใหม่ — ล้าง selection กลับไปหน้าอัปโหลด */}
         <div className="mb-6 flex-shrink-0">
           <button
-            onClick={onNewChat}
+            onClick={onNewReview}
             className="px-4 py-2 text-sm font-medium bg-amber-500 text-neutral-950 rounded-lg hover:bg-amber-400 transition-colors"
           >
-            +Newchat
+            + ตรวจสัญญาใหม่
           </button>
         </div>
 
         {/* Tools: ลิงก์ไปหน้าจัดการ Playbook / รัน Evaluation / สถานะระบบ
-            แยกจากรายการเรื่องที่ปรึกษา ไม่ใช่ "เรื่อง" เลยใส่เป็น row ของลิงก์เล็ก ๆ */}
+            แยกจากรายการสัญญา ไม่ใช่ "เรื่อง" เลยใส่เป็น row ของลิงก์เล็ก ๆ */}
         <div className="mb-6 flex-shrink-0 flex items-center gap-2 text-xs">
           <Link
             to="/playbook"
@@ -172,7 +134,7 @@ function Sidebar({ onNewChat, onSelectChat, user, onLogout }: SidebarProps = {})
           </Link>
         </div>
 
-        {/* รายการเรื่องที่ปรึกษา: เลื่อน (scroll) ได้เมื่อรายการเยอะเกินพื้นที่ */}
+        {/* รายการสัญญา: เลื่อน (scroll) ได้เมื่อรายการเยอะเกินพื้นที่ */}
         {/* สไตล์ scrollbar ให้เข้ากับธีม: บาง โปร่ง สีเทาเข้ม และเปลี่ยนเป็นสีอำพันตอน hover */}
         <div
           className="space-y-3 flex-1 min-h-0 overflow-y-auto pr-2 -mr-2
@@ -183,29 +145,69 @@ function Sidebar({ onNewChat, onSelectChat, user, onLogout }: SidebarProps = {})
             hover:[&::-webkit-scrollbar-thumb]:bg-amber-500/40"
           style={{ scrollbarWidth: 'thin', scrollbarColor: '#262626 transparent' }}
         >
-          {infros.length === 0 ? (
+          {error ? (
+            <div className="text-center text-neutral-400 py-12 text-sm border border-dashed border-rose-500/40 rounded-xl px-4">
+              <p className="text-rose-300 mb-3">{error}</p>
+              {onRetry && (
+                <button
+                  onClick={onRetry}
+                  className="text-xs px-3 py-1.5 rounded-lg bg-neutral-900 border border-neutral-800 text-neutral-300 hover:border-amber-500/40 hover:text-amber-300 transition-colors"
+                >
+                  ลองใหม่
+                </button>
+              )}
+            </div>
+          ) : loading ? (
             <div className="text-center text-neutral-600 py-16 text-sm border border-dashed border-neutral-800 rounded-xl">
-              กำลังโหลดข้อมูล...
+              กำลังโหลดประวัติ...
+            </div>
+          ) : reports.length === 0 ? (
+            <div className="text-center text-neutral-600 py-16 text-sm border border-dashed border-neutral-800 rounded-xl px-6 leading-relaxed">
+              ยังไม่มีสัญญาที่ตรวจ
+              <br />
+              อัปโหลดไฟล์ .pdf หรือ .docx ทางขวาเพื่อเริ่ม
             </div>
           ) : (
-            infros.map((chat) => (
+            reports.map((report) => (
               <div
-                key={chat.id}
-                onClick={() => onSelectChat?.(chat)}
-                className="rounded-xl bg-neutral-900 border border-neutral-800 hover:border-neutral-700 transition-colors px-5 py-4 cursor-pointer"
+                key={report.reportId}
+                onClick={() => onSelectReport?.(report)}
+                className={`rounded-xl bg-neutral-900 border transition-colors px-5 py-4 cursor-pointer ${
+                  report.reportId === selectedReportId
+                    ? 'border-amber-500/50'
+                    : 'border-neutral-800 hover:border-neutral-700'
+                }`}
               >
-                <h3 className="text-[15px] font-medium text-neutral-100 leading-snug mb-2">
-                  {chat.title}
+                <h3 className="text-[15px] font-medium text-neutral-100 leading-snug mb-1 truncate">
+                  {titleOf(report)}
                 </h3>
-                <div className="flex flex-wrap gap-2">
-                  {chat.tags.map((tag, i) => (
-                    <span
-                      key={i}
-                      className="px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-amber-500/10 text-amber-300 ring-1 ring-amber-500/30"
-                    >
-                      {tag}
+                <p className="text-[11px] text-neutral-500 mb-2.5">
+                  {formatDate(report.createdAt)} · {report.clauseCount} ข้อสัญญา
+                </p>
+                <div className="flex flex-wrap items-center gap-2">
+                  <span
+                    className={`px-2.5 py-0.5 rounded-full text-[11px] font-medium ${
+                      riskBadge[report.overallRisk]
+                    }`}
+                  >
+                    {riskLabel[report.overallRisk] ?? report.overallRisk}
+                  </span>
+                  {/* นับเฉพาะระดับที่มีจริง — "0 สูง" ไม่ได้บอกอะไรนอกจากรบกวนสายตา */}
+                  {report.summary.high > 0 && (
+                    <span className={`text-[11px] ${riskAccent.HIGH}`}>
+                      สูง {report.summary.high}
                     </span>
-                  ))}
+                  )}
+                  {report.summary.medium > 0 && (
+                    <span className={`text-[11px] ${riskAccent.MEDIUM}`}>
+                      กลาง {report.summary.medium}
+                    </span>
+                  )}
+                  {report.summary.low > 0 && (
+                    <span className={`text-[11px] ${riskAccent.LOW}`}>
+                      ต่ำ {report.summary.low}
+                    </span>
+                  )}
                 </div>
               </div>
             ))

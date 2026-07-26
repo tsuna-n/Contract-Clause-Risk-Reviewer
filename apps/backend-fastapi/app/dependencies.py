@@ -41,6 +41,7 @@ from app.security import decode_access_token
 from app.services.evaluation import EvalService
 from app.services.override import OverrideService
 from app.services.playbook import PlaybookService
+from app.services.report import ReportService
 from app.services.review import ReviewService
 
 PLAYBOOK_PATH = "data/playbook/positions.yaml"
@@ -119,10 +120,22 @@ def get_retriever() -> Retriever:
     return Retriever(get_embedder(), get_vector_store())
 
 
-@lru_cache
 def get_known_positions() -> dict[str, PlaybookPosition]:
-    """Return every playbook position keyed by id (used by the judge for grounding)."""
-    return {position.id: position for position in load_positions(PLAYBOOK_PATH)}
+    """Return every playbook position keyed by id (used by the judge for grounding).
+
+    Read from the vector store, not the seed YAML, and deliberately *not*
+    cached: the retriever matches clauses against the store, and ``/playbook``
+    lets a reviewer add positions to it at any time. Serving a startup snapshot
+    would make the judge reject a citation to anything added since - the
+    position is real, retrievable, and quoted correctly, and it would still be
+    reported as "unknown playbook position".
+
+    The YAML is the fallback for an un-ingested database, so a fresh install
+    validates against the seed instead of finding no known positions at all
+    and failing every citation.
+    """
+    positions = get_vector_store().list_all() or load_positions(PLAYBOOK_PATH)
+    return {position.id: position for position in positions}
 
 
 # --- pipeline ----------------------------------------------------------------
@@ -130,8 +143,13 @@ def get_known_positions() -> dict[str, PlaybookPosition]:
 
 @lru_cache
 def get_judge() -> Judge:
-    """Return the shared grounding judge."""
-    return Judge(get_llm_client(), get_known_positions())
+    """Return the shared grounding judge.
+
+    The positions are passed as the *function*, not its result: the judge is a
+    process-wide singleton, so binding one snapshot of the playbook into it
+    would freeze it for the lifetime of the process.
+    """
+    return Judge(get_llm_client(), get_known_positions)
 
 
 @lru_cache
@@ -159,6 +177,12 @@ def get_review_service() -> ReviewService:
         get_report_repo(),
         retention_ttl_seconds=get_settings().retention_ttl_seconds,
     )
+
+
+@lru_cache
+def get_report_service() -> ReportService:
+    """Return the shared report-history service."""
+    return ReportService(get_report_repo())
 
 
 def get_override_service(db: Session = Depends(get_db)) -> OverrideService:

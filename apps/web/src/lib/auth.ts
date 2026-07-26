@@ -13,6 +13,39 @@ export function getGoogleLoginUrl(): string {
   return `${API_BASE_URL}/auth/google/login`
 }
 
+export function getDevLoginUrl(): string {
+  return `${API_BASE_URL}/auth/dev-login`
+}
+
+// Hosts Google will accept in a plain-http redirect URI. Everything else has
+// to be https on a real public domain.
+const LOOPBACK_HOSTS = new Set(['localhost', '127.0.0.1', '[::1]', '::1'])
+
+/**
+ * Can Google sign-in work at all against the API host this build points at?
+ *
+ * Google's OAuth policy accepts a redirect URI only if it is loopback
+ * (`http://localhost`, `http://127.0.0.1`) or https on a public domain. Open
+ * the app over the LAN — `http://172.20.10.2:5173` talking to
+ * `http://172.20.10.2:8000` — and the redirect URI is a private IP over
+ * plain http, which Google refuses outright with `Error 400: invalid_request`.
+ *
+ * That refusal happens on Google's side *before* the consent screen, so the
+ * backend's callback never runs and nothing redirects back to
+ * `/login?error=...`. The user is simply stranded on a Google error page. The
+ * only place this can be caught is here, before the click.
+ */
+export function isGoogleLoginAvailable(): boolean {
+  try {
+    const { protocol, hostname } = new URL(API_BASE_URL)
+    return protocol === 'https:' || LOOPBACK_HOSTS.has(hostname)
+  } catch {
+    // An unparseable base URL is a different bug; don't hide a working button
+    // on the strength of a guess.
+    return true
+  }
+}
+
 // The backend sends failed sign-ins back to /login?error=<code>. Codes come
 // straight from Google (or from authlib), so translate the ones a user can
 // actually act on and fall back to something honest for the rest.

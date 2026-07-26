@@ -26,10 +26,19 @@ class OverrideService:
         new_risk: RiskLevel,
         reason: str,
         actor: str,
+        session_id: str,
     ) -> ContractReviewReport:
-        """Override a clause's risk level and append an audit record."""
+        """Override a clause's risk level and append an audit record.
+
+        ``session_id`` scopes the write to the caller's own reports. Report ids
+        are unguessable, but "unguessable" is not an access control: without
+        this check any signed-in user who came by an id could rewrite someone
+        else's risk assessment and sign the audit trail with their own name.
+        A report owned by another session reads as missing, for the same reason
+        it does in :class:`~app.services.report.ReportService`.
+        """
         report = self.reports.get(report_id)
-        if report is None:
+        if report is None or report.session_id != session_id:
             raise NotFoundError(f"report {report_id} not found")
 
         match = next((r for r in report.reviews if r.clause.id == clause_id), None)

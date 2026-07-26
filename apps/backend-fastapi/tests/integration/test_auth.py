@@ -225,3 +225,81 @@ def test_google_callback_lost_session_redirects_with_state_error(
 
     assert resp.status_code in (302, 307)
     assert resp.headers["location"] == f"{settings.frontend_url}/login?error=mismatching_state"
+
+
+# --- where the token is delivered (Referer handling) -------------------------
+#
+# Each redirect below carries a freshly minted JWT in its query string, so
+# "which origin do we redirect to" is an authentication boundary rather than a
+# cosmetic detail. The Referer may adjust the port - the frontend runs on 5173
+# while the API answers on 8000 - but never the host.
+
+
+def test_referer_on_the_same_host_sets_the_port(
+    client: TestClient, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """The LAN case: app served from :5173, API called on :8000, one host."""
+
+    async def fake_authorize_access_token(request):
+        return _mock_token()
+
+    monkeypatch.setattr(oauth.google, "authorize_access_token", fake_authorize_access_token)
+
+    resp = client.get(
+        "/auth/google/callback",
+        headers={"Referer": "http://testserver:5173/login"},
+        follow_redirects=False,
+    )
+
+    assert resp.headers["location"].startswith("http://testserver:5173/auth/callback?token=")
+
+
+def test_cross_origin_referer_cannot_steal_the_token(
+    client: TestClient, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """A page on another origin must not be able to name itself as the target.
+
+    Referer is attacker-controlled: a link from evil.example.com into the OAuth
+    flow would otherwise have the victim's JWT delivered to that domain.
+    """
+
+    async def fake_authorize_access_token(request):
+        return _mock_token()
+
+    monkeypatch.setattr(oauth.google, "authorize_access_token", fake_authorize_access_token)
+
+    resp = client.get(
+        "/auth/google/callback",
+        headers={"Referer": "https://evil.example.com/anything"},
+        follow_redirects=False,
+    )
+
+    location = resp.headers["location"]
+    assert "evil.example.com" not in location
+    assert location.startswith(f"{settings.frontend_url}/auth/callback?token=")
+
+
+def test_dev_login_ignores_a_cross_origin_referer(
+    client: TestClient, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """/auth/dev-login mints a token with no credentials at all - same rule."""
+    monkeypatch.setattr(get_settings(), "app_env", "development")
+
+    resp = client.get(
+        "/auth/dev-login?email=victim@corp.com",
+        headers={"Referer": "https://evil.example.com/"},
+        follow_redirects=False,
+    )
+
+    assert "evil.example.com" not in resp.headers["location"]
+    assert resp.headers["location"].startswith(f"{settings.frontend_url}/auth/callback?token=")
+
+
+def test_dev_login_is_refused_outside_development(
+    client: TestClient, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.setattr(get_settings(), "app_env", "production")
+
+    resp = client.get("/auth/dev-login", follow_redirects=False)
+
+    assert resp.headers["location"] == f"{settings.frontend_url}/login?error=dev_login_disabled"

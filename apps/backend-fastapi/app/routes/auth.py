@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import logging
-from urllib.parse import urlencode
+from urllib.parse import urlencode, urlparse
 
 from authlib.integrations.starlette_client import OAuthError
 from fastapi import APIRouter, Depends, Request, Response
@@ -22,7 +22,45 @@ logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/auth", tags=["auth"])
 
 
-def _redirect_to_frontend(path: str, **params: str) -> RedirectResponse:
+def _frontend_base_url(request: Request | None) -> str:
+    """Where to send the browser back to.
+
+    Normally ``FRONTEND_URL``. The ``Referer`` is allowed to override the
+    *port* only - and only when it names the same host the request arrived on
+    - so that opening the app over the LAN works without editing
+    ``FRONTEND_URL`` every time the dev machine's address changes.
+
+    The host check is the whole point. This helper appends a freshly minted
+    JWT to the URL it returns, so trusting ``Referer`` outright would let any
+    page on the internet link to ``/auth/dev-login`` (or start the Google flow)
+    and have the token delivered straight to its own domain. ``Referer`` is
+    attacker-controlled; the host the request was addressed to is not.
+    """
+    configured = get_settings().frontend_url
+    if request is None:
+        return configured
+
+    referer = request.headers.get("referer")
+    if not referer:
+        return configured
+
+    parsed = urlparse(referer)
+    if not parsed.scheme or not parsed.netloc:
+        return configured
+    # Same host as the API call itself -> it really is this deployment's
+    # frontend on another port. Anything else is someone else's origin.
+    if parsed.hostname != request.url.hostname:
+        logger.warning(
+            "ignoring cross-origin referer %r on %s (expected host %r)",
+            parsed.netloc,
+            request.url.path,
+            request.url.hostname,
+        )
+        return configured
+    return f"{parsed.scheme}://{parsed.netloc}"
+
+
+def _redirect_to_frontend(request: Request | None, path: str, **params: str) -> RedirectResponse:
     """Redirect the browser back to the frontend.
 
     The OAuth endpoints are reached by full-page navigation, not by fetch(),
@@ -31,7 +69,34 @@ def _redirect_to_frontend(path: str, **params: str) -> RedirectResponse:
     no way back to the login screen.
     """
     query = f"?{urlencode(params)}" if params else ""
-    return RedirectResponse(f"{get_settings().frontend_url}{path}{query}")
+    return RedirectResponse(f"{_frontend_base_url(request)}{path}{query}")
+
+
+@router.get("/dev-login")
+async def dev_login(
+    request: Request,
+    email: str = "dev@example.com",
+    name: str = "Dev User",
+    db: Session = Depends(get_db),
+):
+    """Fast dev sign-in endpoint for testing over LAN/offline without Google OAuth restrictions."""
+    if get_settings().app_env != "development":
+        return _redirect_to_frontend(request, "/login", error="dev_login_disabled")
+
+    user_id = f"dev-user-{email}"
+    user = db.get(User, user_id)
+    if user is None:
+        user = User(id=user_id, email=email)
+        db.add(user)
+
+    user.email = email
+    user.name = name
+    user.picture = None
+    db.commit()
+
+    return _redirect_to_frontend(
+        request, "/auth/callback", token=create_access_token(subject=user_id)
+    )
 
 
 @router.get("/google/login")
@@ -53,12 +118,12 @@ async def google_callback(request: Request, db: Session = Depends(get_db)):
         token = await oauth.google.authorize_access_token(request)
     except OAuthError as exc:
         logger.warning("Google OAuth failed: %s: %s", exc.error, exc.description)
-        return _redirect_to_frontend("/login", error=exc.error or "oauth_failed")
+        return _redirect_to_frontend(request, "/login", error=exc.error or "oauth_failed")
 
     userinfo = token.get("userinfo")
     if not userinfo or not userinfo.get("email"):
         logger.warning("Google OAuth returned no usable userinfo: %s", sorted(token))
-        return _redirect_to_frontend("/login", error="missing_email")
+        return _redirect_to_frontend(request, "/login", error="missing_email")
 
     user_id = userinfo["sub"]  # Google's stable per-account identifier
     user = db.get(User, user_id)
@@ -71,7 +136,9 @@ async def google_callback(request: Request, db: Session = Depends(get_db)):
     user.picture = userinfo.get("picture")
     db.commit()
 
-    return _redirect_to_frontend("/auth/callback", token=create_access_token(subject=user_id))
+    return _redirect_to_frontend(
+        request, "/auth/callback", token=create_access_token(subject=user_id)
+    )
 
 
 @router.get("/me", response_model=UserOut)

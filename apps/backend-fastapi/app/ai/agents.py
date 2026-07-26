@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import re
 from abc import ABC, abstractmethod
+from collections.abc import Callable
 from dataclasses import dataclass
 
 from pydantic import BaseModel, Field
@@ -273,9 +274,18 @@ class Judge(Agent[ClauseReview, Verdict]):
 
     name = "judge"
 
-    def __init__(self, llm: LLMClient, known_positions: dict[str, PlaybookPosition]) -> None:
+    def __init__(
+        self,
+        llm: LLMClient,
+        known_positions: dict[str, PlaybookPosition] | Callable[[], dict[str, PlaybookPosition]],
+    ) -> None:
         super().__init__(llm)
-        self.known_positions = known_positions
+        # A callable, not a dict, when the playbook can change under us. The
+        # matcher retrieves from the live store, which the CRUD endpoints
+        # write to; a snapshot taken at startup would call every position
+        # added since then "unknown" and reject a perfectly good citation.
+        # A plain dict is still accepted - tests pass a fixed one.
+        self._positions = known_positions if callable(known_positions) else lambda: known_positions
 
     def run(self, payload: ClauseReview) -> Verdict:
         """Return a :class:`Verdict` for ``payload``.
@@ -284,7 +294,11 @@ class Judge(Agent[ClauseReview, Verdict]):
         grounding, no-invented-fallback) first; only calls the LLM judge for
         the softer "rationale doesn't overreach" check once those pass.
         """
-        known_ids = set(self.known_positions)
+        # Resolved once per verdict: the three checks below must agree on one
+        # view of the playbook, and re-reading it between them would also mean
+        # three round trips to the store.
+        known_positions = self._positions()
+        known_ids = set(known_positions)
 
         unknown = invalid_citations(payload, known_ids)
         if unknown:
@@ -295,7 +309,7 @@ class Judge(Agent[ClauseReview, Verdict]):
             )
 
         for citation in payload.citations:
-            position = self.known_positions[citation.playbook_position_id]
+            position = known_positions[citation.playbook_position_id]
             source_text = f"{position.preferred_language} {position.fallback_language}"
             if not is_grounded(citation.excerpt, source_text):
                 return Verdict(
@@ -304,7 +318,7 @@ class Judge(Agent[ClauseReview, Verdict]):
                     should_retry=True,
                 )
 
-        if not is_allowed_fallback(payload.suggested_fallback, list(self.known_positions.values())):
+        if not is_allowed_fallback(payload.suggested_fallback, list(known_positions.values())):
             return Verdict(
                 grounded=False,
                 reason="suggested fallback does not match playbook wording verbatim",

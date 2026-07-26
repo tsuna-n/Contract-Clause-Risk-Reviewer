@@ -118,6 +118,14 @@ class VectorStore(Protocol):
         """Return the ``top_k`` nearest positions to ``vector``."""
         ...
 
+    def list_all(self) -> list[PlaybookPosition]:
+        """Return every stored position.
+
+        The judge needs this: it has to recognise any position the retriever
+        could hand it, and the retriever reads the store, not the seed YAML.
+        """
+        ...
+
 
 class PgVectorStore:
     """pgvector-backed :class:`VectorStore` implementation.
@@ -157,6 +165,18 @@ class PgVectorStore:
             session.execute(stmt)
             session.commit()
 
+    @staticmethod
+    def _to_position(row: PlaybookEmbedding) -> PlaybookPosition:
+        return PlaybookPosition(
+            id=row.id,
+            clause_type=ClauseType(row.clause_type),
+            title=row.title,
+            preferred_language=row.preferred_language,
+            fallback_language=row.fallback_language,
+            risk_if_absent=RiskLevel(row.risk_if_absent),
+            tags=list(row.tags or []),
+        )
+
     def query(self, vector: list[float], top_k: int = 5) -> list[RetrievalHit]:
         """Run a cosine-distance nearest-neighbor query."""
         distance = PlaybookEmbedding.embedding.cosine_distance(vector)
@@ -167,25 +187,19 @@ class PgVectorStore:
                 .limit(top_k)
                 .all()
             )
-        hits: list[RetrievalHit] = []
-        for row, dist in rows:
-            position = PlaybookPosition(
-                id=row.id,
-                clause_type=ClauseType(row.clause_type),
-                title=row.title,
-                preferred_language=row.preferred_language,
-                fallback_language=row.fallback_language,
-                risk_if_absent=RiskLevel(row.risk_if_absent),
-                tags=list(row.tags or []),
+        return [
+            RetrievalHit(
+                position=self._to_position(row),
+                score=1.0 - float(dist),
+                source=RetrievalSource.DENSE,
             )
-            hits.append(
-                RetrievalHit(
-                    position=position,
-                    score=1.0 - float(dist),
-                    source=RetrievalSource.DENSE,
-                )
-            )
-        return hits
+            for row, dist in rows
+        ]
+
+    def list_all(self) -> list[PlaybookPosition]:
+        """Return every stored position."""
+        with self._session_factory() as session:
+            return [self._to_position(row) for row in session.query(PlaybookEmbedding).all()]
 
 
 # --- retrieval ---------------------------------------------------------------

@@ -1,31 +1,20 @@
-import type { Infro } from './Sidebar';
+import type { ContractReport, RiskLevel } from '../contract/types';
+import { riskAccent, riskBadge } from '../contract/riskStyles';
 
 interface SideDetailProps {
-  infro: Infro;
+  report: ContractReport;
   onClose: () => void;
 }
 
-const statusLabel: Record<string, string> = {
-  resolved: 'ดำเนินการเสร็จสิ้น',
-  pending: 'รอดำเนินการ',
-  open: 'เปิดเรื่อง',
-  closed: 'ปิดเรื่อง',
+const riskLabel: Record<string, string> = {
+  HIGH: 'เสี่ยงสูง',
+  MEDIUM: 'เสี่ยงปานกลาง',
+  LOW: 'เสี่ยงต่ำ',
+  UNKNOWN: 'ยังไม่ประเมิน',
 };
 
-const statusColor: Record<string, string> = {
-  resolved: 'bg-emerald-500/10 text-emerald-300 ring-emerald-500/30',
-  pending: 'bg-amber-500/10 text-amber-300 ring-amber-500/30',
-  open: 'bg-sky-500/10 text-sky-300 ring-sky-500/30',
-  closed: 'bg-neutral-500/10 text-neutral-300 ring-neutral-500/30',
-};
-
-const categoryLabel: Record<string, string> = {
-  lease: 'สัญญาเช่า',
-  sale: 'สัญญาซื้อขาย',
-  service: 'สัญญาบริการ',
-  employment: 'สัญญาจ้างงาน',
-  dispute: 'ข้อพิพาท',
-};
+// เรียงจากเสี่ยงมากไปน้อย — แถวบนสุดคือสิ่งที่ต้องดูก่อน
+const RISK_ROWS: RiskLevel[] = ['HIGH', 'MEDIUM', 'LOW', 'UNKNOWN'];
 
 function formatDate(iso: string) {
   return new Date(iso).toLocaleString('th-TH', {
@@ -34,11 +23,24 @@ function formatDate(iso: string) {
   });
 }
 
-// SideDetail.tsx — แผงสรุปข้อมูลทั้งหมดของเรื่อง แสดงเป็น sidebar ทางขวา
-// ใช้คู่กับปุ่ม "ภาพรวม" ใน Detail.tsx โดยส่ง prop `infro` เข้ามา
+// SideDetail.tsx — แผงสรุปรายงานหนึ่งฉบับ แสดงเป็น sidebar ทางขวา
+// ใช้คู่กับปุ่ม "ภาพรวม" ใน Detail.tsx โดยส่ง prop `report` เข้ามา
 // และ `onClose` สำหรับปิดแผงกลับไปสถานะปกติ
-// component นี้เป็น standalone แยกออกมา นำไปวางต่อกับหน้าไหนก็ได้ที่มี infro
-function SideDetail({ infro, onClose }: SideDetailProps) {
+function SideDetail({ report, onClose }: SideDetailProps) {
+  const counts: Record<RiskLevel, number> = {
+    HIGH: report.summary.high,
+    MEDIUM: report.summary.medium,
+    LOW: report.summary.low,
+    UNKNOWN: report.summary.unknown,
+  };
+  const total = report.clauses.length;
+
+  // จัดกลุ่มตามประเภทข้อสัญญาที่ classifier ตอบมา เรียงจากมากไปน้อย
+  const byType = [...report.clauses.reduce((acc, clause) => {
+    acc.set(clause.clauseType, (acc.get(clause.clauseType) ?? 0) + 1);
+    return acc;
+  }, new Map<string, number>())].sort((a, b) => b[1] - a[1]);
+
   return (
     <>
       {/* ฉากหลังจาง ๆ คลิกเพื่อปิด */}
@@ -52,20 +54,18 @@ function SideDetail({ infro, onClose }: SideDetailProps) {
       <aside
         className="fixed inset-y-0 right-0 z-50 w-full max-w-sm border-l border-neutral-800 bg-neutral-950 shadow-2xl shadow-black/50 overflow-y-auto transition-transform duration-300 ease-out"
         role="dialog"
-        aria-label="ภาพรวมข้อมูลเรื่อง"
+        aria-label="ภาพรวมรายงาน"
       >
         <div className="px-6 py-6">
           {/* หัวแผง */}
           <div className="mb-6 flex items-start justify-between gap-3 border-b border-neutral-800 pb-5">
-            <div>
-              <p className="text-xs uppercase tracking-[0.2em] text-amber-500/70 mb-1">
-                ภาพรวม · {infro.contractId}
-              </p>
+            <div className="min-w-0">
+              <p className="text-xs uppercase tracking-[0.2em] text-amber-500/70 mb-1">ภาพรวม</p>
               <h2
-                className="text-lg font-semibold text-neutral-100 leading-snug"
+                className="text-lg font-semibold text-neutral-100 leading-snug break-words"
                 style={{ fontFamily: 'Georgia, "Noto Serif Thai", serif' }}
               >
-                {infro.title}
+                {report.filename || report.contractId}
               </h2>
             </div>
             <button
@@ -77,60 +77,87 @@ function SideDetail({ infro, onClose }: SideDetailProps) {
             </button>
           </div>
 
-          {/* สถานะ + หมวดหมู่ */}
+          {/* ความเสี่ยงรวม */}
           <div className="flex flex-wrap gap-2 mb-6">
             <span
-              className={`px-3 py-1 rounded-full text-[11px] font-medium ring-1 ${
-                statusColor[infro.status] ?? statusColor.open
+              className={`px-3 py-1 rounded-full text-[11px] font-medium ${
+                riskBadge[report.overallRisk]
               }`}
             >
-              {statusLabel[infro.status] ?? infro.status}
+              รวม: {riskLabel[report.overallRisk] ?? report.overallRisk}
             </span>
             <span className="px-3 py-1 rounded-full text-[11px] font-medium bg-neutral-800 text-neutral-300 ring-1 ring-neutral-700">
-              {categoryLabel[infro.category] ?? infro.category}
+              {total} ข้อสัญญา
             </span>
           </div>
 
-          {/* รายละเอียด */}
+          {/* กระจายความเสี่ยง — แถบสัดส่วนอ่านเร็วกว่าตัวเลขล้วน */}
           <div className="rounded-xl bg-neutral-900 border border-neutral-800 px-4 py-4 mb-4">
-            <p className="text-xs uppercase tracking-wide text-neutral-500 mb-2">รายละเอียด</p>
-            <p className="text-sm text-neutral-200 leading-relaxed">{infro.detail}</p>
-          </div>
-
-          {/* ข้อมูลเพิ่มเติม */}
-          <div className="rounded-xl bg-neutral-900 border border-neutral-800 px-4 py-4 mb-4 grid grid-cols-2 gap-4">
-            <div>
-              <p className="text-xs uppercase tracking-wide text-neutral-500 mb-1">สร้างเมื่อ</p>
-              <p className="text-sm text-neutral-200">{formatDate(infro.createdAt)}</p>
-            </div>
-            <div>
-              <p className="text-xs uppercase tracking-wide text-neutral-500 mb-1">อัปเดตล่าสุด</p>
-              <p className="text-sm text-neutral-200">{formatDate(infro.updatedAt)}</p>
-            </div>
-            <div className="col-span-2">
-              <p className="text-xs uppercase tracking-wide text-neutral-500 mb-1">ผู้ร่วมสนทนา</p>
-              <p className="text-sm text-neutral-200">{infro.participants.join(', ')}</p>
-            </div>
-            <div className="col-span-2">
-              <p className="text-xs uppercase tracking-wide text-neutral-500 mb-1">จำนวนข้อความ</p>
-              <p className="text-sm text-neutral-200">{infro.messageCount} ข้อความ</p>
-            </div>
-          </div>
-
-          {/* แท็ก */}
-          <div>
-            <p className="text-xs uppercase tracking-wide text-neutral-500 mb-2">แท็ก</p>
-            <div className="flex flex-wrap gap-2">
-              {infro.tags.map((tag, i) => (
-                <span
-                  key={i}
-                  className="px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-amber-500/10 text-amber-300 ring-1 ring-amber-500/30"
-                >
-                  {tag}
-                </span>
+            <p className="text-xs uppercase tracking-wide text-neutral-500 mb-3">
+              กระจายความเสี่ยง
+            </p>
+            <div className="space-y-2.5">
+              {RISK_ROWS.map((level) => (
+                <div key={level} className="flex items-center gap-3">
+                  <span className={`w-24 shrink-0 text-xs ${riskAccent[level]}`}>
+                    {riskLabel[level]}
+                  </span>
+                  <div className="flex-1 h-1.5 rounded-full bg-neutral-800 overflow-hidden">
+                    <div
+                      className={`h-full rounded-full ${
+                        level === 'HIGH'
+                          ? 'bg-red-400'
+                          : level === 'MEDIUM'
+                            ? 'bg-amber-400'
+                            : level === 'LOW'
+                              ? 'bg-emerald-400'
+                              : 'bg-slate-500'
+                      }`}
+                      style={{ width: total ? `${(counts[level] / total) * 100}%` : '0%' }}
+                    />
+                  </div>
+                  <span className="w-6 shrink-0 text-right text-xs text-neutral-300">
+                    {counts[level]}
+                  </span>
+                </div>
               ))}
             </div>
           </div>
+
+          {/* ประเภทข้อสัญญาที่พบ */}
+          {byType.length > 0 && (
+            <div className="rounded-xl bg-neutral-900 border border-neutral-800 px-4 py-4 mb-4">
+              <p className="text-xs uppercase tracking-wide text-neutral-500 mb-2">
+                ประเภทข้อสัญญาที่พบ
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {byType.map(([type, count]) => (
+                  <span
+                    key={type}
+                    className="px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-amber-500/10 text-amber-300 ring-1 ring-amber-500/30"
+                  >
+                    {type.replace(/_/g, ' ')} · {count}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* ข้อมูลรายงาน */}
+          <div className="rounded-xl bg-neutral-900 border border-neutral-800 px-4 py-4 mb-4 space-y-3">
+            <div>
+              <p className="text-xs uppercase tracking-wide text-neutral-500 mb-1">ตรวจเมื่อ</p>
+              <p className="text-sm text-neutral-200">{formatDate(report.createdAt)}</p>
+            </div>
+            <div>
+              <p className="text-xs uppercase tracking-wide text-neutral-500 mb-1">Report ID</p>
+              <p className="text-xs text-neutral-300 font-mono break-all">{report.reportId}</p>
+            </div>
+          </div>
+
+          {report.disclaimer && (
+            <p className="text-[11px] text-amber-200/70 leading-relaxed">{report.disclaimer}</p>
+          )}
         </div>
       </aside>
     </>

@@ -43,9 +43,28 @@ export interface RiskSummary {
 export interface ContractReport {
   reportId: string;
   contractId: string;
+  /** The uploaded file's name — what the report is called in the UI. */
+  filename: string;
   createdAt: string;
   overallRisk: RiskLevel;
   summary: RiskSummary;
   disclaimer: string;
   clauses: ClauseView[];
+}
+
+/**
+ * One row of review history: a report without its clause reviews.
+ *
+ * The sidebar renders every past review at once and shows none of the clause
+ * detail, so the backend sends these instead of whole reports. Opening one
+ * fetches the full `ContractReport`.
+ */
+export interface ReportSummary {
+  reportId: string;
+  contractId: string;
+  filename: string;
+  createdAt: string;
+  overallRisk: RiskLevel;
+  summary: RiskSummary;
+  clauseCount: number;
 }
