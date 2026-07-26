@@ -50,6 +50,24 @@ export async function fetchPlaybookPositions(clauseType?: string): Promise<Playb
   return apiFetch<PlaybookPosition[]>(`/playbook${query}`, { auth: false });
 }
 
+/** A single scored retrieval result — mirrors `RetrievalHit` in app/schemas.py. */
+export interface RetrievalHit {
+  position: PlaybookPosition;
+  score: number;
+  source: "dense" | "hybrid";
+}
+
+/**
+ * Free-text semantic search over the playbook (the `/playbook/search` debug
+ * endpoint). Unlike `fetchPlaybookPositions`, which lists everything, this
+ * ranks positions by meaning via the retriever and returns scored hits.
+ */
+export async function searchPlaybook(q: string, topK = 5): Promise<RetrievalHit[]> {
+  const params = new URLSearchParams({ q });
+  if (topK) params.set("top_k", String(topK));
+  return apiFetch<RetrievalHit[]>(`/playbook/search?${params.toString()}`, { auth: false });
+}
+
 export async function getPlaybookPosition(id: string): Promise<PlaybookPosition> {
   return apiFetch<PlaybookPosition>(`/playbook/${encodeURIComponent(id)}`, { auth: false });
 }

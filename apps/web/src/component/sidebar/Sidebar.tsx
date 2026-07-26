@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 
 export interface Infro {
   id: string;
@@ -146,6 +147,29 @@ function Sidebar({ onNewChat, onSelectChat, user, onLogout }: SidebarProps = {})
           >
             +Newchat
           </button>
+        </div>
+
+        {/* Tools: ลิงก์ไปหน้าจัดการ Playbook / รัน Evaluation / สถานะระบบ
+            แยกจากรายการเรื่องที่ปรึกษา ไม่ใช่ "เรื่อง" เลยใส่เป็น row ของลิงก์เล็ก ๆ */}
+        <div className="mb-6 flex-shrink-0 flex items-center gap-2 text-xs">
+          <Link
+            to="/playbook"
+            className="flex-1 text-center px-2 py-1.5 rounded-lg bg-neutral-900 border border-neutral-800 text-neutral-300 hover:border-amber-500/40 hover:text-amber-300 transition-colors"
+          >
+            Playbook
+          </Link>
+          <Link
+            to="/evaluate"
+            className="flex-1 text-center px-2 py-1.5 rounded-lg bg-neutral-900 border border-neutral-800 text-neutral-300 hover:border-amber-500/40 hover:text-amber-300 transition-colors"
+          >
+            Evaluate
+          </Link>
+          <Link
+            to="/system"
+            className="flex-1 text-center px-2 py-1.5 rounded-lg bg-neutral-900 border border-neutral-800 text-neutral-300 hover:border-amber-500/40 hover:text-amber-300 transition-colors"
+          >
+            System
+          </Link>
         </div>
 
         {/* รายการเรื่องที่ปรึกษา: เลื่อน (scroll) ได้เมื่อรายการเยอะเกินพื้นที่ */}

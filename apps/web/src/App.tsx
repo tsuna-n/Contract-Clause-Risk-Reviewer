@@ -6,6 +6,9 @@ import { getToken } from "./lib/auth";
 import AuthProvider from "./component/AuthProvider";
 import Chat from "./page/layout/chat-layout";
 import ContractPage from "./page/contract";
+import PlaybookPage from "./page/playbook";
+import EvaluatePage from "./page/evaluate";
+import SystemPage from "./page/system";
 
 /**
  * "/" is the login screen for signed-out visitors and a shortcut into the app
@@ -41,6 +44,36 @@ const router = createBrowserRouter([
     element: (
       <RequireAuth>
         <ContractPage />
+      </RequireAuth>
+    ),
+  },
+  {
+    // Playbook management (CRUD) + semantic search. Reached from the sidebar's
+    // Tools links; guarded like the rest of the app even though the playbook
+    // API itself doesn't require a bearer token.
+    path: "/playbook",
+    element: (
+      <RequireAuth>
+        <PlaybookPage />
+      </RequireAuth>
+    ),
+  },
+  {
+    // Evaluation harness: runs the pipeline against a gold set and reports
+    // accuracy metrics. Long-running, so it lives on its own page.
+    path: "/evaluate",
+    element: (
+      <RequireAuth>
+        <EvaluatePage />
+      </RequireAuth>
+    ),
+  },
+  {
+    // System status: pings the root + /health + /health/db probes.
+    path: "/system",
+    element: (
+      <RequireAuth>
+        <SystemPage />
       </RequireAuth>
     ),
   },

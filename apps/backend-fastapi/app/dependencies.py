@@ -34,11 +34,13 @@ from app.database import get_db
 from app.models import User
 from app.repositories.audit import AuditRepository
 from app.repositories.contract import ContractRepository, RedisContractRepository
+from app.repositories.playbook import PlaybookRepository
 from app.repositories.report import RedisReportRepository, ReportRepository
 from app.schemas import PlaybookPosition
 from app.security import decode_access_token
 from app.services.evaluation import EvalService
 from app.services.override import OverrideService
+from app.services.playbook import PlaybookService
 from app.services.review import ReviewService
 
 PLAYBOOK_PATH = "data/playbook/positions.yaml"
@@ -162,6 +164,17 @@ def get_review_service() -> ReviewService:
 def get_override_service(db: Session = Depends(get_db)) -> OverrideService:
     """Return an override service bound to a request-scoped DB session."""
     return OverrideService(get_report_repo(), AuditRepository(db))
+
+
+def get_playbook_service(db: Session = Depends(get_db)) -> PlaybookService:
+    """Return a playbook service bound to a request-scoped DB session.
+
+    Request-scoped like the override service: each call gets its own session
+    so a commit in one request can't bleed into another. The embedder is the
+    shared singleton so newly created/updated positions get real vectors and
+    turn up in retrieval immediately.
+    """
+    return PlaybookService(PlaybookRepository(db), get_embedder())
 
 
 @lru_cache

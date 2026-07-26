@@ -5,7 +5,9 @@ import {
   createPlaybookPosition,
   updatePlaybookPosition,
   deletePlaybookPosition,
+  searchPlaybook,
   type PlaybookPosition,
+  type RetrievalHit,
   type ClauseType,
   type RiskLevel,
   type CreatePlaybookPayload,
@@ -50,6 +52,13 @@ export default function PlaybookPage() {
   const [formRisk, setFormRisk] = useState<RiskLevel>("medium");
   const [formTags, setFormTags] = useState<string>("");
   const [submitting, setSubmitting] = useState<boolean>(false);
+
+  // Semantic search (GET /playbook/search) — ค้นตามความหมายทั้ง playbook
+  // แยกจาก searchQuery ซึ่งกรอง client-side แค่ในรายการที่โหลดมาแล้ว
+  const [semanticQ, setSemanticQ] = useState<string>("");
+  const [semanticResults, setSemanticResults] = useState<RetrievalHit[] | null>(null);
+  const [semanticLoading, setSemanticLoading] = useState<boolean>(false);
+  const [semanticError, setSemanticError] = useState<string | null>(null);
 
   const loadData = async () => {
     try {
@@ -148,6 +157,28 @@ export default function PlaybookPage() {
     }
   };
 
+  const runSemanticSearch = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!semanticQ.trim()) return;
+    try {
+      setSemanticLoading(true);
+      setSemanticError(null);
+      const hits = await searchPlaybook(semanticQ.trim());
+      setSemanticResults(hits);
+    } catch (err: unknown) {
+      setSemanticError(err instanceof Error ? err.message : "Semantic search failed");
+      setSemanticResults(null);
+    } finally {
+      setSemanticLoading(false);
+    }
+  };
+
+  const clearSemanticSearch = () => {
+    setSemanticResults(null);
+    setSemanticError(null);
+    setSemanticQ("");
+  };
+
   const filteredPositions = positions.filter((p) => {
     if (!searchQuery.trim()) return true;
     const q = searchQuery.toLowerCase();
@@ -218,8 +249,84 @@ export default function PlaybookPage() {
           </div>
         </div>
 
+        {/* Semantic search (GET /playbook/search) — ค้นตามความหมาย
+            แยกจากช่องกรองด้านบน ซึ่งกรองแค่ในรายการที่โหลดมาแล้ว */}
+        <form
+          onSubmit={runSemanticSearch}
+          className="bg-neutral-900 border border-neutral-800 rounded-xl p-4 flex flex-col sm:flex-row gap-3 items-stretch sm:items-center"
+        >
+          <label className="text-xs uppercase tracking-wider text-neutral-400 font-medium sm:w-32">
+            Semantic:
+          </label>
+          <input
+            type="text"
+            value={semanticQ}
+            onChange={(e) => setSemanticQ(e.target.value)}
+            placeholder="Search by meaning across all positions (e.g. 'who pays if data leaks')"
+            className="flex-1 bg-neutral-800 border border-neutral-700 text-neutral-200 text-sm rounded-lg px-4 py-2 placeholder-neutral-500 focus:outline-none focus:border-amber-500"
+          />
+          <button
+            type="submit"
+            disabled={semanticLoading || !semanticQ.trim()}
+            className="px-4 py-2 text-sm font-medium rounded-lg bg-neutral-800 text-neutral-200 hover:bg-neutral-700 disabled:opacity-50 disabled:cursor-not-allowed transition"
+          >
+            {semanticLoading ? "Searching…" : "Search"}
+          </button>
+          {semanticResults !== null && (
+            <button
+              type="button"
+              onClick={clearSemanticSearch}
+              className="px-4 py-2 text-sm font-medium rounded-lg bg-neutral-800 text-neutral-400 hover:text-neutral-200 transition"
+            >
+              ← Back to list
+            </button>
+          )}
+        </form>
+        {semanticError && (
+          <div className="bg-red-950/40 border border-red-800/60 text-red-300 p-3 rounded-xl text-sm">
+            {semanticError}
+          </div>
+        )}
+
         {/* Content Table / Cards */}
-        {loading ? (
+        {semanticResults !== null ? (
+          semanticResults.length === 0 ? (
+            <div className="bg-neutral-900/60 border border-dashed border-neutral-800 rounded-xl py-16 text-center text-neutral-500">
+              No matching positions.
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {semanticResults.map((hit, i) => (
+                <div
+                  key={hit.position.id}
+                  className="bg-neutral-900 border border-neutral-800 rounded-xl p-4"
+                >
+                  <div className="flex items-center justify-between mb-2 gap-3">
+                    <div className="flex items-center gap-3 min-w-0">
+                      <span className="text-xs font-mono text-neutral-500 flex-shrink-0">#{i + 1}</span>
+                      <span className="px-2.5 py-1 rounded-full text-xs font-medium bg-amber-500/10 text-amber-300 border border-amber-500/20 flex-shrink-0">
+                        {hit.position.clause_type}
+                      </span>
+                      <h3 className="text-sm font-medium text-neutral-100 truncate">
+                        {hit.position.title}
+                      </h3>
+                    </div>
+                    <div className="flex items-center gap-2 text-xs flex-shrink-0">
+                      <span className="text-neutral-400">score {hit.score.toFixed(3)}</span>
+                      <span className="px-2 py-0.5 rounded bg-neutral-800 text-neutral-400 uppercase">
+                        {hit.source}
+                      </span>
+                    </div>
+                  </div>
+                  <p className="text-xs text-neutral-400 line-clamp-2">
+                    {hit.position.preferred_language}
+                  </p>
+                  <p className="text-[11px] text-neutral-600 mt-1 font-mono">{hit.position.id}</p>
+                </div>
+              ))}
+            </div>
+          )
+        ) : loading ? (
           <div className="text-center py-20 text-neutral-500">Loading playbook positions...</div>
         ) : error ? (
           <div className="bg-red-950/40 border border-red-800/60 text-red-300 p-4 rounded-xl text-center">

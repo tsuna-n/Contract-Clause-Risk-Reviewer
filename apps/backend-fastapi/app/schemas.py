@@ -75,6 +75,39 @@ class PlaybookPosition(BaseModel):
     tags: list[str] = Field(default_factory=list)
 
 
+class PlaybookPositionCreate(BaseModel):
+    """Payload for creating a playbook position.
+
+    ``id`` is optional: the repository generates one (``pb_<short>``) when the
+    caller leaves it blank, so the API accepts a position without forcing the
+    client to invent a stable identifier first.
+    """
+
+    id: str | None = None
+    clause_type: ClauseType
+    title: str
+    preferred_language: str
+    fallback_language: str
+    risk_if_absent: RiskLevel = RiskLevel.MEDIUM
+    tags: list[str] = Field(default_factory=list)
+
+
+class PlaybookPositionUpdate(BaseModel):
+    """Partial update for a playbook position.
+
+    Every field is optional — a ``None`` means "leave unchanged", which the
+    repository turns into a skipped assignment. This is why the update route
+    can accept a body with only the fields a reviewer actually edited.
+    """
+
+    clause_type: ClauseType | None = None
+    title: str | None = None
+    preferred_language: str | None = None
+    fallback_language: str | None = None
+    risk_if_absent: RiskLevel | None = None
+    tags: list[str] | None = None
+
+
 class RetrievalHit(BaseModel):
     """A single scored retrieval result."""
 
