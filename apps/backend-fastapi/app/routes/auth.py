@@ -6,8 +6,8 @@ import logging
 from urllib.parse import urlencode
 
 from authlib.integrations.starlette_client import OAuthError
-from fastapi import APIRouter, Depends, Request
-from fastapi.responses import RedirectResponse
+from fastapi import APIRouter, Depends, Request, Response
+from fastapi.responses import JSONResponse, RedirectResponse
 from sqlalchemy.orm import Session
 
 from app.config import get_settings
@@ -15,7 +15,7 @@ from app.database import get_db
 from app.dependencies import get_current_user
 from app.models import User
 from app.schemas import UserOut
-from app.security import create_access_token, oauth
+from app.security import SESSION_COOKIE_NAME, create_access_token, oauth
 
 logger = logging.getLogger(__name__)
 
@@ -81,6 +81,21 @@ def read_current_user(current_user: User = Depends(get_current_user)) -> User:
 
 
 @router.post("/logout")
-def logout() -> dict[str, str]:
-    """Stateless logout: the client just discards its token."""
-    return {"message": "Logged out. Discard the access token client-side."}
+def logout(request: Request) -> Response:
+    """Log out: drop the server-side session and the cookie that carries it.
+
+    The access token is a stateless JWT, so discarding it client-side is what
+    ends the session — but the OAuth flow also leaves a signed ``session``
+    cookie in the browser (``SessionMiddleware``, which authlib uses to hold
+    the CSRF state across the redirect to Google). Leaving that behind means a
+    "logged out" browser still walks around carrying server-issued state, and
+    the next login reuses it. Clear both halves here.
+    """
+    request.session.clear()
+
+    response = JSONResponse({"message": "Logged out. Discard the access token client-side."})
+    # SessionMiddleware only emits an expiry cookie when the session it loaded
+    # was non-empty, so deleting it explicitly is what makes logout
+    # deterministic for a browser whose session cookie is stale or unreadable.
+    response.delete_cookie(SESSION_COOKIE_NAME, path="/")
+    return response

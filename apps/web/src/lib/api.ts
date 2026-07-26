@@ -107,6 +107,13 @@ interface ApiFetchOptions {
   json?: unknown;
   /** Send the stored bearer token. Defaults to true. */
   auth?: boolean;
+  /**
+   * Cookie policy for the call. The API lives on a different origin than the
+   * app, so cookies are neither sent nor accepted unless a call opts in with
+   * "include" — which /auth/logout does, or the backend's expiry cookie would
+   * be dropped and the session cookie would survive the logout.
+   */
+  credentials?: RequestCredentials;
   signal?: AbortSignal;
   /** Give up after this long. Defaults to DEFAULT_TIMEOUT_MS. */
   timeoutMs?: number;
@@ -124,6 +131,7 @@ export async function apiFetch<T>(path: string, options: ApiFetchOptions = {}): 
     body,
     json,
     auth = true,
+    credentials,
     signal,
     timeoutMs = DEFAULT_TIMEOUT_MS,
   } = options;
@@ -155,6 +163,7 @@ export async function apiFetch<T>(path: string, options: ApiFetchOptions = {}): 
       method,
       body: payload,
       headers,
+      credentials,
       signal: abortSignal,
     });
   } catch (error) {

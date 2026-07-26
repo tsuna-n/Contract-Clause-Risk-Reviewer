@@ -17,6 +17,11 @@ from app.config import get_settings
 
 _settings = get_settings()
 
+# Name of the cookie SessionMiddleware signs and hands to the browser. Named
+# here rather than left to Starlette's default because two places have to agree
+# on it: main.py sets the cookie, and /auth/logout deletes it.
+SESSION_COOKIE_NAME = "session"
+
 oauth = OAuth()
 oauth.register(
     name="google",

@@ -54,22 +54,57 @@ export function fetchCurrentUser(): Promise<User> {
 }
 
 /**
- * Sign out.
- *
- * The backend holds no session state, so discarding the token locally is what
- * actually ends the session — but the call still goes out, both so the server
- * sees the logout and so this stays the single place to change if tokens ever
- * become revocable.
- *
- * Deliberately not awaited: apiFetch reads the token before it suspends, so
- * the clear below can't race it, and waiting on the round-trip would leave the
- * token readable in localStorage for as long as the request hangs.
+ * A logout must not hang on a slow backend. The local clear happens either
+ * way, so a short ceiling only trades away the server-side cookie expiry —
+ * and waiting the default 30s with the token still in localStorage is worse.
  */
-export function logout(): void {
-  void apiFetch<{ message: string }>('/auth/logout', { method: 'POST' }).catch(
-    () => {
-      // Nothing to recover — the session is over on this device either way.
-    },
-  )
-  clearToken()
+const LOGOUT_TIMEOUT_MS = 5_000
+
+/**
+ * Expire every cookie this origin can see.
+ *
+ * Only reaches cookies set by the frontend origin and readable from JS:
+ * HttpOnly cookies, and anything the API set on its own origin, are invisible
+ * here — those are the backend's to delete, which is why /auth/logout does it
+ * server-side. Both halves are needed; neither covers the other.
+ */
+function clearBrowserCookies(): void {
+  for (const entry of document.cookie.split(';')) {
+    const name = entry.split('=')[0]?.trim()
+    if (!name) continue
+    // A cookie is identified by name+path, so a delete that doesn't name the
+    // right path silently misses. Cover the current path and its parents.
+    const segments = window.location.pathname.split('/')
+    const paths = segments.map((_, i) => segments.slice(0, i + 1).join('/') || '/')
+    for (const path of new Set(['/', ...paths])) {
+      document.cookie = `${name}=; path=${path}; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Lax`
+    }
+  }
+}
+
+/**
+ * Sign out: end the session on the server, then wipe every trace of it here.
+ *
+ * Awaited, unlike a fire-and-forget POST, because the server ends the session
+ * by *replying* with an expired session cookie — navigating away mid-flight
+ * aborts the request and leaves that cookie in the browser. The local clear
+ * runs in `finally` so a backend that is down or slow can't strand a signed-in
+ * looking UI.
+ */
+export async function logout(): Promise<void> {
+  try {
+    await apiFetch<{ message: string }>('/auth/logout', {
+      method: 'POST',
+      // Without this the browser neither sends the session cookie nor stores
+      // the expiry the response carries: the API is a different origin.
+      credentials: 'include',
+      timeoutMs: LOGOUT_TIMEOUT_MS,
+    })
+  } catch {
+    // Nothing to recover — the session is over on this device either way.
+  } finally {
+    clearToken()
+    sessionStorage.clear()
+    clearBrowserCookies()
+  }
 }

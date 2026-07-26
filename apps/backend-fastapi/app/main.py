@@ -10,6 +10,7 @@ from app.config import get_settings
 from app.errors import register_exception_handlers
 from app.logger import configure_logging
 from app.routes import api_router
+from app.security import SESSION_COOKIE_NAME
 
 
 @asynccontextmanager
@@ -36,7 +37,12 @@ def create_app() -> FastAPI:
         allow_headers=["*"],
     )
     # Required by Authlib's OAuth redirect flow to persist state across requests.
-    app.add_middleware(SessionMiddleware, secret_key=settings.session_secret_key)
+    # The cookie name is pinned so /auth/logout can delete the same cookie.
+    app.add_middleware(
+        SessionMiddleware,
+        secret_key=settings.session_secret_key,
+        session_cookie=SESSION_COOKIE_NAME,
+    )
 
     app.include_router(api_router)
 

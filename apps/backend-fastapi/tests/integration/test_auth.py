@@ -21,7 +21,12 @@ from app.config import get_settings
 from app.database import get_db
 from app.main import create_app
 from app.models import User
-from app.security import create_access_token, decode_access_token, oauth
+from app.security import (
+    SESSION_COOKIE_NAME,
+    create_access_token,
+    decode_access_token,
+    oauth,
+)
 
 settings = get_settings()
 
@@ -174,6 +179,36 @@ def test_google_callback_missing_email_redirects_to_login_with_reason(
 
     assert resp.status_code in (302, 307)
     assert resp.headers["location"] == f"{settings.frontend_url}/login?error=missing_email"
+
+
+def test_logout_expires_the_session_cookie(client: TestClient) -> None:
+    """Logging out must take the OAuth session cookie with it.
+
+    The JWT is the client's to discard, but the signed ``session`` cookie is
+    the server's — a browser that keeps it stays half-logged-in on an origin
+    the frontend can't reach into and clear itself.
+    """
+    client.cookies.set(SESSION_COOKIE_NAME, "stale-session-value", domain="testserver")
+
+    resp = client.post("/auth/logout")
+
+    assert resp.status_code == 200
+    # Asserted on the response rather than on the client's cookie jar: what the
+    # server owes here is the expiry header. (httpx's jar ignores it for a
+    # cookie that was injected by hand; a browser does not.)
+    expiries = [
+        header
+        for header in resp.headers.get_list("set-cookie")
+        if header.startswith(f"{SESSION_COOKIE_NAME}=")
+    ]
+    assert expiries, "logout sent no Set-Cookie for the session cookie"
+    assert any("Max-Age=0" in header for header in expiries)
+    assert any("Path=/" in header for header in expiries)
+
+
+def test_logout_needs_no_token(client: TestClient) -> None:
+    """A user whose token already expired must still be able to sign out."""
+    assert client.post("/auth/logout").status_code == 200
 
 
 def test_google_callback_lost_session_redirects_with_state_error(

@@ -16,8 +16,12 @@ export interface Infro {
 
 export interface SidebarUser {
   isLoggedIn: boolean;
+  /** ยังรอคำตอบจาก /auth/me อยู่ — แสดงสถานะกำลังโหลดแทนชื่อ Guest */
+  isLoading?: boolean;
   name?: string;
   email?: string;
+  /** รูปโปรไฟล์จาก Google (คีย์ picture ใน userinfo) */
+  picture?: string;
 }
 
 interface SidebarProps {
@@ -27,11 +31,10 @@ interface SidebarProps {
   onLogout?: () => void;
 }
 
-// ปกปิดอีเมลให้เหลือแค่ ***@gmail.com
-function maskEmail(email?: string) {
-  if (!email) return '***@gmail.com';
-  const domain = email.includes('@') ? email.split('@')[1] : 'gmail.com';
-  return `***@${domain}`;
+// ตัวย่อสำหรับวงกลมโปรไฟล์ ใช้ตอนไม่มีรูปจาก Google หรือรูปโหลดไม่ขึ้น
+function initialOf(name?: string, email?: string) {
+  const source = name?.trim() || email?.trim() || '';
+  return source ? source[0]!.toUpperCase() : '?';
 }
 
 const infroData: Infro[] = [{
@@ -102,10 +105,21 @@ const infroData: Infro[] = [{
 
 function Sidebar({ onNewChat, onSelectChat, user, onLogout }: SidebarProps = {}) {
   const [infros] = useState<Infro[]>(infroData);
+  // รูปโปรไฟล์ Google ตอบ 429/403 ได้เมื่อโดน rate limit — ถ้าโหลดไม่ขึ้น
+  // ให้ตกกลับไปใช้ตัวย่อ ไม่ปล่อยให้เห็นไอคอนรูปเสีย
+  const [avatarFailed, setAvatarFailed] = useState(false);
 
   const isLoggedIn = user?.isLoggedIn ?? false;
-  const displayName = isLoggedIn ? (user?.name || 'ผู้ใช้งาน') : 'Guest';
-  const displayEmail = isLoggedIn ? maskEmail(user?.email) : '***@gmail.com';
+  const isLoading = user?.isLoading ?? false;
+
+  // ชื่อจาก Google อาจเป็น null ได้ (บางบัญชีไม่แชร์) แต่อีเมลมีเสมอ
+  const displayName = isLoggedIn
+    ? user?.name || user?.email || 'ผู้ใช้งาน'
+    : isLoading
+      ? 'กำลังโหลด…'
+      : 'Guest';
+  const displayEmail = isLoggedIn ? (user?.email ?? '') : isLoading ? '' : '***@gmail.com';
+  const avatarUrl = isLoggedIn && !avatarFailed ? user?.picture : undefined;
 
   return (
     // เดิมใช้ min-h-screen + py-10 ทำให้ความสูงยืดตามเนื้อหา footer จึงไม่ชิดขอบล่างของกรอบ
@@ -177,14 +191,27 @@ function Sidebar({ onNewChat, onSelectChat, user, onLogout }: SidebarProps = {})
         {/* Footer: โปรไฟล์ผู้ใช้ + ปุ่ม logout — ล็อกอยู่ขอบล่างของกรอบเสมอ */}
         <div className="mt-4 pt-4 border-t border-neutral-800 flex items-center justify-between flex-shrink-0">
           <div className="flex items-center gap-3 min-w-0">
-            {/* วงกลมโปรไฟล์เปล่า */}
-            <div className="w-10 h-10 rounded-full border-2 border-neutral-700 flex-shrink-0" />
+            {/* วงกลมโปรไฟล์: รูปจาก Google ถ้ามี ไม่มีก็ใช้ตัวย่อของชื่อ */}
+            {avatarUrl ? (
+              <img
+                src={avatarUrl}
+                alt={displayName}
+                // Google ไม่ส่งรูปให้เมื่อมี referrer ข้ามโดเมน — ต้องปิด referrer
+                referrerPolicy="no-referrer"
+                onError={() => setAvatarFailed(true)}
+                className="w-10 h-10 rounded-full border-2 border-neutral-700 object-cover flex-shrink-0"
+              />
+            ) : (
+              <div className="w-10 h-10 rounded-full border-2 border-neutral-700 flex-shrink-0 flex items-center justify-center text-sm font-medium text-neutral-400">
+                {isLoggedIn ? initialOf(user?.name, user?.email) : ''}
+              </div>
+            )}
 
             <div className="min-w-0">
               <p className="text-sm font-medium text-neutral-100 truncate">
                 {displayName}
               </p>
-              <p className="text-xs text-neutral-500 truncate">
+              <p className="text-xs text-neutral-500 truncate" title={displayEmail}>
                 {displayEmail}
               </p>
             </div>

@@ -3,6 +3,7 @@ import Login from "./page/login";
 import AuthCallback from "./page/callback";
 import RequireAuth from "./component/RequireAuth";
 import { getToken } from "./lib/auth";
+import AuthProvider from "./component/AuthProvider";
 import Chat from "./page/layout/chat-layout";
 import ContractPage from "./page/contract";
 
@@ -70,5 +71,11 @@ const router = createBrowserRouter([
 ]);
 
 export default function App() {
-  return <RouterProvider router={router} />;
+  // AuthProvider sits above the router so the signed-in user survives
+  // navigation: fetched once on load, not re-fetched on every route change.
+  return (
+    <AuthProvider>
+      <RouterProvider router={router} />
+    </AuthProvider>
+  );
 }
