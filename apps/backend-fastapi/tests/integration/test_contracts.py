@@ -169,8 +169,15 @@ def test_review_contract_requires_auth() -> None:
     assert resp.status_code == 401
 
 
+def test_review_contract_accepts_plain_text(client: TestClient) -> None:
+    resp = _upload(client, filename="contract.txt", content="ข้อ 1. การเลิกสัญญา".encode())
+
+    assert resp.status_code == 200
+    assert resp.json()["filename"] == "contract.txt"
+
+
 def test_review_contract_rejects_unsupported_file_type(client: TestClient) -> None:
-    resp = _upload(client, filename="contract.txt", content=b"hello world")
+    resp = _upload(client, filename="contract.rtf", content=b"hello world")
     assert resp.status_code == 422
 
 

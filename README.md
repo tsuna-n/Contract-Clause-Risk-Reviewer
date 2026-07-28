@@ -54,7 +54,7 @@
 | Backend | **Redis-backed repos** | contract/report repo ย้ายจาก in-memory ไป Redis แล้ว (native TTL) — scale ข้าม process/replica ได้ |
 | Backend | **Playbook search + eval** | `GET /playbook/search`, `POST /evaluate` — ใช้งานได้จริง |
 | Backend | LLM client + RAG | Gemini client (structured output), hybrid retrieval (pgvector cosine + BM25) |
-| Backend | Parsers | PDF (PyMuPDF) / DOCX (python-docx) → `ParsedDocument` |
+| Backend | Parsers | PDF (PyMuPDF) / DOCX (python-docx) / TXT (เดา encoding: UTF-8 → cp874) → `ParsedDocument` |
 | Backend | Guardrails | grounding, citation validity, no-invented-fallback — wired เข้า judge แล้ว |
 | Backend | Schemas | Pydantic models: clause, report, taxonomy, playbook, eval |
 | Backend | **Report history** | `GET /contracts` (สรุปรายงานของ session เรียงใหม่→เก่า) + `GET /contracts/{report_id}` (ฉบับเต็ม) — Redis เก็บ sorted set ต่อ session เป็น index, รายงานของคนอื่นตอบ `404` ไม่ใช่ `403` |
@@ -70,7 +70,7 @@
 | Frontend | **Detail + ภาพรวม** | กางดู clause ทีละข้อพร้อม rationale/citation/grounding verdict, แผงภาพรวมสรุปการกระจายความเสี่ยงและประเภท clause ที่พบ |
 | Frontend | **Deep link เข้ารายงานเดิม** | `/contract?report=<id>` โหลดรายงานที่เก็บไว้มา override ต่อได้ — refresh ไม่หาย |
 | Frontend | **API client layer** | `lib/api.ts` (bearer auth, แปลง error ทั้ง `{error,message}` และ `{detail}` ของ backend, 401 เคลียร์ token อัตโนมัติ) + `lib/contracts.ts` (DTO ตรงกับ `app/schemas/*` + mapper → view model) |
-| Frontend | **Contract upload UI** | `/contract` — อัปโหลด `.pdf`/`.docx` ไป `POST /contracts/review` จริง พร้อม loading / error / empty state (จำกัดนามสกุลตามที่ backend parse ได้จริง) |
+| Frontend | **Contract upload UI** | `/contract` — อัปโหลด `.pdf`/`.docx`/`.txt` ไป `POST /contracts/review` จริง พร้อม loading / error / empty state (จำกัดนามสกุลตามที่ backend parse ได้จริง) |
 | Frontend | **Risk report view** | แสดง clause list พร้อม risk badge, excerpt, AI rationale, suggested fallback, citation (playbook position + excerpt), grounding verdict ของ judge และ disclaimer จาก report |
 | Frontend | **Override UI** | sidebar ต่อ `POST /contracts/{id}/override` จริง — validate ก่อนส่ง, response แทน state ทั้งก้อน, summary/overall risk อัปเดตตาม |
 | Frontend | **Export report** | ปุ่ม Export ทั้งหน้า `/contract` และหน้ารายงานใน `/manual` — **JSON** (รายงานเต็ม), **CSV** (แถวละ clause พร้อม BOM ให้ Excel อ่านภาษาไทยถูก + กัน CSV injection), และ **Print / Save as PDF** (`PrintableReport` portal ลง `<body>` แล้ว print stylesheet สลับมาแสดงแทนทั้งแอป) — ทำฝั่ง browser ล้วน ไม่ต้องมี endpoint |
@@ -195,7 +195,7 @@ pnpm dev                         # http://localhost:5173
 - **`heading` มักเป็นข้อความ clause ทั้งย่อหน้า** ไม่ใช่หัวข้อสั้น ๆ — ถ้าเอาไปใช้เป็น title ตรง ๆ
   จะได้ย่อหน้ายาวเป็นหัวข้อ (mapper จึงเลือกจาก `clause_type` ก่อน แล้วค่อย fallback ไปดึงหัวข้อ
   จากต้นประโยค รองรับรูปแบบ `"ข้อ 5. ..."` ภาษาไทยด้วย)
-- **รับเฉพาะ `.pdf` และ `.docx`** — นามสกุลอื่น backend ตอบ `422 document_parse_error`
+- **รับเฉพาะ `.pdf`, `.docx` และ `.txt`** — นามสกุลอื่น backend ตอบ `422 document_parse_error`
   (ดูตาราง [ไฟล์สัญญาแบบไหนใช้ได้](#ไฟล์สัญญาแบบไหนใช้ได้) ด้านล่าง)
 - **`ContractReviewReport` ไม่มี metadata ของสัญญา** (คู่สัญญา / วันที่ / มูลค่า) — มีแค่ `filename`
   ที่ติดมากับการอัปโหลด อย่าเดาข้อมูลพวกนี้ขึ้นมาแสดงเอง
@@ -218,13 +218,29 @@ pnpm dev                         # http://localhost:5173
 
 | ไฟล์ | ผล | หมายเหตุ |
 |------|-----|----------|
-| `.docx` / `.pdf` หัวข้อเลขอังกฤษ (`1. Confidentiality`, `2.3 Term`, `12) Termination`) | ✅ ดีที่สุด | ตัด clause ตามหัวข้อ ตรงตามข้อสัญญาจริง |
-| `.docx` / `.pdf` **หัวข้อไทย** (`ข้อ 1. การรักษาความลับ`, `1. การเลิกสัญญา`, `๑. เงื่อนไข`) | ✅ รองรับแล้ว | ตัดตามข้อจริงเหมือนอังกฤษ (เพิ่ม 2026-07-28) |
+| `.docx` / `.pdf` / `.txt` หัวข้อเลขอังกฤษ (`1. Confidentiality`, `2.3 Term`, `12) Termination`) | ✅ ดีที่สุด | ตัด clause ตามหัวข้อ ตรงตามข้อสัญญาจริง |
+| `.docx` / `.pdf` / `.txt` **หัวข้อไทย** (`ข้อ 1. การรักษาความลับ`, `1. การเลิกสัญญา`, `๑. เงื่อนไข`) | ✅ รองรับแล้ว | ตัดตามข้อจริงเหมือนอังกฤษ (เพิ่ม 2026-07-28) |
+| `.txt` เข้ารหัส cp874 / UTF-8 (มีหรือไม่มี BOM) | ✅ รองรับแล้ว | เดา encoding ให้เอง (เพิ่ม 2026-07-28) — ไฟล์ที่ decode ไม่ออกยัง review ได้ แต่ตัวอักษรเสียบางส่วน |
 | นำหน้าด้วย `Section 4.` / `Article 7.` / `Clause 9` / `ข้อที่ 2.` | ✅ รองรับแล้ว | prefix พวกนี้เข้าเงื่อนไขหัวข้อแล้ว |
 | หัวข้อพิมพ์เล็ก (`1. confidentiality`) / bullet / เลขโรมัน (`ARTICLE I`) | ⚠️ ใช้ได้แต่ตัดหยาบ | ตกไปใช้ **paragraph fallback** — 1 ย่อหน้า = 1 clause |
 | **PDF สแกน / ถ่ายรูป (ไม่มี text layer)** | ❌ ได้รายงานเปล่า | backend ตอบ `200` แต่ได้ **0 clause** — UI ขึ้น banner เตือนแล้ว ต้อง OCR ก่อน |
 | PDF ใส่รหัสผ่าน | ❌ `422` | `document closed or encrypted` — ต้องปลดรหัสก่อน |
-| `.doc` (Word เก่า) / `.txt` / `.rtf` / ไม่มีนามสกุล | ❌ `422` | `unsupported file type` — ต้อง Save As เป็น `.docx` หรือ `.pdf` |
+| `.doc` (Word เก่า) / `.rtf` / `.md` / ไม่มีนามสกุล | ❌ `422` | `unsupported file type` — ต้อง Save As เป็น `.docx`, `.pdf` หรือ `.txt` |
+
+**`.txt` รองรับแล้ว (2026-07-28):** `parse_txt` ใน `app/parsers.py` — ไม่มีหน้ากระดาษเหมือน DOCX
+จึงนับเป็นหน้าเดียว (`page_map == {1: (0, len(text))}`) และเดา encoding ตามลำดับ `utf-8-sig`
+(ครอบคลุม UTF-8 ธรรมดา + ตัด BOM ที่ Notepad ใส่มา) → `cp874` (โค้ดเพจไทยของ Windows คือสิ่งที่
+ไฟล์ไทยที่ Save เป็น "ANSI" เป็นจริง ๆ) → สุดท้าย `utf-8` แบบ `errors="replace"` เพื่อไม่ให้อัปโหลด
+พังเพราะไบต์เสียไม่กี่ตัว
+
+**ไฟล์ตัวอย่างไว้เทส** (`apps/backend-fastapi/data/`):
+
+| ไฟล์ | ข้อ | ใช้เทสอะไร |
+|------|-----|------------|
+| `data/samples/thai-nda-short.txt` | 3 | smoke test เร็วสุด — `.txt` + หัวข้อไทย (~2 นาที) |
+| `data/samples/thai-software-service-agreement.txt` | 11 | สัญญาไทยเต็มฉบับ ครอบคลุม 8 clause type รวมข้อเสี่ยงจริง (ความรับผิดไม่จำกัด, non-compete 5 ปีไม่จำกัดพื้นที่, ชำระเงิน 60 วัน) — ~8 นาที |
+| `data/samples/*.docx` (3 ไฟล์) | — | เทส DOCX parser |
+| `data/contracts/*.txt` (12 ไฟล์) | — | สัญญาจริงจาก CUAD — อัปโหลดตรงได้แล้วตั้งแต่รองรับ `.txt` |
 
 **หัวข้อไทยรองรับแล้ว (2026-07-28):** เดิม regex ใน `app/parsers.py` คือ
 `^\s*(\d+(\.\d+)*)[.)]?\s+[A-Z]` ซึ่งบังคับ **อักษรอังกฤษตัวใหญ่ A–Z** ต่อท้ายเลขข้อ ตัวอักษรไทย

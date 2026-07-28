@@ -1,4 +1,4 @@
-"""Document parsing: PDF/DOCX bytes -> normalized text + page offsets.
+"""Document parsing: PDF/DOCX/TXT bytes -> normalized text + page offsets.
 
 The offsets matter: every clause the pipeline produces carries a span back into
 ``ParsedDocument.text``, which is what makes citations checkable against the
@@ -155,5 +155,41 @@ def parse_docx(data: bytes) -> ParsedDocument:
     return ParsedDocument(text=text, spans=[span], page_map={1: (0, len(text))})
 
 
+#: Encodings tried, in order, when decoding a ``.txt`` upload.
+#:
+#: A plain-text file carries no encoding declaration, so this is a guess made in
+#: the order the guesses are likely to be right. ``utf-8-sig`` covers plain UTF-8
+#: as well, and strips the BOM Notepad writes; ``cp874`` is the Thai Windows
+#: codepage, which is what a Thai contract saved as "ANSI" actually is - decoding
+#: one as UTF-8 raises rather than mojibakes, so the fallback is reached.
+_TXT_ENCODINGS = ("utf-8-sig", "cp874")
+
+
+def _decode_text(data: bytes) -> str:
+    """Decode text bytes, guessing the encoding, without ever raising.
+
+    A file we cannot decode cleanly still reviews better mangled than not at
+    all: the last resort replaces bad bytes instead of failing the upload.
+    """
+    for encoding in _TXT_ENCODINGS:
+        try:
+            return data.decode(encoding)
+        except UnicodeDecodeError:
+            continue
+    return data.decode("utf-8", errors="replace")
+
+
+def parse_txt(data: bytes) -> ParsedDocument:
+    """Parse plain-text bytes into a :class:`ParsedDocument`.
+
+    Like DOCX, plain text has no pages, so the whole document is a single
+    synthetic page. The segmenter still gets what it needs: ``normalize`` keeps
+    blank-line paragraph breaks, and numbered headings survive as written.
+    """
+    text = normalize(_decode_text(data))
+    span = TextSpan(start=0, end=len(text), page=1)
+    return ParsedDocument(text=text, spans=[span], page_map={1: (0, len(text))})
+
+
 #: Upload extension -> parser. ``ReviewService`` rejects anything not listed.
-PARSERS = {"pdf": parse_pdf, "docx": parse_docx}
+PARSERS = {"pdf": parse_pdf, "docx": parse_docx, "txt": parse_txt}

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import type { ReportSummary } from '../contract/types';
 import { riskAccent, riskBadge } from '../contract/riskStyles';
+import { ACCEPTED_EXTENSIONS } from '../../lib/contracts';
 
 export interface SidebarUser {
   isLoggedIn: boolean;
@@ -44,7 +45,7 @@ const riskLabel: Record<string, string> = {
 
 // ชื่อไฟล์ที่อัปโหลดคือชื่อเรื่อง — ตัดนามสกุลออกเพราะซ้ำกับที่รู้อยู่แล้ว
 function titleOf(report: ReportSummary) {
-  return report.filename.replace(/\.(pdf|docx)$/i, '') || report.contractId;
+  return report.filename.replace(/\.(pdf|docx|txt)$/i, '') || report.contractId;
 }
 
 function formatDate(iso: string) {
@@ -165,7 +166,7 @@ function Sidebar({
             <div className="text-center text-neutral-600 py-16 text-sm border border-dashed border-neutral-800 rounded-xl px-6 leading-relaxed">
               ยังไม่มีสัญญาที่ตรวจ
               <br />
-              อัปโหลดไฟล์ .pdf หรือ .docx ทางขวาเพื่อเริ่ม
+              อัปโหลดไฟล์ {ACCEPTED_EXTENSIONS.join(' / ')} ทางขวาเพื่อเริ่ม
             </div>
           ) : (
             reports.map((report) => (

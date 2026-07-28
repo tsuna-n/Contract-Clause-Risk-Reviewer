@@ -216,8 +216,8 @@ function toReportSummary(row: BackendReportSummary): ReportSummary {
 
 // ── Calls ──────────────────────────────────────────────────────────────────────
 
-/** Extensions the backend has a parser for (see `_PARSERS` in review_service.py). */
-export const ACCEPTED_EXTENSIONS = [".pdf", ".docx"] as const;
+/** Extensions the backend has a parser for (see `PARSERS` in app/parsers.py). */
+export const ACCEPTED_EXTENSIONS = [".pdf", ".docx", ".txt"] as const;
 export const ACCEPT_ATTRIBUTE = ACCEPTED_EXTENSIONS.join(",");
 
 export function isSupportedFile(file: File): boolean {
