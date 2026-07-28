@@ -40,6 +40,36 @@
 .anim-delay-3 { animation-delay: 0.32s; }
 .anim-delay-4 { animation-delay: 0.42s; }
 
+/* ─── Print ────────────────────────────────────────────────────────────────
+   `PrintableReport` portals a paper version of the report onto <body> and
+   tags it `.print-root`. It stays hidden on screen; printing hides the app
+   (#root) and reveals it instead, so the printout owes nothing to the dark,
+   two-panel, scrolling workspace the app renders. */
+.print-root {
+  display: none;
+}
+
+@media print {
+  #root {
+    display: none !important;
+  }
+
+  .print-root {
+    display: block !important;
+  }
+
+  /* Reset the dark base style — printing white-on-white is the default
+     failure mode of a dark app. */
+  body {
+    background: #fff !important;
+    color: #000 !important;
+  }
+
+  @page {
+    margin: 16mm 14mm;
+  }
+}
+
 /* ─── Custom scrollbar ─────────────────────────────────────────────────────── */
 ::-webkit-scrollbar           { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track     { background: rgba(15, 23, 42, 0.3); }

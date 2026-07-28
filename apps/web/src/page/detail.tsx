@@ -2,6 +2,11 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import type { ContractReport } from '../component/contract/types';
 import { riskAccent, riskBadge, riskRow, riskRowSelected } from '../component/contract/riskStyles';
+import {
+  ExportMenu,
+  PrintableReport,
+  UnknownClausesNotice,
+} from '../component/contract';
 import SideDetail from '../component/sidebar/SideDetail';
 
 interface DetailProps {
@@ -91,15 +96,23 @@ function Detail({ report, loading = false, error = null, onBack, onRetry }: Deta
                 ← กลับไปหน้าอัปโหลด
               </button>
             )}
-            <p className="text-xs uppercase tracking-[0.2em] text-amber-500/70 mb-1">
-              {formatDate(report.createdAt)}
-            </p>
-            <h1
-              className="text-2xl font-semibold text-neutral-100 leading-snug break-words"
-              style={{ fontFamily: 'Georgia, "Noto Serif Thai", serif' }}
-            >
-              {report.filename || report.contractId}
-            </h1>
+            <div className="flex items-start justify-between gap-4">
+              <div className="min-w-0">
+                <p className="text-xs uppercase tracking-[0.2em] text-amber-500/70 mb-1">
+                  {formatDate(report.createdAt)}
+                </p>
+                <h1
+                  className="text-2xl font-semibold text-neutral-100 leading-snug break-words"
+                  style={{ fontFamily: 'Georgia, "Noto Serif Thai", serif' }}
+                >
+                  {report.filename || report.contractId}
+                </h1>
+              </div>
+              <ExportMenu
+                report={report}
+                className="shrink-0 flex items-center gap-1.5 rounded-lg border border-neutral-800 bg-neutral-900 px-3 py-1.5 text-xs font-medium text-neutral-300 transition-colors hover:border-amber-500/40 hover:text-amber-300"
+              />
+            </div>
           </div>
 
           {/* ความเสี่ยงรวม + จำนวนแต่ละระดับ */}
@@ -115,6 +128,10 @@ function Detail({ report, loading = false, error = null, onBack, onRetry }: Deta
               {report.clauses.length} ข้อสัญญา
             </span>
           </div>
+
+          {/* ข้อสัญญาที่ประเมินไม่สำเร็จก็ยังมี badge กับถูกนับใน summary เหมือนข้อที่
+              ตรวจผ่าน — ต้องบอกให้ชัดตรงนี้ว่ามันคนละเรื่องกับ "ไม่มีความเสี่ยง" */}
+          <UnknownClausesNotice report={report} locale="th" className="mb-6" />
 
           {/* คำเตือนจาก backend — ติดมากับทุกรายงาน ไม่ใช่ข้อความที่ frontend แต่งเอง */}
           {report.disclaimer && (
@@ -247,6 +264,9 @@ function Detail({ report, loading = false, error = null, onBack, onRetry }: Deta
 
       {/* แผงภาพรวมทางขวา */}
       {showOverview && <SideDetail report={report} onClose={() => setShowOverview(false)} />}
+
+      {/* ซ่อนอยู่บนจอ — print stylesheet จะสลับมาแสดงตัวนี้แทนทั้งแอป */}
+      <PrintableReport report={report} />
     </div>
   );
 }

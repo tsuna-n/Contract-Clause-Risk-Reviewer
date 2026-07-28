@@ -72,6 +72,8 @@
 | Frontend | **Contract upload UI** | `/contract` — อัปโหลด `.pdf`/`.docx` ไป `POST /contracts/review` จริง พร้อม loading / error / empty state (จำกัดนามสกุลตามที่ backend parse ได้จริง) |
 | Frontend | **Risk report view** | แสดง clause list พร้อม risk badge, excerpt, AI rationale, suggested fallback, citation (playbook position + excerpt), grounding verdict ของ judge และ disclaimer จาก report |
 | Frontend | **Override UI** | sidebar ต่อ `POST /contracts/{id}/override` จริง — validate ก่อนส่ง, response แทน state ทั้งก้อน, summary/overall risk อัปเดตตาม |
+| Frontend | **Export report** | ปุ่ม Export ทั้งหน้า `/contract` และหน้ารายงานใน `/manual` — **JSON** (รายงานเต็ม), **CSV** (แถวละ clause พร้อม BOM ให้ Excel อ่านภาษาไทยถูก + กัน CSV injection), และ **Print / Save as PDF** (`PrintableReport` portal ลง `<body>` แล้ว print stylesheet สลับมาแสดงแทนทั้งแอป) — ทำฝั่ง browser ล้วน ไม่ต้องมี endpoint |
+| Frontend | **เตือนเมื่อ clause ประเมินไม่สำเร็จ** | รายงานที่มี `unknown` ขึ้น banner ระดับรายงานว่า "ยังไม่ได้วิเคราะห์ ไม่ใช่ว่าไม่มีความเสี่ยง" พร้อมบอกสาเหตุที่พบบ่อย (โควตา Gemini หมด) — badge สีเทารายข้ออ่านเหมือน "ผ่าน" ได้ง่ายเกินไป |
 | Infra | Docker Compose | ยก Postgres (pgvector) + Redis ได้จริง |
 
 ---
@@ -82,7 +84,7 @@
 |------|--------|------------|
 | Backend | Contract metadata | ยังไม่ดึงคู่สัญญา / วันที่ / มูลค่าสัญญา ออกมาจากเอกสาร — `ContractReviewReport` ไม่มีฟิลด์พวกนี้ (UI จึงไม่แสดง แทนที่จะเดาข้อมูลเอง) |
 | Backend | Accept risk | มีแต่ override + audit log ยังไม่มี endpoint สำหรับ "accept" — ฝั่ง UI จึงเก็บเป็น local review progress เท่านั้น |
-| Backend | Export report | ยังไม่มี endpoint export รายงาน (PDF/CSV) |
+| Backend | Export report (server-side) | ยังไม่มี endpoint export — ฝั่ง frontend ทำ JSON/CSV/Print เองได้แล้วจากรายงานที่อยู่ในเบราว์เซอร์ จะต้องมี endpoint ก็ต่อเมื่ออยาก export โดยไม่เปิดหน้าเว็บ (เช่น ส่งเมล/แบตช์) |
 | Backend | เก็บรายงานถาวร | รายงานอยู่ใน Redis ตาม `retention_ttl_seconds` — ประวัติเป็น "ย้อนหลังเท่าที่ยังไม่หมดอายุ" ไม่ใช่คลังถาวร ถ้าต้องเก็บยาวต้องย้ายไป Postgres |
 | Backend | Clause-level accuracy ที่วัดแล้ว | gold set พร้อมใช้แล้วแต่ยังไม่ได้รัน `POST /evaluate` เต็มชุด (327 clause ≈ 1,300 LLM call) — โควตา Gemini free tier อยู่ที่ 20 request/วัน |
 
@@ -195,7 +197,12 @@ pnpm dev                         # http://localhost:5173
 - **รับเฉพาะ `.pdf` และ `.docx`** — นามสกุลอื่น backend ตอบ `422 document_parse_error`
 - **`ContractReviewReport` ไม่มี metadata ของสัญญา** (คู่สัญญา / วันที่ / มูลค่า) — มีแค่ `filename`
   ที่ติดมากับการอัปโหลด อย่าเดาข้อมูลพวกนี้ขึ้นมาแสดงเอง
-- **การ review ใช้เวลาราว 1 นาที** (วัดได้ ~83 วิ สำหรับ 3 clause) — ต้องมี loading state ที่ชัดเจน
+- **การ review ใช้เวลาหลายนาที ไม่ใช่หลักวินาที** — วัดจริงได้ ~45 วิ/clause (83 วิ สำหรับ 3 clause,
+  **6 นาที 15 วิ สำหรับ 8 clause** วัดเมื่อ 2026-07-28) เพราะ pipeline เดินทีละ clause และยิง LLM
+  ~4 ครั้งต่อ clause — ต้อง loading state ที่ชัดเจนและอย่าเขียนว่า "about a minute"
+- **Export ทำฝั่ง browser ล้วน** — ไม่มี endpoint และไม่ต้องมี: ตอนรายงานขึ้นจอแล้ว `ContractReport`
+  อยู่ใน memory ครบ เหลือแค่ serialize (`lib/export.ts`) สิ่งเดียวที่ไม่ติดไปคือ `span.start/end`
+  ซึ่ง mapper ตัดทิ้งตั้งแต่ก่อนถึง UI อยู่แล้ว
 - **โควตา Gemini หมดแล้วยังตอบ `200`** — pipeline แยก failure ของแต่ละ clause ออกจากกัน (ตั้งใจ)
   ดังนั้นเมื่อโดน `429` ทั้งฉบับ จะได้ report ที่ทุก clause เป็น `unknown` พร้อม rationale ว่า
   "Automated review failed for this clause" ไม่ใช่ error ระดับ request — UI ต้องแสดง `unknown`
@@ -205,13 +212,13 @@ pnpm dev                         # http://localhost:5173
 
 ## Roadmap ที่เหลือ
 
-เส้นทางหลัก (login → upload → review → override → เปิดรายงานเดิม) ใช้งานได้จริงครบแล้ว — เหลือ:
+เส้นทางหลัก (login → upload → review → override → export → เปิดรายงานเดิม) ใช้งานได้จริงครบแล้ว
+— ที่เหลือทุกข้อต้องแก้ฝั่ง backend ก่อน ทำใน frontend อย่างเดียวไม่ได้:
 
-1. **Export Report** — ยังไม่มีทั้ง endpoint และปุ่ม
-2. **Accept risk แบบ persist** — ต้องมี endpoint + audit ฝั่ง backend ก่อน ตอนนี้เป็น local state
-3. **เก็บรายงานถาวร** — ตอนนี้อยู่ใน Redis ตาม TTL หมดอายุแล้วหายจากประวัติ ถ้าต้องเก็บยาว
+1. **Accept risk แบบ persist** — ต้องมี endpoint + audit ฝั่ง backend ก่อน ตอนนี้เป็น local state
+2. **เก็บรายงานถาวร** — ตอนนี้อยู่ใน Redis ตาม TTL หมดอายุแล้วหายจากประวัติ ถ้าต้องเก็บยาว
    ต้องมีตารางใน Postgres
-4. **Contract metadata extraction** — ถ้าอยากได้ panel คู่สัญญา/วันที่/มูลค่า ต้องให้ pipeline
+3. **Contract metadata extraction** — ถ้าอยากได้ panel คู่สัญญา/วันที่/มูลค่า ต้องให้ pipeline
    สกัดออกมาใส่ `ContractReviewReport` ก่อน (CUAD มี annotation หมวด Parties / Agreement Date /
    Effective Date อยู่แล้ว ใช้เป็น gold set ได้ทันที)
-5. **รัน evaluation เต็มชุด** — gold set 12 ฉบับพร้อมแล้ว แต่ต้องมีโควตา Gemini พอ
+4. **รัน evaluation เต็มชุด** — gold set 12 ฉบับพร้อมแล้ว แต่ต้องมีโควตา Gemini พอ

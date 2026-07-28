@@ -1,6 +1,12 @@
 import { useCallback, useEffect, useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
-import { OriginalContract, AIRiskAnalysis } from "../component/contract";
+import {
+  OriginalContract,
+  AIRiskAnalysis,
+  ExportMenu,
+  PrintableReport,
+  UnknownClausesNotice,
+} from "../component/contract";
 import type { ContractReport, RiskLevel } from "../component/contract/types";
 import { riskAccent } from "../component/contract/riskStyles";
 import { ApiError } from "../lib/api";
@@ -198,6 +204,11 @@ export default function ContractPage() {
                 {report.overallRisk} RISK
               </p>
             </div>
+
+            <ExportMenu
+              report={report}
+              className="flex items-center gap-2 px-4 py-2 rounded-xl border border-slate-600 text-sm font-semibold text-slate-300 hover:bg-slate-700/50 hover:text-white hover:border-slate-500 transition-colors"
+            />
           </div>
         )}
       </header>
@@ -206,9 +217,13 @@ export default function ContractPage() {
       {busy && (
         <div className="flex items-center gap-3 px-8 py-3 border-b border-sky-500/20 bg-sky-950/40 shrink-0">
           <span className="w-3.5 h-3.5 rounded-full border-2 border-sky-400 border-t-transparent animate-spin" />
+          {/* The wait is measured, not guessed: the pipeline runs clauses
+              serially at roughly four LLM calls each, and a real 8-clause
+              contract took just over six minutes. "About a minute" reads as a
+              hang once the third minute passes. */}
           <p className="text-sm text-sky-200">
             {reviewing
-              ? `Reviewing ${fileName}… this runs the full pipeline and can take a minute.`
+              ? `Reviewing ${fileName}… the full pipeline runs clause by clause and usually takes several minutes — leave this tab open.`
               : "Loading the stored report…"}
           </p>
         </div>
@@ -225,6 +240,15 @@ export default function ContractPage() {
           >
             ✕
           </button>
+        </div>
+      )}
+
+      {/* A clause the pipeline failed on still renders with a badge and a
+          summary count, which is indistinguishable from one it cleared. Say so
+          at report level, above the panels. */}
+      {report && report.summary.unknown > 0 && (
+        <div className="px-8 pt-3 shrink-0">
+          <UnknownClausesNotice report={report} />
         </div>
       )}
 
@@ -253,6 +277,9 @@ export default function ContractPage() {
           onAccept={handleAccept}
         />
       </main>
+
+      {/* Hidden on screen; the print stylesheet swaps it in for the app. */}
+      {report && <PrintableReport report={report} />}
     </div>
   );
 }
