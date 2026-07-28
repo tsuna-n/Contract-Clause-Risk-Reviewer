@@ -34,7 +34,7 @@
 
 | ส่วน | เทคโนโลยี | คำอธิบาย |
 |------|-----------|----------|
-| `apps/backend-fastapi` | FastAPI, SQLAlchemy, Postgres/pgvector, Redis, Gemini | API + review pipeline (ดู [README ของ backend](apps/backend-fastapi/README.md)) |
+| `apps/backend-fastapi` | FastAPI, SQLAlchemy, Postgres/pgvector, Redis, LLM (Gemini / Claude / OpenAI-compatible) | API + review pipeline (ดู [README ของ backend](apps/backend-fastapi/README.md)) |
 | `apps/web` | React 19, Vite, Tailwind, react-router | Frontend (login, onboarding, หน้า review สัญญา) |
 | `infrastructure` | Docker Compose | Postgres (pgvector) + Redis + api |
 
@@ -53,7 +53,7 @@
 | Backend | **Override + audit** | `POST /contracts/{id}/override` — เปลี่ยน risk level, re-aggregate, เขียน audit log ลง Postgres (ทดสอบแล้ว + integration test อัตโนมัติ) |
 | Backend | **Redis-backed repos** | contract/report repo ย้ายจาก in-memory ไป Redis แล้ว (native TTL) — scale ข้าม process/replica ได้ |
 | Backend | **Playbook search + eval** | `GET /playbook/search`, `POST /evaluate` — ใช้งานได้จริง |
-| Backend | LLM client + RAG | Gemini client (structured output), hybrid retrieval (pgvector cosine + BM25) |
+| Backend | **LLM client + RAG (สลับค่ายได้)** | provider adapter (`app/ai/providers.py`) — Gemini / Anthropic Claude / OpenAI-compatible (Z.AI GLM, DeepSeek, vLLM) เลือกด้วย `LLM_PROVIDER` ตัวเดียว, structured output ตามวิธีของแต่ละค่าย, hybrid retrieval (pgvector cosine + BM25) |
 | Backend | Parsers | PDF (PyMuPDF) / DOCX (python-docx) / TXT (เดา encoding: UTF-8 → cp874) → `ParsedDocument` |
 | Backend | Guardrails | grounding, citation validity, no-invented-fallback — wired เข้า judge แล้ว |
 | Backend | Schemas | Pydantic models: clause, report, taxonomy, playbook, eval |
@@ -121,6 +121,71 @@ pnpm dev                         # http://localhost:5173
 > ไม่งั้น CORS จะบล็อก
 
 รายละเอียด env / setup / roadmap ของ backend: [`apps/backend-fastapi/README.md`](apps/backend-fastapi/README.md)
+
+---
+
+## เลือกค่าย AI (สลับได้ด้วย `.env` อย่างเดียว)
+
+`LLM_PROVIDER` ตัวเดียวเลือกได้ 4 ค่าย โดยมี adapter จริง 3 ตัวใน
+[`app/ai/providers.py`](apps/backend-fastapi/app/ai/providers.py) — `zai` คือ adapter แบบ
+OpenAI-compatible ที่เติม endpoint/model ของ Z.AI ให้แล้ว ตัวเดียวกันนี้จึงใช้กับ DeepSeek, Ollama,
+vLLM ได้ด้วยการตั้ง `LLM_BASE_URL` เอง SDK ทั้งสามติดตั้งมาให้ครบและ `import` แบบ lazy —
+**ไม่ต้องแก้โค้ด ไม่ต้อง rebuild image**
+
+| ค่าย | `LLM_PROVIDER` | คีย์ที่ต้องมี | model default |
+|------|----------------|---------------|---------------|
+| Google Gemini | `gemini` | `GEMINI_API_KEY` | `gemini-3.5-flash` |
+| Anthropic Claude | `anthropic` | `ANTHROPIC_API_KEY` | `claude-opus-5` |
+| Z.AI (GLM) | `zai` | `ZAI_API_KEY` | `glm-4.6` |
+| OpenAI-compatible | `openai` | `OPENAI_API_KEY` + `LLM_MODEL` + `LLM_BASE_URL` | — (ต้องระบุเอง) |
+
+**ตัวอย่าง: เปลี่ยนไปใช้ Claude Haiku 4.5** (คอนฟิกที่ repo นี้ใช้อยู่ตอนนี้)
+
+```env
+# --- LLM: Anthropic (Claude Haiku 4.5) ---
+LLM_PROVIDER=anthropic
+ANTHROPIC_API_KEY=sk-ant-api03-...
+LLM_MODEL=claude-haiku-4-5
+
+# --- Embeddings: ยังเป็น Gemini (Anthropic ไม่มี embedding API) ---
+EMBEDDING_PROVIDER=gemini
+GEMINI_API_KEY=AIza...
+EMBEDDING_MODEL=gemini-embedding-001
+```
+
+เคสนี้ **ไม่ต้อง re-ingest playbook** เพราะ embedding ยังเป็นโมเดลเดิม vector ใน pgvector จึงใช้ต่อได้
+ทั้งหมด — เปลี่ยนแค่ว่าใครเป็นคนอ่านสัญญา
+
+ตรวจว่าได้ค่ายที่ตั้งใจหลัง restart:
+
+```bash
+cd apps/backend-fastapi && .venv/bin/python -c "
+from app.ai.providers import build_chat_backend
+from app.ai.retrieval import build_embedder
+from app.config import get_settings
+b = build_chat_backend(get_settings()); e = build_embedder()
+print('chat :', type(b).__name__, '->', b.model)
+print('embed:', type(e).__name__, '->', e.model, f'({e.dim} dim)')
+"
+# chat : AnthropicChatBackend -> claude-haiku-4-5
+# embed: GeminiEmbedder -> gemini-embedding-001 (768 dim)
+```
+
+**4 ข้อที่ต้องรู้ก่อนสลับ:**
+
+1. **สลับค่ายแล้วต้องแก้ `LLM_MODEL` ด้วย** — ตั้ง `LLM_PROVIDER=anthropic` ทั้งที่
+   `LLM_MODEL=gemini-3.5-flash` จะฟ้อง `ProviderConfigError` ตั้งแต่เรียกครั้งแรก แทนที่จะไปเจอ
+   404 ของ vendor ที่ไม่บอกว่าตัวไหนผิด (ลบ `LLM_MODEL` ทิ้งก็ได้ = ใช้ default ของค่ายนั้น)
+2. **คีย์ว่างถือว่าไม่ได้ตั้ง** — `ANTHROPIC_API_KEY=` เฉย ๆ จะฟ้องทันทีว่าตัวไหนขาด ไม่ปล่อยให้ไป
+   ตาย 401 รายข้อจนได้รายงานที่ทุก clause เป็น `unknown` โดยไม่มีอะไรบอกสาเหตุ
+3. **เปลี่ยน embedding = ต้อง re-ingest** — vector จากคนละโมเดลเทียบ cosine กันไม่ได้ ถ้า
+   `EMBEDDING_DIM` เปลี่ยนด้วยต้องมี Alembic migration ใหม่ (`0c41a8268ed0` hardcode `VECTOR(768)`)
+   แล้วรัน `python -m scripts.ingest_playbook`
+4. **restart เสมอ** — `get_settings()` / `get_llm_client()` / `get_embedder()` เป็น `@lru_cache`
+   ทั้งหมด และ `uvicorn --reload` จับแค่ไฟล์ `.py` ไม่จับ `.env`
+
+ตารางเต็ม + ตัวแปรทุกตัว (`LLM_API_KEY`, `EMBEDDING_API_KEY`, `LLM_BASE_URL` ฯลฯ):
+[README ของ backend → สลับค่าย AI](apps/backend-fastapi/README.md#สลับค่าย-ai-ผ่าน-env)
 
 ---
 

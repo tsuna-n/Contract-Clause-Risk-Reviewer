@@ -23,10 +23,10 @@ from app.ai.llm import LLMClient
 from app.ai.pipeline import Orchestrator
 from app.ai.retrieval import (
     Embedder,
-    GeminiEmbedder,
     PgVectorStore,
     Retriever,
     VectorStore,
+    build_embedder,
     load_positions,
 )
 from app.config import get_settings
@@ -104,8 +104,8 @@ def get_llm_client() -> LLMClient:
 
 @lru_cache
 def get_embedder() -> Embedder:
-    """Return the shared embedder."""
-    return GeminiEmbedder()
+    """Return the shared embedder for the configured provider."""
+    return build_embedder()
 
 
 @lru_cache
