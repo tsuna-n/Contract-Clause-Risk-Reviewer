@@ -5,7 +5,7 @@ import { riskAccent, riskBadge, riskRow, riskRowSelected } from '../component/co
 import {
   ExportMenu,
   PrintableReport,
-  UnknownClausesNotice,
+  IncompleteReviewNotice,
 } from '../component/contract';
 import SideDetail from '../component/sidebar/SideDetail';
 
@@ -131,7 +131,7 @@ function Detail({ report, loading = false, error = null, onBack, onRetry }: Deta
 
           {/* ข้อสัญญาที่ประเมินไม่สำเร็จก็ยังมี badge กับถูกนับใน summary เหมือนข้อที่
               ตรวจผ่าน — ต้องบอกให้ชัดตรงนี้ว่ามันคนละเรื่องกับ "ไม่มีความเสี่ยง" */}
-          <UnknownClausesNotice report={report} locale="th" className="mb-6" />
+          <IncompleteReviewNotice report={report} locale="th" className="mb-6" />
 
           {/* คำเตือนจาก backend — ติดมากับทุกรายงาน ไม่ใช่ข้อความที่ frontend แต่งเอง */}
           {report.disclaimer && (

@@ -3,7 +3,7 @@ export { default as AIRiskAnalysis } from "./AIRiskAnalysis";
 export { default as OverrideSidebar } from "./OverrideSidebar";
 export { default as ExportMenu } from "./ExportMenu";
 export { default as PrintableReport } from "./PrintableReport";
-export { default as UnknownClausesNotice } from "./UnknownClausesNotice";
+export { default as IncompleteReviewNotice } from "./IncompleteReviewNotice";
 export type {
   ClauseView,
   Citation,

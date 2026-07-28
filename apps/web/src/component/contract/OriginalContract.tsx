@@ -9,6 +9,15 @@ interface OriginalContractProps {
   onClauseSelect: (id: string) => void;
   /** Called with a user-picked file; the page owns the upload itself. */
   onFileSelect: (file: File) => void;
+  /**
+   * A report is loaded, even if it yielded no clauses.
+   *
+   * Without this the panel can't tell "nothing uploaded yet" from "a file was
+   * reviewed and no text came out of it" — and it told the second case to
+   * upload a contract, while the page header named the file it had just
+   * reviewed.
+   */
+  hasReport?: boolean;
   /** Disables the picker while a review is in flight. */
   busy?: boolean;
   /** Clause ids the reviewer has accepted, for at-a-glance progress. */
@@ -20,6 +29,7 @@ export default function OriginalContract({
   selectedClauseId,
   onClauseSelect,
   onFileSelect,
+  hasReport = false,
   busy = false,
   acceptedIds,
 }: OriginalContractProps) {
@@ -69,10 +79,24 @@ export default function OriginalContract({
       <div className="flex-1 overflow-y-auto px-6 py-6 space-y-4">
         {clauses.length === 0 ? (
           <div className="h-full flex flex-col items-center justify-center text-center gap-2 px-6">
-            <p className="text-slate-400 text-sm font-medium">No contract loaded</p>
-            <p className="text-slate-600 text-xs">
-              Upload a {ACCEPTED_EXTENSIONS.join(" or ")} file to run a review
-            </p>
+            {hasReport ? (
+              <>
+                <p className="text-slate-400 text-sm font-medium">
+                  No clauses could be extracted
+                </p>
+                <p className="text-slate-600 text-xs max-w-xs leading-relaxed">
+                  The file was read but produced no text to review — usually a scanned
+                  PDF with no text layer.
+                </p>
+              </>
+            ) : (
+              <>
+                <p className="text-slate-400 text-sm font-medium">No contract loaded</p>
+                <p className="text-slate-600 text-xs">
+                  Upload a {ACCEPTED_EXTENSIONS.join(" or ")} file to run a review
+                </p>
+              </>
+            )}
           </div>
         ) : (
           clauses.map((clause, index) => {

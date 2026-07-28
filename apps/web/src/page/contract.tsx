@@ -5,7 +5,7 @@ import {
   AIRiskAnalysis,
   ExportMenu,
   PrintableReport,
-  UnknownClausesNotice,
+  IncompleteReviewNotice,
 } from "../component/contract";
 import type { ContractReport, RiskLevel } from "../component/contract/types";
 import { riskAccent } from "../component/contract/riskStyles";
@@ -243,13 +243,10 @@ export default function ContractPage() {
         </div>
       )}
 
-      {/* A clause the pipeline failed on still renders with a badge and a
-          summary count, which is indistinguishable from one it cleared. Say so
-          at report level, above the panels. */}
-      {report && report.summary.unknown > 0 && (
-        <div className="px-8 pt-3 shrink-0">
-          <UnknownClausesNotice report={report} />
-        </div>
+      {/* A review that produced nothing, or clauses the pipeline failed on,
+          both render as an ordinary report. Say so above the panels. */}
+      {report && (
+        <IncompleteReviewNotice report={report} className="mx-8 mt-3 shrink-0" />
       )}
 
       {report?.disclaimer && (
@@ -265,6 +262,7 @@ export default function ContractPage() {
           selectedClauseId={selectedClauseId}
           onClauseSelect={setSelectedClauseId}
           onFileSelect={handleFileSelect}
+          hasReport={report !== null}
           busy={busy}
           acceptedIds={acceptedIds}
         />
