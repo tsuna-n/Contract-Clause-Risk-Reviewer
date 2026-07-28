@@ -15,7 +15,15 @@ from typing import Protocol
 import yaml
 from sqlalchemy.dialects.postgresql import insert
 
-from app.config import get_settings
+from app.ai.providers import (
+    GEMINI,
+    ProviderConfigError,
+    resolve_api_key,
+    resolve_base_url,
+    resolve_embedding_model,
+    resolve_embedding_provider,
+)
+from app.config import Settings, get_settings
 from app.database import SessionLocal
 from app.models import PlaybookEmbedding
 from app.schemas import (
@@ -47,11 +55,14 @@ class GeminiEmbedder:
         model: str | None = None,
         dim: int | None = None,
         timeout_seconds: int | None = None,
+        api_key: str | None = None,
     ) -> None:
         settings = get_settings()
-        self.model = model or settings.embedding_model
+        self.model = model or resolve_embedding_model(GEMINI, settings.embedding_model)
         self.dim = dim or settings.embedding_dim
-        self._api_key = settings.gemini_api_key
+        self._api_key = api_key or resolve_api_key(
+            settings, GEMINI, override=settings.embedding_api_key
+        )
         self._timeout_seconds = timeout_seconds or settings.llm_timeout_seconds
         self._client = None  # lazily constructed google.genai.Client
 
@@ -83,6 +94,94 @@ class GeminiEmbedder:
             ),
         )
         return [list(embedding.values or []) for embedding in response.embeddings or []]
+
+
+class OpenAICompatibleEmbedder:
+    """Embedder for any OpenAI-shaped embeddings API, Z.AI's included.
+
+    ``dimensions`` is optional in that API and not every host implements it, so
+    a rejection is treated as "this model has one fixed width" and retried
+    without it. The width still has to match ``EMBEDDING_DIM``: the playbook
+    repository silently stores a zero vector for a mismatched length, which
+    would make positions unretrievable with nothing in the logs to explain it.
+    """
+
+    def __init__(
+        self,
+        model: str | None = None,
+        dim: int | None = None,
+        timeout_seconds: int | None = None,
+        api_key: str | None = None,
+        base_url: str | None = None,
+        provider: str | None = None,
+    ) -> None:
+        settings = get_settings()
+        resolved_provider = provider or resolve_embedding_provider(settings)
+        self.model = model or resolve_embedding_model(resolved_provider, settings.embedding_model)
+        self.dim = dim or settings.embedding_dim
+        self._api_key = api_key or resolve_api_key(
+            settings, resolved_provider, override=settings.embedding_api_key
+        )
+        self._base_url = base_url or resolve_base_url(
+            resolved_provider, settings.embedding_base_url or settings.llm_base_url
+        )
+        self._timeout_seconds = timeout_seconds or settings.llm_timeout_seconds
+        self._client = None  # lazily constructed openai.OpenAI
+        self._supports_dimensions = True
+
+    def _get_client(self):
+        """Lazily construct the underlying ``openai.OpenAI`` client."""
+        if self._client is None:
+            import openai
+
+            # The OpenAI SDK takes seconds, unlike Gemini's milliseconds.
+            self._client = openai.OpenAI(
+                api_key=self._api_key,
+                base_url=self._base_url,
+                timeout=self._timeout_seconds,
+            )
+        return self._client
+
+    def embed(self, texts: list[str]) -> list[list[float]]:
+        """Return one embedding vector per input text."""
+        if not texts:
+            return []
+
+        if self._supports_dimensions:
+            try:
+                response = self._get_client().embeddings.create(
+                    model=self.model, input=texts, dimensions=self.dim
+                )
+                return self._vectors(response)
+            except Exception:  # noqa: BLE001 - host may not implement `dimensions`
+                self._supports_dimensions = False
+
+        response = self._get_client().embeddings.create(model=self.model, input=texts)
+        return self._vectors(response)
+
+    def _vectors(self, response) -> list[list[float]]:
+        vectors = [list(item.embedding) for item in response.data]
+        if vectors and len(vectors[0]) != self.dim:
+            raise ProviderConfigError(
+                f"{self.model} returned {len(vectors[0])}-dim vectors but EMBEDDING_DIM is "
+                f"{self.dim}; set EMBEDDING_DIM to match and re-run the Alembic migration "
+                "plus `python -m scripts.ingest_playbook`"
+            )
+        return vectors
+
+
+def build_embedder(settings: Settings | None = None) -> Embedder:
+    """Construct the embedder described by settings.
+
+    Separate from the chat provider on purpose: Anthropic has no embedding API,
+    so a Claude-reviewed deployment still retrieves through Gemini (or any
+    OpenAI-compatible host) without the two settings fighting each other.
+    """
+    settings = settings or get_settings()
+    provider = resolve_embedding_provider(settings)
+    if provider == GEMINI:
+        return GeminiEmbedder()
+    return OpenAICompatibleEmbedder(provider=provider)
 
 
 class DummyEmbedder:

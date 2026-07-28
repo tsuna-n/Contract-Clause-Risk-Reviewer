@@ -24,8 +24,8 @@ Backend สำหรับระบบ **วิเคราะห์ความ
 | Web framework | FastAPI + Uvicorn |
 | Database | PostgreSQL (`pgvector/pgvector:pg16`) + SQLAlchemy 2.0 (psycopg 3) |
 | Cache / queue | Redis 7 — contract/report repo (session-scoped, native TTL) |
-| LLM | Google GenAI / Gemini (`gemini-3.5-flash` ค่า default, ตั้งผ่าน `LLM_MODEL`) |
-| Embeddings | Gemini (`gemini-embedding-001`, 768 มิติ) |
+| LLM | สลับค่ายได้ผ่าน `LLM_PROVIDER`: Gemini (default) / Anthropic Claude / OpenAI-compatible (Z.AI GLM, DeepSeek, vLLM) — ดู [สลับค่าย AI](#สลับค่าย-ai-ผ่าน-env) |
+| Embeddings | ตั้งแยกจาก LLM ผ่าน `EMBEDDING_PROVIDER` (default: Gemini `gemini-embedding-001`, 768 มิติ) |
 | Retrieval | Hybrid: pgvector cosine (dense) + BM25 rerank (`rank-bm25`) |
 | Parsing | PyMuPDF (PDF), python-docx (DOCX) |
 | Auth | Google OAuth (Authlib) + JWT (python-jose) |
@@ -97,7 +97,8 @@ apps/backend-fastapi/
 │   │   ├── report.py           #    ContractReviewReport ใน Redis (TTL) + in-memory
 │   │   └── audit.py            #    audit log ถาวรใน Postgres
 │   └── ai/                     # AI engine — อ่านไล่ตามลำดับ pipeline ได้เลย
-│       ├── llm.py              #    LLMClient (Gemini) + structured output + render prompt
+│       ├── providers.py        #    adapter รายค่าย (Gemini / Claude / OpenAI-compatible) + Usage
+│       ├── llm.py              #    LLMClient (บางมาก — delegate ให้ providers) + render prompt
 │       ├── retrieval.py        #    embedder → pgvector store → hybrid retriever → citation → ingest
 │       ├── agents.py           #    Segmenter, Classifier, Matcher, RiskScorer, Judge
 │       ├── guardrails.py       #    grounding, citation validity, no-invented-fallback, disclaimer
@@ -229,7 +230,8 @@ judge บอกว่า ungrounded, และ isolate failure ต่อ clause 
 DATABASE_URL=postgresql+psycopg://postgres:password@localhost:5432/contract_risk_db
 REDIS_URL=redis://localhost:6379/0
 
-# LLM (Google GenAI / Gemini)
+# LLM (ค่าย default = Gemini; สลับค่ายดูหัวข้อถัดไป)
+LLM_PROVIDER=gemini
 GEMINI_API_KEY=...
 LLM_MODEL=gemini-3.5-flash
 EMBEDDING_MODEL=gemini-embedding-001
@@ -251,6 +253,53 @@ JWT_SECRET_KEY=<random-secret>
 > `LLM_MODEL`/`EMBEDDING_MODEL` ค่า default อาจต้องปรับตาม tier ของ API key — free tier บางบัญชี
 > ไม่มี quota ให้ `gemini-2.5-pro`/`text-embedding-004` (deprecated ไปแล้วสำหรับบัญชีใหม่บางส่วน);
 > เช็ค model ที่ใช้ได้จริงด้วย `client.models.list()` ถ้าเจอ `404`/`429` ตอนเรียก
+
+### สลับค่าย AI ผ่าน `.env`
+
+`LLM_PROVIDER` รับ 4 ค่า — `gemini` (default) / `anthropic` / `openai` / `zai` — โดยมี adapter จริง
+3 ตัวใน `app/ai/providers.py` (`zai` คือ adapter แบบ OpenAI-compatible ที่เติม endpoint กับ model
+ของ Z.AI ให้แล้ว) SDK ทั้งสามติดตั้งมาให้ครบตั้งแต่แรกและ `import` แบบ lazy ตัวที่ไม่ได้ใช้จึงไม่ถูก
+โหลด — **สลับค่ายคือแก้ `.env` แล้ว restart เท่านั้น ไม่ต้องแตะโค้ด**
+
+| ค่าย | ตั้งใน `.env` | model default | หมายเหตุ |
+|------|--------------|---------------|----------|
+| Gemini | `LLM_PROVIDER=gemini` + `GEMINI_API_KEY` | `gemini-3.5-flash` | ค่าเดิมของโปรเจกต์ |
+| Claude | `LLM_PROVIDER=anthropic` + `ANTHROPIC_API_KEY` | `claude-opus-5` | ไม่มี embedding API → retrieval ตกไปใช้ Gemini อัตโนมัติ |
+| Z.AI (GLM) | `LLM_PROVIDER=zai` + `ZAI_API_KEY` | `glm-4.6` | เติม `https://api.z.ai/api/paas/v4` ให้เอง |
+| OpenAI-compatible | `LLM_PROVIDER=openai` + `OPENAI_API_KEY` + `LLM_MODEL` + `LLM_BASE_URL` | — | ครอบคลุม OpenAI, DeepSeek, Ollama, vLLM; **ต้องระบุ `LLM_MODEL` เอง** |
+
+ตัวแปรที่เพิ่มมา (ไม่ตั้งก็ได้ทั้งหมด ยกเว้นคีย์ของค่ายที่เลือก):
+
+```env
+LLM_PROVIDER=anthropic          # gemini | anthropic | openai | zai
+ANTHROPIC_API_KEY=sk-ant-...    # หรือ OPENAI_API_KEY / ZAI_API_KEY ตามค่าย
+LLM_API_KEY=...                 # คีย์กลาง ใช้แทนคีย์รายค่ายด้านบนได้
+LLM_MODEL=claude-opus-5         # ไม่ตั้ง = ใช้ default ของค่ายนั้น
+LLM_BASE_URL=...                # เฉพาะ host แบบ OpenAI-compatible
+
+EMBEDDING_PROVIDER=gemini       # ไม่ตั้ง = ตามค่าย LLM ถ้าค่ายนั้น embed ได้ ไม่งั้นเป็น gemini
+EMBEDDING_MODEL=gemini-embedding-001
+EMBEDDING_API_KEY=...           # ไม่ตั้ง = ใช้คีย์ของ EMBEDDING_PROVIDER
+EMBEDDING_BASE_URL=...
+```
+
+**ข้อควรระวัง 3 ข้อ:**
+
+1. **สลับค่ายแล้วต้องแก้ `LLM_MODEL` ด้วย** ถ้าเคยตั้งไว้ — ระบบตรวจให้แล้ว: ตั้ง
+   `LLM_PROVIDER=anthropic` ทั้งที่ `LLM_MODEL=gemini-3.5-flash` จะขึ้น
+   `ProviderConfigError: LLM_MODEL='gemini-3.5-flash' is a gemini model but the provider is
+   anthropic` ตั้งแต่เรียกครั้งแรก แทนที่จะไปเจอ 404 ของฝั่ง vendor ที่ไม่บอกว่าตัวไหนผิด
+   (ชื่อ model ที่ไม่รู้จัก เช่น fine-tune ของตัวเอง ปล่อยผ่านหมด)
+2. **เปลี่ยน embedding = ต้อง re-ingest** — vector จากคนละ model เทียบ cosine กันไม่ได้ ถ้า
+   `EMBEDDING_DIM` เปลี่ยนด้วยต้องเขียน Alembic migration ใหม่ (`ALTER COLUMN`) เพราะ migration
+   `0c41a8268ed0` hardcode `VECTOR(dim=768)` ไว้ แล้วรัน `python -m scripts.ingest_playbook`
+3. **restart เสมอ** — `get_settings()`, `get_llm_client()`, `get_embedder()` เป็น `@lru_cache`
+   ทั้งหมด แก้ `.env` ระหว่างรันไม่มีผล และ `uvicorn --reload` ก็ไม่ reload เพราะจับแค่ไฟล์ `.py`
+
+**Structured output** ต่างกันตามค่าย แต่ agent ไม่ต้องรู้: Gemini ใช้ `response_schema`, Claude ใช้
+`messages.parse(output_format=...)`, ส่วน OpenAI-compatible ลอง `json_schema` แบบ strict ก่อน แล้ว
+fallback เป็น `json_object` พร้อมแนบ schema ไปใน system prompt ถ้า host นั้นไม่รองรับ (จำผลไว้
+ต่อ instance ไม่ยิงซ้ำทุก clause) — ทุกทางจบด้วย pydantic validate เหมือนกัน guardrail จึงไม่ต้องแยกเคส
 
 ### 2) ยก infrastructure (Postgres + Redis)
 ```bash
@@ -1282,6 +1331,12 @@ class Segmenter(Agent[ParsedDocument, list[Clause]]):
 ---
 
 ## [8] LLM client — `app/ai/llm.py`
+
+> 📌 **อัปเดต 2026-07-28:** โค้ดที่ยกมาอธิบายด้านล่างนี้ (การสร้าง `google.genai.Client`, การ
+> map `usage_metadata`, การเรียก `response_schema`) ย้ายไป `app/ai/providers.py` แล้ว เพราะตอนนี้
+> รองรับหลายค่าย — `LLMClient` เหลือแค่ facade ที่เลือก backend ตาม `LLM_PROVIDER` แล้วสะสม `Usage`
+> **หลักการทุกข้อที่อธิบายไว้ยังใช้ได้เหมือนเดิม** (lazy client, timeout เป็น ms เฉพาะฝั่ง Gemini,
+> ทางสำรองตอน `parsed` เป็น `None`) แค่ย้ายไปอยู่ในไฟล์ adapter ของแต่ละค่าย
 
 ```python
 # ── ส่วนที่ 1: โหลด prompt จากไฟล์ ────────────────────────────────────────────

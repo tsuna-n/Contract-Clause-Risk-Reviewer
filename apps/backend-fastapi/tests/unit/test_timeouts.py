@@ -12,7 +12,7 @@ from datetime import UTC, datetime
 
 from jose import jwt
 
-from app.ai.llm import LLMClient
+from app.ai.providers import GeminiChatBackend, build_chat_backend
 from app.ai.retrieval import GeminiEmbedder
 from app.config import get_settings
 from app.security import create_access_token
@@ -44,7 +44,8 @@ def _captured_client_timeout(monkeypatch, build) -> int:
 
 def test_llm_client_sends_timeout_to_sdk_in_milliseconds(monkeypatch) -> None:
     timeout_ms = _captured_client_timeout(
-        monkeypatch, lambda: LLMClient(timeout_seconds=45)
+        monkeypatch,
+        lambda: GeminiChatBackend(model="m", api_key=None, timeout_seconds=45),
     )
     assert timeout_ms == 45_000
 
@@ -57,8 +58,17 @@ def test_embedder_sends_timeout_to_sdk_in_milliseconds(monkeypatch) -> None:
 
 
 def test_llm_timeout_defaults_to_configured_setting(monkeypatch) -> None:
-    expected = get_settings().llm_timeout_seconds
-    assert _captured_client_timeout(monkeypatch, LLMClient) == expected * 1000
+    # Pinned to Gemini rather than read from .env: this is about the timeout
+    # default flowing into the SDK, not about which vendor is configured today.
+    settings = get_settings().model_copy(
+        update={"llm_provider": "gemini", "llm_model": None, "gemini_api_key": "test-key"}
+    )
+    expected = settings.llm_timeout_seconds
+
+    def backend():
+        return build_chat_backend(settings)
+
+    assert _captured_client_timeout(monkeypatch, backend) == expected * 1000
 
 
 def test_report_ttl_does_not_outlive_the_session() -> None:
