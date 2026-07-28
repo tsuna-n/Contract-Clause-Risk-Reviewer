@@ -118,6 +118,16 @@ function humanizeClauseType(clauseType: BackendClauseType): string {
 const HEADING_MAX_CHARS = 80;
 
 /**
+ * The numbering a clause opens with: "2. ", "(3) ", "Section 4. ", "ข้อ 5. ",
+ * "๑. " — mirroring the headings `app/parsers.py` recognizes.
+ *
+ * Requires whitespace after the number so that a figure inside a sentence
+ * ("1.5% per month") isn't mistaken for a clause number and chopped off.
+ */
+const CLAUSE_NUMBERING =
+  /^(?:ข้อที่|ข้อ|Article|Section|Clause)?\s*\(?[\d๐-๙]+(?:\.[\d๐-๙]+)*[.)]?\s+/i;
+
+/**
  * Pull a title out of the clause's own opening, e.g.
  * "2. Limitation of Liability. Supplier shall…" -> "Limitation of Liability".
  *
@@ -125,11 +135,7 @@ const HEADING_MAX_CHARS = 80;
  * ("Other") tells the reviewer nothing.
  */
 function leadingLabel(text: string): string | null {
-  // Strips "2. ", "(3) ", "Section 4. " and the Thai "ข้อ 5. " so the label is
-  // the clause's subject rather than its number.
-  const withoutNumbering = text
-    .trim()
-    .replace(/^(?:ข้อที่|ข้อ|Article|Section|Clause)?\s*\(?\d+[.)]\s*/i, "");
+  const withoutNumbering = text.trim().replace(CLAUSE_NUMBERING, "");
   const label = withoutNumbering.split(".")[0]?.trim();
   if (!label || label.length < 3 || label.length > HEADING_MAX_CHARS) return null;
   if (!/[a-zA-Z฀-๿]/.test(label)) return null;
@@ -140,7 +146,11 @@ function leadingLabel(text: string): string | null {
 function toTitle(clause: BackendClause): string {
   const heading = clause.heading?.trim();
   if (heading && heading.length <= HEADING_MAX_CHARS && heading !== clause.text.trim()) {
-    return heading;
+    // The lists that render this already number their rows, so a heading that
+    // carries its own number reads as "1. ข้อ 1. การรักษาความลับ". Drop the
+    // clause's copy and keep the list's — unless stripping leaves nothing,
+    // which means the number *was* the heading.
+    return heading.replace(CLAUSE_NUMBERING, "").trim() || heading;
   }
   if (clause.clause_type === "other") {
     const derived = leadingLabel(clause.text);

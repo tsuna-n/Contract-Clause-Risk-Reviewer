@@ -60,7 +60,8 @@
 | Backend | **Report history** | `GET /contracts` (สรุปรายงานของ session เรียงใหม่→เก่า) + `GET /contracts/{report_id}` (ฉบับเต็ม) — Redis เก็บ sorted set ต่อ session เป็น index, รายงานของคนอื่นตอบ `404` ไม่ใช่ `403` |
 | Backend | **Data fixtures จาก CUAD** | `scripts/build_cuad_fixtures.py` แปลง CUAD v1 → สัญญาจริง 12 ฉบับ + gold 327 clause (91 clause มี label จาก annotation ของผู้เชี่ยวชาญ) + `.docx` ให้ลองอัปโหลด 3 ไฟล์ |
 | Backend | **Playbook 36 จุดยืน** | ครบทั้ง 12 clause type อ้างอิงหมวดรีวิว 41 หมวดของ CUAD — `preferred`/`fallback` เป็นภาษาสัญญาจริงที่ guardrail ใช้เทียบ verbatim ได้ |
-| Backend | Tests | 82 unit/integration tests ผ่านหมด |
+| Backend | Tests | 117 unit/integration tests ผ่านหมด (1 skipped) |
+| Backend | **หัวข้อสัญญาไทย** | `_HEADING_RE` รับ `ข้อ 1.` / `๑.` / เลขอารบิกตามด้วยตัวอักษรไทย (พยัญชนะ + สระหน้า `เ แ โ ใ ไ`) และ prefix `Section`/`Article`/`Clause` — สัญญาไทยตัด clause ตามข้อจริงแทน paragraph fallback โดยอังกฤษ 12 ฉบับเดิมไม่กระทบ |
 | Frontend | Scaffold | React 19 + Vite + Tailwind + routing (`/login`, `/auth/callback`, `/manual`, `/contract`) |
 | Frontend | Login UI | หน้า login + components (Google button, brand header, card, ฯลฯ) |
 | Frontend | Auth flow | ต่อกับ backend ครบ: login redirect → callback เก็บ token → `fetchCurrentUser` (`/auth/me`), `RequireAuth` guard, logout |
@@ -217,17 +218,28 @@ pnpm dev                         # http://localhost:5173
 
 | ไฟล์ | ผล | หมายเหตุ |
 |------|-----|----------|
-| `.docx` / `.pdf` หัวข้อเลขอังกฤษ (`1. Confidentiality`) | ✅ ดีที่สุด | ตัด clause ตามหัวข้อ ตรงตามข้อสัญญาจริง |
-| `.docx` / `.pdf` หัวข้อไทย (`ข้อ 1.` / `1. การรักษาความลับ`) | ⚠️ ใช้ได้แต่ตัดหยาบ | ตกไปใช้ **paragraph fallback** — 1 ย่อหน้า = 1 clause |
-| หัวข้อพิมพ์เล็ก / bullet / `ARTICLE I` / `Section 4.` | ⚠️ ใช้ได้แต่ตัดหยาบ | paragraph fallback เหมือนกัน |
+| `.docx` / `.pdf` หัวข้อเลขอังกฤษ (`1. Confidentiality`, `2.3 Term`, `12) Termination`) | ✅ ดีที่สุด | ตัด clause ตามหัวข้อ ตรงตามข้อสัญญาจริง |
+| `.docx` / `.pdf` **หัวข้อไทย** (`ข้อ 1. การรักษาความลับ`, `1. การเลิกสัญญา`, `๑. เงื่อนไข`) | ✅ รองรับแล้ว | ตัดตามข้อจริงเหมือนอังกฤษ (เพิ่ม 2026-07-28) |
+| นำหน้าด้วย `Section 4.` / `Article 7.` / `Clause 9` / `ข้อที่ 2.` | ✅ รองรับแล้ว | prefix พวกนี้เข้าเงื่อนไขหัวข้อแล้ว |
+| หัวข้อพิมพ์เล็ก (`1. confidentiality`) / bullet / เลขโรมัน (`ARTICLE I`) | ⚠️ ใช้ได้แต่ตัดหยาบ | ตกไปใช้ **paragraph fallback** — 1 ย่อหน้า = 1 clause |
 | **PDF สแกน / ถ่ายรูป (ไม่มี text layer)** | ❌ ได้รายงานเปล่า | backend ตอบ `200` แต่ได้ **0 clause** — UI ขึ้น banner เตือนแล้ว ต้อง OCR ก่อน |
 | PDF ใส่รหัสผ่าน | ❌ `422` | `document closed or encrypted` — ต้องปลดรหัสก่อน |
 | `.doc` (Word เก่า) / `.txt` / `.rtf` / ไม่มีนามสกุล | ❌ `422` | `unsupported file type` — ต้อง Save As เป็น `.docx` หรือ `.pdf` |
 
-**ทำไมหัวข้อไทยถึงตัดหยาบ:** ตัวตัด clause ใช้ regex `^\s*(\d+(\.\d+)*)[.)]?\s+[A-Z]` ใน
-`app/parsers.py` ซึ่งบังคับว่าต้องเป็น **อักษรอังกฤษตัวใหญ่ A–Z** ต่อท้ายเลขข้อ ตัวอักษรไทยจึงไม่เข้า
-เงื่อนไข (`\d` รับเลขไทย `๑` ได้ แต่ `[A-Z]` ไม่รับ `ค`) — ยังใช้งานได้เพราะมี paragraph fallback
-แต่ขอบเขต clause จะตามย่อหน้าแทนที่จะตามข้อสัญญา ถ้าจะรองรับสัญญาไทยเต็มที่ต้องแก้ regex ตัวนี้
+**หัวข้อไทยรองรับแล้ว (2026-07-28):** เดิม regex ใน `app/parsers.py` คือ
+`^\s*(\d+(\.\d+)*)[.)]?\s+[A-Z]` ซึ่งบังคับ **อักษรอังกฤษตัวใหญ่ A–Z** ต่อท้ายเลขข้อ ตัวอักษรไทย
+จึงไม่เข้าเงื่อนไข (`\d` รับเลขไทย `๑` ได้ แต่ `[A-Z]` ไม่รับ `ค`) สัญญาไทยเลยตกไปใช้ paragraph
+fallback ทั้งฉบับ ตอนนี้ `_HEADING_RE` รับเพิ่ม:
+
+- prefix `ข้อ` / `ข้อที่` / `Article` / `Section` / `Clause` หน้าเลขข้อ
+- เลขไทย `๐–๙` คู่กับเลขอารบิก
+- ตัวอักษรไทยขึ้นต้นชื่อหัวข้อ — พยัญชนะ `ก–ฮ` **และสระหน้า `เ แ โ ใ ไ`** ซึ่งเขียนนำหน้าพยัญชนะ
+  จึงเป็นอักขระตัวแรกของคำจริง ๆ (`เงื่อนไข`, `ใบแจ้งหนี้`, `ไม่แข่งขัน`)
+
+ยังคงต้องมีตัวอักษรตามหลังเลขเสมอ เพื่อไม่ให้บรรทัดที่ขึ้นต้นด้วยตัวเลข (`500,000 baht payable…`,
+`1.5% per month`) ถูกนับเป็นหัวข้อ — ทดสอบแล้วว่า **สัญญาอังกฤษจริงทั้ง 12 ฉบับใน `data/contracts`
+นับหัวข้อได้เท่าเดิมทุกฉบับ (0/12 เปลี่ยน)** และฝั่ง frontend ตัดเลขซ้ำออกจาก title แล้ว
+(`CLAUSE_NUMBERING` ใน `lib/contracts.ts`) ไม่งั้นจะได้ `1. ข้อ 1. การรักษาความลับ`
 
 > ⚠️ **ยังไม่มีการจำกัดขนาดไฟล์** — route อ่านไฟล์ทั้งก้อนเข้า memory (`await file.read()`)
 > ไฟล์ใหญ่มากจะกินแรมและใช้เวลานาน (ราว 45 วิ/clause)

@@ -47,7 +47,35 @@ class ParsedDocument:
 # --- normalization -----------------------------------------------------------
 
 _LIGATURES = {"ﬁ": "fi", "ﬂ": "fl", "ﬀ": "ff"}
-_HEADING_RE = re.compile(r"^\s*(\d+(\.\d+)*)[.)]?\s+[A-Z]")
+
+# Characters a Thai heading's title can begin with: the consonants ก–ฮ plus the
+# four leading vowels เ แ โ ใ ไ, which are written *before* their consonant and
+# so really do start words ("เงื่อนไข", "ใบแจ้งหนี้"). Thai has no case, so
+# there is no uppercase test to make here - the script itself is the signal
+# that a title, rather than more sentence, follows the number.
+_THAI_LETTER = r"ก-ฮเ-ไ"
+# Arabic digits plus Thai digits ๐–๙, spelled out rather than left to ``\d``:
+# ``\d`` already matches every Unicode decimal digit, which would let Devanagari
+# or Arabic-Indic numerals through in a rule that is deliberately about two
+# scripts.
+_DIGIT = r"0-9๐-๙"
+
+#: Does a line open a numbered clause?
+#:
+#: ``1. Confidentiality`` / ``2.3 Term`` / ``12) Termination`` and their Thai
+#: equivalents ``ข้อ 1. การรักษาความลับ``, ``๑. เงื่อนไข``. The optional
+#: ``ข้อ``/``ข้อที่``/``ARTICLE``/``Section``/``Clause`` prefix is what most
+#: real contracts put in front of the number.
+#:
+#: The trailing letter class is the part doing the real work: without it every
+#: line starting with a figure ("500,000 baht payable...") reads as a heading.
+_HEADING_RE = re.compile(
+    r"^\s*"
+    r"(?:(?:ข้อที่|ข้อ|ARTICLE|Article|Section|Clause)\s*)?"
+    rf"([{_DIGIT}]+(?:\.[{_DIGIT}]+)*)"
+    r"[.)]?\s+"
+    rf"[A-Z{_THAI_LETTER}]"
+)
 
 
 def normalize_whitespace(text: str) -> str:
@@ -65,7 +93,13 @@ def replace_ligatures(text: str) -> str:
 
 
 def is_heading(line: str) -> bool:
-    """Heuristic: does ``line`` look like a numbered clause heading?"""
+    """Heuristic: does ``line`` look like a numbered clause heading?
+
+    Recognizes both scripts the corpus actually contains — ``1. Termination``
+    and ``ข้อ 1. การเลิกสัญญา`` — because a document whose headings go
+    unrecognized falls back to a blank-line paragraph split, and paragraph
+    boundaries are not clause boundaries.
+    """
     return bool(_HEADING_RE.match(line))
 
 
