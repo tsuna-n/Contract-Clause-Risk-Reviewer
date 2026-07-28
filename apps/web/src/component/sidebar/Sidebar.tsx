@@ -82,6 +82,16 @@ function Sidebar({
   const displayEmail = isLoggedIn ? (user?.email ?? '') : isLoading ? '' : '***@gmail.com';
   const avatarUrl = isLoggedIn && !avatarFailed ? user?.picture : undefined;
 
+  // ===== Added: Delete Button =====
+  // Deletes the currently selected contract card/box (the one highlighted via
+  // selectedReportId). Triggered by the Delete button in the toolbar.
+  function handleDelete() {
+    // TODO: implement delete logic for the selected contract (selectedReportId)
+    //       e.g. call DELETE API + remove it from the reports list
+    if (!selectedReportId) return;
+  }
+  // ===== End Added =====
+
   return (
     // เดิมใช้ min-h-screen + py-10 ทำให้ความสูงยืดตามเนื้อหา footer จึงไม่ชิดขอบล่างของกรอบ
     // เปลี่ยนเป็น h-screen (สูงคงที่เท่าจอ/กรอบ) และตัด padding แนวตั้งออก
@@ -103,13 +113,23 @@ function Sidebar({
         </div>
 
         {/* เริ่มตรวจฉบับใหม่ — ล้าง selection กลับไปหน้าอัปโหลด */}
-        <div className="mb-6 flex-shrink-0">
+        <div className="mb-6 flex-shrink-0 flex items-center justify-between">
           <button
             onClick={onNewReview}
             className="px-4 py-2 text-sm font-medium bg-amber-500 text-neutral-950 rounded-lg hover:bg-amber-400 transition-colors"
           >
             + ตรวจสัญญาใหม่
           </button>
+
+         {/* ===== Delete Button ===== */}
+         {/* Deletes the currently selected contract card created in the sidebar */}
+          <button
+            onClick={handleDelete}
+            className="px-4 py-2 text-sm font-medium bg-neutral-900 border border-neutral-800 text-neutral-300 rounded-lg hover:border-rose-500/40 hover:text-rose-300 transition-colors"
+          >
+            Delete
+          </button>
+          {/* ===== End Added ===== */}
         </div>
 
         {/* Tools: ลิงก์ไปหน้าจัดการ Playbook / รัน Evaluation / สถานะระบบ
