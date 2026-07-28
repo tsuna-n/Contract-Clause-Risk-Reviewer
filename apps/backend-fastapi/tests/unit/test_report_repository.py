@@ -55,6 +55,13 @@ class FakeRedis:
         """Simulate a key reaching the end of its TTL."""
         self.strings.pop(key, None)
 
+    def delete(self, *keys: str) -> None:
+        for key in keys:
+            self.strings.pop(key, None)
+            self.zsets.pop(key, None)
+            self.ttls.pop(key, None)
+
+
 
 def make_report(report_id: str, session_id: str = "user-1", *, age_seconds: int = 0):
     return ContractReviewReport(
@@ -126,3 +133,19 @@ def test_redis_index_ttl_is_refreshed_on_every_save() -> None:
     repo.save(make_report("r2"))
 
     assert client.ttls["session:user-1:reports"] == 3600
+
+
+def test_delete_report_removes_report(repo) -> None:
+    repo.save(make_report("r1", "user-1"))
+    repo.save(make_report("r2", "user-1"))
+
+    assert repo.delete("r1", "user-1") is True
+    assert [r.report_id for r in repo.list_for_session("user-1")] == ["r2"]
+    assert repo.get("r1") is None
+
+
+def test_delete_report_fails_for_wrong_session(repo) -> None:
+    repo.save(make_report("r1", "user-1"))
+
+    assert repo.delete("r1", "user-2") is False
+    assert repo.get("r1") is not None

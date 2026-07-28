@@ -31,6 +31,10 @@ class ReportRepository(Protocol):
         """Remove ``session_id``'s reports older than ``ttl_seconds``; return their ids."""
         ...
 
+    def delete(self, report_id: str, session_id: str) -> bool:
+        """Delete ``report_id`` if owned by ``session_id``; return True if deleted."""
+        ...
+
 
 class InMemoryReportRepository:
     """Process-local dict-backed store.
@@ -66,6 +70,13 @@ class InMemoryReportRepository:
         for report_id in expired:
             del self._store[report_id]
         return expired
+
+    def delete(self, report_id: str, session_id: str) -> bool:
+        entry = self._store.get(report_id)
+        if entry is not None and entry[0].session_id == session_id:
+            del self._store[report_id]
+            return True
+        return False
 
 
 class RedisReportRepository:
@@ -134,3 +145,11 @@ class RedisReportRepository:
 
     def purge_expired(self, session_id: str, ttl_seconds: int) -> list[str]:
         return []
+
+    def delete(self, report_id: str, session_id: str) -> bool:
+        report = self.get(report_id)
+        if report is None or report.session_id != session_id:
+            return False
+        self._client.delete(self._key(report_id))
+        self._client.zrem(self._index_key(session_id), report_id)
+        return True

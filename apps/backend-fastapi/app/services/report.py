@@ -36,3 +36,9 @@ class ReportService:
         if report is None or report.session_id != session_id:
             raise NotFoundError(f"report {report_id} not found")
         return report
+
+    def delete_report(self, report_id: str, session_id: str) -> None:
+        """Delete one of this session's reports or raise NotFoundError."""
+        success = self.reports.delete(report_id, session_id)
+        if not success:
+            raise NotFoundError(f"report {report_id} not found")

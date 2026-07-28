@@ -339,3 +339,34 @@ def test_override_requires_auth() -> None:
         json={"clause_id": "clause-1", "new_risk": "high", "reason": "x"},
     )
     assert resp.status_code == 401
+
+
+# --- DELETE /contracts/{report_id} -------------------------------------------
+
+
+def test_delete_report_succeeds(client: TestClient) -> None:
+    report_id = _upload(client).json()["report_id"]
+    assert client.get(f"/contracts/{report_id}").status_code == 200
+
+    resp = client.delete(f"/contracts/{report_id}")
+    assert resp.status_code == 204
+
+    assert client.get(f"/contracts/{report_id}").status_code == 404
+    history = client.get("/contracts").json()
+    assert not any(row["report_id"] == report_id for row in history)
+
+
+def test_delete_unknown_report_is_404(client: TestClient) -> None:
+    assert client.delete("/contracts/no-such-report").status_code == 404
+
+
+def test_delete_another_sessions_report_is_404(client: TestClient) -> None:
+    client.report_repo.save(  # type: ignore[attr-defined]
+        ContractReviewReport(report_id="someone-elses", contract_id="c", session_id="user-2")
+    )
+    assert client.delete("/contracts/someone-elses").status_code == 404
+
+
+def test_delete_report_requires_auth() -> None:
+    assert TestClient(create_app()).delete("/contracts/report-1").status_code == 401
+

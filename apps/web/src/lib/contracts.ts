@@ -323,3 +323,11 @@ export async function overrideClause({
   );
   return toContractReport(report);
 }
+
+/** Delete a stored review report from DB. */
+export async function deleteReport(reportId: string): Promise<void> {
+  await apiFetch<void>(`/contracts/${encodeURIComponent(reportId)}`, {
+    method: "DELETE",
+  });
+}
+

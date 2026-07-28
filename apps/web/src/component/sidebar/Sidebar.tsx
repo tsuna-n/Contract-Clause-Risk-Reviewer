@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, type MouseEvent } from 'react';
+import { Trash2, Plus, LogOut, BookOpen, ShieldCheck, Cpu, Loader2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import type { ReportSummary } from '../contract/types';
 import { riskAccent, riskBadge } from '../contract/riskStyles';
@@ -6,31 +7,25 @@ import { ACCEPTED_EXTENSIONS } from '../../lib/contracts';
 
 export interface SidebarUser {
   isLoggedIn: boolean;
-  /** ยังรอคำตอบจาก /auth/me อยู่ — แสดงสถานะกำลังโหลดแทนชื่อ Guest */
   isLoading?: boolean;
   name?: string;
   email?: string;
-  /** รูปโปรไฟล์จาก Google (คีย์ picture ใน userinfo) */
   picture?: string;
 }
 
 interface SidebarProps {
-  /** ประวัติการรีวิวจริงจาก GET /contracts (ใหม่สุดอยู่บน) */
   reports: ReportSummary[];
-  /** ยังโหลดประวัติไม่เสร็จ — ต่างจาก "โหลดเสร็จแล้วแต่ไม่มีเรื่อง" */
   loading?: boolean;
-  /** โหลดประวัติไม่สำเร็จ; ข้อความพร้อมแสดง */
   error?: string | null;
-  /** report ที่เลือกอยู่ตอนนี้ ใช้ไฮไลต์รายการ */
   selectedReportId?: string | null;
   onNewReview?: () => void;
   onSelectReport?: (report: ReportSummary) => void;
+  onDeleteReport?: (reportId: string) => void | Promise<void>;
   onRetry?: () => void;
   user?: SidebarUser;
   onLogout?: () => void;
 }
 
-// ตัวย่อสำหรับวงกลมโปรไฟล์ ใช้ตอนไม่มีรูปจาก Google หรือรูปโหลดไม่ขึ้น
 function initialOf(name?: string, email?: string) {
   const source = name?.trim() || email?.trim() || '';
   return source ? source[0]!.toUpperCase() : '?';
@@ -43,7 +38,6 @@ const riskLabel: Record<string, string> = {
   UNKNOWN: 'ยังไม่ประเมิน',
 };
 
-// ชื่อไฟล์ที่อัปโหลดคือชื่อเรื่อง — ตัดนามสกุลออกเพราะซ้ำกับที่รู้อยู่แล้ว
 function titleOf(report: ReportSummary) {
   return report.filename.replace(/\.(pdf|docx|txt)$/i, '') || report.contractId;
 }
@@ -62,18 +56,17 @@ function Sidebar({
   selectedReportId = null,
   onNewReview,
   onSelectReport,
+  onDeleteReport,
   onRetry,
   user,
   onLogout,
 }: SidebarProps) {
-  // รูปโปรไฟล์ Google ตอบ 429/403 ได้เมื่อโดน rate limit — ถ้าโหลดไม่ขึ้น
-  // ให้ตกกลับไปใช้ตัวย่อ ไม่ปล่อยให้เห็นไอคอนรูปเสีย
   const [avatarFailed, setAvatarFailed] = useState(false);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
   const isLoggedIn = user?.isLoggedIn ?? false;
   const isLoading = user?.isLoading ?? false;
 
-  // ชื่อจาก Google อาจเป็น null ได้ (บางบัญชีไม่แชร์) แต่อีเมลมีเสมอ
   const displayName = isLoggedIn
     ? user?.name || user?.email || 'ผู้ใช้งาน'
     : isLoading
@@ -82,81 +75,68 @@ function Sidebar({
   const displayEmail = isLoggedIn ? (user?.email ?? '') : isLoading ? '' : '***@gmail.com';
   const avatarUrl = isLoggedIn && !avatarFailed ? user?.picture : undefined;
 
-  // ===== Added: Delete Button =====
-  // Deletes the currently selected contract card/box (the one highlighted via
-  // selectedReportId). Triggered by the Delete button in the toolbar.
-  function handleDelete() {
-    // TODO: implement delete logic for the selected contract (selectedReportId)
-    //       e.g. call DELETE API + remove it from the reports list
-    if (!selectedReportId) return;
+  async function handleDelete(e: MouseEvent, reportId: string) {
+    e.stopPropagation();
+    if (!onDeleteReport) return;
+    if (!window.confirm('คุณต้องการลบรายงานสัญญานี้ออกจากระบบหรือไม่?')) return;
+
+    try {
+      setDeletingId(reportId);
+      await onDeleteReport(reportId);
+    } finally {
+      setDeletingId(null);
+    }
   }
-  // ===== End Added =====
 
   return (
-    // เดิมใช้ min-h-screen + py-10 ทำให้ความสูงยืดตามเนื้อหา footer จึงไม่ชิดขอบล่างของกรอบ
-    // เปลี่ยนเป็น h-screen (สูงคงที่เท่าจอ/กรอบ) และตัด padding แนวตั้งออก
-    // แล้วค่อยใส่ padding ให้ container ด้านในแทน เพื่อให้ footer ล็อกอยู่ขอบล่างเสมอ
     <div className="h-screen bg-neutral-950 flex justify-center px-4 overflow-hidden">
       <div className="w-full max-w-2xl flex flex-col h-full py-10">
-        {/* หัวข้อ */}
         <div className="mb-8 flex items-end justify-between border-b border-neutral-800 pb-5 flex-shrink-0">
           <div>
-            <p className="text-xs uppercase tracking-[0.2em] text-amber-500/70 mb-1">Legal desk</p>
+            <p className="text-xs uppercase tracking-[0.2em] text-amber-500/70 mb-1 font-mono">Legal desk</p>
             <h1 className="text-2xl font-semibold text-neutral-100" style={{ fontFamily: 'Georgia, "Noto Serif Thai", serif' }}>
               สัญญาที่ตรวจแล้ว
             </h1>
           </div>
-          {/* ระหว่างโหลดยังไม่รู้จำนวน — เลี่ยงการโชว์ "0 ฉบับ" แล้วกระโดดเป็นเลขจริง */}
-          <span className="text-xs text-neutral-500">
+          <span className="text-xs text-neutral-500 font-medium">
             {loading ? '' : `${reports.length} ฉบับ`}
           </span>
         </div>
 
-        {/* เริ่มตรวจฉบับใหม่ — ล้าง selection กลับไปหน้าอัปโหลด */}
         <div className="mb-6 flex-shrink-0 flex items-center justify-between">
           <button
             onClick={onNewReview}
-            className="px-4 py-2 text-sm font-medium bg-amber-500 text-neutral-950 rounded-lg hover:bg-amber-400 transition-colors"
+            className="px-4 py-2 text-sm font-medium bg-amber-500 text-neutral-950 rounded-lg hover:bg-amber-400 active:scale-[0.98] transition-all flex items-center gap-2 shadow-sm font-sans"
           >
-            + ตรวจสัญญาใหม่
+            <Plus className="w-4 h-4 stroke-[2.5]" />
+            <span>ตรวจสัญญาใหม่</span>
           </button>
-
-         {/* ===== Delete Button ===== */}
-         {/* Deletes the currently selected contract card created in the sidebar */}
-          <button
-            onClick={handleDelete}
-            className="px-4 py-2 text-sm font-medium bg-neutral-900 border border-neutral-800 text-neutral-300 rounded-lg hover:border-rose-500/40 hover:text-rose-300 transition-colors"
-          >
-            Delete
-          </button>
-          {/* ===== End Added ===== */}
         </div>
 
-        {/* Tools: ลิงก์ไปหน้าจัดการ Playbook / รัน Evaluation / สถานะระบบ
-            แยกจากรายการสัญญา ไม่ใช่ "เรื่อง" เลยใส่เป็น row ของลิงก์เล็ก ๆ */}
         <div className="mb-6 flex-shrink-0 flex items-center gap-2 text-xs">
           <Link
             to="/playbook"
-            className="flex-1 text-center px-2 py-1.5 rounded-lg bg-neutral-900 border border-neutral-800 text-neutral-300 hover:border-amber-500/40 hover:text-amber-300 transition-colors"
+            className="flex-1 flex items-center justify-center gap-1.5 px-2 py-1.5 rounded-lg bg-neutral-900 border border-neutral-800 text-neutral-300 hover:border-amber-500/40 hover:text-amber-300 transition-all group"
           >
-            Playbook
+            <BookOpen className="w-3.5 h-3.5 text-neutral-400 group-hover:text-amber-300 transition-colors" />
+            <span>Playbook</span>
           </Link>
           <Link
             to="/evaluate"
-            className="flex-1 text-center px-2 py-1.5 rounded-lg bg-neutral-900 border border-neutral-800 text-neutral-300 hover:border-amber-500/40 hover:text-amber-300 transition-colors"
+            className="flex-1 flex items-center justify-center gap-1.5 px-2 py-1.5 rounded-lg bg-neutral-900 border border-neutral-800 text-neutral-300 hover:border-amber-500/40 hover:text-amber-300 transition-all group"
           >
-            Evaluate
+            <ShieldCheck className="w-3.5 h-3.5 text-neutral-400 group-hover:text-amber-300 transition-colors" />
+            <span>Evaluate</span>
           </Link>
           <Link
             to="/system"
-            className="flex-1 text-center px-2 py-1.5 rounded-lg bg-neutral-900 border border-neutral-800 text-neutral-300 hover:border-amber-500/40 hover:text-amber-300 transition-colors"
+            className="flex-1 flex items-center justify-center gap-1.5 px-2 py-1.5 rounded-lg bg-neutral-900 border border-neutral-800 text-neutral-300 hover:border-amber-500/40 hover:text-amber-300 transition-all group"
           >
-            System
+            <Cpu className="w-3.5 h-3.5 text-neutral-400 group-hover:text-amber-300 transition-colors" />
+            <span>System</span>
           </Link>
         </div>
 
-        {/* รายการสัญญา: เลื่อน (scroll) ได้เมื่อรายการเยอะเกินพื้นที่ */}
-        {/* สไตล์ scrollbar ให้เข้ากับธีม: บาง โปร่ง สีเทาเข้ม และเปลี่ยนเป็นสีอำพันตอน hover */}
         <div
           className="space-y-3 flex-1 min-h-0 overflow-y-auto pr-2 -mr-2
             [&::-webkit-scrollbar]:w-1.5
@@ -193,18 +173,36 @@ function Sidebar({
               <div
                 key={report.reportId}
                 onClick={() => onSelectReport?.(report)}
-                className={`rounded-xl bg-neutral-900 border transition-colors px-5 py-4 cursor-pointer ${
+                className={`rounded-xl bg-neutral-900 border transition-all px-5 py-4 cursor-pointer relative group ${
                   report.reportId === selectedReportId
-                    ? 'border-amber-500/50'
-                    : 'border-neutral-800 hover:border-neutral-700'
+                    ? 'border-amber-500/50 bg-neutral-900/90 shadow-sm'
+                    : 'border-neutral-800 hover:border-neutral-700 hover:bg-neutral-900/60'
                 }`}
               >
-                <h3 className="text-[15px] font-medium text-neutral-100 leading-snug mb-1 truncate">
-                  {titleOf(report)}
-                </h3>
+                <div className="flex items-start justify-between gap-3 mb-1">
+                  <h3 className="text-[15px] font-medium text-neutral-100 leading-snug truncate flex-1" title={titleOf(report)}>
+                    {titleOf(report)}
+                  </h3>
+                  <button
+                    type="button"
+                    disabled={deletingId === report.reportId}
+                    onClick={(e) => void handleDelete(e, report.reportId)}
+                    title="ลบรายงานนี้ออกจากระบบ"
+                    aria-label="ลบรายงาน"
+                    className="p-1.5 -mr-1.5 -mt-1 rounded-lg text-neutral-500 opacity-60 group-hover:opacity-100 hover:text-rose-400 hover:bg-rose-500/10 transition-all flex-shrink-0 disabled:opacity-50"
+                  >
+                    {deletingId === report.reportId ? (
+                      <Loader2 className="w-4 h-4 animate-spin text-rose-400" />
+                    ) : (
+                      <Trash2 className="w-4 h-4 transition-transform hover:scale-110" />
+                    )}
+                  </button>
+                </div>
+
                 <p className="text-[11px] text-neutral-500 mb-2.5">
                   {formatDate(report.createdAt)} · {report.clauseCount} ข้อสัญญา
                 </p>
+
                 <div className="flex flex-wrap items-center gap-2">
                   <span
                     className={`px-2.5 py-0.5 rounded-full text-[11px] font-medium ${
@@ -213,7 +211,6 @@ function Sidebar({
                   >
                     {riskLabel[report.overallRisk] ?? report.overallRisk}
                   </span>
-                  {/* นับเฉพาะระดับที่มีจริง — "0 สูง" ไม่ได้บอกอะไรนอกจากรบกวนสายตา */}
                   {report.summary.high > 0 && (
                     <span className={`text-[11px] ${riskAccent.HIGH}`}>
                       สูง {report.summary.high}
@@ -235,15 +232,12 @@ function Sidebar({
           )}
         </div>
 
-        {/* Footer: โปรไฟล์ผู้ใช้ + ปุ่ม logout — ล็อกอยู่ขอบล่างของกรอบเสมอ */}
         <div className="mt-4 pt-4 border-t border-neutral-800 flex items-center justify-between flex-shrink-0">
           <div className="flex items-center gap-3 min-w-0">
-            {/* วงกลมโปรไฟล์: รูปจาก Google ถ้ามี ไม่มีก็ใช้ตัวย่อของชื่อ */}
             {avatarUrl ? (
               <img
                 src={avatarUrl}
                 alt={displayName}
-                // Google ไม่ส่งรูปให้เมื่อมี referrer ข้ามโดเมน — ต้องปิด referrer
                 referrerPolicy="no-referrer"
                 onError={() => setAvatarFailed(true)}
                 className="w-10 h-10 rounded-full border-2 border-neutral-700 object-cover flex-shrink-0"
@@ -264,28 +258,13 @@ function Sidebar({
             </div>
           </div>
 
-          {/* ปุ่ม logout (สัญลักษณ์) */}
           <button
             onClick={onLogout}
             aria-label="logout"
             title="ออกจากระบบ"
-            className="p-2 rounded-lg text-neutral-500 hover:text-amber-400 hover:bg-neutral-900 transition-colors flex-shrink-0"
+            className="p-2 rounded-lg text-neutral-400 hover:text-amber-400 hover:bg-neutral-900 transition-colors flex-shrink-0 flex items-center justify-center"
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="18"
-              height="18"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-              <polyline points="16 17 21 12 16 7" />
-              <line x1="21" y1="12" x2="9" y2="12" />
-            </svg>
+            <LogOut className="w-4.5 h-4.5" />
           </button>
         </div>
       </div>
@@ -294,3 +273,4 @@ function Sidebar({
 }
 
 export default Sidebar;
+

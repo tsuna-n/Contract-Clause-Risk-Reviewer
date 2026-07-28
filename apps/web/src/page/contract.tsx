@@ -11,11 +11,8 @@ import type { ContractReport, RiskLevel } from "../component/contract/types";
 import { riskAccent } from "../component/contract/riskStyles";
 import { ApiError } from "../lib/api";
 import {
-  ACCEPTED_EXTENSIONS,
   fetchReport,
-  isSupportedFile,
   overrideClause,
-  reviewContract,
 } from "../lib/contracts";
 
 export default function ContractPage() {
@@ -29,7 +26,6 @@ export default function ContractPage() {
   const [report, setReport] = useState<ContractReport | null>(null);
   const [fileName, setFileName] = useState<string | null>(null);
   const [selectedClauseId, setSelectedClauseId] = useState<string | null>(null);
-  const [reviewing, setReviewing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   /**
    * The last `?report=` id the loader below finished with, win or lose.
@@ -91,36 +87,7 @@ export default function ContractPage() {
     };
   }, [requestedReportId, resolvedReportId, handleApiError]);
 
-  const loadingStoredReport = requestedReportId !== null && requestedReportId !== resolvedReportId;
-  const busy = reviewing || loadingStoredReport;
-
-  const handleFileSelect = useCallback(
-    async (file: File) => {
-      if (!isSupportedFile(file)) {
-        setError(
-          `${file.name} is not a supported format. Upload ${ACCEPTED_EXTENSIONS.join(" or ")}.`
-        );
-        return;
-      }
-
-      setReviewing(true);
-      setError(null);
-      setFileName(file.name);
-      setAcceptedIds(new Set());
-      try {
-        const result = await reviewContract(file);
-        setReport(result);
-        setSelectedClauseId(result.clauses[0]?.id ?? null);
-      } catch (err) {
-        setReport(null);
-        setSelectedClauseId(null);
-        handleApiError(err);
-      } finally {
-        setReviewing(false);
-      }
-    },
-    [handleApiError]
-  );
+  const busy = requestedReportId !== null && requestedReportId !== resolvedReportId;
 
   /**
    * The override endpoint returns the whole updated report, so the response
@@ -222,9 +189,7 @@ export default function ContractPage() {
               contract took just over six minutes. "About a minute" reads as a
               hang once the third minute passes. */}
           <p className="text-sm text-sky-200">
-            {reviewing
-              ? `Reviewing ${fileName}… the full pipeline runs clause by clause and usually takes several minutes — leave this tab open.`
-              : "Loading the stored report…"}
+            Loading the stored report…
           </p>
         </div>
       )}
@@ -261,9 +226,7 @@ export default function ContractPage() {
           clauses={report?.clauses ?? []}
           selectedClauseId={selectedClauseId}
           onClauseSelect={setSelectedClauseId}
-          onFileSelect={handleFileSelect}
           hasReport={report !== null}
-          busy={busy}
           acceptedIds={acceptedIds}
         />
 

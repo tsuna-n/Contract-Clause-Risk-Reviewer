@@ -4,7 +4,7 @@ import Sidebar from "../../component/sidebar/Sidebar";
 import type { ContractReport, ReportSummary } from "../../component/contract/types";
 import { useAuth } from "../../lib/auth-context";
 import { ApiError } from "../../lib/api";
-import { fetchReport, fetchReportHistory } from "../../lib/contracts";
+import { deleteReport, fetchReport, fetchReportHistory } from "../../lib/contracts";
 import FileUploadPage from "../chat";
 import Detail from "../detail";
 
@@ -101,6 +101,21 @@ function Chat() {
     setReportError(null);
   }, []);
 
+  const handleDeleteReport = useCallback(
+    async (reportId: string) => {
+      try {
+        await deleteReport(reportId);
+        if (selectedId === reportId) {
+          clearSelection();
+        }
+        reloadHistory();
+      } catch (err) {
+        setHistoryError(handleApiError(err, "ลบรายงานไม่สำเร็จ"));
+      }
+    },
+    [selectedId, clearSelection, reloadHistory, handleApiError]
+  );
+
   /**
    * อัปโหลดเสร็จ: แสดงรายงานที่เพิ่งได้เลย ไม่ต้องดึงซ้ำ — response ของ
    * /contracts/review คือรายงานฉบับเต็มอยู่แล้ว ส่วนประวัติค่อยรีเฟรชตาม
@@ -130,6 +145,8 @@ function Chat() {
           onRetry={reloadHistory}
           onNewReview={clearSelection}
           onSelectReport={(summary) => void openReport(summary.reportId)}
+          onDeleteReport={handleDeleteReport}
+
           // ข้อมูลจริงจากบัญชี Google ที่ล็อกอิน (มาจาก GET /auth/me)
           // name/picture เป็น null ได้ถ้าบัญชีไม่ได้แชร์มา จึงแปลงเป็น undefined
           // ให้ prop ที่เป็น optional ทำงานถูกทาง

@@ -91,3 +91,14 @@ async def override_clause(
         actor=current_user.email,
         session_id=current_user.id,
     )
+
+
+@router.delete("/{report_id}", status_code=204)
+async def delete_report(
+    report_id: str,
+    current_user: User = Depends(get_current_user),
+    service: ReportService = Depends(get_report_service),
+) -> None:
+    """Delete one stored review report."""
+    service.delete_report(report_id, session_id=current_user.id)
+
