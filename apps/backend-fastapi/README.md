@@ -447,10 +447,13 @@ python -m scripts.purge_reports                        # ใช้ REPORT_RETENT
 
 ### เพดานของ gold label ที่มาจาก CUAD
 
+> ✅ **ซ่อมแล้วเมื่อ 2026-07-30** — หัวข้อนี้เก็บไว้เพราะมันคือหลักฐานว่าทำไมต้องซ่อม และเพราะ
+> ตัวเลข eval ทุกชุดที่บันทึกไว้ก่อนหน้านั้นวัดกับ label ชุดเก่า วิธีใหม่อยู่ท้ายหัวข้อ
+
 `classification_accuracy` **วัดการจับคู่ label ของ fixture ปนอยู่ด้วย ไม่ใช่ความแม่นของ classifier
 เพียว ๆ** — เรื่องเดียวกับที่ `risk_accuracy` รอบแรกวัด provider ไม่ได้วัด pipeline
 
-`build_cuad_fixtures.py` ให้ label กับ clause จาก **CUAD annotation ที่ offset ตกอยู่ในข้อนั้น**
+กฎเดิมให้ label กับ clause จาก **CUAD annotation ที่ offset ตกอยู่ในข้อนั้น**
 (นับจำนวน category ที่ตก ตัวไหนมากสุดชนะ) แต่ CUAD ไม่ได้ annotate ว่า "ข้อนี้เป็นข้อประเภทอะไร"
 มันตอบคำถาม 41 ข้อเกี่ยวกับสัญญา แล้วไฮไลต์ **วลี** ที่เป็นคำตอบ — วลีนั้นมักอยู่ในข้อที่ว่าด้วย
 เรื่องอื่น ตรวจของจริง 3 ฉบับแรกด้วยการยิงเฉพาะ classifier + retriever (2026-07-30):
@@ -469,14 +472,32 @@ python -m scripts.purge_reports                        # ใช้ REPORT_RETENT
 **นี่เป็นเหตุผลที่ `payment_terms` ได้ 25%** ไม่ใช่เพราะ playbook ครอบไม่พอ (`payment_terms` มี
 จุดยืนอยู่ 5 อัน มากสุดในทุกประเภท — และการจำแนกประเภทไม่ได้ใช้ playbook เลย)
 
-**ทำอะไรไปแล้ว:** `format_report()` พิมพ์ทิศทางของความไม่ตรงออกมาด้วย (`gold -> predicted`) ซึ่ง
-`confusion_matrix()` คำนวณได้อยู่แล้วแต่ไม่เคยถูกพิมพ์ — ตัวเลขรวมตัวเดียวซ่อนเรื่องนี้ไว้หมด
+**สิ่งที่แก้ (2026-07-30):** label มาจาก category ที่ **ครอบคลุมข้อนั้นมากที่สุด** และถูกตัดทิ้ง
+ถ้าครอบไม่ถึง `MIN_LABEL_COVERAGE` = 0.15 (ข้อนั้นกลายเป็นข้อไม่มี label ซึ่ง `run_eval` ข้ามให้
+อยู่แล้ว) `Candidate.annotations` เก็บ span ของไฮไลต์แล้ว — `answer_start` + `len(answer["text"])`
+ซึ่งเดิมทิ้ง — และ `covered_characters()` นับอักขระทับกันแบบ union เพราะไฮไลต์ category เดียวกัน
+ซ้อนกันเองได้ (บวกดิบ ๆ ได้ coverage 116% ในข้อ Insurance จริง ๆ)
 
-**ยังไม่ทำและทำไม:** วิธีดัน `classification_accuracy` ให้สูงขึ้นที่ *ไม่* ควรทำคือแก้ prompt ให้
-เดาตาม label ที่ผิด หรือให้คะแนนจากหัวข้อของ clause (`13. Warranty` → `warranty`) เพราะนั่นคือ
-วัด pipeline เทียบกับ heuristic ของตัวเอง ไม่ใช่เทียบกับผู้เชี่ยวชาญ — จะแก้ต้องแก้ที่วิธีสร้าง label
-(เช่น ใช้ span ของไฮไลต์ที่ CUAD ให้มา แทน offset เริ่มต้นตัวเดียว — ตอนนี้ `build_cuad_fixtures.py`
-เก็บแค่ `answer_start` แล้วทิ้ง `answer["text"]`) ซึ่งต้องรีวิวเป็นงานของตัวเอง
+เกณฑ์เลือกจากการวัด ไม่ใช่เดา และ **เปลี่ยนใจหลังวัด**: ตั้ง 0.3 ก่อนตาม histogram ที่เป็น bimodal
+(33 ข้อเหนือ 80%, 16 ข้อใต้ 20%) แต่ preview ฟ้องว่าหยาบเกินไป — ทิ้ง `governing_law` ของข้อ
+`9.05. Applicable Law` และ `warranty` ของ `5.01. Products Warranty` ที่ CUAD ไฮไลต์ถูกแล้ว
+เพียงแต่ไฮไลต์แค่ประโยคเดียวในข้อยาว (91 → 66 label) จึงลงมาที่ 0.15 = 91 → 82 label
+
+ผลลัพธ์: **span ทั้ง 327 ข้อและตัวสัญญาทั้ง 12 ไฟล์ไม่เปลี่ยนเลย** (ตรวจด้วย md5 + เทียบ span
+ทุกคู่) `segmentation_f1` จึงยังเทียบข้ามการเปลี่ยนนี้ได้ ส่วน `classification_accuracy` กับ
+`risk_accuracy` เทียบไม่ได้ ทุก label ที่เหลือมี `label_coverage` ติดมาในไฟล์ (ต่ำสุด 0.158 /
+กลาง 0.675 / สูงสุด 0.991) และข้อที่ CUAD แตะแต่ครอบไม่ถึงเกณฑ์ยังเก็บ `cuad_categories` ไว้
+เพื่อให้แยกออกว่า "CUAD ไม่ได้พูดถึงข้อนี้" ต่างจาก "พูดถึงแต่หลักฐานเบาเกินกว่าจะตั้ง label"
+
+**ต้นทุน (ไม่ใช่ของฟรี):** label หาย 9 อัน — 2 อันในนั้นเถียงได้ว่าถูก (`5. Consideration` =
+`payment_terms`, `22. Assignment` = `other`) และ `11. Trademarks` เปลี่ยนจาก
+`intellectual_property` → `other` เพราะตอนนี้ coverage ตัดสินแทนการนับจำนวน category
+
+**สิ่งที่ตั้งใจไม่ทำ:** ดัน `classification_accuracy` ด้วยการแก้ prompt ให้เดาตาม label ที่ผิด หรือ
+ให้คะแนนจากหัวข้อของ clause (`13. Warranty` → `warranty`) — นั่นคือวัด pipeline เทียบกับ heuristic
+ของตัวเอง ไม่ใช่เทียบกับผู้เชี่ยวชาญ
+
+**ยังไม่ได้รัน eval บน label ชุดใหม่** — ตัวเลขที่บันทึกไว้ทั้งหมดยังเป็นของชุดเก่า
 
 ### สร้าง data fixtures ใหม่จาก CUAD
 ```bash
@@ -493,7 +514,7 @@ python -m scripts.build_cuad_fixtures --cuad ~/project/cuad
 |------|----------|
 | `data/playbook/positions.yaml` | จุดยืน/ภาษามาตรฐานของบริษัท 36 ตำแหน่ง ครบทั้ง 12 clause type (preferred/fallback + `risk_if_absent`) — เขียนด้วยมือ อ้างอิงหมวดรีวิว 41 หมวดของ CUAD |
 | `data/contracts/*.txt` | สัญญาการค้าจริง 12 ฉบับจาก CUAD v1 (คัดโดยสคริปต์ ไม่ได้เลือกด้วยมือ) |
-| `data/gold/annotations.jsonl` | gold set: 327 clause span, 91 clause มี `clause_type`/`risk_level` จาก annotation ของ CUAD |
+| `data/gold/annotations.jsonl` | gold set: 327 clause span, **82** clause มี `clause_type`/`risk_level` + `label_coverage` (สัดส่วนของข้อที่ไฮไลต์ CUAD ครอบ) — ข้อที่ CUAD แตะแต่ครอบไม่ถึง `MIN_LABEL_COVERAGE` เก็บ `cuad_categories` ไว้แต่ไม่มี label |
 | `data/samples/*.docx` | 3 ฉบับที่สั้นที่สุดแปลงเป็น `.docx` — เอาไว้ลากใส่หน้าอัปโหลดเพื่อทดสอบ |
 
 ทั้งสามอย่างหลังสร้างใหม่ได้ด้วย:
@@ -2336,9 +2357,9 @@ monkeypatch.setattr(oauth.google, "authorize_access_token", fake_authorize_acces
 เขียนไว้ตรงนี้เพื่อไม่ให้เอกสารอธิบาย logic ไปโดยไม่บอกจุดที่ยังมีปัญหา —
 รายละเอียดและวิธีแก้อยู่ในผลรีวิว (ข้อที่แก้ไปแล้วถูกย้ายไปท้ายหัวข้อ):
 
-1. **`classification_accuracy` ถูกจำกัดด้วยคุณภาพ gold label ไม่ใช่ตัว classifier** — ดูหัวข้อ
-   [เพดานของ gold label](#เพดานของ-gold-label-ที่มาจาก-cuad) ด้านล่าง ยังไม่ได้แก้เพราะการแก้ที่
-   ถูกต้องคือเปลี่ยนวิธีสร้าง label ไม่ใช่ปรับ prompt ให้ตรงกับ label ที่ผิด
+1. **ยังไม่มีตัวเลข eval บน gold label ชุดใหม่** — label ซ่อมแล้วเมื่อ 2026-07-30 (91 → 82,
+   ดู [เพดานของ gold label](#เพดานของ-gold-label-ที่มาจาก-cuad)) แต่ตัวเลขทุกชุดที่บันทึกไว้
+   วัดกับ label เก่า จึงเทียบกับของใหม่ไม่ได้
 2. **ไม่มี integration test ที่ยิง LLM จริง** — เทสต์ทั้งหมด mock ที่ขอบ provider ส่วน eval
    regression gate ยัง skip ไว้ (มี cost) การพังแบบที่ mock จับไม่ได้ (เช่น Z.AI รับ `json_schema`
    แล้วตอบ markdown) จึงเจอตอนรันจริงเท่านั้น

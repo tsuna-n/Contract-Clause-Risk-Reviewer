@@ -83,9 +83,9 @@
 | Backend | Guardrails | grounding, citation validity, no-invented-fallback — wired เข้า judge แล้ว |
 | Backend | Schemas | Pydantic models: clause, report, taxonomy, playbook, eval |
 | Backend | **Report history** | `GET /contracts` (สรุปรายงานของตัวเอง เรียงใหม่→เก่า) + `GET /contracts/{report_id}` (ฉบับเต็ม) + `DELETE /contracts/{report_id}` — Postgres ใช้ index `(session_id, created_at)`, Redis ใช้ sorted set ต่อ session, รายงานของคนอื่นตอบ `404` ไม่ใช่ `403` |
-| Backend | **Data fixtures จาก CUAD** | `scripts/build_cuad_fixtures.py` แปลง CUAD v1 → สัญญาจริง 12 ฉบับ + gold 327 clause (91 clause มี label จาก annotation ของผู้เชี่ยวชาญ) + `.docx` ให้ลองอัปโหลด 3 ไฟล์ |
+| Backend | **Data fixtures จาก CUAD** | `scripts/build_cuad_fixtures.py` แปลง CUAD v1 → สัญญาจริง 12 ฉบับ + gold 327 clause (82 clause มี label — เฉพาะข้อที่ไฮไลต์ของ CUAD ครอบคลุมมากพอ ดู `MIN_LABEL_COVERAGE`) + `.docx` ให้ลองอัปโหลด 3 ไฟล์ |
 | Backend | **Playbook 36 จุดยืน** | ครบทั้ง 12 clause type อ้างอิงหมวดรีวิว 41 หมวดของ CUAD — `preferred`/`fallback` เป็นภาษาสัญญาจริงที่ guardrail ใช้เทียบ verbatim ได้ |
-| Backend | Tests | 258 unit/integration tests ผ่านหมด (1 skipped — eval regression gate ที่ต้องยิง LLM จริง) |
+| Backend | Tests | 268 unit/integration tests ผ่านหมด (1 skipped — eval regression gate ที่ต้องยิง LLM จริง) |
 | Backend | **หัวข้อสัญญาไทย** | `_HEADING_RE` รับ `ข้อ 1.` / `๑.` / เลขอารบิกตามด้วยตัวอักษรไทย (พยัญชนะ + สระหน้า `เ แ โ ใ ไ`) และ prefix `Section`/`Article`/`Clause` — สัญญาไทยตัด clause ตามข้อจริงแทน paragraph fallback โดยอังกฤษ 12 ฉบับเดิมไม่กระทบ |
 | Frontend | Scaffold | React 19 + Vite + Tailwind + routing (`/login`, `/auth/callback`, `/manual`, `/contract`) |
 | Frontend | Login UI | หน้า login + components (Google button, brand header, card, ฯลฯ) |
@@ -109,8 +109,8 @@
 
 | ส่วน | รายการ | รายละเอียด |
 |------|--------|------------|
-| Backend | **gold label ของ eval ยังไม่ตรงกับ clause จริง** | คอขวดของทุกตัวเลขความแม่น: label มาจาก CUAD annotation ที่บังเอิญตกอยู่ในข้อนั้น ทำให้ข้อที่ขึ้นหัวว่า `13. Warranty` เป็น gold `other` และ `9.07 Successors and Assigns` เป็น gold `payment_terms` — **classifier ตอบถูกแต่ถูกนับว่าผิด** ต้องแก้ที่วิธีสร้าง label (ใช้ span ของไฮไลต์ที่ CUAD ให้มา แทน offset ตัวเดียว) |
-| Backend | integration test ที่ยิง LLM จริง | เทสต์ทั้ง 258 ตัว mock ที่ขอบ provider — บั๊กแบบ "Z.AI รับ `json_schema` แล้วตอบ markdown" ผ่าน mock ได้สบาย เจอตอนรันจริงเท่านั้น |
+| Backend | eval บน gold label ชุดใหม่ | ตัว label ซ่อมแล้ว (91 → 82, span ไม่เปลี่ยน) แต่ยังไม่ได้รัน eval บนไม้บรรทัดใหม่ — ตัวเลขที่บันทึกไว้ทั้งหมดยังเป็นของ label เก่า |
+| Backend | integration test ที่ยิง LLM จริง | เทสต์ทั้ง 268 ตัว mock ที่ขอบ provider — บั๊กแบบ "Z.AI รับ `json_schema` แล้วตอบ markdown" ผ่าน mock ได้สบาย เจอตอนรันจริงเท่านั้น |
 | Backend | Clause-level accuracy เต็มชุด | รันแล้ว 3 ฉบับ / 90 clause (gold label 26 ข้อ): `classification 57.69%`, `risk 50.00%`, `segmentation 100%`, `citation 100%`, ไม่มี clause ล้มเพราะ provider เลย — เหลือเต็มชุด 12 ฉบับ / 327 clause (≈ 1,300 call, ~2 ชม.) |
 | Backend | cron ของ retention job | **ตั้งใจไม่ตั้ง** — ตัว job พร้อมใช้แล้ว (`scripts/purge_reports.py`) แต่ค่า default คือเก็บรายงานไว้จนเจ้าของสั่งลบ เพราะการลบกู้คืนไม่ได้และตัวสัญญาหายไปด้วย ให้ตั้ง `REPORT_RETENTION_DAYS` + cron ตอนมีนโยบายเก็บข้อมูลจริง (ตัวอย่าง crontab อยู่ใน docstring ของสคริปต์) |
 
@@ -384,6 +384,11 @@ fallback ทั้งฉบับ ตอนนี้ `_HEADING_RE` รับเ�
 
 ## ผล evaluation (2026-07-30) — ก่อน/หลังแก้ thinking mode
 
+> ⚠️ **ตัวเลขทุกตารางในหัวข้อนี้วัดกับ gold label ชุดเก่า** (ก่อน relabel วันเดียวกัน — ดูหัวข้อ
+> [ซ่อม gold label](#ซ่อม-gold-label-2026-07-30) ด้านล่าง) `classification_accuracy` กับ
+> `risk_accuracy` **เทียบกับผลที่รันหลังจากนี้ไม่ได้** เพราะไม้บรรทัดเปลี่ยน ส่วน
+> `segmentation_f1` เทียบได้ตามปกติ เพราะ span ทั้ง 327 ข้อไม่ถูกแตะ
+
 รัน 1 สัญญาเดิมทั้งสองครั้ง (`ticketscominc-sponsorship-agreement`, 8 clause) คอนฟิกเดียวกัน
 (`LLM_PROVIDER=zai`, `glm-4.6`, `LLM_TIMEOUT_SECONDS=120`) ต่างกันแค่ `LLM_THINKING`:
 
@@ -435,9 +440,57 @@ fallback ทั้งฉบับ ตอนนี้ `_HEADING_RE` รับเ�
 | `warranty` | 1 | **100%** | | `limitation_of_liability` | 2 | 50% |
 | `other` | 5 | 40% | | `payment_terms` | 4 | **25%** |
 
-`payment_terms` แม่นน้อยสุด (1 ใน 4) และเป็นประเภทเดียวกับที่รอบแรกตอบ `unknown` เพราะ playbook
-ไม่มีจุดยืนที่ตรง — สองรอบชี้ไปที่เดียวกัน คอขวดถัดไปคือ **ความครอบคลุมของ playbook** ไม่ใช่
-provider ส่วน `other` 40% เป็นเรื่องคาดหมาย: มันคือถังรวมของ clause ที่ taxonomy 12 ตัวไม่มีชื่อให้
+`payment_terms` แม่นน้อยสุด (1 ใน 4) — ตอนแรกอ่านว่าเป็นเพราะ playbook ครอบไม่พอ **ซึ่งผิด**
+(`payment_terms` มีจุดยืน 5 อัน มากสุดในทุกประเภท และการจำแนกประเภทไม่ได้ใช้ playbook เลย)
+ต้นเหตุจริงคือ gold label — หัวข้อถัดไป
+
+---
+
+## ซ่อม gold label (2026-07-30)
+
+ตรวจด้วยการยิงเฉพาะ classifier + retriever กับ 3 ฉบับแรก แล้วดู `cuad_categories` ของแต่ละข้อ พบว่า
+**หลายกรณีโมเดลตอบถูกแต่ gold ผิด**:
+
+| clause จริง | annotation ที่ตกในข้อนั้น | gold เก่า | classifier |
+|---|---|---|---|
+| `6.02. Termination. This Agreement may be terminated only:` | `Change Of Control` (11.0% ของข้อ) | `other` | `termination` ✅ |
+| `13. Warranty. SIERRA warrants that the Product shall be free from defects` | `Insurance` (28.5%) | `other` | `warranty` ✅ |
+| `9.07. Successors and Assigns.` | `Anti-Assignment` + `Minimum Commitment` (11.3%) | `payment_terms` | `other` ✅ |
+| `3. RATE  Charterer agrees to pay...` | `Governing Law` (3.0%) | `other` | — |
+
+**เพราะ CUAD ไม่ได้จำแนกประเภทข้อสัญญา** — มันตอบคำถาม 41 ข้อเกี่ยวกับสัญญาแล้วไฮไลต์ *วลี*
+ที่เป็นคำตอบ ซึ่งมักอยู่ในข้อที่ว่าด้วยเรื่องอื่น กฎเดิมคือ "ข้อไหนที่ offset เริ่มต้นของไฮไลต์ตกอยู่
+ข้อนั้นได้ label" จึงเปลี่ยนหลักฐานข้างเคียงให้เป็นประเภทของข้อ
+
+**สิ่งที่แก้:** ให้ label จาก category ที่ **ครอบคลุมข้อนั้นมากที่สุด** และตัด label ทิ้งถ้าครอบไม่ถึง
+`MIN_LABEL_COVERAGE` (ข้อนั้นกลายเป็นข้อไม่มี label ซึ่ง `run_eval` ข้ามให้ตั้งแต่แรกอยู่แล้ว) โดย
+`Candidate.annotations` เก็บ span ของไฮไลต์แล้ว (`answer_start` + `len(answer["text"])` ซึ่งเดิม
+ทิ้งไป) และนับอักขระทับกันแบบ union — บวกดิบ ๆ ได้ coverage 116% ในข้อ Insurance จริง ๆ
+
+**เกณฑ์เลือกจากข้อมูล และเปลี่ยนใจหลังวัด:** ตั้ง 30% ก่อนตาม histogram ที่เป็น bimodal (33 ข้ออยู่
+เหนือ 80%, 16 ข้ออยู่ใต้ 20%) แต่ preview ฟ้องว่าหยาบเกินไป — ทิ้ง `governing_law` ของข้อ
+`9.05. Applicable Law` และ `warranty` ของ `5.01. Products Warranty` ที่ CUAD ไฮไลต์ถูกแล้วแต่
+ไฮไลต์แค่ประโยคเดียวในข้อยาว จึงลงมาที่ **15%** ซึ่งตัดแค่หางล่างที่เถียงไม่ได้
+
+| | เก่า | ใหม่ |
+|---|---|---|
+| clause span | 327 | **327 (ไม่เปลี่ยนเลย — md5 ของสัญญาทั้ง 12 ไฟล์เท่าเดิม)** |
+| clause ที่มี label | 91 | **82** |
+| clause type ที่มี label | 8 | 8 (`termination` 17, `other` 16, `non_compete` 15, `payment_terms` 9, `governing_law` 9, `intellectual_property` 8, `limitation_of_liability` 6, `warranty` 2) |
+| `label_coverage` | — | ต่ำสุด 0.158 / กลาง 0.675 / สูงสุด 0.991 (เขียนลงไฟล์ gold ให้อ่านได้ว่า label ไหนมีหลักฐานหนักแค่ไหน) |
+
+**ต้นทุนที่ยอมจ่าย ไม่ใช่ของฟรี:** label หายไป 9 อัน และ 2 อันในนั้นเถียงได้ว่าถูก
+(`5. Consideration` = `payment_terms`, `22. Assignment` = `other`) กับอีก 1 ข้อที่เปลี่ยนไปทางแย่ลง
+(`11. Trademarks` จาก `intellectual_property` → `other` เพราะตอนนี้ coverage ตัดสินแทนการนับ
+จำนวน category)
+
+**ยังไม่มีตัวเลข eval บน label ชุดใหม่** — ตั้งใจข้ามไปตามที่ตัดสินใจร่วมกัน (ประหยัด ~2 ชม.
+กับค่า LLM) ตัวเลขในหัวข้อก่อนหน้าทั้งหมดยังเป็นของ label ชุดเก่า อยากได้ของใหม่รัน:
+`.venv/bin/python -m scripts.run_eval --limit 3` (~33 นาที) แล้วเทียบกับ 57.69% / 50.00% ที่บันทึกไว้
+
+**ตรวจแล้วว่า harness อ่านไฟล์ใหม่ได้** — รัน `run_eval` กับ stub orchestrator (ไม่ยิง LLM):
+`segmentation_f1` 100%, ให้คะแนน 82 sample, ไม่พังกับฟิลด์ `label_coverage` หรือข้อที่มี
+`cuad_categories` แต่ไม่มี label
 
 ---
 
@@ -447,14 +500,10 @@ provider ส่วน `other` 40% เป็นเรื่องคาดหม�
 และ roadmap เดิมปิดไปหมดแล้วเมื่อ 2026-07-30 — accept risk / เก็บรายงานถาวร / contract metadata /
 LLM call ที่ผ่านสม่ำเสมอ / data-retention job ส่วน export ถูกตัดออกจากขอบเขต เหลือ:
 
-1. **สร้าง gold label ให้ตรงกับ clause จริง** — คอขวดของทุกตัวเลขความแม่น และเป็นงาน backend
-   ชิ้นใหญ่สุดที่เหลือ: `build_cuad_fixtures.py` ให้ label จาก CUAD annotation ที่ offset ตกอยู่ใน
-   ข้อนั้น แต่ CUAD ไฮไลต์ **วลีที่เป็นคำตอบของคำถาม 41 ข้อ** ไม่ได้บอกว่า "ข้อนี้เป็นข้อประเภทอะไร"
-   ผลคือข้อที่ขึ้นหัวว่า `13. Warranty` เป็น gold `other` (เพราะ annotation เดียวที่ตกในข้อนั้นคือ
-   `Insurance`) และ classifier ที่ตอบ `warranty` ถูกนับว่าผิด — ทางที่ตั้งใจไว้คือใช้ span ของ
-   ไฮไลต์ (`answer["text"]` ที่ตอนนี้ถูกทิ้ง) แทน offset เริ่มต้นตัวเดียว รายละเอียดพร้อมตาราง
-   หลักฐาน: [เพดานของ gold label](apps/backend-fastapi/README.md#เพดานของ-gold-label-ที่มาจาก-cuad)
-2. **integration test ที่ยิง LLM จริงอย่างน้อย 1 เส้น** — เทสต์ 258 ตัว mock ที่ขอบ provider
+1. **รัน evaluation กับ gold label ชุดใหม่** — งานเดียวที่เหลือของ eval: ตัว label ซ่อมแล้ว
+   (ดู [ซ่อม gold label](#ซ่อม-gold-label-2026-07-30)) แต่ยังไม่มีตัวเลขบนไม้บรรทัดใหม่
+   เริ่มจาก `--limit 3` (~33 นาที) เพื่อเทียบกับ 57.69% / 50.00% ที่บันทึกไว้บน label เก่า
+2. **integration test ที่ยิง LLM จริงอย่างน้อย 1 เส้น** — เทสต์ 268 ตัว mock ที่ขอบ provider
    ทั้งหมด บั๊กแบบ "Z.AI รับ `json_schema` แล้วตอบ markdown มา" ผ่าน mock ได้สบาย ๆ
 3. **ตั้ง cron ให้ retention job** — สคริปต์พร้อมแล้ว (`python -m scripts.purge_reports`) ตั้งใจ
    ไม่ตั้งให้ เพราะกรอบเวลาเก็บข้อมูลเป็นนโยบายที่ต้องตัดสินใจเอง (ลบแล้วกู้ไม่ได้)
