@@ -101,14 +101,22 @@ def run_eval(
     orchestrator: Orchestrator,
     known_position_ids: set[str],
     limit: int | None = None,
+    contract_ids: set[str] | None = None,
 ) -> EvalMetrics:
     """Run ``orchestrator`` over the gold set and return aggregate metrics.
 
     The eval regression gate requires >= 75% accuracy (see tests/eval). Gold
     records whose ``data/contracts/<contract_id>.txt`` fixture is missing are
     skipped (logged, not failed) so the harness degrades gracefully.
+
+    ``limit`` and ``contract_ids`` both narrow the run, and exist because the
+    full set is roughly 1,300 LLM calls: ``limit`` takes the first N records,
+    ``contract_ids`` picks named ones — which is how you run the *cheap*
+    contracts rather than whichever happen to be first in the file.
     """
     records = load_gold(gold_path)
+    if contract_ids is not None:
+        records = [record for record in records if record["contract_id"] in contract_ids]
     if limit is not None:
         records = records[:limit]
 

@@ -128,8 +128,10 @@ apps/backend-fastapi/
 * **`app/models.py` vs `app/schemas.py`** — `models.py` คือตารางจริงใน Postgres (import แล้ว
   `Base.metadata` ครบ ซึ่ง Alembic autogenerate ใช้เทียบกับ DB), `schemas.py` คือรูปร่างข้อมูล
   ที่วิ่งผ่าน HTTP และระหว่าง layer
-* **contract/report ไม่ได้อยู่ใน Postgres** — เป็นข้อมูล session-scoped เก็บใน Redis พร้อม TTL
-  ส่วนที่อยู่ใน Postgres ถาวรมีแค่ `users`, `audit_overrides` และ `playbook_embeddings`
+* **ข้อความสัญญาดิบไม่เคยลงตาราง** — เก็บใน Redis ระหว่าง pipeline ทำงานแล้วลบทิ้งทันทีที่ได้
+  report; ส่วนที่อยู่ใน Postgres ถาวรคือ `users`, `audit_overrides`, `playbook_embeddings`
+  และ **`contract_reports`** (รายงานที่ผลิตแล้ว — อยู่จนกว่าเจ้าของจะสั่งลบ, สลับกลับไปเก็บใน
+  Redis ตาม TTL ได้ด้วย `REPORT_STORAGE=redis`)
 * **`alembic/env.py`** ดึง `sqlalchemy.url` จาก `Settings().database_url` เอง ไม่ต้องใส่
   connection string ซ้ำใน `alembic.ini`
 
@@ -137,9 +139,14 @@ apps/backend-fastapi/
 
 ```
 upload → parse (PDF/DOCX) → segment → classify → match(playbook/RAG) → risk_scorer → judge → report
+                          └────────→ metadata extractor ─────────────────────────────────↗
 ```
 (ดู `app/ai/pipeline.py`: `segment → classify → match → score → judge`, มี retry 1 ครั้งถ้า
 judge บอกว่า ungrounded, และ isolate failure ต่อ clause — clause ที่ error ไม่ทำให้ report ทั้งใบพัง)
+
+`MetadataExtractor` อยู่นอกสายนั้น: ยิง LLM ครั้งเดียวต่อ**ฉบับ** อ่านหัว 4k + ท้าย 2.5k ตัวอักษร
+เพื่อดึงคู่สัญญา/วันที่/มูลค่า/กฎหมายที่ใช้บังคับ แล้วทิ้งค่าที่หาไม่เจอในเอกสารแบบคำต่อคำ —
+ล้มเหลวก็ได้แค่ metadata ว่าง รายงานยังออกครบ (ปิดด้วย `ENABLE_METADATA_EXTRACTION=false`)
 
 ---
 
@@ -158,10 +165,25 @@ judge บอกว่า ungrounded, และ isolate failure ต่อ clause 
   แบบ deterministic ก่อน แล้วค่อยถาม LLM เพิ่มสำหรับเช็ค rationale ที่ overreach
 - **Override + audit log** — override เปลี่ยน risk level, re-aggregate summary, เขียน audit log ลง
   Postgres (permanent, ไม่มี TTL) — ทดสอบกับ DB จริงแล้ว
-- **Data retention** — contract ดิบถูกลบทันทีหลัง orchestrator สร้าง report เสร็จ; report ถูก sweep
-  ตาม TTL (`RETENTION_TTL_SECONDS`, default 8 ชม.) ต่อ session ตอนมี upload ใหม่จาก session เดิม
-  — ตั้งไว้ **ต่ำกว่า** `ACCESS_TOKEN_EXPIRE_MINUTES` (12 ชม.) เสมอ เพื่อไม่ให้ report หมดอายุช้ากว่า
-  token ที่ใช้ดึงมัน (override ต้องโหลด report ด้วย id ก่อน)
+- **Accept risk แบบ persist** — `POST /contracts/{id}/accept` ตั้ง `accepted`/`accepted_by`/
+  `accepted_at` บน clause review นั้น (ไม่แตะ risk level เลย — การรับรองแปลว่า "เห็นด้วย"
+  ไม่ใช่ "แก้"), ถอนคืนได้ด้วย `accepted=false`, ลง audit ทั้งสองทิศทางผ่านคอลัมน์ `action`
+  (`override`/`accept`/`unaccept`) และการ override จะล้างการรับรองทิ้งเพราะมันรับรองคำตัดสินเดิม
+- **เก็บรายงานถาวรใน Postgres** — ตาราง `contract_reports`: `payload` (JSONB ของ
+  `ContractReviewReport` ทั้งก้อน) + คอลัมน์ที่ history ใช้จริง (`session_id`, `created_at`,
+  `filename`, `overall_risk`, `summary`, `clause_count`) เพื่อให้ `GET /contracts` อ่าน sidebar
+  ได้โดยไม่ต้อง deserialize clause ทุกข้อของทุกรายงาน; index composite
+  `(session_id, created_at)` ตรงกับ query เดียวที่มี — เลือก backend ด้วย `REPORT_STORAGE`
+  (`postgres` default / `redis` = พฤติกรรม TTL แบบเดิม) ทดสอบทั้งสามตัว (memory/redis/postgres)
+  ด้วยชุดเทสต์เดียวกันใน `tests/unit/test_report_repository.py`
+- **Contract metadata** — `MetadataExtractor` (1 call ต่อฉบับ) → `ContractReviewReport.metadata`;
+  ทุกค่าเป็นข้อความจากเอกสารแบบคำต่อคำ ตรวจด้วย `is_grounded()` ตัวเดียวกับที่ judge ใช้ ค่าที่
+  หาไม่เจอถูกทิ้งเป็น `null` (ทดสอบกับ CUAD จริงแล้ว: ได้คู่สัญญา 2 ราย + `"1st day of August,
+  2013"` + `"the laws of the State of Texas"` ครบ)
+- **Data retention** — contract ดิบถูกลบทันทีหลัง orchestrator สร้าง report เสร็จ; รายงานที่ผลิต
+  แล้วเก็บถาวรใน Postgres (`RETENTION_TTL_SECONDS` มีผลเฉพาะตอน `REPORT_STORAGE=redis`
+  ซึ่งถ้าใช้ต้องตั้งไว้ **ต่ำกว่า** `ACCESS_TOKEN_EXPIRE_MINUTES` เสมอ เพื่อไม่ให้ report หมดอายุ
+  ช้ากว่า token ที่ใช้ดึงมัน)
 - **Evaluation harness** — `run_eval` รันทั้ง pipeline จริงต่อ gold contract, คำนวณ
   segmentation F1 / classification accuracy / risk accuracy / citation validity;
   fixture ทั้งหมดสร้างด้วย `scripts.build_cuad_fixtures` จึงตรงกับ offset ของ
@@ -207,18 +229,19 @@ judge บอกว่า ungrounded, และ isolate failure ต่อ clause 
   audit DB (SQLite): happy path คืน report ถูกต้อง, ต้อง auth (`401` ถ้าไม่ส่ง token), unsupported
   file type → `422`, override เปลี่ยน risk + re-aggregate `overall_risk` + เขียน audit record
   ถูกต้อง (`old_risk`/`new_risk`/`actor`), report/clause ไม่มีจริง → `404`
-- **Tests** — 46 unit/integration tests ผ่านหมด (`pytest tests/`; อีก 1 test เป็น eval regression
+- **Tests** — 191 unit/integration tests ผ่านหมด (`pytest tests/`; อีก 1 test เป็น eval regression
   gate ที่ skip ไว้เพราะต้องเรียก LLM จริง)
 
 ---
 
 ## ❌ สิ่งที่ยังไม่ได้ทำ
 
-- **Frontend**: dashboard/reports (เมนู Sidebar) — ยังเป็น stub ฝั่ง `apps/web`
-  (นอก scope ของ backend)
-- **ประวัติรายงานย้อนหลัง**: ยังไม่มี `GET /contracts/{report_id}` — report อยู่ใน state ของหน้าเท่านั้น
+- **Export ฝั่ง server**: ยังไม่มี endpoint export — frontend ทำ JSON/CSV/Print เองจากรายงานที่
+  โหลดมาแล้ว จะต้องมี endpoint ก็ต่อเมื่ออยาก export โดยไม่เปิดหน้าเว็บ (ส่งเมล/แบตช์)
+- **Data-retention policy**: รายงานอยู่ถาวรใน Postgres แล้ว ไม่มีอะไรลบตัวเอง — ถ้าต้องลบตามอายุ
+  ต้องเขียน job เอง หรือกลับไปใช้ `REPORT_STORAGE=redis`
 - **Eval regression gate** (`tests/eval/test_regression.py`) — ยัง skip ไว้เพราะต้องเรียก LLM จริง
-  (มี cost + ต้องมี quota); รันเองได้ผ่าน `python -m scripts.run_eval`
+  (มี cost + ต้องมี quota); รันเองได้ผ่าน `python -m scripts.run_eval` (ดู `--limit` / `--contract`)
 
 ---
 
@@ -243,6 +266,10 @@ GOOGLE_REDIRECT_URI=http://localhost:8000/auth/google/callback
 FRONTEND_URL=http://localhost:5173
 SESSION_SECRET_KEY=<random-secret>
 JWT_SECRET_KEY=<random-secret>
+
+# Storage + feature flags (ค่าที่เห็นคือ default — ไม่ใส่ก็ได้)
+REPORT_STORAGE=postgres            # postgres = เก็บถาวร | redis = หมดอายุตาม TTL
+ENABLE_METADATA_EXTRACTION=true    # false = ประหยัด 1 LLM call/ฉบับ แลกกับไม่มีแผงคู่สัญญา/วันที่
 ```
 > ⚠️ `.env` อยู่ใน `.gitignore` และเคยถูก purge ออกจาก git history — **ห้าม commit เข้า git**
 >
@@ -339,11 +366,15 @@ docker compose -f ../../infrastructure/docker-compose.yml up -d   # postgres + r
 
 ### รัน evaluation harness
 ```bash
-python -m scripts.run_eval          # data/gold/annotations.jsonl -> metrics report
+python -m scripts.run_eval                                              # เต็มชุด
+python -m scripts.run_eval --limit 3                                    # 3 สัญญาแรก
+python -m scripts.run_eval --contract ticketscominc-sponsorship-agreement   # เจาะจงฉบับ
 ```
 
 > ⚠️ gold set มี 327 clause และ pipeline ยิง LLM ราว 4 ครั้งต่อ clause — เต็มชุดคือ ~1,300 request
-> ลองน้อย ๆ ก่อนด้วย `POST /evaluate` แล้วส่ง `limit` (จำนวน**สัญญา** ไม่ใช่ clause)
+> (หลักชั่วโมง) ลองน้อย ๆ ก่อนด้วย `--contract` ซึ่งเลือกฉบับสั้นได้ ต่างจาก `--limit` ที่ตัด
+> จากหัวไฟล์ (ฉบับแรกในไฟล์คือฉบับที่มี 47 clause) — `POST /evaluate` ก็ส่ง `limit` ได้เหมือนกัน
+> (จำนวน**สัญญา** ไม่ใช่ clause)
 
 ### สร้าง data fixtures ใหม่จาก CUAD
 ```bash
@@ -393,6 +424,8 @@ python -m scripts.build_cuad_fixtures --cuad ~/project/cuad   # ต้องม�
 | GET | `/contracts` | ✅ ต้อง auth; คืน `ReportSummary` ของ session ตัวเอง เรียงใหม่→เก่า |
 | GET | `/contracts/{report_id}` | ✅ ต้อง auth; ของ session อื่น → `404` (ไม่ใช่ `403` เพราะ `403` = ยืนยันว่า id นี้มีอยู่จริง) |
 | POST | `/contracts/{report_id}/override` | ✅ ต้อง auth; ตรวจเจ้าของ report ด้วย; automated test (mocked LLM) + ทดสอบกับ DB จริงแล้ว |
+| POST | `/contracts/{report_id}/accept` | ✅ ต้อง auth; รับรอง/ถอนการรับรอง clause (`clause_id`, `accepted`, `note`) — ไม่แตะ risk level, ลง audit ทั้งสองทิศทาง |
+| DELETE | `/contracts/{report_id}` | ✅ ต้อง auth; `204`/`404` (ของ session อื่นตอบ `404` เหมือนกัน) |
 | GET | `/playbook` · `POST /playbook` · `GET/PUT/DELETE /playbook/{id}` | ✅ CRUD ครบ |
 | GET | `/playbook/search` | ✅ |
 | POST | `/evaluate` | ✅ |
@@ -401,10 +434,18 @@ python -m scripts.build_cuad_fixtures --cuad ~/project/cuad   # ต้องม�
 
 ## Roadmap ที่เหลือ
 
-**Backend ใช้งานได้ครบทุกเส้นทางหลักแล้ว** (รวม Google OAuth ที่ login จริงผ่านแล้ว) เหลือ:
+**Backend ใช้งานได้ครบทุกเส้นทางหลักแล้ว** (รวม Google OAuth ที่ login จริงผ่านแล้ว, ประวัติรายงาน
+ถาวร, accept/override + audit และ metadata ของสัญญา) เหลือ:
 
-1. **`GET /contracts/{report_id}`** — ให้ frontend deep-link กลับเข้ารายงานเดิมได้ (ตอนนี้ refresh แล้วหาย)
-2. **Export report (PDF/CSV)** และ **accept-risk แบบ persist** — ยังไม่มี endpoint
+0. **LLM call ล้มบ่อยกับคอนฟิกปัจจุบัน** — eval 1 สัญญา (2026-07-30, `zai`/`glm-4.6`, timeout
+   120 วิ) มี 6 ใน 8 clause ล้ม: timeout 3 ครั้ง + structured output ตอบสตริงว่าง 3 ครั้ง
+   (`_RiskAssessment` ×2, `_LLMVerdict` ×1) pipeline degrade ถูกต้องทุกครั้ง (clause เป็น
+   `unknown`) แต่แปลว่ารายงานจริงก็จะเต็มไปด้วย `unknown` เหมือนกัน — ดูหัวข้อผล evaluation
+   ใน [README หลัก](../../README.md)
+1. **รัน evaluation เต็มชุด** — gold set พร้อมแล้ว แต่ ~1,300 LLM call ยังไม่ได้รันครบ
+   (และยังไม่ควรรันจนกว่าข้อ 0 จะแก้ ไม่งั้นได้ตัวเลขที่แปลไม่ได้)
+2. **Export ฝั่ง server (PDF/CSV)** — ตอนนี้ frontend ทำเองในเบราว์เซอร์
+3. **Data-retention job** — รายงานไม่หมดอายุอีกแล้ว ถ้าต้องมีนโยบายลบต้องเขียนเอง
 
 ---
 

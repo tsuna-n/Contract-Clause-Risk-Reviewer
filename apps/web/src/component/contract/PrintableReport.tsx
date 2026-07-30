@@ -49,8 +49,23 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
   );
 }
 
+/** The metadata the document actually stated, as label/value pairs. */
+function metadataPairs(report: ContractReport): [string, string][] {
+  const { metadata } = report;
+  const pairs: [string, string | null][] = [
+    ["Parties", metadata.parties.join(" · ") || null],
+    ["Agreement date", metadata.agreementDate],
+    ["Effective date", metadata.effectiveDate],
+    ["Expires", metadata.expirationDate],
+    ["Value", metadata.contractValue],
+    ["Governing law", metadata.governingLaw],
+  ];
+  return pairs.filter((pair): pair is [string, string] => Boolean(pair[1]));
+}
+
 export default function PrintableReport({ report }: PrintableReportProps) {
   const { summary } = report;
+  const metadataRows = metadataPairs(report);
 
   return createPortal(
     <div
@@ -106,6 +121,18 @@ export default function PrintableReport({ report }: PrintableReportProps) {
         </p>
       )}
 
+      {/* Contract-level facts, quoted from the document. Whoever reads the
+          printout has no page to check them against, so they belong on it. */}
+      {metadataRows.length > 0 && (
+        <section style={{ marginTop: "10pt", fontSize: "9pt", lineHeight: 1.5 }}>
+          {metadataRows.map(([label, value]) => (
+            <div key={label}>
+              <strong>{label}:</strong> {value}
+            </div>
+          ))}
+        </section>
+      )}
+
       {report.disclaimer && (
         <p style={{ marginTop: "8pt", fontSize: "8.5pt", color: "#444", lineHeight: 1.45 }}>
           {report.disclaimer}
@@ -139,6 +166,9 @@ export default function PrintableReport({ report }: PrintableReportProps) {
               {clause.clauseType.replace(/_/g, " ")}
               {clause.page !== null && ` · page ${clause.page}`}
               {` · ${clause.verified ? "grounded in playbook" : "not grounded — verify manually"}`}
+              {/* A printed report is what gets circulated and filed, so the
+                  sign-off has to travel with it. */}
+              {clause.accepted && ` · accepted by ${clause.acceptedBy ?? "reviewer"}`}
             </div>
 
             <Field label="Clause text">{clause.text}</Field>

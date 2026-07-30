@@ -1,6 +1,7 @@
 import { apiFetch } from "./api";
 import type {
   ClauseView,
+  ContractMetadataView,
   ContractReport,
   ReportSummary,
   RiskLevel,
@@ -55,7 +56,12 @@ interface BackendClauseReview {
   rationale: string;
   citations: BackendCitation[];
   suggested_fallback: string | null;
+  /** The judge's grounding verdict — the pipeline checking its own work. */
   verified: boolean;
+  /** A person's sign-off — set by `POST /contracts/{id}/accept`. */
+  accepted: boolean;
+  accepted_by: string | null;
+  accepted_at: string | null;
 }
 
 interface BackendRiskSummary {
@@ -63,6 +69,16 @@ interface BackendRiskSummary {
   medium: number;
   low: number;
   unknown: number;
+}
+
+/** Matches `ContractMetadata` in app/schemas.py — verbatim quotes, all optional. */
+interface BackendContractMetadata {
+  parties: string[];
+  agreement_date: string | null;
+  effective_date: string | null;
+  expiration_date: string | null;
+  contract_value: string | null;
+  governing_law: string | null;
 }
 
 // `session_id` is intentionally absent: the backend keeps it on the report for
@@ -76,6 +92,7 @@ export interface BackendContractReviewReport {
   overall_risk: BackendRiskLevel;
   summary: BackendRiskSummary;
   reviews: BackendClauseReview[];
+  metadata: BackendContractMetadata;
   disclaimer: string;
 }
 
@@ -185,7 +202,27 @@ function toClauseView(review: BackendClauseReview): ClauseView {
       excerpt: citation.excerpt,
     })),
     verified: review.verified,
+    accepted: review.accepted,
+    acceptedBy: review.accepted_by,
+    acceptedAt: review.accepted_at,
     page: clause.span.page,
+  };
+}
+
+/**
+ * Reports stored before metadata extraction existed come back without the
+ * field, so it is treated as optional here rather than trusted to be present.
+ */
+function toContractMetadata(
+  metadata: BackendContractMetadata | undefined
+): ContractMetadataView {
+  return {
+    parties: metadata?.parties ?? [],
+    agreementDate: metadata?.agreement_date ?? null,
+    effectiveDate: metadata?.effective_date ?? null,
+    expirationDate: metadata?.expiration_date ?? null,
+    contractValue: metadata?.contract_value ?? null,
+    governingLaw: metadata?.governing_law ?? null,
   };
 }
 
@@ -197,6 +234,7 @@ export function toContractReport(report: BackendContractReviewReport): ContractR
     createdAt: report.created_at,
     overallRisk: toRiskLevel(report.overall_risk),
     summary: report.summary,
+    metadata: toContractMetadata(report.metadata),
     disclaimer: report.disclaimer,
     clauses: report.reviews.map(toClauseView),
   };
@@ -260,11 +298,10 @@ export async function reviewContract(
 }
 
 /**
- * This session's past reviews, newest first.
+ * This user's past reviews, newest first.
  *
- * Reports live in Redis under the retention TTL, so this is "recent history",
- * not an archive — a review the backend has already dropped is gone, and the
- * list simply comes back shorter.
+ * Reports are stored in Postgres and kept until their owner deletes them, so
+ * this is the full archive rather than a recent-items list.
  */
 export async function fetchReportHistory(signal?: AbortSignal): Promise<ReportSummary[]> {
   const rows = await apiFetch<BackendReportSummary[]>("/contracts", { signal });
@@ -319,6 +356,38 @@ export async function overrideClause({
         new_risk: toBackendRiskLevel(newRisk),
         reason,
       },
+    }
+  );
+  return toContractReport(report);
+}
+
+export interface AcceptRequest {
+  reportId: string;
+  clauseId: string;
+  /** `false` withdraws a sign-off made earlier. */
+  accepted: boolean;
+  note?: string;
+}
+
+/**
+ * Sign off on one clause's assessment, or take the sign-off back.
+ *
+ * Risk levels don't move — accepting says the reviewer agrees with what the
+ * pipeline found. Like override, the response is the whole updated report and
+ * replaces page state, so the ✓ a reviewer sees is the server's copy rather
+ * than an optimistic guess at it.
+ */
+export async function acceptClause({
+  reportId,
+  clauseId,
+  accepted,
+  note,
+}: AcceptRequest): Promise<ContractReport> {
+  const report = await apiFetch<BackendContractReviewReport>(
+    `/contracts/${encodeURIComponent(reportId)}/accept`,
+    {
+      method: "POST",
+      json: { clause_id: clauseId, accepted, ...(note ? { note } : {}) },
     }
   );
   return toContractReport(report);

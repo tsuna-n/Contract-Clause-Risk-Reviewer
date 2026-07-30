@@ -2,6 +2,9 @@
 
 segment -> classify -> match -> score -> judge
 
+:class:`MetadataExtractor` sits outside that chain: it runs once over the whole
+document rather than once per clause, and nothing downstream depends on it.
+
 Every agent takes one unit of work and returns one result, so
 :class:`~app.ai.pipeline.Orchestrator` can compose them without knowing how any
 of them is implemented. ``prompt_version`` is declared per agent so a run can be
@@ -26,6 +29,7 @@ from app.schemas import (
     Clause,
     ClauseReview,
     ClauseType,
+    ContractMetadata,
     PlaybookPosition,
     RetrievalHit,
     RiskLevel,
@@ -118,6 +122,80 @@ class Segmenter(Agent[ParsedDocument, list[Clause]]):
                 )
             )
         return clauses
+
+
+# --- 1b. contract metadata ----------------------------------------------------
+
+_METADATA_SYSTEM_PROMPT = "You are a precise contract metadata extractor."
+# How much of the document the extractor is shown. Parties and dates live in
+# the preamble; the term and governing law live at the very end. Everything
+# between is clause text this step has no use for, and sending it would pay
+# for the whole contract on a call that reads two paragraphs of it.
+#
+# Kept deliberately tight: measured against a real CUAD contract, a ~9k-char
+# excerpt took 113s on GLM-4.6 — close enough to the 120s per-call ceiling
+# (``LLM_TIMEOUT_SECONDS``) that a slightly longer preamble would have lost the
+# metadata to a timeout. These bounds still clear the first two pages and the
+# signature block, which is where every one of these facts is written.
+_METADATA_HEAD_CHARS = 4000
+_METADATA_TAIL_CHARS = 2500
+
+
+def _metadata_excerpt(text: str) -> str:
+    """Return the document's opening and closing, joined by an elision marker."""
+    if len(text) <= _METADATA_HEAD_CHARS + _METADATA_TAIL_CHARS:
+        return text
+    return (
+        f"{text[:_METADATA_HEAD_CHARS]}\n\n[... middle of the document omitted ...]\n\n"
+        f"{text[-_METADATA_TAIL_CHARS:]}"
+    )
+
+
+class MetadataExtractor(Agent[ParsedDocument, ContractMetadata]):
+    """Reads the parties, dates, value and governing law off a contract.
+
+    Runs once per document rather than once per clause: these are properties
+    of the agreement, and they are stated in two places every contract has —
+    the preamble and the closing.
+    """
+
+    name = "metadata_extractor"
+
+    def run(self, payload: ParsedDocument) -> ContractMetadata:
+        """Extract contract-level metadata, keeping only what the document says.
+
+        The model is told to quote verbatim, and then every value it returns is
+        checked against the document text before it is kept. Metadata is the
+        part of the report a reviewer is least likely to double-check — it
+        reads like it was transcribed, not inferred — so an invented party or
+        a hallucinated contract value is dropped rather than displayed.
+        """
+        prompt = render_prompt(
+            "metadata.v1.jinja", document_excerpt=_metadata_excerpt(payload.text)
+        )
+        extracted = self.llm.complete_structured(
+            system=_METADATA_SYSTEM_PROMPT,
+            prompt=prompt,
+            response_model=ContractMetadata,
+        )
+        return self._drop_ungrounded(extracted, payload.text)
+
+    @staticmethod
+    def _drop_ungrounded(metadata: ContractMetadata, source_text: str) -> ContractMetadata:
+        """Blank out any value that isn't in ``source_text`` word-for-word."""
+
+        def keep(value: str | None) -> str | None:
+            cleaned = value.strip() if value else ""
+            return cleaned if cleaned and is_grounded(cleaned, source_text) else None
+
+        return ContractMetadata(
+            parties=[p.strip() for p in metadata.parties if keep(p)],
+            agreement_date=keep(metadata.agreement_date),
+            effective_date=keep(metadata.effective_date),
+            expiration_date=keep(metadata.expiration_date),
+            contract_value=keep(metadata.contract_value),
+            governing_law=keep(metadata.governing_law),
+        )
 
 
 # --- 2. classify -------------------------------------------------------------

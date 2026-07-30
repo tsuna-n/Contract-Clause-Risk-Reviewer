@@ -341,6 +341,105 @@ def test_override_requires_auth() -> None:
     assert resp.status_code == 401
 
 
+# --- POST /contracts/{report_id}/accept --------------------------------------
+
+
+def _accept(client: TestClient, report_id: str, **payload):
+    body = {"clause_id": "clause-1"} | payload
+    return client.post(f"/contracts/{report_id}/accept", json=body)
+
+
+def test_accept_marks_the_clause_and_writes_audit(
+    client: TestClient, audit_db_session: Session
+) -> None:
+    report_id = _upload(client).json()["report_id"]
+
+    resp = _accept(client, report_id, note="reviewed with counsel")
+
+    assert resp.status_code == 200
+    review = resp.json()["reviews"][0]
+    assert review["accepted"] is True
+    assert review["accepted_by"] == "reviewer@example.com"
+    assert review["accepted_at"] is not None
+
+    row = audit_db_session.query(AuditOverride).filter_by(report_id=report_id).one()
+    assert row.action == "accept"
+    assert row.reason == "reviewed with counsel"
+    # Accepting vouches for the assessment; it does not restate it.
+    assert row.old_risk == row.new_risk == "medium"
+
+
+def test_accept_leaves_the_risk_assessment_alone(client: TestClient) -> None:
+    """Sign-off means "I agree", so the numbers must not move."""
+    report = _upload(client).json()
+
+    body = _accept(client, report["report_id"]).json()
+
+    assert body["reviews"][0]["risk_level"] == "medium"
+    assert body["overall_risk"] == "medium"
+    assert body["summary"] == report["summary"]
+
+
+def test_accept_survives_a_reload(client: TestClient) -> None:
+    """The point of the endpoint: progress that a refresh doesn't erase."""
+    report_id = _upload(client).json()["report_id"]
+    _accept(client, report_id)
+
+    reloaded = client.get(f"/contracts/{report_id}").json()
+
+    assert reloaded["reviews"][0]["accepted"] is True
+
+
+def test_accept_can_be_withdrawn(client: TestClient, audit_db_session: Session) -> None:
+    report_id = _upload(client).json()["report_id"]
+    _accept(client, report_id)
+
+    body = _accept(client, report_id, accepted=False).json()
+
+    review = body["reviews"][0]
+    assert review["accepted"] is False
+    assert review["accepted_by"] is None
+    # The retraction is logged, not erased - the first sign-off still happened.
+    actions = [row.action for row in audit_db_session.query(AuditOverride).all()]
+    assert actions == ["accept", "unaccept"]
+
+
+def test_overriding_an_accepted_clause_clears_the_acceptance(client: TestClient) -> None:
+    """The sign-off was for the old verdict, and the reviewer just replaced it."""
+    report_id = _upload(client).json()["report_id"]
+    _accept(client, report_id)
+
+    body = client.post(
+        f"/contracts/{report_id}/override",
+        json={"clause_id": "clause-1", "new_risk": "high", "reason": "escalated"},
+    ).json()
+
+    assert body["reviews"][0]["accepted"] is False
+
+
+def test_accept_unknown_report_is_404(client: TestClient) -> None:
+    assert _accept(client, "no-such-report").status_code == 404
+
+
+def test_accept_unknown_clause_is_404(client: TestClient) -> None:
+    report_id = _upload(client).json()["report_id"]
+    assert _accept(client, report_id, clause_id="no-such-clause").status_code == 404
+
+
+def test_accept_another_sessions_report_is_404(client: TestClient) -> None:
+    client.report_repo.save(  # type: ignore[attr-defined]
+        ContractReviewReport(report_id="someone-elses", contract_id="c", session_id="user-2")
+    )
+    assert _accept(client, "someone-elses").status_code == 404
+
+
+def test_accept_requires_auth() -> None:
+    resp = TestClient(create_app()).post(
+        "/contracts/report-1/accept", json={"clause_id": "clause-1"}
+    )
+    assert resp.status_code == 401
+
+
 # --- DELETE /contracts/{report_id} -------------------------------------------
 
 

@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import type { ContractReport } from '../component/contract/types';
 import { riskAccent, riskBadge, riskRow, riskRowSelected } from '../component/contract/riskStyles';
 import {
+  ContractMetadataPanel,
   ExportMenu,
   PrintableReport,
   IncompleteReviewNotice,
@@ -129,6 +130,10 @@ function Detail({ report, loading = false, error = null, onBack, onRetry }: Deta
             </span>
           </div>
 
+          {/* คู่สัญญา / วันที่ / มูลค่า — คัดมาจากตัวเอกสารแบบคำต่อคำ ถ้าเอกสารไม่ได้ระบุ
+              ก็จะไม่ขึ้นอะไรเลย */}
+          <ContractMetadataPanel metadata={report.metadata} locale="th" className="mb-6" />
+
           {/* ข้อสัญญาที่ประเมินไม่สำเร็จก็ยังมี badge กับถูกนับใน summary เหมือนข้อที่
               ตรวจผ่าน — ต้องบอกให้ชัดตรงนี้ว่ามันคนละเรื่องกับ "ไม่มีความเสี่ยง" */}
           <IncompleteReviewNotice report={report} locale="th" className="mb-6" />
@@ -218,6 +223,15 @@ function Detail({ report, loading = false, error = null, onBack, onRetry }: Deta
                               ))}
                             </ul>
                           </div>
+                        )}
+
+                        {/* ผู้ตรวจรับรองแล้วหรือยัง — เก็บอยู่ในรายงาน กดรับรองได้ที่หน้า
+                            /contract แต่ต้องเห็นที่นี่ด้วยไม่งั้นดูไม่ออกว่าอ่านถึงไหนแล้ว */}
+                        {clause.accepted && (
+                          <p className={`text-[11px] ${riskAccent.LOW}`}>
+                            ✓ ผู้ตรวจรับรองแล้ว
+                            {clause.acceptedBy ? ` โดย ${clause.acceptedBy}` : ''}
+                          </p>
                         )}
 
                         {/* ผลตรวจของ judge: rationale อ้างอิงข้อความจริงใน playbook หรือไม่ */}

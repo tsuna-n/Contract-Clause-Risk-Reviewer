@@ -23,7 +23,7 @@ class ReportService:
 
     def list_history(self, session_id: str) -> list[ReportSummary]:
         """Return this session's reviews, newest first."""
-        return [ReportSummary.of(report) for report in self.reports.list_for_session(session_id)]
+        return self.reports.list_summaries(session_id)
 
     def get_report(self, report_id: str, session_id: str) -> ContractReviewReport:
         """Return one of this session's reports.

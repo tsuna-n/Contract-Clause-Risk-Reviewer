@@ -44,6 +44,17 @@ export function reportToJson(report: ContractReport): string {
       exported_at: new Date().toISOString(),
       overall_risk: report.overallRisk,
       summary: report.summary,
+      // Verbatim quotes from the contract, or empty where it didn't say. Left
+      // exactly as extracted — reformatting a date here would turn a quote
+      // into an interpretation.
+      metadata: {
+        parties: report.metadata.parties,
+        agreement_date: report.metadata.agreementDate,
+        effective_date: report.metadata.effectiveDate,
+        expiration_date: report.metadata.expirationDate,
+        contract_value: report.metadata.contractValue,
+        governing_law: report.metadata.governingLaw,
+      },
       disclaimer: report.disclaimer,
       clauses: report.clauses.map((clause, index) => ({
         index: index + 1,
@@ -54,6 +65,10 @@ export function reportToJson(report: ContractReport): string {
         // The judge's grounding verdict. Named for what it means rather than
         // the DTO's `verified`, which reads like "a human checked this".
         grounded_in_playbook: clause.verified,
+        // The human half of the record: who signed off, and when.
+        accepted: clause.accepted,
+        accepted_by: clause.acceptedBy,
+        accepted_at: clause.acceptedAt,
         page: clause.page,
         rationale: clause.rationale,
         suggested_fallback: clause.suggestedFallback,
@@ -92,6 +107,8 @@ const CSV_HEADERS = [
   "clause_type",
   "risk_level",
   "grounded_in_playbook",
+  "accepted_by",
+  "accepted_at",
   "page",
   "rationale",
   "suggested_fallback",
@@ -112,6 +129,8 @@ export function reportToCsv(report: ContractReport): string {
       csvCell(clause.clauseType),
       csvCell(clause.riskLevel),
       csvCell(clause.verified ? "yes" : "no"),
+      csvCell(clause.acceptedBy),
+      csvCell(clause.acceptedAt),
       csvCell(clause.page),
       csvCell(clause.rationale),
       csvCell(clause.suggestedFallback),

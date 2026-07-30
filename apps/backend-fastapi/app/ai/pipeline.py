@@ -4,11 +4,26 @@ from __future__ import annotations
 
 import uuid
 
-from app.ai.agents import Classifier, Judge, Matcher, RiskScorer, RiskScorerInput, Segmenter
+from app.ai.agents import (
+    Classifier,
+    Judge,
+    Matcher,
+    MetadataExtractor,
+    RiskScorer,
+    RiskScorerInput,
+    Segmenter,
+)
 from app.ai.guardrails import disclaimer_text
 from app.logger import get_logger
 from app.parsers import ParsedDocument
-from app.schemas import Clause, ClauseReview, ContractReviewReport, RiskLevel, RiskSummary
+from app.schemas import (
+    Clause,
+    ClauseReview,
+    ContractMetadata,
+    ContractReviewReport,
+    RiskLevel,
+    RiskSummary,
+)
 
 logger = get_logger(__name__)
 
@@ -51,12 +66,17 @@ class Orchestrator:
         matcher: Matcher,
         risk_scorer: RiskScorer,
         judge: Judge,
+        metadata_extractor: MetadataExtractor | None = None,
     ) -> None:
         self.segmenter = segmenter
         self.classifier = classifier
         self.matcher = matcher
         self.risk_scorer = risk_scorer
         self.judge = judge
+        # Optional: ``None`` turns the header panel off and saves one LLM call
+        # per review (``ENABLE_METADATA_EXTRACTION=false``). Reports then carry
+        # empty metadata, which is exactly what the UI renders as "not stated".
+        self.metadata_extractor = metadata_extractor
 
     def review(
         self,
@@ -77,8 +97,24 @@ class Orchestrator:
             overall_risk=overall,
             summary=summary,
             reviews=reviews,
+            metadata=self._extract_metadata(document),
             disclaimer=disclaimer_text(),
         )
+
+    def _extract_metadata(self, document: ParsedDocument) -> ContractMetadata:
+        """Read the contract's header facts, or return empty if that fails.
+
+        Isolated like a clause failure is: the parties and dates are context
+        for the risk assessment, never the reason it was run, so losing them
+        must not cost the reviewer a report they waited minutes for.
+        """
+        if self.metadata_extractor is None:
+            return ContractMetadata()
+        try:
+            return self.metadata_extractor.run(document)
+        except Exception:
+            logger.warning("contract metadata extraction failed", exc_info=True)
+            return ContractMetadata()
 
     def _review_clause(self, clause: Clause) -> ClauseReview:
         """Run one clause through classify -> match -> score -> judge.

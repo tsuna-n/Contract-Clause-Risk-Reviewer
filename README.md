@@ -22,6 +22,14 @@
 > client id/secret ตรวจสอบกับ Google endpoint จริงแล้วว่าใช้ได้ และทุก error path (ยกเลิกที่หน้า
 > consent / session หลุด) redirect กลับ `/login?error=<code>` พร้อมข้อความที่อ่านรู้เรื่อง
 >
+> **รายงานถาวร + accept risk + metadata ของสัญญา (2026-07-30)** — เคลียร์ roadmap ที่ค้างอยู่
+> 3 ข้อ: รายงานย้ายจาก Redis (TTL) ไปเก็บใน **Postgres** ถาวรแล้ว (ตาราง `contract_reports`,
+> หายเมื่อเจ้าของสั่งลบเท่านั้น — สลับกลับด้วย `REPORT_STORAGE=redis` ได้), เพิ่ม
+> **`POST /contracts/{id}/accept`** ให้ผู้ตรวจ "รับรอง" ข้อสัญญาได้จริงพร้อมลง audit log
+> (ถอนคืนได้ และ override จะล้างการรับรองให้เอง), และ pipeline **สกัด metadata ของสัญญา**
+> (คู่สัญญา / วันที่ / มูลค่า / กฎหมายที่ใช้บังคับ) มาแสดงเป็นแผงหัวรายงาน โดยทุกค่าต้องเป็น
+> ข้อความที่อยู่ในเอกสารจริงแบบคำต่อคำ ไม่งั้นถูกตัดทิ้ง
+>
 > **เลิกใช้ mock data ทั้งระบบ + ประวัติรายงานใช้งานได้ (2026-07-26)** — fixture ของ backend
 > สร้างจาก **CUAD v1** (สัญญาการค้าจริง 510 ฉบับ annotate โดยผู้เชี่ยวชาญ) ผ่าน
 > `scripts/build_cuad_fixtures.py`, playbook ขยายเป็น 36 จุดยืนครอบทั้ง 12 clause type,
@@ -47,20 +55,23 @@
 | Backend | App + entrypoint | FastAPI factory `app.main:app`, CORS, `SessionMiddleware` — boot ได้ |
 | Backend | Health endpoints | `GET /`, `/health`, `/health/db` (ต่อ Postgres จริง → connected) |
 | Backend | DB layer | SQLAlchemy engine/session/`Base`, `get_db` |
-| Backend | **Alembic migrations** | แทน `create_all` แล้ว — `env.py` ดึง URL จาก app settings, migration แรกครอบ `users`/`playbook_embeddings`(+`CREATE EXTENSION vector`)/`audit_overrides`, ทดสอบ upgrade/downgrade cycle จริงแล้ว |
+| Backend | **Alembic migrations** | แทน `create_all` แล้ว — `env.py` ดึง URL จาก app settings; 3 migration: initial (`users`/`playbook_embeddings`+`CREATE EXTENSION vector`/`audit_overrides`) → `contract_reports` → `audit_overrides.action` ทุกตัวทดสอบ upgrade/downgrade cycle กับ Postgres จริงแล้ว |
 | Backend | Auth (OAuth + JWT) | routes `/auth/*` ครบ, User model — **integration test อัตโนมัติแล้ว**: JWT ถูก→คืน user, token ปลอม/ไม่มี user→`401`, OAuth login redirect + callback (create/update user, ออก JWT, error path) — mock ที่ authlib boundary |
 | Backend | **Review pipeline** | `POST /contracts/review` — **ทดสอบ live กับ Gemini + pgvector จริงแล้ว** + integration test อัตโนมัติ (mocked LLM): parse→segment→classify→match(RAG)→score→judge→report พร้อม citation ที่ grounded |
 | Backend | **Override + audit** | `POST /contracts/{id}/override` — เปลี่ยน risk level, re-aggregate, เขียน audit log ลง Postgres (ทดสอบแล้ว + integration test อัตโนมัติ) |
-| Backend | **Redis-backed repos** | contract/report repo ย้ายจาก in-memory ไป Redis แล้ว (native TTL) — scale ข้าม process/replica ได้ |
+| Backend | **Accept risk (persist)** | `POST /contracts/{id}/accept` — ผู้ตรวจรับรองข้อสัญญาทีละข้อ เก็บ `accepted`/`accepted_by`/`accepted_at` ไว้ในรายงาน (refresh ไม่หาย), ถอนคืนได้ (`accepted=false`), ลง audit log ทั้งสองทิศทาง (`action` = `accept`/`unaccept`) และ override จะล้างการรับรองให้อัตโนมัติเพราะเป็นการรับรองคำตัดสินเดิม |
+| Backend | **เก็บรายงานถาวร (Postgres)** | ตาราง `contract_reports` (payload JSONB + คอลัมน์ที่ history ใช้จริง) — ไม่มีวันหมดอายุ, `GET /contracts` อ่านจากคอลัมน์ไม่ต้อง deserialize รายงานทั้งฉบับ; `REPORT_STORAGE=redis` กลับไปใช้แบบ TTL เดิมได้ |
+| Backend | **Contract metadata** | agent `MetadataExtractor` ยิง LLM 1 ครั้งต่อ**ฉบับ** (ไม่ใช่ต่อ clause) อ่านหัว+ท้ายเอกสาร → คู่สัญญา / วันที่ทำสัญญา / วันมีผล / วันสิ้นสุด / มูลค่า / กฎหมายที่ใช้บังคับ; ทุกค่าถูกเช็คกับตัวเอกสารแบบคำต่อคำ ค่าที่หาไม่เจอถูกทิ้ง (`ENABLE_METADATA_EXTRACTION=false` ปิดได้) |
+| Backend | **Redis-backed repos** | contract repo อยู่บน Redis (native TTL) — ตัว report repo ย้ายไป Postgres แล้ว แต่ Redis ยังเป็นตัวเลือกอยู่ |
 | Backend | **Playbook search + eval** | `GET /playbook/search`, `POST /evaluate` — ใช้งานได้จริง |
 | Backend | **LLM client + RAG (สลับค่ายได้)** | provider adapter (`app/ai/providers.py`) — Gemini / Anthropic Claude / OpenAI-compatible (Z.AI GLM, DeepSeek, vLLM) เลือกด้วย `LLM_PROVIDER` ตัวเดียว, structured output ตามวิธีของแต่ละค่าย, hybrid retrieval (pgvector cosine + BM25) |
 | Backend | Parsers | PDF (PyMuPDF) / DOCX (python-docx) / TXT (เดา encoding: UTF-8 → cp874) → `ParsedDocument` |
 | Backend | Guardrails | grounding, citation validity, no-invented-fallback — wired เข้า judge แล้ว |
 | Backend | Schemas | Pydantic models: clause, report, taxonomy, playbook, eval |
-| Backend | **Report history** | `GET /contracts` (สรุปรายงานของ session เรียงใหม่→เก่า) + `GET /contracts/{report_id}` (ฉบับเต็ม) — Redis เก็บ sorted set ต่อ session เป็น index, รายงานของคนอื่นตอบ `404` ไม่ใช่ `403` |
+| Backend | **Report history** | `GET /contracts` (สรุปรายงานของตัวเอง เรียงใหม่→เก่า) + `GET /contracts/{report_id}` (ฉบับเต็ม) + `DELETE /contracts/{report_id}` — Postgres ใช้ index `(session_id, created_at)`, Redis ใช้ sorted set ต่อ session, รายงานของคนอื่นตอบ `404` ไม่ใช่ `403` |
 | Backend | **Data fixtures จาก CUAD** | `scripts/build_cuad_fixtures.py` แปลง CUAD v1 → สัญญาจริง 12 ฉบับ + gold 327 clause (91 clause มี label จาก annotation ของผู้เชี่ยวชาญ) + `.docx` ให้ลองอัปโหลด 3 ไฟล์ |
 | Backend | **Playbook 36 จุดยืน** | ครบทั้ง 12 clause type อ้างอิงหมวดรีวิว 41 หมวดของ CUAD — `preferred`/`fallback` เป็นภาษาสัญญาจริงที่ guardrail ใช้เทียบ verbatim ได้ |
-| Backend | Tests | 117 unit/integration tests ผ่านหมด (1 skipped) |
+| Backend | Tests | 191 unit/integration tests ผ่านหมด (1 skipped — eval regression gate ที่ต้องยิง LLM จริง) |
 | Backend | **หัวข้อสัญญาไทย** | `_HEADING_RE` รับ `ข้อ 1.` / `๑.` / เลขอารบิกตามด้วยตัวอักษรไทย (พยัญชนะ + สระหน้า `เ แ โ ใ ไ`) และ prefix `Section`/`Article`/`Clause` — สัญญาไทยตัด clause ตามข้อจริงแทน paragraph fallback โดยอังกฤษ 12 ฉบับเดิมไม่กระทบ |
 | Frontend | Scaffold | React 19 + Vite + Tailwind + routing (`/login`, `/auth/callback`, `/manual`, `/contract`) |
 | Frontend | Login UI | หน้า login + components (Google button, brand header, card, ฯลฯ) |
@@ -73,6 +84,8 @@
 | Frontend | **Contract upload UI** | `/contract` — อัปโหลด `.pdf`/`.docx`/`.txt` ไป `POST /contracts/review` จริง พร้อม loading / error / empty state (จำกัดนามสกุลตามที่ backend parse ได้จริง) |
 | Frontend | **Risk report view** | แสดง clause list พร้อม risk badge, excerpt, AI rationale, suggested fallback, citation (playbook position + excerpt), grounding verdict ของ judge และ disclaimer จาก report |
 | Frontend | **Override UI** | sidebar ต่อ `POST /contracts/{id}/override` จริง — validate ก่อนส่ง, response แทน state ทั้งก้อน, summary/overall risk อัปเดตตาม |
+| Frontend | **Accept / undo จริง** | ปุ่ม Accept Risk ยิง `POST /contracts/{id}/accept` แล้ว — ✓ ในรายการข้อสัญญามาจากรายงาน ไม่ใช่ state ในหน้า, กดซ้ำเพื่อถอนคืน, มีบรรทัดบอกว่าใครรับรองเมื่อไหร่ และติดไปกับ export/print ด้วย |
+| Frontend | **แผง metadata ของสัญญา** | `ContractMetadataPanel` แสดงคู่สัญญา/วันที่/มูลค่า/กฎหมาย ทั้งหน้า `/contract` และรายงานใน `/manual` — ช่องที่เอกสารไม่ได้ระบุจะไม่ขึ้นเลย (ไม่แสดงขีดกลางให้ชวนสงสัยว่าพัง) |
 | Frontend | **Export report** | ปุ่ม Export ทั้งหน้า `/contract` และหน้ารายงานใน `/manual` — **JSON** (รายงานเต็ม), **CSV** (แถวละ clause พร้อม BOM ให้ Excel อ่านภาษาไทยถูก + กัน CSV injection), และ **Print / Save as PDF** (`PrintableReport` portal ลง `<body>` แล้ว print stylesheet สลับมาแสดงแทนทั้งแอป) — ทำฝั่ง browser ล้วน ไม่ต้องมี endpoint |
 | Frontend | **เตือนเมื่อ clause ประเมินไม่สำเร็จ** | รายงานที่มี `unknown` ขึ้น banner ระดับรายงานว่า "ยังไม่ได้วิเคราะห์ ไม่ใช่ว่าไม่มีความเสี่ยง" พร้อมบอกสาเหตุที่พบบ่อย (โควตา Gemini หมด) — badge สีเทารายข้ออ่านเหมือน "ผ่าน" ได้ง่ายเกินไป |
 | Infra | Docker Compose | ยก Postgres (pgvector) + Redis ได้จริง |
@@ -83,11 +96,9 @@
 
 | ส่วน | รายการ | รายละเอียด |
 |------|--------|------------|
-| Backend | Contract metadata | ยังไม่ดึงคู่สัญญา / วันที่ / มูลค่าสัญญา ออกมาจากเอกสาร — `ContractReviewReport` ไม่มีฟิลด์พวกนี้ (UI จึงไม่แสดง แทนที่จะเดาข้อมูลเอง) |
-| Backend | Accept risk | มีแต่ override + audit log ยังไม่มี endpoint สำหรับ "accept" — ฝั่ง UI จึงเก็บเป็น local review progress เท่านั้น |
 | Backend | Export report (server-side) | ยังไม่มี endpoint export — ฝั่ง frontend ทำ JSON/CSV/Print เองได้แล้วจากรายงานที่อยู่ในเบราว์เซอร์ จะต้องมี endpoint ก็ต่อเมื่ออยาก export โดยไม่เปิดหน้าเว็บ (เช่น ส่งเมล/แบตช์) |
-| Backend | เก็บรายงานถาวร | รายงานอยู่ใน Redis ตาม `retention_ttl_seconds` — ประวัติเป็น "ย้อนหลังเท่าที่ยังไม่หมดอายุ" ไม่ใช่คลังถาวร ถ้าต้องเก็บยาวต้องย้ายไป Postgres |
-| Backend | Clause-level accuracy ที่วัดแล้ว | gold set พร้อมใช้แล้วแต่ยังไม่ได้รัน `POST /evaluate` เต็มชุด (327 clause ≈ 1,300 LLM call) — โควตา Gemini free tier อยู่ที่ 20 request/วัน |
+| Backend | Clause-level accuracy ที่เชื่อถือได้ | รันไปแล้ว 1 สัญญา (ดูตารางด้านล่าง) แต่ **ตัวเลขยังใช้ตัดสิน pipeline ไม่ได้** เพราะ 6 ใน 8 clause ล้มเพราะ provider ไม่ใช่เพราะตอบผิด — ต้องแก้เรื่อง LLM ก่อนแล้วค่อยรันเต็มชุด (327 clause ≈ 1,300+ call) |
+| Backend | ลบข้อมูลตามกำหนดเวลา | รายงานเก็บถาวรใน Postgres แล้ว จึงไม่มีอะไรลบตัวเองอีก — ถ้าต้องมี data-retention policy ต้องเขียน job ลบเอง (หรือกลับไปใช้ `REPORT_STORAGE=redis`) |
 
 ---
 
@@ -139,7 +150,7 @@ vLLM ได้ด้วยการตั้ง `LLM_BASE_URL` เอง SDK ท
 | Z.AI (GLM) | `zai` | `ZAI_API_KEY` | `glm-4.6` |
 | OpenAI-compatible | `openai` | `OPENAI_API_KEY` + `LLM_MODEL` + `LLM_BASE_URL` | — (ต้องระบุเอง) |
 
-**ตัวอย่าง: เปลี่ยนไปใช้ Claude Haiku 4.5** (คอนฟิกที่ repo นี้ใช้อยู่ตอนนี้)
+**ตัวอย่าง: เปลี่ยนไปใช้ Claude Haiku 4.5**
 
 ```env
 # --- LLM: Anthropic (Claude Haiku 4.5) ---
@@ -167,9 +178,18 @@ b = build_chat_backend(get_settings()); e = build_embedder()
 print('chat :', type(b).__name__, '->', b.model)
 print('embed:', type(e).__name__, '->', e.model, f'({e.dim} dim)')
 "
-# chat : AnthropicChatBackend -> claude-haiku-4-5
-# embed: GeminiEmbedder -> gemini-embedding-001 (768 dim)
 ```
+
+คอนฟิกที่ `.env` ของ repo นี้ใช้อยู่ตอนนี้คือ **Z.AI GLM-4.6 อ่านสัญญา + Gemini ทำ embedding**
+(ผลจริงของคำสั่งด้านบน เมื่อ 2026-07-30):
+
+```
+chat : OpenAICompatibleChatBackend -> glm-4.6
+embed: GeminiEmbedder -> gemini-embedding-001 (768 dim)
+```
+
+`zai` ใช้ adapter ตัวเดียวกับ `openai` ชื่อคลาสที่ขึ้นจึงเป็น `OpenAICompatibleChatBackend` —
+ไม่ได้แปลว่าตั้งค่าผิด
 
 **4 ข้อที่ต้องรู้ก่อนสลับ:**
 
@@ -247,6 +267,8 @@ print('embed:', type(e).__name__, '->', e.model, f'({e.dim} dim)')
 | `GET /contracts` | ประวัติใน Sidebar | คืน **`ReportSummary`** (ไม่มี `reviews`) เรียงใหม่→เก่า |
 | `GET /contracts/{report_id}` | เปิดรายงานเดิม / deep link `?report=` | รายงานของ session อื่นตอบ `404` |
 | `POST /contracts/{report_id}/override` | override risk | รับค่าเป็น **JSON body** (`clause_id`, `new_risk`, `reason`) — คืน report ทั้งก้อนที่อัปเดตแล้ว |
+| `POST /contracts/{report_id}/accept` | ปุ่ม Accept Risk | JSON body (`clause_id`, `accepted`, `note` ไม่บังคับ) — ไม่แตะ risk level เลย คืน report ทั้งก้อน; `accepted=false` = ถอนการรับรอง |
+| `DELETE /contracts/{report_id}` | ปุ่มลบใน Sidebar | `204` เมื่อลบสำเร็จ, `404` ถ้าไม่ใช่รายงานของตัวเอง |
 | `GET /playbook`, `POST/PUT/DELETE /playbook/{id}`, `GET /playbook/search` | หน้า `/playbook` | |
 | `POST /evaluate` | หน้า `/evaluate` | |
 | `GET /`, `/health`, `/health/db` | หน้า `/system` | |
@@ -262,11 +284,14 @@ print('embed:', type(e).__name__, '->', e.model, f'({e.dim} dim)')
   จากต้นประโยค รองรับรูปแบบ `"ข้อ 5. ..."` ภาษาไทยด้วย)
 - **รับเฉพาะ `.pdf`, `.docx` และ `.txt`** — นามสกุลอื่น backend ตอบ `422 document_parse_error`
   (ดูตาราง [ไฟล์สัญญาแบบไหนใช้ได้](#ไฟล์สัญญาแบบไหนใช้ได้) ด้านล่าง)
-- **`ContractReviewReport` ไม่มี metadata ของสัญญา** (คู่สัญญา / วันที่ / มูลค่า) — มีแค่ `filename`
-  ที่ติดมากับการอัปโหลด อย่าเดาข้อมูลพวกนี้ขึ้นมาแสดงเอง
+- **`metadata` ของสัญญาเป็น "คำที่เอกสารเขียนไว้" ไม่ใช่ค่าที่ parse แล้ว** — `agreement_date`
+  อาจเป็น `"1st day of August, 2013"` ตรง ๆ อย่าเอาไป `new Date()` หรือจัดรูปแบบใหม่ เพราะจะกลาย
+  เป็นการตีความแทนการอ้างอิง และทุกฟิลด์ว่างได้หมด (เอกสารไม่ได้ระบุ = ไม่ต้องแสดง)
 - **การ review ใช้เวลาหลายนาที ไม่ใช่หลักวินาที** — วัดจริงได้ ~45 วิ/clause (83 วิ สำหรับ 3 clause,
   **6 นาที 15 วิ สำหรับ 8 clause** วัดเมื่อ 2026-07-28) เพราะ pipeline เดินทีละ clause และยิง LLM
   ~4 ครั้งต่อ clause — ต้อง loading state ที่ชัดเจนและอย่าเขียนว่า "about a minute"
+  บวกอีก 1 call ต่อ**ฉบับ**สำหรับ metadata (วัดกับ GLM-4.6 ได้ ~113 วิ ตอนส่งข้อความ 9k ตัวอักษร
+  จึงหั่นเหลือหัว 4k + ท้าย 2.5k ให้ห่างเพดาน `LLM_TIMEOUT_SECONDS` 120 วิ)
 - **Export ทำฝั่ง browser ล้วน** — ไม่มี endpoint และไม่ต้องมี: ตอนรายงานขึ้นจอแล้ว `ContractReport`
   อยู่ใน memory ครบ เหลือแค่ serialize (`lib/export.ts`) สิ่งเดียวที่ไม่ติดไปคือ `span.start/end`
   ซึ่ง mapper ตัดทิ้งตั้งแต่ก่อนถึง UI อยู่แล้ว
@@ -327,15 +352,53 @@ fallback ทั้งฉบับ ตอนนี้ `_HEADING_RE` รับเ�
 
 ---
 
+## ผล evaluation ครั้งแรก (2026-07-30) — และสิ่งที่มันบอก
+
+รัน 1 สัญญา (`ticketscominc-sponsorship-agreement`, 8 clause) ด้วยคอนฟิกปัจจุบัน
+(`LLM_PROVIDER=zai`, `glm-4.6`, `LLM_TIMEOUT_SECONDS=120`) ใช้เวลา ~70 นาที:
+
+| เมตริก | ผล | อ่านยังไง |
+|--------|-----|-----------|
+| `segmentation_f1` | **100.00%** | ตัด clause ตรงกับ gold ทุกข้อ — ขั้นนี้ไม่ใช้ LLM เลย จึงเป็นตัวเลขที่เชื่อได้ |
+| `classification_accuracy` | 50.00% | จาก clause ที่มี label แค่ 4 ข้อ (2 ถูก) — sample เล็กเกินกว่าจะสรุปอะไร |
+| `risk_accuracy` | 0.00% | **ไม่ได้แปลว่าโมเดลตอบผิด** — clause ที่ประเมินไม่สำเร็จถูกนับเป็น `unknown` ซึ่งไม่ตรงกับ gold เสมอ |
+| `citation_validity` | 100.00% | citation ที่ออกมาชี้ playbook position จริงทุกอัน |
+
+**6 ใน 8 clause ล้มระหว่างทาง** และสาเหตุอยู่ที่ฝั่ง provider ทั้งหมด:
+
+| อาการ | จำนวน | คืออะไร |
+|-------|-------|---------|
+| `openai.APITimeoutError` | 3 | call เดียวใช้เกิน `LLM_TIMEOUT_SECONDS` (120 วิ) |
+| structured output ตอบสตริงว่าง | 3 | `_RiskAssessment` ×2, `_LLMVerdict` ×1 — พังตอน validate JSON (`ContractMetadata` ก็โดนอีก 1 ครั้ง) |
+
+pipeline ทำงานตามที่ออกแบบไว้ทุกอย่าง: clause ที่ล้มกลายเป็น `unknown` + "manual review required"
+รายงานยังออกครบ และ UI ขึ้น banner เตือนว่า "ยังไม่ได้วิเคราะห์ ไม่ใช่ว่าไม่มีความเสี่ยง" —
+แต่ **ตัวเลข accuracy ชุดนี้วัด provider ไม่ได้วัด pipeline** จึงยังไม่ควรเอาไปอ้างอิง
+
+**ก่อนจะรันเต็มชุด (1,300+ call) ควรแก้เรื่องนี้ก่อน** ไม่งั้นจะจ่ายค่า LLM ทั้งชุดเพื่อได้ตัวเลขที่
+แปลไม่ได้ ทางที่น่าลอง: เพิ่ม `LLM_TIMEOUT_SECONDS`, ตรวจว่า `max_tokens` ของ GLM ถูกโหมด
+thinking กินจนไม่เหลือให้ตอบหรือเปล่า, หรือสลับกลับไป `LLM_PROVIDER=gemini` ที่เคยรันผ่านมาก่อน
+
+---
+
 ## Roadmap ที่เหลือ
 
-เส้นทางหลัก (login → upload → review → override → export → เปิดรายงานเดิม) ใช้งานได้จริงครบแล้ว
-— ที่เหลือทุกข้อต้องแก้ฝั่ง backend ก่อน ทำใน frontend อย่างเดียวไม่ได้:
+เส้นทางหลัก (login → upload → review → accept/override → export → เปิดรายงานเดิม) ใช้งานได้จริง
+ครบแล้ว และ roadmap เดิม 3 ใน 4 ข้อ (accept risk / เก็บรายงานถาวร / contract metadata) ปิดไปแล้ว
+เมื่อ 2026-07-30 เหลือ:
 
-1. **Accept risk แบบ persist** — ต้องมี endpoint + audit ฝั่ง backend ก่อน ตอนนี้เป็น local state
-2. **เก็บรายงานถาวร** — ตอนนี้อยู่ใน Redis ตาม TTL หมดอายุแล้วหายจากประวัติ ถ้าต้องเก็บยาว
-   ต้องมีตารางใน Postgres
-3. **Contract metadata extraction** — ถ้าอยากได้ panel คู่สัญญา/วันที่/มูลค่า ต้องให้ pipeline
-   สกัดออกมาใส่ `ContractReviewReport` ก่อน (CUAD มี annotation หมวด Parties / Agreement Date /
-   Effective Date อยู่แล้ว ใช้เป็น gold set ได้ทันที)
-4. **รัน evaluation เต็มชุด** — gold set 12 ฉบับพร้อมแล้ว แต่ต้องมีโควตา Gemini พอ
+1. **ทำให้ LLM call ผ่านอย่างสม่ำเสมอ** — ดูหัวข้อผล evaluation ด้านบน นี่คือคอขวดจริงของทั้งระบบ
+   ตอนนี้ ไม่ใช่แค่เรื่องของ eval
+2. **รัน evaluation เต็มชุด** — gold set 12 ฉบับ 327 clause พร้อมแล้ว รันบางส่วนก่อนได้:
+
+   ```bash
+   cd apps/backend-fastapi
+   .venv/bin/python -m scripts.run_eval --contract ticketscominc-sponsorship-agreement  # ฉบับสั้นสุด
+   .venv/bin/python -m scripts.run_eval --limit 3      # 3 ฉบับแรก
+   .venv/bin/python -m scripts.run_eval                # เต็มชุด
+   ```
+
+3. **Export ฝั่ง server** — ตอนนี้ทำในเบราว์เซอร์ทั้งหมด (JSON/CSV/Print) จะต้องมี endpoint
+   ก็ต่อเมื่ออยาก export โดยไม่เปิดหน้าเว็บ เช่น ส่งเมลหรือทำเป็นแบตช์
+4. **Data-retention policy** — พอรายงานเก็บถาวรใน Postgres แล้วก็ไม่มีอะไรลบตัวเองอีก
+   ถ้าต้องมีนโยบายลบตามอายุ ต้องเขียน job เอง

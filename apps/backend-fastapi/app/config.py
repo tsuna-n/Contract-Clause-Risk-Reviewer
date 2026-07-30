@@ -1,6 +1,7 @@
 """Application settings + feature flags (pydantic-settings)."""
 
 from functools import lru_cache
+from typing import Literal
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -80,11 +81,25 @@ class Settings(BaseSettings):
     # --- feature flags ---
     enable_judge: bool = True
     enable_hybrid_retrieval: bool = True
-    # How long a finished report stays in Redis. Overriding a clause reloads
-    # the report by id, so this is really "how long can someone step away and
-    # still adjust their results" — an hour was short enough to 404 on people
-    # mid-session. Kept below the token lifetime so the session always
-    # outlives the data it points at.
+    # One extra LLM call per review (not per clause) that reads the parties,
+    # dates, value and governing law off the document. Off means reports carry
+    # empty metadata and the UI shows no header panel — nothing else changes.
+    enable_metadata_extraction: bool = True
+    # Where finished reports live. ``postgres`` keeps them until their owner
+    # deletes them, which is what makes the history list a record rather than
+    # a recent-items list; ``redis`` restores the old TTL'd behaviour for a
+    # deployment that would rather not retain contract text at all.
+    #
+    # A ``Literal``, not a plain string, so a typo fails at boot: the two
+    # choices differ in whether contract text is retained indefinitely, and
+    # ``REPORT_STORAGE=redis1`` quietly falling back to the default would be a
+    # retention decision made by a slip of the finger.
+    report_storage: Literal["postgres", "redis"] = "postgres"
+    # How long a finished report stays in Redis (``REPORT_STORAGE=redis``
+    # only). Overriding a clause reloads the report by id, so this is really
+    # "how long can someone step away and still adjust their results" — an
+    # hour was short enough to 404 on people mid-session. Kept below the token
+    # lifetime so the session always outlives the data it points at.
     retention_ttl_seconds: int = 60 * 60 * 8
 
 

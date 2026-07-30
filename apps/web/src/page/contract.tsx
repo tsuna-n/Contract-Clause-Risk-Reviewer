@@ -3,6 +3,7 @@ import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import {
   OriginalContract,
   AIRiskAnalysis,
+  ContractMetadataPanel,
   ExportMenu,
   PrintableReport,
   IncompleteReviewNotice,
@@ -11,6 +12,7 @@ import type { ContractReport, RiskLevel } from "../component/contract/types";
 import { riskAccent } from "../component/contract/riskStyles";
 import { ApiError } from "../lib/api";
 import {
+  acceptClause,
   fetchReport,
   overrideClause,
 } from "../lib/contracts";
@@ -36,8 +38,6 @@ export default function ContractPage() {
    * the URL changed to a different report.
    */
   const [resolvedReportId, setResolvedReportId] = useState<string | null>(null);
-  /** Local review progress — the backend records overrides, not acceptances. */
-  const [acceptedIds, setAcceptedIds] = useState<ReadonlySet<string>>(new Set());
 
   /** A dead session can't be recovered in-page — send the user back to login. */
   const handleApiError = useCallback(
@@ -69,7 +69,6 @@ export default function ContractPage() {
         setReport(loaded);
         setFileName(loaded.filename || loaded.contractId);
         setSelectedClauseId(loaded.clauses[0]?.id ?? null);
-        setAcceptedIds(new Set());
         setError(null);
         setResolvedReportId(requestedReportId);
       },
@@ -91,7 +90,8 @@ export default function ContractPage() {
 
   /**
    * The override endpoint returns the whole updated report, so the response
-   * replaces page state rather than being patched into it.
+   * replaces page state rather than being patched into it. (It also clears the
+   * clause's acceptance server-side — the sign-off was for the old verdict.)
    */
   const handleOverride = useCallback(
     async (clauseId: string, newRisk: RiskLevel, reason: string) => {
@@ -103,20 +103,22 @@ export default function ContractPage() {
         reason,
       });
       setReport(updated);
-      // An overridden clause is no longer "accepted as assessed".
-      setAcceptedIds((prev) => {
-        if (!prev.has(clauseId)) return prev;
-        const next = new Set(prev);
-        next.delete(clauseId);
-        return next;
-      });
     },
     [report]
   );
 
-  const handleAccept = useCallback((clauseId: string) => {
-    setAcceptedIds((prev) => new Set(prev).add(clauseId));
-  }, []);
+  /** Sign-off is stored on the report, so the response is again the new state. */
+  const handleAccept = useCallback(
+    async (clauseId: string, accepted: boolean) => {
+      if (!report) return;
+      try {
+        setReport(await acceptClause({ reportId: report.reportId, clauseId, accepted }));
+      } catch (err) {
+        handleApiError(err);
+      }
+    },
+    [report, handleApiError]
+  );
 
   const selectedClause = report?.clauses.find((c) => c.id === selectedClauseId) ?? null;
 
@@ -214,6 +216,12 @@ export default function ContractPage() {
         <IncompleteReviewNotice report={report} className="mx-8 mt-3 shrink-0" />
       )}
 
+      {/* Parties, dates, value — quoted from the document. Renders nothing
+          when the contract didn't state any of it. */}
+      {report && (
+        <ContractMetadataPanel metadata={report.metadata} className="mx-8 mt-3 shrink-0" />
+      )}
+
       {report?.disclaimer && (
         <div className="px-8 py-2.5 border-b border-amber-500/20 bg-amber-950/30 shrink-0">
           <p className="text-xs text-amber-200/90 leading-relaxed">{report.disclaimer}</p>
@@ -227,14 +235,12 @@ export default function ContractPage() {
           selectedClauseId={selectedClauseId}
           onClauseSelect={setSelectedClauseId}
           hasReport={report !== null}
-          acceptedIds={acceptedIds}
         />
 
         <AIRiskAnalysis
           clause={selectedClause}
           reportId={report?.reportId ?? null}
           onOverride={handleOverride}
-          accepted={selectedClause ? acceptedIds.has(selectedClause.id) : false}
           onAccept={handleAccept}
         />
       </main>

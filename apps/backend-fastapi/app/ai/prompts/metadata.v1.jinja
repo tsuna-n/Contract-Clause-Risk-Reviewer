@@ -1,0 +1,22 @@
+You are a contract analyst. Extract the facts below about the contract as a
+whole. Respond only with the structured output requested.
+
+Rules:
+- Copy every value **verbatim** from the document. Do not reformat dates, do
+  not expand or shorten company names, do not convert currencies or amounts.
+- If the document does not state a fact, leave the field null (or the list
+  empty). A missing value is a correct answer; a guessed one is not. Anything
+  that cannot be found in the document word-for-word is discarded.
+- parties: the contracting entities as the document names them, usually in the
+  opening paragraph (e.g. the full legal names, one per party).
+- agreement_date: the date the agreement is dated or signed.
+- effective_date: the date performance starts, when stated separately.
+- expiration_date: the date or end of the term, when the document gives one.
+- contract_value: the total price, fee, or consideration the contract states.
+- governing_law: the jurisdiction whose law governs, as written.
+
+Document (the opening, and the closing where the term and governing law
+usually sit):
+"""
+{{ document_excerpt }}
+"""

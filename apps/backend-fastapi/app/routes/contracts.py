@@ -11,7 +11,7 @@ from app.dependencies import (
     get_review_service,
 )
 from app.models import User
-from app.schemas import ContractReviewReport, OverrideRequest, ReportSummary
+from app.schemas import AcceptRequest, ContractReviewReport, OverrideRequest, ReportSummary
 from app.services.override import OverrideService
 from app.services.report import ReportService
 from app.services.review import ReviewService
@@ -88,6 +88,28 @@ async def override_clause(
         clause_id=payload.clause_id,
         new_risk=payload.new_risk,
         reason=payload.reason,
+        actor=current_user.email,
+        session_id=current_user.id,
+    )
+
+
+@router.post(
+    "/{report_id}/accept",
+    response_model=ContractReviewReport,
+    response_model_exclude=_INTERNAL_REPORT_FIELDS,
+)
+async def accept_clause(
+    report_id: str,
+    payload: AcceptRequest,
+    current_user: User = Depends(get_current_user),
+    service: OverrideService = Depends(get_override_service),
+) -> ContractReviewReport:
+    """Sign off on a clause's assessment, or withdraw a previous sign-off."""
+    return service.accept_clause(
+        report_id=report_id,
+        clause_id=payload.clause_id,
+        accepted=payload.accepted,
+        note=payload.note,
         actor=current_user.email,
         session_id=current_user.id,
     )

@@ -8,9 +8,14 @@ interface AIRiskAnalysisProps {
   /** Absent until a contract has been reviewed; disables override. */
   reportId?: string | null;
   onOverride?: (clauseId: string, newRisk: RiskLevel, reason: string) => Promise<void>;
-  /** Reviewer has accepted this clause's assessment (local review progress). */
-  accepted?: boolean;
-  onAccept?: (clauseId: string) => void;
+  /**
+   * Record or withdraw the reviewer's sign-off on this clause.
+   *
+   * Whether the clause *is* accepted comes from the clause itself — it is
+   * stored on the report — so there is no separate prop that could disagree
+   * with it.
+   */
+  onAccept?: (clauseId: string, accepted: boolean) => Promise<void>;
 }
 
 function EmptyPanel({ message, hint }: { message: string; hint: string }) {
@@ -29,10 +34,11 @@ export default function AIRiskAnalysis({
   clause,
   reportId,
   onOverride,
-  accepted = false,
   onAccept,
 }: AIRiskAnalysisProps) {
   const [overrideSidebarOpen, setOverrideSidebarOpen] = useState(false);
+  /** Accepting is a round trip now, so the button has to say it's mid-flight. */
+  const [accepting, setAccepting] = useState(false);
 
   if (!clause) {
     return (
@@ -44,6 +50,19 @@ export default function AIRiskAnalysis({
   }
 
   const canOverride = Boolean(reportId && onOverride);
+  const { accepted } = clause;
+
+  const toggleAccepted = async () => {
+    if (!onAccept) return;
+    setAccepting(true);
+    try {
+      await onAccept(clause.id, !accepted);
+    } finally {
+      // `finally`, not the success path: a failed call has to give the button
+      // back, or a network blip leaves the clause permanently un-signable.
+      setAccepting(false);
+    }
+  };
 
   return (
     <>
@@ -168,14 +187,26 @@ export default function AIRiskAnalysis({
           </div>
         </div>
 
+        {/* Who signed off, once someone has. A ✓ with no name is a claim
+            nobody is attached to, which is the opposite of an audit trail. */}
+        {accepted && clause.acceptedBy && (
+          <div className="px-6 py-2 border-t border-white/10 bg-emerald-950/20">
+            <p className="text-xs text-emerald-300/80">
+              ✓ Accepted by {clause.acceptedBy}
+              {clause.acceptedAt && ` · ${new Date(clause.acceptedAt).toLocaleString()}`}
+            </p>
+          </div>
+        )}
+
         {/* Action Buttons */}
         <div className="px-6 py-4 border-t border-white/10 bg-white/5 grid grid-cols-2 gap-3">
-          {/* Acceptance is local review progress — the backend has no accept
-              endpoint, only override, so this deliberately claims nothing more. */}
+          {/* Sign-off is persisted (POST /contracts/{id}/accept) and reversible
+              — clicking again withdraws it, which is also audited. */}
           <button
             type="button"
-            onClick={() => onAccept?.(clause.id)}
-            disabled={accepted || !onAccept}
+            onClick={toggleAccepted}
+            disabled={accepting || !onAccept}
+            title={accepted ? "Withdraw your sign-off on this clause" : undefined}
             className={`
               py-3 rounded-xl text-sm font-semibold
               transition-all duration-200 ease-in-out
@@ -188,7 +219,7 @@ export default function AIRiskAnalysis({
               }
             `}
           >
-            {accepted ? "✓ Accepted" : "Accept Risk"}
+            {accepting ? "Saving…" : accepted ? "✓ Accepted — Undo" : "Accept Risk"}
           </button>
           <button
             type="button"

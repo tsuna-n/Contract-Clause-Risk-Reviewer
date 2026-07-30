@@ -129,6 +129,26 @@ def test_labelled_clause_is_still_scored(gold_set) -> None:
     assert metrics.risk_accuracy == 0.0
 
 
+def test_contract_ids_selects_which_contracts_run(gold_set) -> None:
+    """A full run is ~1,300 LLM calls; naming one contract is how you afford a check."""
+    gold, spans = gold_set
+    orchestrator = StubOrchestrator(
+        [(ClauseType.TERMINATION, RiskLevel.MEDIUM), (ClauseType.WARRANTY, RiskLevel.HIGH)],
+        spans,
+    )
+
+    metrics = run_eval(
+        gold,
+        orchestrator=orchestrator,
+        known_position_ids=set(),
+        contract_ids={"some-other-contract"},
+    )
+
+    # Nothing matched, so nothing was run - and nothing was billed.
+    assert metrics.per_type == []
+    assert metrics.segmentation_f1 == 1.0  # vacuously: no predictions, no gold
+
+
 def test_missing_contract_fixture_is_skipped_not_fatal(tmp_path: Path) -> None:
     gold = tmp_path / "gold" / "annotations.jsonl"
     gold.parent.mkdir(parents=True)

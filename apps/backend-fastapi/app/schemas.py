@@ -153,10 +153,56 @@ class ClauseReview(BaseModel):
     rationale: str = ""
     citations: list[Citation] = Field(default_factory=list)
     suggested_fallback: str | None = None
+    # The judge's grounding verdict on the machine's own rationale.
     verified: bool = False
+    # A person read this clause and signed off on the assessment as it stands.
+    # Distinct from ``verified``: that is the pipeline checking itself, this is
+    # a human taking responsibility, and it is what turns a report into a piece
+    # of work someone can resume. Reversible - see ``AcceptRequest``.
+    accepted: bool = False
+    # Who accepted, and when. Absent while ``accepted`` is False.
+    accepted_by: str | None = None
+    accepted_at: datetime | None = None
 
 
 # --- reports -----------------------------------------------------------------
+
+
+class ContractMetadata(BaseModel):
+    """Facts about the contract as a whole, quoted from the document.
+
+    Every value is text copied verbatim out of the uploaded file, and anything
+    the extractor returns that isn't found in the document is dropped before
+    it reaches here — the same no-invention rule the clause reviews live under,
+    applied to the header panel. Empty is a correct answer: a blank "Parties"
+    row is a document that doesn't name them, and that beats a plausible guess
+    a reviewer would have no reason to doubt.
+
+    Dates are strings, not ``date`` objects, on purpose. Contracts write dates
+    as "the 3rd day of March, 2019" or "3/4/19", and parsing either one means
+    choosing an interpretation (which day? which convention?) that the reviewer
+    can no longer see or check. The document's own wording is the fact.
+    """
+
+    parties: list[str] = Field(default_factory=list)
+    agreement_date: str | None = None
+    effective_date: str | None = None
+    expiration_date: str | None = None
+    contract_value: str | None = None
+    governing_law: str | None = None
+
+    def is_empty(self) -> bool:
+        """True when the extractor found nothing to report."""
+        return not any(
+            [
+                self.parties,
+                self.agreement_date,
+                self.effective_date,
+                self.expiration_date,
+                self.contract_value,
+                self.governing_law,
+            ]
+        )
 
 
 class RiskSummary(BaseModel):
@@ -188,6 +234,10 @@ class ContractReviewReport(BaseModel):
     overall_risk: RiskLevel = RiskLevel.UNKNOWN
     summary: RiskSummary = Field(default_factory=RiskSummary)
     reviews: list[ClauseReview] = Field(default_factory=list)
+    # Who signed what, when, for how much - read out of the document itself.
+    # Defaults to empty, which is what a report saved before extraction
+    # existed (or one where the pipeline found nothing) reads back as.
+    metadata: ContractMetadata = Field(default_factory=ContractMetadata)
     disclaimer: str = ""
 
 
@@ -234,6 +284,23 @@ class OverrideRequest(BaseModel):
     clause_id: str = Field(min_length=1)
     new_risk: RiskLevel
     reason: str = Field(min_length=1, max_length=1000)
+
+
+class AcceptRequest(BaseModel):
+    """A reviewer signing off on one clause's assessment - or taking it back.
+
+    ``accepted=False`` un-accepts, because sign-off is a claim a person made
+    and misclicking it must be undoable. Both directions are audited, so the
+    log shows the retraction rather than quietly losing the first record.
+
+    ``note`` is optional here, unlike ``OverrideRequest.reason``: disagreeing
+    with the model is a judgement that needs explaining, agreeing with it is
+    not.
+    """
+
+    clause_id: str = Field(min_length=1)
+    accepted: bool = True
+    note: str | None = Field(default=None, max_length=1000)
 
 
 # --- evaluation --------------------------------------------------------------

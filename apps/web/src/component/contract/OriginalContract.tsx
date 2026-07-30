@@ -14,8 +14,6 @@ interface OriginalContractProps {
    * reviewed.
    */
   hasReport?: boolean;
-  /** Clause ids the reviewer has accepted, for at-a-glance progress. */
-  acceptedIds?: ReadonlySet<string>;
 }
 
 export default function OriginalContract({
@@ -23,7 +21,6 @@ export default function OriginalContract({
   selectedClauseId,
   onClauseSelect,
   hasReport = false,
-  acceptedIds,
 }: OriginalContractProps) {
   return (
     <div className="flex flex-col h-full bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl overflow-hidden shadow-2xl">
@@ -72,8 +69,17 @@ export default function OriginalContract({
                     its own numbering/heading, so inlining the two duplicates it. */}
                 <div className="flex items-baseline justify-between gap-3 mb-1.5">
                   <span className="font-bold text-slate-100 text-sm">
-                    {acceptedIds?.has(clause.id) && (
-                      <span className="text-emerald-400 mr-1" title="Accepted">
+                    {/* Sign-off comes with the report, so the checklist is
+                        still filled in after a refresh. */}
+                    {clause.accepted && (
+                      <span
+                        className="text-emerald-400 mr-1"
+                        title={
+                          clause.acceptedBy
+                            ? `Accepted by ${clause.acceptedBy}`
+                            : "Accepted"
+                        }
+                      >
                         ✓
                       </span>
                     )}

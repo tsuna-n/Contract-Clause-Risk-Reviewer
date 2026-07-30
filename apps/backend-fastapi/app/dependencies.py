@@ -18,7 +18,14 @@ from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from sqlalchemy.orm import Session
 
-from app.ai.agents import Classifier, Judge, Matcher, RiskScorer, Segmenter
+from app.ai.agents import (
+    Classifier,
+    Judge,
+    Matcher,
+    MetadataExtractor,
+    RiskScorer,
+    Segmenter,
+)
 from app.ai.llm import LLMClient
 from app.ai.pipeline import Orchestrator
 from app.ai.retrieval import (
@@ -30,12 +37,16 @@ from app.ai.retrieval import (
     load_positions,
 )
 from app.config import get_settings
-from app.database import get_db
+from app.database import SessionLocal, get_db
 from app.models import User
 from app.repositories.audit import AuditRepository
 from app.repositories.contract import ContractRepository, RedisContractRepository
 from app.repositories.playbook import PlaybookRepository
-from app.repositories.report import RedisReportRepository, ReportRepository
+from app.repositories.report import (
+    PostgresReportRepository,
+    RedisReportRepository,
+    ReportRepository,
+)
 from app.schemas import PlaybookPosition
 from app.security import decode_access_token
 from app.services.evaluation import EvalService
@@ -89,8 +100,16 @@ def get_contract_repo() -> ContractRepository:
 
 @lru_cache
 def get_report_repo() -> ReportRepository:
-    """Return the shared Redis-backed report store."""
-    return RedisReportRepository(get_redis_client(), get_settings().retention_ttl_seconds)
+    """Return the shared report store selected by ``REPORT_STORAGE``.
+
+    Postgres by default: a review costs minutes of pipeline time and real
+    money, so losing it to a retention window is the expensive outcome.
+    ``redis`` is still there for a deployment that would rather let contract
+    text expire on its own.
+    """
+    if get_settings().report_storage == "redis":
+        return RedisReportRepository(get_redis_client(), get_settings().retention_ttl_seconds)
+    return PostgresReportRepository(SessionLocal)
 
 
 # --- llm + rag ---------------------------------------------------------------
@@ -162,6 +181,11 @@ def get_orchestrator() -> Orchestrator:
         matcher=Matcher(llm, get_retriever()),
         risk_scorer=RiskScorer(llm),
         judge=get_judge(),
+        # Left out entirely when disabled, so the pipeline has nothing to call
+        # rather than an agent that has to check a flag before every run.
+        metadata_extractor=(
+            MetadataExtractor(llm) if get_settings().enable_metadata_extraction else None
+        ),
     )
 
 

@@ -30,6 +30,16 @@ export interface ClauseView {
   citations: Citation[];
   /** The judge confirmed the rationale is grounded in the cited playbook text. */
   verified: boolean;
+  /**
+   * A reviewer signed off on this assessment.
+   *
+   * Stored on the report by `POST /contracts/{id}/accept`, not kept in the
+   * page: review progress that a refresh erased was worse than no progress at
+   * all, because it looked like work had been lost rather than never saved.
+   */
+  accepted: boolean;
+  acceptedBy: string | null;
+  acceptedAt: string | null;
   page: number | null;
 }
 
@@ -40,6 +50,26 @@ export interface RiskSummary {
   unknown: number;
 }
 
+/**
+ * Contract-level facts the pipeline read out of the document.
+ *
+ * Every value is verbatim text from the file — the backend discards anything
+ * it can't find there word-for-word — so these are quotes, not conclusions.
+ * Dates stay as the document wrote them ("the 3rd day of March, 2019"); don't
+ * reformat them here, that would undo the point of quoting.
+ *
+ * Any field can be absent, and an all-empty metadata block is normal: the
+ * document simply didn't say.
+ */
+export interface ContractMetadataView {
+  parties: string[];
+  agreementDate: string | null;
+  effectiveDate: string | null;
+  expirationDate: string | null;
+  contractValue: string | null;
+  governingLaw: string | null;
+}
+
 export interface ContractReport {
   reportId: string;
   contractId: string;
@@ -48,6 +78,7 @@ export interface ContractReport {
   createdAt: string;
   overallRisk: RiskLevel;
   summary: RiskSummary;
+  metadata: ContractMetadataView;
   disclaimer: string;
   clauses: ClauseView[];
 }
