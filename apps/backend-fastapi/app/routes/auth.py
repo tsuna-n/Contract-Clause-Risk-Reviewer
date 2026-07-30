@@ -73,14 +73,22 @@ def _redirect_to_frontend(request: Request | None, path: str, **params: str) -> 
 
 
 @router.get("/dev-login")
-async def dev_login(
+def dev_login(
     request: Request,
     email: str = "dev@example.com",
     name: str = "Dev User",
     db: Session = Depends(get_db),
 ):
-    """Fast dev sign-in endpoint for testing over LAN/offline without Google OAuth restrictions."""
-    if get_settings().app_env != "development":
+    """Fast dev sign-in for LAN/offline testing, where Google OAuth can't work.
+
+    This hands out a token for whatever email is asked for, with no proof of
+    anything - so it is behind two locks that must both be open
+    (``APP_ENV=development`` *and* ``ENABLE_DEV_LOGIN=true``). One lock would be
+    ``APP_ENV``, which is also the variable most likely to be left at its
+    default on the deployment where that matters most.
+    """
+    settings = get_settings()
+    if settings.app_env != "development" or not settings.enable_dev_login:
         return _redirect_to_frontend(request, "/login", error="dev_login_disabled")
 
     user_id = f"dev-user-{email}"

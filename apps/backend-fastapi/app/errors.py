@@ -46,6 +46,24 @@ class NotFoundError(DomainError):
     code = "not_found"
 
 
+class PayloadTooLargeError(DomainError):
+    """Raised when an upload exceeds what this service agrees to review.
+
+    A real ``413`` rather than a parse error: nothing is wrong with the
+    document, there is just more of it than one request is allowed to spend.
+    """
+
+    status_code = 413
+    code = "payload_too_large"
+
+
+class InvalidInputError(DomainError):
+    """Raised when a request is well-formed but asks for something not allowed."""
+
+    status_code = 400
+    code = "invalid_input"
+
+
 def register_exception_handlers(app) -> None:  # noqa: ANN001 - FastAPI app
     """Register handlers mapping :class:`DomainError` to JSON responses."""
     from fastapi import Request

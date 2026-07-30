@@ -21,11 +21,16 @@ class ReviewService:
         contracts: ContractRepository,
         reports: ReportRepository,
         retention_ttl_seconds: int = 3600,
+        max_clauses: int | None = None,
     ) -> None:
         self.orchestrator = orchestrator
         self.contracts = contracts
         self.reports = reports
         self.retention_ttl_seconds = retention_ttl_seconds
+        # Injected rather than read from settings here, like the TTL beside it,
+        # so a caller that isn't serving an HTTP request (the eval harness) is
+        # not silently subject to a limit written for one.
+        self.max_clauses = max_clauses
 
     def review_upload(
         self,
@@ -54,7 +59,10 @@ class ReviewService:
         self.contracts.save(contract_id, document)
         try:
             report = self.orchestrator.review(
-                document, contract_id=contract_id, session_id=session_id
+                document,
+                contract_id=contract_id,
+                session_id=session_id,
+                max_clauses=self.max_clauses,
             )
         finally:
             # Raw contract text isn't retained beyond producing the report.

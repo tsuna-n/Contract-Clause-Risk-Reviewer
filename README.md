@@ -77,13 +77,14 @@
 | Backend | **LLM client + RAG (สลับค่ายได้)** | provider adapter (`app/ai/providers.py`) — Gemini / Anthropic Claude / OpenAI-compatible (Z.AI GLM, DeepSeek, vLLM) เลือกด้วย `LLM_PROVIDER` ตัวเดียว, structured output ตามวิธีของแต่ละค่าย, hybrid retrieval (pgvector cosine + BM25) |
 | Backend | **LLM call ทนทานขึ้น** | `LLM_THINKING=disabled` (default) ปิด thinking ของ reasoning model ที่กินงบ `max_tokens` จนตอบว่าง + retry ชั้นบน SDK เฉพาะ failure ที่ถามใหม่แล้วมีโอกาสได้ (timeout/429/5xx/คำตอบว่าง/JSON พัง) จำกัดด้วย `LLM_MAX_ATTEMPTS` และงบเวลา 1 timeout — 400/401 ไม่ retry |
 | Backend | **Data-retention job** | `python -m scripts.purge_reports` ลบรายงานเก่ากว่า `REPORT_RETENTION_DAYS` (`--dry-run` นับก่อนได้) — ต้องตั้ง cron เอง เพราะการลบข้อมูลของคนอื่นไม่ควรเป็นผลพลอยได้ของ request |
+| Backend | **Hardening ระดับ request (2026-07-30)** | ปิด 4 จุดที่ request เดียวยึดหรือเปิดระบบได้: **auth ระดับ router** ที่ `/playbook/*` (6 ตัว) + `/evaluate` → `401` (ประกาศที่ router ไม่ใช่รายตัว endpoint ใหม่จึงปิดเอง), **ย้าย blocking I/O ออกจาก event loop** (`def` + `run_in_threadpool` ตอน review) — วัดจริง `/health` ตอบ 1.2–2.0 ms ระหว่าง review 18.9 วิ (เดิม 2.7 s), **เพดาน `MAX_UPLOAD_BYTES` 10 MB** (อ่านแบบ bounded → `413` ไม่ buffer ก่อน) + **`MAX_CLAUSES` 300** (เช็คหลัง segment ก่อนจ่ายค่า LLM), **`gold_set_path` ต้องอยู่ใน `data/gold/`** และ **`/auth/dev-login` ต้องมี 2 กลอน** (`APP_ENV=development` + `ENABLE_DEV_LOGIN=true`) |
 | Backend | Parsers | PDF (PyMuPDF) / DOCX (python-docx) / TXT (เดา encoding: UTF-8 → cp874) → `ParsedDocument` |
 | Backend | Guardrails | grounding, citation validity, no-invented-fallback — wired เข้า judge แล้ว |
 | Backend | Schemas | Pydantic models: clause, report, taxonomy, playbook, eval |
 | Backend | **Report history** | `GET /contracts` (สรุปรายงานของตัวเอง เรียงใหม่→เก่า) + `GET /contracts/{report_id}` (ฉบับเต็ม) + `DELETE /contracts/{report_id}` — Postgres ใช้ index `(session_id, created_at)`, Redis ใช้ sorted set ต่อ session, รายงานของคนอื่นตอบ `404` ไม่ใช่ `403` |
 | Backend | **Data fixtures จาก CUAD** | `scripts/build_cuad_fixtures.py` แปลง CUAD v1 → สัญญาจริง 12 ฉบับ + gold 327 clause (91 clause มี label จาก annotation ของผู้เชี่ยวชาญ) + `.docx` ให้ลองอัปโหลด 3 ไฟล์ |
 | Backend | **Playbook 36 จุดยืน** | ครบทั้ง 12 clause type อ้างอิงหมวดรีวิว 41 หมวดของ CUAD — `preferred`/`fallback` เป็นภาษาสัญญาจริงที่ guardrail ใช้เทียบ verbatim ได้ |
-| Backend | Tests | 217 unit/integration tests ผ่านหมด (1 skipped — eval regression gate ที่ต้องยิง LLM จริง) |
+| Backend | Tests | 243 unit/integration tests ผ่านหมด (1 skipped — eval regression gate ที่ต้องยิง LLM จริง) |
 | Backend | **หัวข้อสัญญาไทย** | `_HEADING_RE` รับ `ข้อ 1.` / `๑.` / เลขอารบิกตามด้วยตัวอักษรไทย (พยัญชนะ + สระหน้า `เ แ โ ใ ไ`) และ prefix `Section`/`Article`/`Clause` — สัญญาไทยตัด clause ตามข้อจริงแทน paragraph fallback โดยอังกฤษ 12 ฉบับเดิมไม่กระทบ |
 | Frontend | Scaffold | React 19 + Vite + Tailwind + routing (`/login`, `/auth/callback`, `/manual`, `/contract`) |
 | Frontend | Login UI | หน้า login + components (Google button, brand header, card, ฯลฯ) |
@@ -107,10 +108,10 @@
 
 | ส่วน | รายการ | รายละเอียด |
 |------|--------|------------|
-| ทั้งสองฝั่ง | Export รายงาน | **ตัดออกจากขอบเขตแล้ว (2026-07-30)** — ปุ่ม JSON/CSV/Print ฝั่ง frontend ถูกลบ และไม่มีแผนทำ endpoint ฝั่ง server รายงานอ่านได้บนหน้าเว็บเท่านั้น |
-| Backend | Clause-level accuracy ที่เชื่อถือได้ | รันแล้ว 1 สัญญา (8 clause) — ตอนนี้ไม่มี clause ล้มเพราะ provider อีกแล้ว แต่ยังเป็น sample เล็กเกินกว่าจะสรุป (มี gold label แค่ 4 ข้อ) เต็มชุดคือ 327 clause ≈ 1,300+ call |
-| Backend | playbook ครอบไม่ครบทุก clause | สาเหตุที่เหลือของ `unknown` — LLM ตอบตรง ๆ ว่าจุดยืนที่ retrieve มาไม่เกี่ยวกับ clause นี้ (2 ใน 8 ข้อของฉบับที่ทดสอบ: ข้อ exclusivity และ payment terms) ต้องเพิ่มจุดยืนใน `positions.yaml` |
-| Backend | cron ของ retention job | ตัว job มีแล้ว (`scripts/purge_reports.py`) แต่ยังไม่ได้ตั้ง cron/systemd timer ให้ — ตั้ง `REPORT_RETENTION_DAYS` เฉย ๆ ไม่ลบอะไรเอง |
+| Backend | Role / สิทธิ์ใน playbook | `/playbook/*` ต้อง login แล้ว แต่เป็น authentication ไม่ใช่ authorization — ผู้ใช้ที่ login แล้วทุกคนแก้จุดยืนของบริษัทได้เท่ากัน ใช้ได้ตอนทุกบัญชีอยู่ทีมเดียวกัน ถ้าจะเปิดให้คนนอกทีมต้องเพิ่ม role ก่อน |
+| Backend | Clause-level accuracy เต็มชุด | รันแล้ว 3 ฉบับ / 90 clause (gold label 26 ข้อ): `classification 57.69%`, `risk 50.00%`, `segmentation 100%`, `citation 100%`, ไม่มี clause ล้มเพราะ provider เลย — เหลือเต็มชุด 12 ฉบับ / 327 clause (≈ 1,300 call, ~2 ชม.) |
+| Backend | playbook ครอบไม่ครบทุก clause | คอขวดที่เหลือของความแม่น — `payment_terms` จำแนกถูก 1 ใน 4 และเป็นประเภทเดียวกับที่ตอบ `unknown` เพราะไม่มีจุดยืนที่ตรง (ทั้งสองรอบ eval ชี้ที่เดียวกัน) ต้องเพิ่มจุดยืนใน `positions.yaml` |
+| Backend | cron ของ retention job | **ตั้งใจไม่ตั้ง** — ตัว job พร้อมใช้แล้ว (`scripts/purge_reports.py`) แต่ค่า default คือเก็บรายงานไว้จนเจ้าของสั่งลบ เพราะการลบกู้คืนไม่ได้และตัวสัญญาหายไปด้วย ให้ตั้ง `REPORT_RETENTION_DAYS` + cron ตอนมีนโยบายเก็บข้อมูลจริง (ตัวอย่าง crontab อยู่ใน docstring ของสคริปต์) |
 
 ---
 
@@ -264,12 +265,18 @@ embed: GeminiEmbedder -> gemini-embedding-001 (768 dim)
 > (`cloudflared` / `ngrok`) แล้วเอา URL ที่ได้ไปใส่ทั้ง Authorized redirect URI ใน Google Console,
 > `GOOGLE_REDIRECT_URI` และ `VITE_API_BASE_URL` (ยังไม่ได้ติดตั้ง tunnel ตัวไหนไว้ในเครื่องนี้)
 
-> ### 🔓 `/auth/dev-login` เปิดประตูทิ้งไว้
+> ### 🔓 `/auth/dev-login` ยังเป็นประตูหลัง — แต่มี 2 กลอนแล้ว (2026-07-30)
 >
 > endpoint นี้ออก JWT ให้ **อีเมลอะไรก็ได้ที่ส่งมา** โดยไม่ตรวจอะไรเลย
-> (`?email=someone@example.com`) กันไว้แค่ `APP_ENV != development` เท่านั้น — ระหว่างเปิด LAN
-> ใครก็ตามที่อยู่วงเดียวกันล็อกอินเป็นใครก็ได้ ใช้เฉพาะตอน dev และอย่า deploy โดยที่ `APP_ENV`
-> ยังเป็น `development`
+> (`?email=someone@example.com`) ระหว่างเปิด LAN ใครที่อยู่วงเดียวกันก็ล็อกอินเป็นใครก็ได้
+>
+> เดิมกันไว้แค่ `APP_ENV != development` ซึ่งไม่พอ เพราะ `APP_ENV` **มีค่า default เป็น
+> `development`** อยู่แล้ว — deploy ที่ไม่เคยตั้งตัวแปรนี้เลยจึงเปิดประตูทิ้งไว้ ตอนนี้ต้องเปิดครบ
+> ทั้งสองอย่าง: `APP_ENV=development` **และ** `ENABLE_DEV_LOGIN=true` (default `false`) ไม่ครบ
+> ทั้งคู่จะ redirect กลับ `/login?error=dev_login_disabled` โดยไม่ออก token ให้เลย
+>
+> เครื่อง dev นี้ตั้ง `ENABLE_DEV_LOGIN=true` ไว้ใน `.env` แล้ว (ไม่ขึ้น git) ปุ่ม Dev Mode Quick
+> Sign In จึงยังใช้ได้เหมือนเดิม — **production อย่าตั้งตัวแปรนี้**
 
 ---
 
@@ -405,9 +412,31 @@ fallback ทั้งฉบับ ตอนนี้ `_HEADING_RE` รับเ�
    ปิด strict validation ทิ้งทั้ง run เงื่อนไขตอนนี้แยก "host ตอบไม่ตรงรูป" ออกจาก "เน็ตมีปัญหา"
    และจะจำว่า host ทำไม่ได้ ก็ต่อเมื่อ fallback ทำงานสำเร็จจริง
 
-**สิ่งที่ยังไม่ได้แปล:** `risk_accuracy` 25% มาจาก gold label 4 ข้อ — 2 ข้อที่ยังไม่ตรงคือ clause ที่
-LLM ตอบว่า "จุดยืนใน playbook ที่ retrieve มาไม่เกี่ยวกับ clause นี้" (exclusivity, payment terms)
-ซึ่งเป็นคำตอบที่ซื่อสัตย์กว่าการเดา คอขวดถัดไปจึงเป็น **ความครอบคลุมของ playbook** ไม่ใช่ provider
+### รอบขยาย: 3 ฉบับ 90 clause (2026-07-30)
+
+รันต่อด้วย `--limit 3` (90 clause, มี gold label 26 ข้อ — sample ใหญ่กว่ารอบแรก 6 เท่า) ใช้เวลา
+~33 นาที **ไม่มี clause ไหนล้มเพราะ provider เลยทั้ง 90 ข้อ**:
+
+| เมตริก | 1 ฉบับ (8 clause) | **3 ฉบับ (90 clause)** | อ่านยังไง |
+|--------|------------------|------------------------|-----------|
+| `segmentation_f1` | 100.00% | **100.00%** | ยืนที่ 100% ทั้งสองรอบ และไม่ใช้ LLM — ตัวเลขที่เชื่อได้ที่สุดในตาราง |
+| `classification_accuracy` | 50.00% (n=4) | **57.69%** (n=26) | เริ่มมีความหมายแล้วที่ n=26 |
+| `risk_accuracy` | 25.00% | **50.00%** | ครึ่งหนึ่งของ clause ที่มี label ให้ระดับความเสี่ยงตรง gold |
+| `citation_validity` | 100.00% | **100.00%** | citation ทุกอันชี้ playbook position จริง ไม่มีที่มั่วเลย |
+| clause ล้มเพราะ provider | 0 / 8 | **0 / 90** | คอนฟิกหลังแก้ thinking mode ยืนระยะได้จริง |
+
+**classification แยกตามประเภท clause** (ตัวเลขคือความแม่นของการจำแนกประเภท ไม่ใช่ความเสี่ยง):
+
+| clause type | n | acc | | clause type | n | acc |
+|---|---|---|---|---|---|---|
+| `termination` | 3 | **100%** | | `non_compete` | 6 | 50% |
+| `governing_law` | 3 | **100%** | | `intellectual_property` | 2 | 50% |
+| `warranty` | 1 | **100%** | | `limitation_of_liability` | 2 | 50% |
+| `other` | 5 | 40% | | `payment_terms` | 4 | **25%** |
+
+`payment_terms` แม่นน้อยสุด (1 ใน 4) และเป็นประเภทเดียวกับที่รอบแรกตอบ `unknown` เพราะ playbook
+ไม่มีจุดยืนที่ตรง — สองรอบชี้ไปที่เดียวกัน คอขวดถัดไปคือ **ความครอบคลุมของ playbook** ไม่ใช่
+provider ส่วน `other` 40% เป็นเรื่องคาดหมาย: มันคือถังรวมของ clause ที่ taxonomy 12 ตัวไม่มีชื่อให้
 
 ---
 

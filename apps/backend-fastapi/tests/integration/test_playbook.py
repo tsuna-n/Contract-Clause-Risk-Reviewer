@@ -5,9 +5,9 @@ from __future__ import annotations
 import pytest
 from fastapi.testclient import TestClient
 
-from app.dependencies import get_playbook_service
+from app.dependencies import get_current_user, get_playbook_service
 from app.main import create_app
-from app.models import PlaybookEmbedding
+from app.models import PlaybookEmbedding, User
 from app.services.playbook import PlaybookService
 
 
@@ -60,13 +60,27 @@ class MemoryPlaybookRepository:
         return False
 
 
-@pytest.fixture()
-def client() -> TestClient:
+def _app_with_playbook_service():
     app = create_app()
     repo = MemoryPlaybookRepository()
     service = PlaybookService(repo, embedder=None)
     app.dependency_overrides[get_playbook_service] = lambda: service
+    return app
+
+
+@pytest.fixture()
+def client() -> TestClient:
+    app = _app_with_playbook_service()
+    app.dependency_overrides[get_current_user] = lambda: User(
+        id="user-1", email="reviewer@example.com", name="Reviewer"
+    )
     return TestClient(app)
+
+
+@pytest.fixture()
+def anonymous_client() -> TestClient:
+    """A client with no bearer token, to prove the router's auth actually bites."""
+    return TestClient(_app_with_playbook_service())
 
 
 def test_playbook_crud_lifecycle(client: TestClient):
@@ -117,3 +131,28 @@ def test_playbook_crud_lifecycle(client: TestClient):
     # 6. Verify non-existence after deletion
     res = client.get("/playbook/pb_test_crud_01")
     assert res.status_code == 404
+
+
+@pytest.mark.parametrize(
+    ("method", "path"),
+    [
+        ("get", "/playbook"),
+        ("get", "/playbook/search?q=liability"),
+        ("get", "/playbook/pb_1"),
+        ("post", "/playbook"),
+        ("put", "/playbook/pb_1"),
+        ("delete", "/playbook/pb_1"),
+    ],
+)
+def test_every_playbook_endpoint_requires_auth(anonymous_client, method, path) -> None:
+    """All six were public until 2026-07-30.
+
+    Parametrized over every route rather than spot-checking one, because the
+    hole was not a wrong check - it was a missing one, on endpoints nobody
+    thought to look at. The write methods are the sharp end: the playbook is
+    what the judge grounds citations against, so editing it edits every verdict
+    the system will reach.
+    """
+    body = {"json": {}} if method in {"post", "put"} else {}
+    response = anonymous_client.request(method, path, **body)
+    assert response.status_code == 401

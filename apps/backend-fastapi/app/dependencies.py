@@ -200,6 +200,7 @@ def get_review_service() -> ReviewService:
         get_contract_repo(),
         get_report_repo(),
         retention_ttl_seconds=get_settings().retention_ttl_seconds,
+        max_clauses=get_settings().max_clauses,
     )
 
 

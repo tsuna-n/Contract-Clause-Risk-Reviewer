@@ -3,13 +3,16 @@
 from __future__ import annotations
 
 from fastapi import APIRouter, Depends, UploadFile
+from starlette.concurrency import run_in_threadpool
 
+from app.config import get_settings
 from app.dependencies import (
     get_current_user,
     get_override_service,
     get_report_service,
     get_review_service,
 )
+from app.errors import PayloadTooLargeError
 from app.models import User
 from app.schemas import AcceptRequest, ContractReviewReport, OverrideRequest, ReportSummary
 from app.services.override import OverrideService
@@ -35,9 +38,25 @@ async def review_contract(
     current_user: User = Depends(get_current_user),
     service: ReviewService = Depends(get_review_service),
 ) -> ContractReviewReport:
-    """Upload a contract and run the review pipeline."""
-    data = await file.read()
-    return service.review_upload(
+    """Upload a contract and run the review pipeline.
+
+    The one endpoint that stays ``async``: reading an upload off the wire is
+    genuinely async work, while everything after it is minutes of blocking
+    pipeline. So the read happens here and the pipeline is handed to a worker
+    thread - otherwise a single review holds the event loop for its whole run
+    and the server answers nothing else, health checks included.
+    """
+    limit = get_settings().max_upload_bytes
+    # One byte past the limit is enough to know it was exceeded, and it is the
+    # difference between refusing a 2 GB upload and buffering it first.
+    data = await file.read(limit + 1)
+    if len(data) > limit:
+        raise PayloadTooLargeError(
+            f"file is larger than the {limit // (1024 * 1024)} MB upload limit"
+        )
+
+    return await run_in_threadpool(
+        service.review_upload,
         filename=file.filename or "upload",
         data=data,
         session_id=current_user.id,
@@ -45,7 +64,7 @@ async def review_contract(
 
 
 @router.get("", response_model=list[ReportSummary])
-async def list_reports(
+def list_reports(
     current_user: User = Depends(get_current_user),
     service: ReportService = Depends(get_report_service),
 ) -> list[ReportSummary]:
@@ -62,7 +81,7 @@ async def list_reports(
     response_model=ContractReviewReport,
     response_model_exclude=_INTERNAL_REPORT_FIELDS,
 )
-async def get_report(
+def get_report(
     report_id: str,
     current_user: User = Depends(get_current_user),
     service: ReportService = Depends(get_report_service),
@@ -76,7 +95,7 @@ async def get_report(
     response_model=ContractReviewReport,
     response_model_exclude=_INTERNAL_REPORT_FIELDS,
 )
-async def override_clause(
+def override_clause(
     report_id: str,
     payload: OverrideRequest,
     current_user: User = Depends(get_current_user),
@@ -98,7 +117,7 @@ async def override_clause(
     response_model=ContractReviewReport,
     response_model_exclude=_INTERNAL_REPORT_FIELDS,
 )
-async def accept_clause(
+def accept_clause(
     report_id: str,
     payload: AcceptRequest,
     current_user: User = Depends(get_current_user),
@@ -116,7 +135,7 @@ async def accept_clause(
 
 
 @router.delete("/{report_id}", status_code=204)
-async def delete_report(
+def delete_report(
     report_id: str,
     current_user: User = Depends(get_current_user),
     service: ReportService = Depends(get_report_service),

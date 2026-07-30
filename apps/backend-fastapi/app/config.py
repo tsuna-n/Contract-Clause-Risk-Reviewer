@@ -24,6 +24,18 @@ class Settings(BaseSettings):
     # redirect target after a successful OAuth callback.
     frontend_url: str = "http://localhost:5173"
 
+    # --- upload limits ---
+    # The route used to read an upload whole with no ceiling at all, so a large
+    # file was both a memory spike and, once segmented, hours of LLM calls.
+    # Two separate limits because they fail differently: bytes protect the
+    # process, clause count protects the bill.
+    max_upload_bytes: int = 10 * 1024 * 1024
+    # ~300 clauses is far above any contract in the CUAD gold set (the largest
+    # is 47) and still an order of magnitude below "someone uploaded a book".
+    # At roughly four LLM calls and 22 seconds per clause, the cap is really a
+    # statement about how long one request may run.
+    max_clauses: int = 300
+
     # --- auth: Google OAuth + JWT ---
     google_oauth_api: str
     google_key_secret: str
@@ -31,6 +43,14 @@ class Settings(BaseSettings):
     session_secret_key: str
     jwt_secret_key: str
     jwt_algorithm: str = "HS256"
+    # ``/auth/dev-login`` issues a token for whatever email is asked for, which
+    # is what makes testing over LAN possible at all (Google refuses redirect
+    # URIs on private IPs). It needs two locks, not one: ``APP_ENV`` is the
+    # setting most likely to be left at its default by the deploy that matters,
+    # and a single forgotten variable should not be the difference between a
+    # login page and an open door. Both this and ``APP_ENV=development`` must
+    # hold, so production has to make two mistakes to be exposed.
+    enable_dev_login: bool = False
     # One working day. Logout is client-side only (the token stays valid until
     # it expires), so this is also how long a leaked token keeps working —
     # which is why it isn't set to weeks.

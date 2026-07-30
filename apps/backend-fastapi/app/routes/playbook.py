@@ -5,7 +5,7 @@ from __future__ import annotations
 from fastapi import APIRouter, Depends, status
 
 from app.ai.retrieval import Retriever
-from app.dependencies import get_playbook_service, get_retriever
+from app.dependencies import get_current_user, get_playbook_service, get_retriever
 from app.schemas import (
     Clause,
     PlaybookPosition,
@@ -16,11 +16,25 @@ from app.schemas import (
 )
 from app.services.playbook import PlaybookService
 
-router = APIRouter(prefix="/playbook", tags=["playbook"])
+# Auth is declared on the router, not per endpoint, because every one of these
+# needs it and the per-endpoint version is the kind of thing a sixth endpoint
+# forgets - which is exactly what happened here: all six were public until
+# 2026-07-30. The playbook is what the judge grounds citations against, so
+# write access to it is write access to every verdict the system reaches.
+#
+# Not scoped per user, unlike ``/contracts``: a playbook is the company's, so
+# any signed-in reviewer reads and edits the same one. That makes this
+# authentication without authorization - fine while every account belongs to
+# the same team, and the place to add roles when that stops being true.
+router = APIRouter(
+    prefix="/playbook",
+    tags=["playbook"],
+    dependencies=[Depends(get_current_user)],
+)
 
 
 @router.get("/search", response_model=list[RetrievalHit])
-async def search_playbook(
+def search_playbook(
     q: str,
     top_k: int = 5,
     retriever: Retriever = Depends(get_retriever),
@@ -36,7 +50,7 @@ async def search_playbook(
 
 
 @router.get("", response_model=list[PlaybookPosition])
-async def list_playbook(
+def list_playbook(
     clause_type: str | None = None,
     service: PlaybookService = Depends(get_playbook_service),
 ) -> list[PlaybookPosition]:
@@ -49,7 +63,7 @@ async def list_playbook(
     response_model=PlaybookPosition,
     status_code=status.HTTP_201_CREATED,
 )
-async def create_playbook(
+def create_playbook(
     payload: PlaybookPositionCreate,
     service: PlaybookService = Depends(get_playbook_service),
 ) -> PlaybookPosition:
@@ -58,7 +72,7 @@ async def create_playbook(
 
 
 @router.get("/{position_id}", response_model=PlaybookPosition)
-async def get_playbook(
+def get_playbook(
     position_id: str,
     service: PlaybookService = Depends(get_playbook_service),
 ) -> PlaybookPosition:
@@ -67,7 +81,7 @@ async def get_playbook(
 
 
 @router.put("/{position_id}", response_model=PlaybookPosition)
-async def update_playbook(
+def update_playbook(
     position_id: str,
     payload: PlaybookPositionUpdate,
     service: PlaybookService = Depends(get_playbook_service),
@@ -77,7 +91,7 @@ async def update_playbook(
 
 
 @router.delete("/{position_id}", status_code=status.HTTP_204_NO_CONTENT)
-async def delete_playbook(
+def delete_playbook(
     position_id: str,
     service: PlaybookService = Depends(get_playbook_service),
 ) -> None:

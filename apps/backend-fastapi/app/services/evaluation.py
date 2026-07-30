@@ -11,11 +11,32 @@ import json
 from pathlib import Path
 
 from app.ai.pipeline import Orchestrator
+from app.errors import InvalidInputError
 from app.logger import get_logger
 from app.parsers import ParsedDocument, TextSpan, normalize
 from app.schemas import EvalMetrics, EvalRequest, PerTypeMetrics, Span
 
 logger = get_logger(__name__)
+
+#: Where a gold set is allowed to live. ``gold_set_path`` arrives in the request
+#: body, so without this the endpoint reads any file the process can — and
+#: reports back through parse errors what it found there.
+GOLD_SET_ROOT = Path("data/gold")
+
+
+def resolve_gold_set_path(raw: str) -> str:
+    """Return ``raw`` as a path inside :data:`GOLD_SET_ROOT`, or refuse it.
+
+    Resolved before comparing, so ``data/gold/../../.env`` is rejected on what
+    it points at rather than on how it is spelled.
+    """
+    root = GOLD_SET_ROOT.resolve()
+    candidate = Path(raw).resolve()
+    if candidate != root and root not in candidate.parents:
+        raise InvalidInputError(
+            f"gold_set_path must be inside {GOLD_SET_ROOT}/ (got {raw!r})"
+        )
+    return str(candidate)
 
 
 # --- metrics -----------------------------------------------------------------
@@ -235,7 +256,7 @@ class EvalService:
     def run(self, request: EvalRequest) -> EvalMetrics:
         """Evaluate the pipeline against a gold set."""
         return run_eval(
-            request.gold_set_path,
+            resolve_gold_set_path(request.gold_set_path),
             orchestrator=self.orchestrator,
             known_position_ids=self.known_position_ids,
             limit=request.limit,

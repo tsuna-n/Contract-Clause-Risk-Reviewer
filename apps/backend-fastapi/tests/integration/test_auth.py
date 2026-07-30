@@ -284,6 +284,7 @@ def test_dev_login_ignores_a_cross_origin_referer(
 ) -> None:
     """/auth/dev-login mints a token with no credentials at all - same rule."""
     monkeypatch.setattr(get_settings(), "app_env", "development")
+    monkeypatch.setattr(get_settings(), "enable_dev_login", True)
 
     resp = client.get(
         "/auth/dev-login?email=victim@corp.com",
@@ -299,7 +300,33 @@ def test_dev_login_is_refused_outside_development(
     client: TestClient, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     monkeypatch.setattr(get_settings(), "app_env", "production")
+    monkeypatch.setattr(get_settings(), "enable_dev_login", True)
 
     resp = client.get("/auth/dev-login", follow_redirects=False)
 
     assert resp.headers["location"] == f"{settings.frontend_url}/login?error=dev_login_disabled"
+
+
+def test_dev_login_needs_its_own_flag_not_just_a_dev_app_env(
+    client: TestClient, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Two locks, and this test guards the second one.
+
+    ``APP_ENV`` defaults to ``development``, so before ``ENABLE_DEV_LOGIN``
+    existed, a deploy that never set ``APP_ENV`` was an endpoint that hands a
+    valid token to anyone who asks for one, for any email address.
+    """
+    monkeypatch.setattr(get_settings(), "app_env", "development")
+    monkeypatch.setattr(get_settings(), "enable_dev_login", False)
+
+    resp = client.get("/auth/dev-login?email=victim@corp.com", follow_redirects=False)
+
+    assert resp.headers["location"] == f"{settings.frontend_url}/login?error=dev_login_disabled"
+    assert "token=" not in resp.headers["location"]
+
+
+def test_dev_login_is_off_by_default() -> None:
+    """The default matters more than the check: a fresh ``.env`` must be closed."""
+    from app.config import Settings
+
+    assert Settings.model_fields["enable_dev_login"].default is False

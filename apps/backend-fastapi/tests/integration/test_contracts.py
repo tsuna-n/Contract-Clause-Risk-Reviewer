@@ -24,6 +24,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import Session, sessionmaker
 from sqlalchemy.pool import StaticPool
 
+from app.config import get_settings
 from app.dependencies import (
     get_current_user,
     get_override_service,
@@ -61,7 +62,15 @@ class _FakeOrchestrator:
         self._count = 0
 
     def review(
-        self, document: ParsedDocument, *, contract_id: str, session_id: str
+        self,
+        document: ParsedDocument,
+        *,
+        contract_id: str,
+        session_id: str,
+        # Accepted and ignored: the clause ceiling is enforced by the real
+        # orchestrator after segmentation (see tests/unit/test_request_limits),
+        # and this fake never segments anything.
+        max_clauses: int | None = None,
     ) -> ContractReviewReport:
         self._count += 1
         clause = Clause(
@@ -167,6 +176,31 @@ def test_review_contract_requires_auth() -> None:
     client = TestClient(create_app())
     resp = _upload(client)
     assert resp.status_code == 401
+
+
+def test_an_upload_over_the_size_limit_is_refused(
+    client: TestClient, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Until 2026-07-30 the route read the whole upload into memory with no
+    ceiling, so the only limit was the machine's RAM."""
+    monkeypatch.setattr(get_settings(), "max_upload_bytes", 1024)
+
+    resp = _upload(client, filename="huge.txt", content=b"x" * 2048)
+
+    assert resp.status_code == 413
+    assert resp.json()["error"] == "payload_too_large"
+
+
+def test_an_upload_at_the_size_limit_is_accepted(
+    client: TestClient, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """The bounded read asks for one byte more than the limit, so the file that
+    exactly fits must not be caught by it."""
+    monkeypatch.setattr(get_settings(), "max_upload_bytes", 1024)
+
+    resp = _upload(client, filename="exact.txt", content=b"x" * 1024)
+
+    assert resp.status_code == 200
 
 
 def test_review_contract_accepts_plain_text(client: TestClient) -> None:

@@ -244,15 +244,19 @@ judge บอกว่า ungrounded, และ isolate failure ต่อ clause 
   audit DB (SQLite): happy path คืน report ถูกต้อง, ต้อง auth (`401` ถ้าไม่ส่ง token), unsupported
   file type → `422`, override เปลี่ยน risk + re-aggregate `overall_risk` + เขียน audit record
   ถูกต้อง (`old_risk`/`new_risk`/`actor`), report/clause ไม่มีจริง → `404`
-- **Tests** — 217 unit/integration tests ผ่านหมด (`pytest tests/`; อีก 1 test เป็น eval regression
+- **Request hardening (2026-07-30)** — ปิด 4 จุดที่ทำให้ request เดียวยึดหรือเปิดระบบทั้งตัว:
+  auth ระดับ router ที่ `/playbook/*` + `/evaluate`, endpoint ที่ทำงาน blocking ย้ายออกจาก event
+  loop (`def` ธรรมดา + `run_in_threadpool()` สำหรับ review), เพดาน `MAX_UPLOAD_BYTES` (อ่านแบบ
+  bounded → `413` ไม่ buffer ไฟล์ทั้งก้อนก่อน) กับ `MAX_CLAUSES` (เช็คหลัง segment ก่อนจ่ายค่า LLM),
+  และ `/auth/dev-login` ต้องเปิด 2 กลอน (`APP_ENV=development` **และ** `ENABLE_DEV_LOGIN=true`)
+  — ทุกข้อยืนยันด้วย `curl` กับเซิร์ฟเวอร์จริง ดูรายละเอียดในหัวข้อข้อควรระวังท้ายไฟล์
+- **Tests** — 243 unit/integration tests ผ่านหมด (`pytest tests/`; อีก 1 test เป็น eval regression
   gate ที่ skip ไว้เพราะต้องเรียก LLM จริง)
 
 ---
 
 ## ❌ สิ่งที่ยังไม่ได้ทำ
 
-- **Export ทุกรูปแบบ**: ตัดออกจากขอบเขตแล้ว (2026-07-30) — ทั้ง endpoint ฝั่ง server และปุ่ม
-  JSON/CSV/Print ฝั่ง frontend ถูกลบทิ้ง ไม่มีทางเอารายงานออกจากระบบนอกจากอ่านบนหน้าเว็บ
 - **Eval regression gate** (`tests/eval/test_regression.py`) — ยัง skip ไว้เพราะต้องเรียก LLM จริง
   (มี cost + ต้องมี quota); รันเองได้ผ่าน `python -m scripts.run_eval` (ดู `--limit` / `--contract`)
 - **รัน evaluation เต็มชุด** — gold set 12 ฉบับ / 327 clause พร้อมแล้ว แต่ยังรันจริงแค่ 1 ฉบับ
@@ -281,6 +285,11 @@ GOOGLE_REDIRECT_URI=http://localhost:8000/auth/google/callback
 FRONTEND_URL=http://localhost:5173
 SESSION_SECRET_KEY=<random-secret>
 JWT_SECRET_KEY=<random-secret>
+ENABLE_DEV_LOGIN=true              # dev เท่านั้น! ต้องมีคู่กับ APP_ENV=development ไม่งั้น /auth/dev-login ปิด
+
+# เพดานต่อ 1 request (ค่าที่เห็นคือ default)
+MAX_UPLOAD_BYTES=10485760          # 10 MB — เกินนี้ตอบ 413 โดยไม่อ่านไฟล์ทั้งก้อนเข้า memory
+MAX_CLAUSES=300                    # เกินนี้ตอบ 413 หลัง segment ก่อนจ่ายค่า LLM (eval ไม่ติดเพดานนี้)
 
 # Storage + feature flags (ค่าที่เห็นคือ default — ไม่ใส่ก็ได้)
 REPORT_STORAGE=postgres            # postgres = เก็บถาวร | redis = หมดอายุตาม TTL
@@ -488,6 +497,10 @@ python -m scripts.build_cuad_fixtures --cuad ~/project/cuad   # ต้องม�
 | GET | `/playbook` · `POST /playbook` · `GET/PUT/DELETE /playbook/{id}` | ✅ CRUD ครบ |
 | GET | `/playbook/search` | ✅ |
 | POST | `/evaluate` | ✅ |
+
+> **ไม่มี endpoint export และไม่ได้ลืม** — ตัดออกจากขอบเขตเมื่อ 2026-07-30 พร้อมกับปุ่ม
+> JSON/CSV/Print ฝั่ง frontend รายงานอ่านผ่าน `GET /contracts/{report_id}` บนหน้าเว็บทางเดียว
+> (บันทึกไว้ตรงนี้เพื่อไม่ให้ใครเห็นช่องว่างแล้วเติมกลับเข้ามา — มันไม่ใช่งานที่ค้าง)
 
 ---
 
@@ -2289,22 +2302,31 @@ monkeypatch.setattr(oauth.google, "authorize_access_token", fake_authorize_acces
 เขียนไว้ตรงนี้เพื่อไม่ให้เอกสารอธิบาย logic ไปโดยไม่บอกจุดที่ยังมีปัญหา —
 รายละเอียดและวิธีแก้อยู่ในผลรีวิว (ข้อที่แก้ไปแล้วถูกย้ายไปท้ายหัวข้อ):
 
-1. **Endpoint เป็น `async def` แต่ข้างในเป็น blocking I/O ล้วน**
-   (`routes/contracts.py`, `playbook.py`, `evaluate.py`) — FastAPI รัน `async def` บน event loop
-   โดยตรง ระหว่างที่ review ทำงาน worker จะไม่ตอบ request อื่นเลย (วัดจริงได้ `/health` ช้าจาก
-   1 ms → 2.7 s) แก้ด้วย `run_in_threadpool()` หรือเปลี่ยนเป็น `def` ธรรมดา
-2. **`POST /evaluate` และ `GET /playbook/search` ยังไม่ต้อง auth** — ทั้งคู่เรียก LLM/embedding
-   ได้โดยไม่ต้อง login และ `EvalRequest.gold_set_path` เป็นพาธที่ client ส่งมาเอง
-3. **ไม่มีเพดานขนาดไฟล์อัปโหลดและจำนวน clause** — `LLM_TIMEOUT_SECONDS` จำกัดแค่ *เวลาต่อ
-   1 call* ไม่ได้จำกัด *จำนวน call* (retry ทำให้จำนวน call ต่อ clause ขยับได้อีก แต่มีงบเวลาคุมอยู่)
-4. **retry ตอน ungrounded ส่ง prompt เดิมเป๊ะ ๆ** (`pipeline.py`) ทั้งที่มี `verdict.reason` อยู่แล้ว
+1. **retry ตอน ungrounded ส่ง prompt เดิมเป๊ะ ๆ** (`pipeline.py`) ทั้งที่มี `verdict.reason` อยู่แล้ว
    — โอกาสได้คำตอบเดิมสูง เท่ากับจ่าย token สองเท่าเปล่า ๆ (คนละชั้นกับ retry ใน `LLMClient`
    ซึ่งยิงซ้ำเฉพาะตอน call ล้ม ไม่ใช่ตอนคำตอบ ungrounded)
-5. **`is_grounded()` เป็น substring check ล้วน** — excerpt สั้น ๆ อย่าง `"the"` ผ่านได้เสมอ
+2. **`is_grounded()` เป็น substring check ล้วน** — excerpt สั้น ๆ อย่าง `"the"` ผ่านได้เสมอ
    ควรมีความยาวขั้นต่ำหรือวัด token overlap
+3. **`/playbook/*` เป็น authentication ไม่ใช่ authorization** — ต้อง login แล้ว (แก้เมื่อ
+   2026-07-30) แต่ผู้ใช้ที่ login แล้ว**ทุกคน**แก้ playbook ของบริษัทได้เท่ากัน เพราะยังไม่มีระบบ
+   role ใช้ได้ตอนที่ทุกบัญชีอยู่ทีมเดียวกัน และเป็นจุดที่ต้องเพิ่ม role เมื่อเลิกเป็นอย่างนั้น
 
-**2 ข้อจากรีวิวรอบนั้นที่แก้ไปแล้ว** (ทวนกับโค้ดจริงเมื่อ 2026-07-30 — เดิมยังค้างอยู่ในลิสต์นี้
-ทั้งที่ไม่จริงแล้ว):
+**5 ข้อที่แก้ไปแล้ว** (3 ข้อล่างแก้เมื่อ 2026-07-30 พร้อมยืนยันด้วย `curl` กับเซิร์ฟเวอร์จริง):
+
+- ~~Endpoint เป็น `async def` แต่ข้างในเป็น blocking I/O~~ — endpoint ที่ทำงาน blocking เปลี่ยนเป็น
+  `def` ธรรมดาให้ FastAPI โยนเข้า threadpool แล้ว (`playbook.py` 6 ตัว, `evaluate.py`,
+  `contracts.py` 5 ตัว) เหลือ `review_contract` เป็น `async` ตัวเดียวเพราะต้อง `await` ตัวอัปโหลด
+  แล้วส่ง pipeline ต่อด้วย `run_in_threadpool()` — **วัดจริง: ระหว่าง review 18.9 วิกำลังทำงาน
+  `/health` ตอบใน 1.2–2.0 ms** (เดิม 2.7 s) มี unit test กันไว้ด้วยว่า endpoint ที่เป็น `async`
+  ต้องอยู่ใน allow-list เท่านั้น (`tests/unit/test_request_limits.py`)
+- ~~`/playbook/*` ทั้ง 6 endpoint และ `POST /evaluate` ไม่ต้อง auth~~ — ประกาศ
+  `dependencies=[Depends(get_current_user)]` **ที่ตัว router** ไม่ใช่รายตัว เพราะรูที่เกิดขึ้นคือ
+  "ลืมใส่" ไม่ใช่ "ใส่ผิด" endpoint ที่เพิ่มเข้ามาใหม่จึงปิดโดยอัตโนมัติ (`curl` ยืนยัน: ทั้ง 6 ตัว
+  + `/evaluate` → `401`, `/health` ยังเปิดตามเจตนา)
+- ~~`EvalRequest.gold_set_path` เป็นพาธที่ client ส่งมาเอง~~ — `resolve_gold_set_path()` บังคับให้
+  อยู่ใน `data/gold/` โดยเทียบหลัง `resolve()` เพื่อให้ `data/gold/../../.env` ถูกปฏิเสธจาก
+  "ปลายทางที่มันชี้" ไม่ใช่จากรูปแบบข้อความ
+อีก 2 ข้อจากรีวิวรอบ 2026-07-26 ที่แก้ไปนานแล้ว แต่ค้างอยู่ในลิสต์นี้จนถึง 2026-07-30:
 
 - ~~`override_risk()` ไม่ได้เทียบ `report.session_id`~~ — ตรวจแล้วที่
   `services/override.py` (`_locate()`: `report.session_id != session_id` → `404`) และใช้ร่วมกับ

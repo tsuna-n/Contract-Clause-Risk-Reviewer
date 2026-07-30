@@ -14,6 +14,7 @@ from app.ai.agents import (
     Segmenter,
 )
 from app.ai.guardrails import disclaimer_text
+from app.errors import PayloadTooLargeError
 from app.logger import get_logger
 from app.parsers import ParsedDocument
 from app.schemas import (
@@ -84,9 +85,23 @@ class Orchestrator:
         *,
         contract_id: str,
         session_id: str,
+        max_clauses: int | None = None,
     ) -> ContractReviewReport:
-        """Review a parsed contract and return a report."""
+        """Review a parsed contract and return a report.
+
+        ``max_clauses`` refuses a document instead of starting on it. Checked
+        here because segmentation is the only step that knows how many clauses
+        there are, and it is the last moment before the expensive part begins:
+        every clause past this point is roughly four LLM calls and twenty
+        seconds. ``None`` means no ceiling, which is what the evaluation
+        harness runs with - it is scoring the pipeline, not serving a request.
+        """
         clauses = self.segmenter.run(document)
+        if max_clauses is not None and len(clauses) > max_clauses:
+            raise PayloadTooLargeError(
+                f"document has {len(clauses)} clauses, above the {max_clauses}-clause "
+                "limit for one review"
+            )
         reviews = [self._review_clause(clause) for clause in clauses]
         summary, overall = aggregate(reviews)
 
