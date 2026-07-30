@@ -135,8 +135,10 @@ class Orchestrator:
         """Run one clause through classify -> match -> score -> judge.
 
         A single retry is allowed when the judge flags the first pass as
-        ungrounded. Any exception isolates the failure to this clause instead
-        of failing the whole report.
+        ungrounded, and it carries the judge's reason back to the scorer: the
+        retry used to re-send the identical prompt, which mostly bought the
+        identical answer for twice the tokens. Any exception isolates the
+        failure to this clause instead of failing the whole report.
         """
         try:
             clause.clause_type = self.classifier.run(clause)
@@ -144,7 +146,9 @@ class Orchestrator:
             review = self.risk_scorer.run(RiskScorerInput(clause=clause, hits=hits))
             verdict = self.judge.run(review)
             if not verdict.grounded and verdict.should_retry:
-                review = self.risk_scorer.run(RiskScorerInput(clause=clause, hits=hits))
+                review = self.risk_scorer.run(
+                    RiskScorerInput(clause=clause, hits=hits, feedback=verdict.reason)
+                )
                 verdict = self.judge.run(review)
             review.verified = verdict.grounded
             return review

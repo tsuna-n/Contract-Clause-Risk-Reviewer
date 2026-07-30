@@ -74,6 +74,34 @@ def test_rejects_an_excerpt_that_is_not_in_the_cited_position() -> None:
     assert not verdict.grounded
 
 
+@pytest.mark.parametrize("excerpt", ["the", "on", "notice.", "may terminate"])
+def test_rejects_an_excerpt_too_short_to_be_evidence(excerpt: str) -> None:
+    """A bare substring check hands out ``verified`` for quoting a stopword.
+
+    ``"the"`` appears in every playbook position ever written, so before the
+    minimum length a review could be marked grounded while quoting nothing that
+    supports it - the worst kind of failure here, because the badge says the
+    opposite of what happened.
+    """
+    judge = Judge(llm=None, known_positions={"pb-1": position("pb-1")})  # type: ignore[arg-type]
+
+    verdict = judge.run(review(cites="pb-1", excerpt=excerpt))
+
+    assert not verdict.grounded
+    assert "at least" in verdict.reason
+    assert verdict.should_retry
+
+
+def test_the_rejection_reason_names_what_to_fix() -> None:
+    """The reason is fed back into the retry, so it has to be actionable."""
+    judge = Judge(llm=None, known_positions={"pb-1": position("pb-1")})  # type: ignore[arg-type]
+
+    verdict = judge.run(review(cites="pb-1", excerpt="terminate immediately without notice"))
+
+    assert "verbatim quote" in verdict.reason
+    assert "c1" in verdict.reason
+
+
 def test_sees_positions_added_after_it_was_built() -> None:
     """The judge is a singleton; the playbook is editable at runtime.
 

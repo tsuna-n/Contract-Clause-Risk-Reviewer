@@ -83,6 +83,25 @@ def get_current_user(
     return user
 
 
+def require_playbook_admin(current_user: User = Depends(get_current_user)) -> User:
+    """Allow playbook writes only from ``PLAYBOOK_ADMIN_EMAILS``, if it is set.
+
+    An empty allow-list means every signed-in reviewer may write, which is what
+    a single-team deployment already had; setting it turns the playbook into
+    something only named people can change. Reads are unaffected either way.
+
+    ``403``, not ``404``: unlike a report id, the existence of the playbook is
+    not a secret - the caller is signed in and simply isn't allowed to edit it.
+    """
+    admins = get_settings().playbook_admins
+    if admins and (current_user.email or "").strip().lower() not in admins:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Editing the playbook is restricted to its administrators",
+        )
+    return current_user
+
+
 # --- infrastructure ----------------------------------------------------------
 
 

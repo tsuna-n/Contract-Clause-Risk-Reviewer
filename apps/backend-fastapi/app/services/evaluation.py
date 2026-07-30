@@ -210,6 +210,7 @@ def run_eval(
             PerTypeMetrics(clause_type=t, support=len(hits), accuracy=sum(hits) / len(hits))
             for t, hits in per_type_hits.items()
         ],
+        classification_confusion=confusion_matrix(pred_types, gold_types),
     )
 
 
@@ -237,9 +238,25 @@ def format_report(metrics: EvalMetrics) -> str:
     ]
     if metrics.per_type:
         lines.append("")
-        lines.append("Per clause type:")
+        lines.append("Per clause type (classification):")
         for row in metrics.per_type:
             lines.append(f"  {row.clause_type:<28} n={row.support:<4} acc={row.accuracy:.2%}")
+    if metrics.classification_confusion:
+        lines.append("")
+        # Printed because the aggregate hides which way the disagreements go,
+        # and that is the whole diagnosis: a gold set built from CUAD carries
+        # the label of whichever annotation fell inside the clause, so a clause
+        # headed "13. Warranty" whose only annotation is ``Insurance`` is gold
+        # ``other``. Reading 57% as "the classifier is 57% right" is a mistake
+        # this block exists to make harder.
+        lines.append("Where classification disagreed (gold -> predicted, n):")
+        for gold, predictions in sorted(metrics.classification_confusion.items()):
+            wrong = {
+                predicted: count for predicted, count in predictions.items() if predicted != gold
+            }
+            if wrong:
+                pairs = ", ".join(f"{p} ({c})" for p, c in sorted(wrong.items()))
+                lines.append(f"  {gold:<28} -> {pairs}")
     return "\n".join(lines)
 
 

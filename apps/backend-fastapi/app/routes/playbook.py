@@ -5,7 +5,13 @@ from __future__ import annotations
 from fastapi import APIRouter, Depends, status
 
 from app.ai.retrieval import Retriever
-from app.dependencies import get_current_user, get_playbook_service, get_retriever
+from app.dependencies import (
+    get_current_user,
+    get_playbook_service,
+    get_retriever,
+    require_playbook_admin,
+)
+from app.models import User
 from app.schemas import (
     Clause,
     PlaybookPosition,
@@ -23,9 +29,8 @@ from app.services.playbook import PlaybookService
 # write access to it is write access to every verdict the system reaches.
 #
 # Not scoped per user, unlike ``/contracts``: a playbook is the company's, so
-# any signed-in reviewer reads and edits the same one. That makes this
-# authentication without authorization - fine while every account belongs to
-# the same team, and the place to add roles when that stops being true.
+# every signed-in reviewer reads the same one. Writes go one step further and
+# ask for ``require_playbook_admin`` - see ``PLAYBOOK_ADMIN_EMAILS``.
 router = APIRouter(
     prefix="/playbook",
     tags=["playbook"],
@@ -65,6 +70,7 @@ def list_playbook(
 )
 def create_playbook(
     payload: PlaybookPositionCreate,
+    _admin: User = Depends(require_playbook_admin),
     service: PlaybookService = Depends(get_playbook_service),
 ) -> PlaybookPosition:
     """Create a new playbook position."""
@@ -84,6 +90,7 @@ def get_playbook(
 def update_playbook(
     position_id: str,
     payload: PlaybookPositionUpdate,
+    _admin: User = Depends(require_playbook_admin),
     service: PlaybookService = Depends(get_playbook_service),
 ) -> PlaybookPosition:
     """Update an existing playbook position."""
@@ -93,6 +100,7 @@ def update_playbook(
 @router.delete("/{position_id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_playbook(
     position_id: str,
+    _admin: User = Depends(require_playbook_admin),
     service: PlaybookService = Depends(get_playbook_service),
 ) -> None:
     """Delete a playbook position by ID."""

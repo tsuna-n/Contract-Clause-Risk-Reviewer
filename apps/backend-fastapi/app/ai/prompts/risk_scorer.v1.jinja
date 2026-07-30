@@ -11,6 +11,16 @@ Rules:
 - If you recommend fallback language, it MUST match the playbook fallback text
   verbatim (again, without the "Fallback:" label). Never invent fallback wording.
 
+{% if feedback %}
+Your previous answer for this clause was rejected by the grounding checker:
+"""
+{{ feedback }}
+"""
+Fix exactly that. Do not change your assessment for any other reason - if the
+problem was a quote, copy the wording character for character from the position
+below; if it was a citation id, use only the ids listed below.
+
+{% endif %}
 Clause type: {{ clause_type }}
 
 Clause text:

@@ -51,6 +51,17 @@ class Settings(BaseSettings):
     # login page and an open door. Both this and ``APP_ENV=development`` must
     # hold, so production has to make two mistakes to be exposed.
     enable_dev_login: bool = False
+    # Who may write to the playbook (create/update/delete). Comma-separated
+    # emails; empty means every signed-in reviewer may, which is the behaviour a
+    # single-team deployment already had and the one its ``/playbook`` page
+    # expects.
+    #
+    # Reading stays open to any signed-in user either way. The asymmetry is the
+    # point: a playbook position is what the judge grounds citations against, so
+    # editing one edits every verdict the system will reach afterwards - that is
+    # worth naming the people who can do it, without inventing a role system and
+    # a migration for a team of one.
+    playbook_admin_emails: str = ""
     # One working day. Logout is client-side only (the token stays valid until
     # it expires), so this is also how long a leaked token keeps working —
     # which is why it isn't set to weeks.
@@ -151,6 +162,19 @@ class Settings(BaseSettings):
     # until that is scheduled (cron, a systemd timer) setting this deletes
     # nothing.
     report_retention_days: int | None = None
+
+    @property
+    def playbook_admins(self) -> frozenset[str]:
+        """:attr:`playbook_admin_emails` as a set, lowercased.
+
+        Case-folded because an allow-list that misses when someone types their
+        own address in capitals is a lock that only catches its owner.
+        """
+        return frozenset(
+            email.strip().lower()
+            for email in self.playbook_admin_emails.split(",")
+            if email.strip()
+        )
 
 
 @lru_cache

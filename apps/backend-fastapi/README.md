@@ -250,7 +250,7 @@ judge บอกว่า ungrounded, และ isolate failure ต่อ clause 
   bounded → `413` ไม่ buffer ไฟล์ทั้งก้อนก่อน) กับ `MAX_CLAUSES` (เช็คหลัง segment ก่อนจ่ายค่า LLM),
   และ `/auth/dev-login` ต้องเปิด 2 กลอน (`APP_ENV=development` **และ** `ENABLE_DEV_LOGIN=true`)
   — ทุกข้อยืนยันด้วย `curl` กับเซิร์ฟเวอร์จริง ดูรายละเอียดในหัวข้อข้อควรระวังท้ายไฟล์
-- **Tests** — 243 unit/integration tests ผ่านหมด (`pytest tests/`; อีก 1 test เป็น eval regression
+- **Tests** — 258 unit/integration tests ผ่านหมด (`pytest tests/`; อีก 1 test เป็น eval regression
   gate ที่ skip ไว้เพราะต้องเรียก LLM จริง)
 
 ---
@@ -286,6 +286,7 @@ FRONTEND_URL=http://localhost:5173
 SESSION_SECRET_KEY=<random-secret>
 JWT_SECRET_KEY=<random-secret>
 ENABLE_DEV_LOGIN=true              # dev เท่านั้น! ต้องมีคู่กับ APP_ENV=development ไม่งั้น /auth/dev-login ปิด
+PLAYBOOK_ADMIN_EMAILS=             # ว่าง = ทุกคนที่ login แก้ playbook ได้; ใส่อีเมล (คั่นด้วย ,) = คนอื่นได้ 403 ตอนเขียน
 
 # เพดานต่อ 1 request (ค่าที่เห็นคือ default)
 MAX_UPLOAD_BYTES=10485760          # 10 MB — เกินนี้ตอบ 413 โดยไม่อ่านไฟล์ทั้งก้อนเข้า memory
@@ -444,6 +445,39 @@ python -m scripts.purge_reports                        # ใช้ REPORT_RETENT
 >
 > **ไม่มีอะไรเรียกมันเอง** — ต้องตั้ง cron/systemd timer ถ้าอยากให้นโยบายมีผลจริง
 
+### เพดานของ gold label ที่มาจาก CUAD
+
+`classification_accuracy` **วัดการจับคู่ label ของ fixture ปนอยู่ด้วย ไม่ใช่ความแม่นของ classifier
+เพียว ๆ** — เรื่องเดียวกับที่ `risk_accuracy` รอบแรกวัด provider ไม่ได้วัด pipeline
+
+`build_cuad_fixtures.py` ให้ label กับ clause จาก **CUAD annotation ที่ offset ตกอยู่ในข้อนั้น**
+(นับจำนวน category ที่ตก ตัวไหนมากสุดชนะ) แต่ CUAD ไม่ได้ annotate ว่า "ข้อนี้เป็นข้อประเภทอะไร"
+มันตอบคำถาม 41 ข้อเกี่ยวกับสัญญา แล้วไฮไลต์ **วลี** ที่เป็นคำตอบ — วลีนั้นมักอยู่ในข้อที่ว่าด้วย
+เรื่องอื่น ตรวจของจริง 3 ฉบับแรกด้วยการยิงเฉพาะ classifier + retriever (2026-07-30):
+
+| clause จริง (ขึ้นต้นด้วย) | `cuad_categories` ที่ตกในข้อนั้น | gold | classifier ตอบ |
+|---|---|---|---|
+| `6.02. Termination. This Agreement may be terminated only:` | `Change Of Control` | `other` | `termination` ✅ |
+| `13. Warranty. SIERRA warrants that the Product shall be free from defects` | `Insurance` | `other` | `warranty` ✅ |
+| `9.07. Successors and Assigns.` | `Anti-Assignment`, `Minimum Commitment` | `payment_terms` | `other` ✅ |
+| `1.01. Distribution Right. ...exclusive right to sell` | `Anti-Assignment`, `Covenant Not To Sue`, `Exclusivity` | `other` | `intellectual_property` |
+
+สามแถวแรก **classifier ตอบถูก gold ผิด** — และแถวที่ 3 แพ้เพราะ tie-break: `Anti-Assignment`
+(→`other`) กับ `Minimum Commitment` (→`payment_terms`) ได้ 1 คะแนนเท่ากัน แล้วกฎ "เสมอให้เอียงไป
+ทางที่เสี่ยงกว่า" เลือก `payment_terms` ให้ข้อที่ว่าด้วยการโอนสิทธิ์
+
+**นี่เป็นเหตุผลที่ `payment_terms` ได้ 25%** ไม่ใช่เพราะ playbook ครอบไม่พอ (`payment_terms` มี
+จุดยืนอยู่ 5 อัน มากสุดในทุกประเภท — และการจำแนกประเภทไม่ได้ใช้ playbook เลย)
+
+**ทำอะไรไปแล้ว:** `format_report()` พิมพ์ทิศทางของความไม่ตรงออกมาด้วย (`gold -> predicted`) ซึ่ง
+`confusion_matrix()` คำนวณได้อยู่แล้วแต่ไม่เคยถูกพิมพ์ — ตัวเลขรวมตัวเดียวซ่อนเรื่องนี้ไว้หมด
+
+**ยังไม่ทำและทำไม:** วิธีดัน `classification_accuracy` ให้สูงขึ้นที่ *ไม่* ควรทำคือแก้ prompt ให้
+เดาตาม label ที่ผิด หรือให้คะแนนจากหัวข้อของ clause (`13. Warranty` → `warranty`) เพราะนั่นคือ
+วัด pipeline เทียบกับ heuristic ของตัวเอง ไม่ใช่เทียบกับผู้เชี่ยวชาญ — จะแก้ต้องแก้ที่วิธีสร้าง label
+(เช่น ใช้ span ของไฮไลต์ที่ CUAD ให้มา แทน offset เริ่มต้นตัวเดียว — ตอนนี้ `build_cuad_fixtures.py`
+เก็บแค่ `answer_start` แล้วทิ้ง `answer["text"]`) ซึ่งต้องรีวิวเป็นงานของตัวเอง
+
 ### สร้าง data fixtures ใหม่จาก CUAD
 ```bash
 python -m scripts.build_cuad_fixtures --cuad ~/project/cuad
@@ -509,13 +543,13 @@ python -m scripts.build_cuad_fixtures --cuad ~/project/cuad   # ต้องม�
 **Backend ใช้งานได้ครบทุกเส้นทางหลักแล้ว** (รวม Google OAuth ที่ login จริงผ่านแล้ว, ประวัติรายงาน
 ถาวร, accept/override + audit และ metadata ของสัญญา) เหลือ:
 
-1. **รัน evaluation เต็มชุด** — gold set พร้อมแล้ว แต่ ~1,300 LLM call ยังไม่ได้รันครบ
-   (รันจริงแล้ว 1 ฉบับหลังแก้ thinking mode: 8/8 clause ได้คำตอบ ไม่มี clause ไหนล้มเพราะ provider
-   อีก — ดูหัวข้อผล evaluation ใน [README หลัก](../../README.md))
-2. **playbook ยังครอบไม่พอ** — คอขวดที่เหลือของ `risk_accuracy` ไม่ใช่ provider แล้ว: clause ที่
-   retrieve มาแล้ว LLM บอกว่า "จุดยืนที่ได้มาไม่เกี่ยวกับ clause นี้" ยังตอบ `unknown` อยู่ (2 ใน 8
-   ของฉบับที่ทดสอบ) ซึ่งเป็นคำตอบที่ตรงไปตรงมา แต่ก็แปลว่าต้องเพิ่มจุดยืนใน
-   `data/playbook/positions.yaml` ให้ครอบ clause ประเภทนั้น
+1. **สร้าง gold label ให้ตรงกับ clause จริง** — งานที่เหลือชิ้นใหญ่สุดและเป็นคอขวดของทุกตัวเลข
+   ความแม่น: label ปัจจุบันมาจาก CUAD annotation ที่บังเอิญตกอยู่ในข้อนั้น ทำให้ข้อที่ขึ้นหัวว่า
+   `13. Warranty` เป็น gold `other` (ดู [เพดานของ gold
+   label](#เพดานของ-gold-label-ที่มาจาก-cuad)) ทางที่ตั้งใจไว้คือใช้ span ของไฮไลต์ที่ CUAD ให้มา
+   (`answer["text"]` ซึ่งตอนนี้ถูกทิ้ง) แทนการใช้ offset เริ่มต้นตัวเดียว
+2. **integration test ที่ยิง LLM จริงอย่างน้อย 1 เส้น** — bug อย่าง "Z.AI รับ `json_schema` แล้วตอบ
+   markdown" ผ่าน unit test ที่ mock ที่ขอบ provider ได้สบาย ๆ กว่าจะเจอก็ตอนรันจริง
 
 ---
 
@@ -2302,16 +2336,26 @@ monkeypatch.setattr(oauth.google, "authorize_access_token", fake_authorize_acces
 เขียนไว้ตรงนี้เพื่อไม่ให้เอกสารอธิบาย logic ไปโดยไม่บอกจุดที่ยังมีปัญหา —
 รายละเอียดและวิธีแก้อยู่ในผลรีวิว (ข้อที่แก้ไปแล้วถูกย้ายไปท้ายหัวข้อ):
 
-1. **retry ตอน ungrounded ส่ง prompt เดิมเป๊ะ ๆ** (`pipeline.py`) ทั้งที่มี `verdict.reason` อยู่แล้ว
-   — โอกาสได้คำตอบเดิมสูง เท่ากับจ่าย token สองเท่าเปล่า ๆ (คนละชั้นกับ retry ใน `LLMClient`
-   ซึ่งยิงซ้ำเฉพาะตอน call ล้ม ไม่ใช่ตอนคำตอบ ungrounded)
-2. **`is_grounded()` เป็น substring check ล้วน** — excerpt สั้น ๆ อย่าง `"the"` ผ่านได้เสมอ
-   ควรมีความยาวขั้นต่ำหรือวัด token overlap
-3. **`/playbook/*` เป็น authentication ไม่ใช่ authorization** — ต้อง login แล้ว (แก้เมื่อ
-   2026-07-30) แต่ผู้ใช้ที่ login แล้ว**ทุกคน**แก้ playbook ของบริษัทได้เท่ากัน เพราะยังไม่มีระบบ
-   role ใช้ได้ตอนที่ทุกบัญชีอยู่ทีมเดียวกัน และเป็นจุดที่ต้องเพิ่ม role เมื่อเลิกเป็นอย่างนั้น
+1. **`classification_accuracy` ถูกจำกัดด้วยคุณภาพ gold label ไม่ใช่ตัว classifier** — ดูหัวข้อ
+   [เพดานของ gold label](#เพดานของ-gold-label-ที่มาจาก-cuad) ด้านล่าง ยังไม่ได้แก้เพราะการแก้ที่
+   ถูกต้องคือเปลี่ยนวิธีสร้าง label ไม่ใช่ปรับ prompt ให้ตรงกับ label ที่ผิด
+2. **ไม่มี integration test ที่ยิง LLM จริง** — เทสต์ทั้งหมด mock ที่ขอบ provider ส่วน eval
+   regression gate ยัง skip ไว้ (มี cost) การพังแบบที่ mock จับไม่ได้ (เช่น Z.AI รับ `json_schema`
+   แล้วตอบ markdown) จึงเจอตอนรันจริงเท่านั้น
 
-**5 ข้อที่แก้ไปแล้ว** (3 ข้อล่างแก้เมื่อ 2026-07-30 พร้อมยืนยันด้วย `curl` กับเซิร์ฟเวอร์จริง):
+**7 ข้อที่แก้ไปแล้ว** (5 ข้อล่างแก้เมื่อ 2026-07-30 พร้อมยืนยันด้วย `curl`/รันจริง):
+
+- ~~retry ตอน ungrounded ส่ง prompt เดิมเป๊ะ ๆ~~ — `RiskScorerInput.feedback` ส่ง `verdict.reason`
+  กลับเข้า prompt รอบสอง (`risk_scorer.v1.jinja` มีบล็อก "your previous answer was rejected")
+  รอบแรกไม่มี feedback รอบสองมี — เทสต์ยืนยันทั้งสองทาง (`tests/unit/test_retry_feedback.py`)
+- ~~`is_grounded()` เป็น substring check ล้วน~~ — เพิ่ม `min_words` และ judge ส่ง
+  `MIN_CITATION_EXCERPT_WORDS = 4` (excerpt จริงที่ pipeline ผลิตยาว 20–40 คำ จึงห่างเพดานมาก)
+  ส่วน metadata ยังใช้ default 1 คำเพราะค่าอย่าง `"กฎหมายไทย"` สั้นโดยธรรมชาติ — ถ้าบังคับ 4 คำ
+  ตรงนั้นจะทิ้ง metadata ที่ถูกต้องทิ้ง
+- ~~`/playbook/*` เป็น authentication ไม่ใช่ authorization~~ — `PLAYBOOK_ADMIN_EMAILS`
+  (comma-separated, ไม่สนตัวพิมพ์ใหญ่เล็ก) จำกัดสิทธิ์ `POST`/`PUT`/`DELETE` เป็น `403`
+  ส่วนการอ่านยังเปิดให้ทุกคนที่ login — ว่างไว้ = ทุกคนเขียนได้เหมือนเดิม (ไม่ทำให้หน้า
+  `/playbook` ของ deployment เดิมพังตอนอัปเกรด)
 
 - ~~Endpoint เป็น `async def` แต่ข้างในเป็น blocking I/O~~ — endpoint ที่ทำงาน blocking เปลี่ยนเป็น
   `def` ธรรมดาให้ FastAPI โยนเข้า threadpool แล้ว (`playbook.py` 6 ตัว, `evaluate.py`,
@@ -2326,6 +2370,7 @@ monkeypatch.setattr(oauth.google, "authorize_access_token", fake_authorize_acces
 - ~~`EvalRequest.gold_set_path` เป็นพาธที่ client ส่งมาเอง~~ — `resolve_gold_set_path()` บังคับให้
   อยู่ใน `data/gold/` โดยเทียบหลัง `resolve()` เพื่อให้ `data/gold/../../.env` ถูกปฏิเสธจาก
   "ปลายทางที่มันชี้" ไม่ใช่จากรูปแบบข้อความ
+
 อีก 2 ข้อจากรีวิวรอบ 2026-07-26 ที่แก้ไปนานแล้ว แต่ค้างอยู่ในลิสต์นี้จนถึง 2026-07-30:
 
 - ~~`override_risk()` ไม่ได้เทียบ `report.session_id`~~ — ตรวจแล้วที่

@@ -20,7 +20,12 @@ from dataclasses import dataclass
 
 from pydantic import BaseModel, Field
 
-from app.ai.guardrails import invalid_citations, is_allowed_fallback, is_grounded
+from app.ai.guardrails import (
+    MIN_CITATION_EXCERPT_WORDS,
+    invalid_citations,
+    is_allowed_fallback,
+    is_grounded,
+)
 from app.ai.llm import LLMClient, render_prompt
 from app.ai.retrieval import Retriever, make_citation
 from app.config import get_settings
@@ -262,6 +267,11 @@ class RiskScorerInput:
 
     clause: Clause
     hits: list[RetrievalHit]
+    #: Why the previous attempt at this clause was rejected, if there was one.
+    #: Set by the orchestrator's one retry so the second attempt is told what
+    #: was wrong - re-sending the identical prompt mostly bought the identical
+    #: answer at twice the token cost.
+    feedback: str | None = None
 
 
 class _CitedPoint(BaseModel):
@@ -303,6 +313,7 @@ class RiskScorer(Agent[RiskScorerInput, ClauseReview]):
             hits=[
                 {"citation_id": hit.position.id, "position": hit.position} for hit in payload.hits
             ],
+            feedback=payload.feedback,
         )
         assessment = self.llm.complete_structured(
             system=_SCORER_SYSTEM_PROMPT,
@@ -389,10 +400,15 @@ class Judge(Agent[ClauseReview, Verdict]):
         for citation in payload.citations:
             position = known_positions[citation.playbook_position_id]
             source_text = f"{position.preferred_language} {position.fallback_language}"
-            if not is_grounded(citation.excerpt, source_text):
+            if not is_grounded(
+                citation.excerpt, source_text, min_words=MIN_CITATION_EXCERPT_WORDS
+            ):
                 return Verdict(
                     grounded=False,
-                    reason=f"excerpt for citation {citation.citation_id} not grounded",
+                    reason=(
+                        f"excerpt for citation {citation.citation_id} is not a verbatim quote of "
+                        f"at least {MIN_CITATION_EXCERPT_WORDS} words from that playbook position"
+                    ),
                     should_retry=True,
                 )
 

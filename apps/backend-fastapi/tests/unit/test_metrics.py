@@ -73,3 +73,24 @@ def test_format_report_includes_per_type_breakdown() -> None:
     report = format_report(metrics)
     assert "segmentation_f1" in report
     assert "termination" in report
+
+
+def test_format_report_shows_which_way_classification_disagreed() -> None:
+    """The aggregate cannot tell "the classifier is wrong" from "the gold label
+    is", and with CUAD-derived labels both happen — so the report prints the
+    direction of every disagreement, and stays quiet about the matches."""
+    metrics = EvalMetrics(
+        classification_accuracy=0.5,
+        classification_confusion={
+            "other": {"warranty": 2, "other": 5},
+            "payment_terms": {"other": 3, "payment_terms": 1},
+            "governing_law": {"governing_law": 3},
+        },
+    )
+
+    report = format_report(metrics)
+
+    assert "other" in report and "warranty (2)" in report
+    assert "payment_terms" in report and "other (3)" in report
+    # A clause type the classifier never got wrong adds nothing to read.
+    assert "governing_law" not in report

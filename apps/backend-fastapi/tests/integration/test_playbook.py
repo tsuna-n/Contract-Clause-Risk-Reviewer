@@ -5,10 +5,24 @@ from __future__ import annotations
 import pytest
 from fastapi.testclient import TestClient
 
+from app.config import get_settings
 from app.dependencies import get_current_user, get_playbook_service
 from app.main import create_app
 from app.models import PlaybookEmbedding, User
 from app.services.playbook import PlaybookService
+
+#: A valid create/update body, shared by the authorization tests below - they
+#: are about who may write, so the payload itself must never be the reason a
+#: request is refused.
+_CREATE_PAYLOAD = {
+    "id": "pb_auth_01",
+    "clause_type": "confidentiality",
+    "title": "Test Confidentiality Position",
+    "preferred_language": "Information shall remain strictly confidential for 3 years.",
+    "fallback_language": "Information shall remain confidential for 1 year.",
+    "risk_if_absent": "high",
+    "tags": ["test"],
+}
 
 
 class MemoryPlaybookRepository:
@@ -156,3 +170,51 @@ def test_every_playbook_endpoint_requires_auth(anonymous_client, method, path) -
     body = {"json": {}} if method in {"post", "put"} else {}
     response = anonymous_client.request(method, path, **body)
     assert response.status_code == 401
+
+
+# --- write authorization -----------------------------------------------------
+
+
+@pytest.fixture()
+def admin_only(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Restrict playbook writes to one named address."""
+    monkeypatch.setattr(get_settings(), "playbook_admin_emails", "boss@example.com")
+
+
+@pytest.mark.parametrize(
+    ("method", "path"),
+    [("post", "/playbook"), ("put", "/playbook/pb_1"), ("delete", "/playbook/pb_1")],
+)
+def test_writes_are_refused_for_a_signed_in_non_admin(
+    client: TestClient, admin_only, method, path
+) -> None:
+    """``403``, not ``404``: the caller is signed in and the playbook is no
+    secret - they simply may not edit it."""
+    body = {"json": _CREATE_PAYLOAD} if method in {"post", "put"} else {}
+    response = client.request(method, path, **body)
+    assert response.status_code == 403
+
+
+def test_reads_stay_open_to_every_signed_in_reviewer(client: TestClient, admin_only) -> None:
+    """The asymmetry is deliberate: everyone reviews against the playbook, only
+    named people change what it says."""
+    assert client.get("/playbook").status_code == 200
+    assert client.get("/playbook/search?q=liability").status_code == 200
+
+
+def test_an_admin_may_still_write(admin_only) -> None:
+    app = _app_with_playbook_service()
+    app.dependency_overrides[get_current_user] = lambda: User(
+        id="user-2", email="BOSS@example.com", name="Boss"
+    )
+
+    # Case-insensitive on purpose: an allow-list that misses because someone
+    # typed their address in capitals is a lock that only catches its owner.
+    assert TestClient(app).post("/playbook", json=_CREATE_PAYLOAD).status_code == 201
+
+
+def test_an_empty_allow_list_lets_any_signed_in_reviewer_write(client: TestClient) -> None:
+    """The default. A single-team deployment had this behaviour already, and
+    turning it off by default would break its /playbook page on upgrade."""
+    assert get_settings().playbook_admins == frozenset()
+    assert client.post("/playbook", json=_CREATE_PAYLOAD).status_code == 201

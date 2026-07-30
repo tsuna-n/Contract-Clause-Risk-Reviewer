@@ -77,6 +77,7 @@
 | Backend | **LLM client + RAG (สลับค่ายได้)** | provider adapter (`app/ai/providers.py`) — Gemini / Anthropic Claude / OpenAI-compatible (Z.AI GLM, DeepSeek, vLLM) เลือกด้วย `LLM_PROVIDER` ตัวเดียว, structured output ตามวิธีของแต่ละค่าย, hybrid retrieval (pgvector cosine + BM25) |
 | Backend | **LLM call ทนทานขึ้น** | `LLM_THINKING=disabled` (default) ปิด thinking ของ reasoning model ที่กินงบ `max_tokens` จนตอบว่าง + retry ชั้นบน SDK เฉพาะ failure ที่ถามใหม่แล้วมีโอกาสได้ (timeout/429/5xx/คำตอบว่าง/JSON พัง) จำกัดด้วย `LLM_MAX_ATTEMPTS` และงบเวลา 1 timeout — 400/401 ไม่ retry |
 | Backend | **Data-retention job** | `python -m scripts.purge_reports` ลบรายงานเก่ากว่า `REPORT_RETENTION_DAYS` (`--dry-run` นับก่อนได้) — ต้องตั้ง cron เอง เพราะการลบข้อมูลของคนอื่นไม่ควรเป็นผลพลอยได้ของ request |
+| Backend | **Guardrail + สิทธิ์ playbook (2026-07-30)** | `is_grounded()` ไม่ใช่ substring ล้วนแล้ว — judge บังคับ excerpt ยาว ≥ 4 คำ (`MIN_CITATION_EXCERPT_WORDS`) เพราะเดิมอ้าง `"the"` ก็ผ่านและได้ badge "ตรวจสอบแล้ว" ส่วน metadata ยังใช้ 1 คำเพราะค่าอย่าง `"กฎหมายไทย"` สั้นโดยธรรมชาติ; retry ตอน ungrounded ส่ง `verdict.reason` กลับเข้า prompt แล้ว (เดิมส่ง prompt เดิมเป๊ะ ๆ = จ่าย token 2 เท่าเพื่อคำตอบเดิม); เขียน playbook จำกัดด้วย `PLAYBOOK_ADMIN_EMAILS` → `403` (อ่านยังเปิดให้ทุกคนที่ login) |
 | Backend | **Hardening ระดับ request (2026-07-30)** | ปิด 4 จุดที่ request เดียวยึดหรือเปิดระบบได้: **auth ระดับ router** ที่ `/playbook/*` (6 ตัว) + `/evaluate` → `401` (ประกาศที่ router ไม่ใช่รายตัว endpoint ใหม่จึงปิดเอง), **ย้าย blocking I/O ออกจาก event loop** (`def` + `run_in_threadpool` ตอน review) — วัดจริง `/health` ตอบ 1.2–2.0 ms ระหว่าง review 18.9 วิ (เดิม 2.7 s), **เพดาน `MAX_UPLOAD_BYTES` 10 MB** (อ่านแบบ bounded → `413` ไม่ buffer ก่อน) + **`MAX_CLAUSES` 300** (เช็คหลัง segment ก่อนจ่ายค่า LLM), **`gold_set_path` ต้องอยู่ใน `data/gold/`** และ **`/auth/dev-login` ต้องมี 2 กลอน** (`APP_ENV=development` + `ENABLE_DEV_LOGIN=true`) |
 | Backend | Parsers | PDF (PyMuPDF) / DOCX (python-docx) / TXT (เดา encoding: UTF-8 → cp874) → `ParsedDocument` |
 | Backend | Guardrails | grounding, citation validity, no-invented-fallback — wired เข้า judge แล้ว |
@@ -84,7 +85,7 @@
 | Backend | **Report history** | `GET /contracts` (สรุปรายงานของตัวเอง เรียงใหม่→เก่า) + `GET /contracts/{report_id}` (ฉบับเต็ม) + `DELETE /contracts/{report_id}` — Postgres ใช้ index `(session_id, created_at)`, Redis ใช้ sorted set ต่อ session, รายงานของคนอื่นตอบ `404` ไม่ใช่ `403` |
 | Backend | **Data fixtures จาก CUAD** | `scripts/build_cuad_fixtures.py` แปลง CUAD v1 → สัญญาจริง 12 ฉบับ + gold 327 clause (91 clause มี label จาก annotation ของผู้เชี่ยวชาญ) + `.docx` ให้ลองอัปโหลด 3 ไฟล์ |
 | Backend | **Playbook 36 จุดยืน** | ครบทั้ง 12 clause type อ้างอิงหมวดรีวิว 41 หมวดของ CUAD — `preferred`/`fallback` เป็นภาษาสัญญาจริงที่ guardrail ใช้เทียบ verbatim ได้ |
-| Backend | Tests | 243 unit/integration tests ผ่านหมด (1 skipped — eval regression gate ที่ต้องยิง LLM จริง) |
+| Backend | Tests | 258 unit/integration tests ผ่านหมด (1 skipped — eval regression gate ที่ต้องยิง LLM จริง) |
 | Backend | **หัวข้อสัญญาไทย** | `_HEADING_RE` รับ `ข้อ 1.` / `๑.` / เลขอารบิกตามด้วยตัวอักษรไทย (พยัญชนะ + สระหน้า `เ แ โ ใ ไ`) และ prefix `Section`/`Article`/`Clause` — สัญญาไทยตัด clause ตามข้อจริงแทน paragraph fallback โดยอังกฤษ 12 ฉบับเดิมไม่กระทบ |
 | Frontend | Scaffold | React 19 + Vite + Tailwind + routing (`/login`, `/auth/callback`, `/manual`, `/contract`) |
 | Frontend | Login UI | หน้า login + components (Google button, brand header, card, ฯลฯ) |
@@ -108,9 +109,9 @@
 
 | ส่วน | รายการ | รายละเอียด |
 |------|--------|------------|
-| Backend | Role / สิทธิ์ใน playbook | `/playbook/*` ต้อง login แล้ว แต่เป็น authentication ไม่ใช่ authorization — ผู้ใช้ที่ login แล้วทุกคนแก้จุดยืนของบริษัทได้เท่ากัน ใช้ได้ตอนทุกบัญชีอยู่ทีมเดียวกัน ถ้าจะเปิดให้คนนอกทีมต้องเพิ่ม role ก่อน |
+| Backend | **gold label ของ eval ยังไม่ตรงกับ clause จริง** | คอขวดของทุกตัวเลขความแม่น: label มาจาก CUAD annotation ที่บังเอิญตกอยู่ในข้อนั้น ทำให้ข้อที่ขึ้นหัวว่า `13. Warranty` เป็น gold `other` และ `9.07 Successors and Assigns` เป็น gold `payment_terms` — **classifier ตอบถูกแต่ถูกนับว่าผิด** ต้องแก้ที่วิธีสร้าง label (ใช้ span ของไฮไลต์ที่ CUAD ให้มา แทน offset ตัวเดียว) |
+| Backend | integration test ที่ยิง LLM จริง | เทสต์ทั้ง 258 ตัว mock ที่ขอบ provider — บั๊กแบบ "Z.AI รับ `json_schema` แล้วตอบ markdown" ผ่าน mock ได้สบาย เจอตอนรันจริงเท่านั้น |
 | Backend | Clause-level accuracy เต็มชุด | รันแล้ว 3 ฉบับ / 90 clause (gold label 26 ข้อ): `classification 57.69%`, `risk 50.00%`, `segmentation 100%`, `citation 100%`, ไม่มี clause ล้มเพราะ provider เลย — เหลือเต็มชุด 12 ฉบับ / 327 clause (≈ 1,300 call, ~2 ชม.) |
-| Backend | playbook ครอบไม่ครบทุก clause | คอขวดที่เหลือของความแม่น — `payment_terms` จำแนกถูก 1 ใน 4 และเป็นประเภทเดียวกับที่ตอบ `unknown` เพราะไม่มีจุดยืนที่ตรง (ทั้งสองรอบ eval ชี้ที่เดียวกัน) ต้องเพิ่มจุดยืนใน `positions.yaml` |
 | Backend | cron ของ retention job | **ตั้งใจไม่ตั้ง** — ตัว job พร้อมใช้แล้ว (`scripts/purge_reports.py`) แต่ค่า default คือเก็บรายงานไว้จนเจ้าของสั่งลบ เพราะการลบกู้คืนไม่ได้และตัวสัญญาหายไปด้วย ให้ตั้ง `REPORT_RETENTION_DAYS` + cron ตอนมีนโยบายเก็บข้อมูลจริง (ตัวอย่าง crontab อยู่ใน docstring ของสคริปต์) |
 
 ---
@@ -446,17 +447,23 @@ provider ส่วน `other` 40% เป็นเรื่องคาดหม�
 และ roadmap เดิมปิดไปหมดแล้วเมื่อ 2026-07-30 — accept risk / เก็บรายงานถาวร / contract metadata /
 LLM call ที่ผ่านสม่ำเสมอ / data-retention job ส่วน export ถูกตัดออกจากขอบเขต เหลือ:
 
-1. **รัน evaluation เต็มชุด** — gold set 12 ฉบับ 327 clause พร้อมแล้ว และตอนนี้คุ้มที่จะรันแล้ว
-   เพราะตัวเลขไม่ได้วัด provider อีก (~1,300 call, ราว 22 วิ/clause):
+1. **สร้าง gold label ให้ตรงกับ clause จริง** — คอขวดของทุกตัวเลขความแม่น และเป็นงาน backend
+   ชิ้นใหญ่สุดที่เหลือ: `build_cuad_fixtures.py` ให้ label จาก CUAD annotation ที่ offset ตกอยู่ใน
+   ข้อนั้น แต่ CUAD ไฮไลต์ **วลีที่เป็นคำตอบของคำถาม 41 ข้อ** ไม่ได้บอกว่า "ข้อนี้เป็นข้อประเภทอะไร"
+   ผลคือข้อที่ขึ้นหัวว่า `13. Warranty` เป็น gold `other` (เพราะ annotation เดียวที่ตกในข้อนั้นคือ
+   `Insurance`) และ classifier ที่ตอบ `warranty` ถูกนับว่าผิด — ทางที่ตั้งใจไว้คือใช้ span ของ
+   ไฮไลต์ (`answer["text"]` ที่ตอนนี้ถูกทิ้ง) แทน offset เริ่มต้นตัวเดียว รายละเอียดพร้อมตาราง
+   หลักฐาน: [เพดานของ gold label](apps/backend-fastapi/README.md#เพดานของ-gold-label-ที่มาจาก-cuad)
+2. **integration test ที่ยิง LLM จริงอย่างน้อย 1 เส้น** — เทสต์ 258 ตัว mock ที่ขอบ provider
+   ทั้งหมด บั๊กแบบ "Z.AI รับ `json_schema` แล้วตอบ markdown มา" ผ่าน mock ได้สบาย ๆ
+3. **ตั้ง cron ให้ retention job** — สคริปต์พร้อมแล้ว (`python -m scripts.purge_reports`) ตั้งใจ
+   ไม่ตั้งให้ เพราะกรอบเวลาเก็บข้อมูลเป็นนโยบายที่ต้องตัดสินใจเอง (ลบแล้วกู้ไม่ได้)
 
-   ```bash
-   cd apps/backend-fastapi
-   .venv/bin/python -m scripts.run_eval --contract ticketscominc-sponsorship-agreement  # ฉบับสั้นสุด
-   .venv/bin/python -m scripts.run_eval --limit 3      # 3 ฉบับแรก
-   .venv/bin/python -m scripts.run_eval                # เต็มชุด
-   ```
+รันชุดวัดผลได้ตามนี้:
 
-2. **เพิ่มความครอบคลุมของ playbook** — คอขวดถัดไปของ `risk_accuracy`: clause ที่ playbook ไม่มี
-   จุดยืนตรง ๆ จะได้ `unknown` พร้อมเหตุผลว่าจุดยืนที่ retrieve มาไม่เกี่ยวข้อง (เจอ 2 ใน 8 ข้อ)
-3. **ตั้ง cron ให้ retention job** — สคริปต์มีแล้ว (`python -m scripts.purge_reports`) แต่ต้องมี
-   cron/systemd timer เรียกจริง ไม่งั้นตั้ง `REPORT_RETENTION_DAYS` ไว้ก็ไม่มีอะไรถูกลบ
+```bash
+cd apps/backend-fastapi
+.venv/bin/python -m scripts.run_eval --contract ticketscominc-sponsorship-agreement  # ฉบับสั้นสุด
+.venv/bin/python -m scripts.run_eval --limit 3      # 3 ฉบับแรก (~33 นาที)
+.venv/bin/python -m scripts.run_eval                # เต็มชุด 327 clause (~2 ชม.)
+```

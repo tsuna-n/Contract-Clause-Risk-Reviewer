@@ -332,6 +332,10 @@ class EvalMetrics(BaseModel):
     risk_accuracy: float = 0.0
     citation_validity: float = 0.0
     per_type: list[PerTypeMetrics] = Field(default_factory=list)
+    #: ``gold clause type -> predicted clause type -> count``. Reported because
+    #: the accuracy figure alone cannot distinguish "the classifier is wrong"
+    #: from "the gold label is" — and with CUAD-derived labels, both happen.
+    classification_confusion: dict[str, dict[str, int]] = Field(default_factory=dict)
 
 
 # --- users -------------------------------------------------------------------

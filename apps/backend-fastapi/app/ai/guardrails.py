@@ -31,9 +31,29 @@ def normalize_for_match(text: str) -> str:
     return " ".join(text.split()).lower()
 
 
-def is_grounded(excerpt: str, source_text: str) -> bool:
-    """Return ``True`` if ``excerpt`` appears (normalized) in ``source_text``."""
-    return normalize_for_match(excerpt) in normalize_for_match(source_text)
+#: Shortest quote the judge will accept as evidence that a rationale is grounded.
+#:
+#: A bare substring check passes on ``"the"``, which appears in every playbook
+#: position ever written - so "verified" could be earned by quoting nothing at
+#: all. Four words is well under what a real citation looks like (the excerpts
+#: this pipeline produces run 20-40 words) and well over what a stopword can
+#: reach, and the cost of being wrong is a retry rather than a wrong verdict.
+MIN_CITATION_EXCERPT_WORDS = 4
+
+
+def is_grounded(excerpt: str, source_text: str, *, min_words: int = 1) -> bool:
+    """Return ``True`` if ``excerpt`` appears (normalized) in ``source_text``.
+
+    ``min_words`` additionally requires the quote to be substantial enough to
+    mean something. It defaults to 1 because the other caller - contract
+    metadata - is checking values that are legitimately short (``"Thai law"``,
+    a date), where presence in the document is the whole question. The judge
+    passes :data:`MIN_CITATION_EXCERPT_WORDS` instead.
+    """
+    normalized = normalize_for_match(excerpt)
+    if len(normalized.split()) < min_words:
+        return False
+    return normalized in normalize_for_match(source_text)
 
 
 def assert_grounded(excerpt: str, source_text: str) -> None:
