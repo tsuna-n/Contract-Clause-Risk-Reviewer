@@ -30,6 +30,16 @@
 > (คู่สัญญา / วันที่ / มูลค่า / กฎหมายที่ใช้บังคับ) มาแสดงเป็นแผงหัวรายงาน โดยทุกค่าต้องเป็น
 > ข้อความที่อยู่ในเอกสารจริงแบบคำต่อคำ ไม่งั้นถูกตัดทิ้ง
 >
+> **LLM call ผ่านสม่ำเสมอแล้ว + ตัดฟีเจอร์ export ออก (2026-07-30, รอบสอง)** — คอขวดที่ค้างอยู่
+> ข้อแรกปิดแล้ว: ต้นเหตุคือ **thinking mode ของ GLM-4.6** ซึ่งกิน token ความคิดจากงบ `max_tokens`
+> ก้อนเดียวกับคำตอบ คิดยาวเกินงบก็ได้ 200 ที่ `content` ว่างกลับมา (วัดจริง: call เดียวกัน
+> 23.7 วิ/984 token ตอนเปิดคิด เทียบกับ **2.1 วิ/55 token** ตอนปิด) เพิ่ม `LLM_THINKING=disabled`
+> เป็นค่า default + retry ชั้นบน SDK ที่ยิงซ้ำเฉพาะ failure ที่ถามใหม่แล้วมีโอกาสได้ ผลกับสัญญา
+> ฉบับเดิมที่ eval เคยเสีย 6 ใน 8 clause: **8/8 ได้คำตอบ ไม่มีข้อไหนล้มเพราะ provider** และเร็วขึ้น
+> จาก 47 วิ/clause เป็น 22.5 วิ/clause พร้อมกันนั้น**ตัดฟีเจอร์ export ออกทั้งหมด** (JSON/CSV/Print
+> ฝั่งเบราว์เซอร์ + แผนทำ endpoint ฝั่ง server) และเพิ่ม **job ลบรายงานตามอายุ**
+> (`scripts/purge_reports.py`) ซึ่งเป็น roadmap ข้อสุดท้ายที่ค้าง
+>
 > **เลิกใช้ mock data ทั้งระบบ + ประวัติรายงานใช้งานได้ (2026-07-26)** — fixture ของ backend
 > สร้างจาก **CUAD v1** (สัญญาการค้าจริง 510 ฉบับ annotate โดยผู้เชี่ยวชาญ) ผ่าน
 > `scripts/build_cuad_fixtures.py`, playbook ขยายเป็น 36 จุดยืนครอบทั้ง 12 clause type,
@@ -65,13 +75,15 @@
 | Backend | **Redis-backed repos** | contract repo อยู่บน Redis (native TTL) — ตัว report repo ย้ายไป Postgres แล้ว แต่ Redis ยังเป็นตัวเลือกอยู่ |
 | Backend | **Playbook search + eval** | `GET /playbook/search`, `POST /evaluate` — ใช้งานได้จริง |
 | Backend | **LLM client + RAG (สลับค่ายได้)** | provider adapter (`app/ai/providers.py`) — Gemini / Anthropic Claude / OpenAI-compatible (Z.AI GLM, DeepSeek, vLLM) เลือกด้วย `LLM_PROVIDER` ตัวเดียว, structured output ตามวิธีของแต่ละค่าย, hybrid retrieval (pgvector cosine + BM25) |
+| Backend | **LLM call ทนทานขึ้น** | `LLM_THINKING=disabled` (default) ปิด thinking ของ reasoning model ที่กินงบ `max_tokens` จนตอบว่าง + retry ชั้นบน SDK เฉพาะ failure ที่ถามใหม่แล้วมีโอกาสได้ (timeout/429/5xx/คำตอบว่าง/JSON พัง) จำกัดด้วย `LLM_MAX_ATTEMPTS` และงบเวลา 1 timeout — 400/401 ไม่ retry |
+| Backend | **Data-retention job** | `python -m scripts.purge_reports` ลบรายงานเก่ากว่า `REPORT_RETENTION_DAYS` (`--dry-run` นับก่อนได้) — ต้องตั้ง cron เอง เพราะการลบข้อมูลของคนอื่นไม่ควรเป็นผลพลอยได้ของ request |
 | Backend | Parsers | PDF (PyMuPDF) / DOCX (python-docx) / TXT (เดา encoding: UTF-8 → cp874) → `ParsedDocument` |
 | Backend | Guardrails | grounding, citation validity, no-invented-fallback — wired เข้า judge แล้ว |
 | Backend | Schemas | Pydantic models: clause, report, taxonomy, playbook, eval |
 | Backend | **Report history** | `GET /contracts` (สรุปรายงานของตัวเอง เรียงใหม่→เก่า) + `GET /contracts/{report_id}` (ฉบับเต็ม) + `DELETE /contracts/{report_id}` — Postgres ใช้ index `(session_id, created_at)`, Redis ใช้ sorted set ต่อ session, รายงานของคนอื่นตอบ `404` ไม่ใช่ `403` |
 | Backend | **Data fixtures จาก CUAD** | `scripts/build_cuad_fixtures.py` แปลง CUAD v1 → สัญญาจริง 12 ฉบับ + gold 327 clause (91 clause มี label จาก annotation ของผู้เชี่ยวชาญ) + `.docx` ให้ลองอัปโหลด 3 ไฟล์ |
 | Backend | **Playbook 36 จุดยืน** | ครบทั้ง 12 clause type อ้างอิงหมวดรีวิว 41 หมวดของ CUAD — `preferred`/`fallback` เป็นภาษาสัญญาจริงที่ guardrail ใช้เทียบ verbatim ได้ |
-| Backend | Tests | 191 unit/integration tests ผ่านหมด (1 skipped — eval regression gate ที่ต้องยิง LLM จริง) |
+| Backend | Tests | 217 unit/integration tests ผ่านหมด (1 skipped — eval regression gate ที่ต้องยิง LLM จริง) |
 | Backend | **หัวข้อสัญญาไทย** | `_HEADING_RE` รับ `ข้อ 1.` / `๑.` / เลขอารบิกตามด้วยตัวอักษรไทย (พยัญชนะ + สระหน้า `เ แ โ ใ ไ`) และ prefix `Section`/`Article`/`Clause` — สัญญาไทยตัด clause ตามข้อจริงแทน paragraph fallback โดยอังกฤษ 12 ฉบับเดิมไม่กระทบ |
 | Frontend | Scaffold | React 19 + Vite + Tailwind + routing (`/login`, `/auth/callback`, `/manual`, `/contract`) |
 | Frontend | Login UI | หน้า login + components (Google button, brand header, card, ฯลฯ) |
@@ -84,9 +96,8 @@
 | Frontend | **Contract upload UI** | `/contract` — อัปโหลด `.pdf`/`.docx`/`.txt` ไป `POST /contracts/review` จริง พร้อม loading / error / empty state (จำกัดนามสกุลตามที่ backend parse ได้จริง) |
 | Frontend | **Risk report view** | แสดง clause list พร้อม risk badge, excerpt, AI rationale, suggested fallback, citation (playbook position + excerpt), grounding verdict ของ judge และ disclaimer จาก report |
 | Frontend | **Override UI** | sidebar ต่อ `POST /contracts/{id}/override` จริง — validate ก่อนส่ง, response แทน state ทั้งก้อน, summary/overall risk อัปเดตตาม |
-| Frontend | **Accept / undo จริง** | ปุ่ม Accept Risk ยิง `POST /contracts/{id}/accept` แล้ว — ✓ ในรายการข้อสัญญามาจากรายงาน ไม่ใช่ state ในหน้า, กดซ้ำเพื่อถอนคืน, มีบรรทัดบอกว่าใครรับรองเมื่อไหร่ และติดไปกับ export/print ด้วย |
+| Frontend | **Accept / undo จริง** | ปุ่ม Accept Risk ยิง `POST /contracts/{id}/accept` แล้ว — ✓ ในรายการข้อสัญญามาจากรายงาน ไม่ใช่ state ในหน้า, กดซ้ำเพื่อถอนคืน, มีบรรทัดบอกว่าใครรับรองเมื่อไหร่ |
 | Frontend | **แผง metadata ของสัญญา** | `ContractMetadataPanel` แสดงคู่สัญญา/วันที่/มูลค่า/กฎหมาย ทั้งหน้า `/contract` และรายงานใน `/manual` — ช่องที่เอกสารไม่ได้ระบุจะไม่ขึ้นเลย (ไม่แสดงขีดกลางให้ชวนสงสัยว่าพัง) |
-| Frontend | **Export report** | ปุ่ม Export ทั้งหน้า `/contract` และหน้ารายงานใน `/manual` — **JSON** (รายงานเต็ม), **CSV** (แถวละ clause พร้อม BOM ให้ Excel อ่านภาษาไทยถูก + กัน CSV injection), และ **Print / Save as PDF** (`PrintableReport` portal ลง `<body>` แล้ว print stylesheet สลับมาแสดงแทนทั้งแอป) — ทำฝั่ง browser ล้วน ไม่ต้องมี endpoint |
 | Frontend | **เตือนเมื่อ clause ประเมินไม่สำเร็จ** | รายงานที่มี `unknown` ขึ้น banner ระดับรายงานว่า "ยังไม่ได้วิเคราะห์ ไม่ใช่ว่าไม่มีความเสี่ยง" พร้อมบอกสาเหตุที่พบบ่อย (โควตา Gemini หมด) — badge สีเทารายข้ออ่านเหมือน "ผ่าน" ได้ง่ายเกินไป |
 | Infra | Docker Compose | ยก Postgres (pgvector) + Redis ได้จริง |
 
@@ -96,9 +107,10 @@
 
 | ส่วน | รายการ | รายละเอียด |
 |------|--------|------------|
-| Backend | Export report (server-side) | ยังไม่มี endpoint export — ฝั่ง frontend ทำ JSON/CSV/Print เองได้แล้วจากรายงานที่อยู่ในเบราว์เซอร์ จะต้องมี endpoint ก็ต่อเมื่ออยาก export โดยไม่เปิดหน้าเว็บ (เช่น ส่งเมล/แบตช์) |
-| Backend | Clause-level accuracy ที่เชื่อถือได้ | รันไปแล้ว 1 สัญญา (ดูตารางด้านล่าง) แต่ **ตัวเลขยังใช้ตัดสิน pipeline ไม่ได้** เพราะ 6 ใน 8 clause ล้มเพราะ provider ไม่ใช่เพราะตอบผิด — ต้องแก้เรื่อง LLM ก่อนแล้วค่อยรันเต็มชุด (327 clause ≈ 1,300+ call) |
-| Backend | ลบข้อมูลตามกำหนดเวลา | รายงานเก็บถาวรใน Postgres แล้ว จึงไม่มีอะไรลบตัวเองอีก — ถ้าต้องมี data-retention policy ต้องเขียน job ลบเอง (หรือกลับไปใช้ `REPORT_STORAGE=redis`) |
+| ทั้งสองฝั่ง | Export รายงาน | **ตัดออกจากขอบเขตแล้ว (2026-07-30)** — ปุ่ม JSON/CSV/Print ฝั่ง frontend ถูกลบ และไม่มีแผนทำ endpoint ฝั่ง server รายงานอ่านได้บนหน้าเว็บเท่านั้น |
+| Backend | Clause-level accuracy ที่เชื่อถือได้ | รันแล้ว 1 สัญญา (8 clause) — ตอนนี้ไม่มี clause ล้มเพราะ provider อีกแล้ว แต่ยังเป็น sample เล็กเกินกว่าจะสรุป (มี gold label แค่ 4 ข้อ) เต็มชุดคือ 327 clause ≈ 1,300+ call |
+| Backend | playbook ครอบไม่ครบทุก clause | สาเหตุที่เหลือของ `unknown` — LLM ตอบตรง ๆ ว่าจุดยืนที่ retrieve มาไม่เกี่ยวกับ clause นี้ (2 ใน 8 ข้อของฉบับที่ทดสอบ: ข้อ exclusivity และ payment terms) ต้องเพิ่มจุดยืนใน `positions.yaml` |
+| Backend | cron ของ retention job | ตัว job มีแล้ว (`scripts/purge_reports.py`) แต่ยังไม่ได้ตั้ง cron/systemd timer ให้ — ตั้ง `REPORT_RETENTION_DAYS` เฉย ๆ ไม่ลบอะไรเอง |
 
 ---
 
@@ -191,7 +203,7 @@ embed: GeminiEmbedder -> gemini-embedding-001 (768 dim)
 `zai` ใช้ adapter ตัวเดียวกับ `openai` ชื่อคลาสที่ขึ้นจึงเป็น `OpenAICompatibleChatBackend` —
 ไม่ได้แปลว่าตั้งค่าผิด
 
-**4 ข้อที่ต้องรู้ก่อนสลับ:**
+**5 ข้อที่ต้องรู้ก่อนสลับ:**
 
 1. **สลับค่ายแล้วต้องแก้ `LLM_MODEL` ด้วย** — ตั้ง `LLM_PROVIDER=anthropic` ทั้งที่
    `LLM_MODEL=gemini-3.5-flash` จะฟ้อง `ProviderConfigError` ตั้งแต่เรียกครั้งแรก แทนที่จะไปเจอ
@@ -203,6 +215,11 @@ embed: GeminiEmbedder -> gemini-embedding-001 (768 dim)
    แล้วรัน `python -m scripts.ingest_playbook`
 4. **restart เสมอ** — `get_settings()` / `get_llm_client()` / `get_embedder()` เป็น `@lru_cache`
    ทั้งหมด และ `uvicorn --reload` จับแค่ไฟล์ `.py` ไม่จับ `.env`
+5. **ย้ายไปค่ายที่เป็น reasoning model ให้ดู `LLM_THINKING`** — ค่า default คือ `disabled` เพราะ
+   token ความคิดถูกหักจากงบ `max_tokens` ก้อนเดียวกับคำตอบ (GLM-4.6: 23.7 วิ/984 token ตอนเปิด
+   เทียบกับ 2.1 วิ/55 token ตอนปิด — และคิดเกินงบ = ได้ 200 ที่ `content` ว่าง) พารามิเตอร์นี้ส่งให้
+   host แบบ OpenAI-compatible เท่านั้น; ตั้ง `LLM_THINKING=auto` ถ้าอยากได้คุณภาพจากการคิดยาว
+   แล้วต้องขยับ `LLM_TIMEOUT_SECONDS` ตามด้วย
 
 ตารางเต็ม + ตัวแปรทุกตัว (`LLM_API_KEY`, `EMBEDDING_API_KEY`, `LLM_BASE_URL` ฯลฯ):
 [README ของ backend → สลับค่าย AI](apps/backend-fastapi/README.md#สลับค่าย-ai-ผ่าน-env)
@@ -277,7 +294,11 @@ embed: GeminiEmbedder -> gemini-embedding-001 (768 dim)
 **ข้อควรระวังที่ทำให้ frontend เพี้ยนได้ (เจอมาแล้วตอนต่อจริง):**
 
 - **Risk level มีแค่ `low` / `medium` / `high` / `unknown`** (ตัวเล็ก) — ไม่มี `CRITICAL`
-  และ `unknown` เกิดขึ้นจริงเมื่อ pipeline วิเคราะห์ clause นั้นไม่สำเร็จ ต้องมีทางแสดงผลเสมอ
+  และ `unknown` เกิดขึ้นจริง ต้องมีทางแสดงผลเสมอ **โดยมี 2 สาเหตุที่ต่างกันมาก** และแยกได้จาก
+  `rationale`: (1) call ล้มจนหมด retry → `"Automated review failed for this clause"` (2) playbook
+  ไม่มีจุดยืนที่เกี่ยวข้อง → LLM อธิบายเป็นภาษาคนว่าจุดยืนที่ได้มาไม่ตรงกับ clause นี้ ซึ่งเป็น
+  คำตอบที่ตั้งใจ ไม่ใช่ความผิดพลาด — หลังปิด thinking mode (2026-07-30) แบบ (2) กลายเป็นสาเหตุ
+  หลักของ `unknown` แทนแบบ (1)
 - **`citations` ว่างและ `suggested_fallback` เป็น `null` ได้** เมื่อ playbook ไม่มีจุดยืนที่ตรงกัน
 - **`heading` มักเป็นข้อความ clause ทั้งย่อหน้า** ไม่ใช่หัวข้อสั้น ๆ — ถ้าเอาไปใช้เป็น title ตรง ๆ
   จะได้ย่อหน้ายาวเป็นหัวข้อ (mapper จึงเลือกจาก `clause_type` ก่อน แล้วค่อย fallback ไปดึงหัวข้อ
@@ -287,18 +308,19 @@ embed: GeminiEmbedder -> gemini-embedding-001 (768 dim)
 - **`metadata` ของสัญญาเป็น "คำที่เอกสารเขียนไว้" ไม่ใช่ค่าที่ parse แล้ว** — `agreement_date`
   อาจเป็น `"1st day of August, 2013"` ตรง ๆ อย่าเอาไป `new Date()` หรือจัดรูปแบบใหม่ เพราะจะกลาย
   เป็นการตีความแทนการอ้างอิง และทุกฟิลด์ว่างได้หมด (เอกสารไม่ได้ระบุ = ไม่ต้องแสดง)
-- **การ review ใช้เวลาหลายนาที ไม่ใช่หลักวินาที** — วัดจริงได้ ~45 วิ/clause (83 วิ สำหรับ 3 clause,
-  **6 นาที 15 วิ สำหรับ 8 clause** วัดเมื่อ 2026-07-28) เพราะ pipeline เดินทีละ clause และยิง LLM
-  ~4 ครั้งต่อ clause — ต้อง loading state ที่ชัดเจนและอย่าเขียนว่า "about a minute"
-  บวกอีก 1 call ต่อ**ฉบับ**สำหรับ metadata (วัดกับ GLM-4.6 ได้ ~113 วิ ตอนส่งข้อความ 9k ตัวอักษร
-  จึงหั่นเหลือหัว 4k + ท้าย 2.5k ให้ห่างเพดาน `LLM_TIMEOUT_SECONDS` 120 วิ)
-- **Export ทำฝั่ง browser ล้วน** — ไม่มี endpoint และไม่ต้องมี: ตอนรายงานขึ้นจอแล้ว `ContractReport`
-  อยู่ใน memory ครบ เหลือแค่ serialize (`lib/export.ts`) สิ่งเดียวที่ไม่ติดไปคือ `span.start/end`
-  ซึ่ง mapper ตัดทิ้งตั้งแต่ก่อนถึง UI อยู่แล้ว
-- **โควตา Gemini หมดแล้วยังตอบ `200`** — pipeline แยก failure ของแต่ละ clause ออกจากกัน (ตั้งใจ)
+- **การ review ใช้เวลาหลายนาที ไม่ใช่หลักวินาที** — วัดจริงหลังปิด thinking mode (2026-07-30):
+  **~22 วิ/clause** (42 วิ สำหรับ 3 clause, **3 นาที สำหรับ 8 clause**) เร็วขึ้นราวเท่าตัวจากเดิม
+  ~47 วิ/clause แต่ยังเป็นหน่วยนาทีอยู่ เพราะ pipeline เดินทีละ clause และยิง LLM ~4 ครั้งต่อ clause
+  — ต้อง loading state ที่ชัดเจนและอย่าเขียนว่า "about a minute" บวกอีก 1 call ต่อ**ฉบับ**
+  สำหรับ metadata (ตอนเปิด thinking เคยวัดได้ ~113 วิ ตอนส่งข้อความ 9k ตัวอักษร จึงหั่นเหลือหัว 4k
+  + ท้าย 2.5k ให้ห่างเพดาน `LLM_TIMEOUT_SECONDS` 120 วิ — ขอบนั้นยังอยู่ ไม่ได้ถอยกลับ)
+- **ไม่มีทาง export รายงานออกจากระบบ** — ตัดออกตั้งใจ (2026-07-30) ทั้งฝั่ง browser และ endpoint
+  ถ้าจะเอากลับต้องเริ่มจาก `ContractReport` ที่อยู่ใน memory ตอนรายงานขึ้นจอ (`lib/contracts.ts`)
+- **โควตาหมด/คีย์ผิดแล้วยังตอบ `200`** — pipeline แยก failure ของแต่ละ clause ออกจากกัน (ตั้งใจ)
   ดังนั้นเมื่อโดน `429` ทั้งฉบับ จะได้ report ที่ทุก clause เป็น `unknown` พร้อม rationale ว่า
   "Automated review failed for this clause" ไม่ใช่ error ระดับ request — UI ต้องแสดง `unknown`
-  ให้เห็นชัด อย่าตีความว่า "ไม่มีความเสี่ยง"
+  ให้เห็นชัด อย่าตีความว่า "ไม่มีความเสี่ยง" (`429` ถูก retry ให้แล้วตามงบ `LLM_MAX_ATTEMPTS`
+  แต่โควตาที่หมดจริงคือหมดทั้งวัน retry ไม่ช่วย — จะช้าลงเล็กน้อยแล้วได้ผลเดิม)
 
 ---
 
@@ -348,48 +370,55 @@ fallback ทั้งฉบับ ตอนนี้ `_HEADING_RE` รับเ�
 (`CLAUSE_NUMBERING` ใน `lib/contracts.ts`) ไม่งั้นจะได้ `1. ข้อ 1. การรักษาความลับ`
 
 > ⚠️ **ยังไม่มีการจำกัดขนาดไฟล์** — route อ่านไฟล์ทั้งก้อนเข้า memory (`await file.read()`)
-> ไฟล์ใหญ่มากจะกินแรมและใช้เวลานาน (ราว 45 วิ/clause)
+> ไฟล์ใหญ่มากจะกินแรมและใช้เวลานาน (ราว 22 วิ/clause หลังปิด thinking mode)
 
 ---
 
-## ผล evaluation ครั้งแรก (2026-07-30) — และสิ่งที่มันบอก
+## ผล evaluation (2026-07-30) — ก่อน/หลังแก้ thinking mode
 
-รัน 1 สัญญา (`ticketscominc-sponsorship-agreement`, 8 clause) ด้วยคอนฟิกปัจจุบัน
-(`LLM_PROVIDER=zai`, `glm-4.6`, `LLM_TIMEOUT_SECONDS=120`) ใช้เวลา ~70 นาที:
+รัน 1 สัญญาเดิมทั้งสองครั้ง (`ticketscominc-sponsorship-agreement`, 8 clause) คอนฟิกเดียวกัน
+(`LLM_PROVIDER=zai`, `glm-4.6`, `LLM_TIMEOUT_SECONDS=120`) ต่างกันแค่ `LLM_THINKING`:
 
-| เมตริก | ผล | อ่านยังไง |
-|--------|-----|-----------|
-| `segmentation_f1` | **100.00%** | ตัด clause ตรงกับ gold ทุกข้อ — ขั้นนี้ไม่ใช้ LLM เลย จึงเป็นตัวเลขที่เชื่อได้ |
-| `classification_accuracy` | 50.00% | จาก clause ที่มี label แค่ 4 ข้อ (2 ถูก) — sample เล็กเกินกว่าจะสรุปอะไร |
-| `risk_accuracy` | 0.00% | **ไม่ได้แปลว่าโมเดลตอบผิด** — clause ที่ประเมินไม่สำเร็จถูกนับเป็น `unknown` ซึ่งไม่ตรงกับ gold เสมอ |
-| `citation_validity` | 100.00% | citation ที่ออกมาชี้ playbook position จริงทุกอัน |
+| เมตริก | ก่อน (thinking เปิด) | หลัง (`LLM_THINKING=disabled`) | อ่านยังไง |
+|--------|---------------------|-------------------------------|-----------|
+| `segmentation_f1` | 100.00% | **100.00%** | ตัด clause ตรงกับ gold ทุกข้อ — ขั้นนี้ไม่ใช้ LLM เลย จึงเป็นตัวเลขที่เชื่อได้ |
+| `classification_accuracy` | 50.00% | 50.00% | จาก clause ที่มี label แค่ 4 ข้อ (2 ถูก) — sample เล็กเกินกว่าจะสรุปอะไร |
+| `risk_accuracy` | 0.00% | 25.00% | เดิม 0% เพราะ clause ที่ล้มถูกนับเป็น `unknown` ซึ่งไม่ตรง gold เสมอ ตอนนี้ที่ยังไม่ตรงคือ clause ที่ playbook ไม่ครอบ |
+| `citation_validity` | 100.00% | **100.00%** | citation ที่ออกมาชี้ playbook position จริงทุกอัน |
+| clause ที่ล้มเพราะ provider | **6 / 8** | **0 / 8** | ← ตัวเลขที่สำคัญที่สุดในตารางนี้ |
+| เวลา review 8 clause | ~6 นาที 15 วิ | **3 นาที 0 วิ** | 22.5 วิ/clause เทียบกับ 47 วิ/clause (จับเวลา `Orchestrator.review()` ตรง ๆ กับสัญญาฉบับเดียวกัน — ตัว eval รอบแรกใช้ ~70 นาทีเพราะรอ timeout 120 วิ ซ้ำ ๆ) |
 
-**6 ใน 8 clause ล้มระหว่างทาง** และสาเหตุอยู่ที่ฝั่ง provider ทั้งหมด:
+**ต้นเหตุของ 6 ใน 8 คือเรื่องเดียว** ไม่ใช่สองเรื่องอย่างที่บันทึกไว้ตอนแรก (`APITimeoutError` 3 ครั้ง
++ structured output ตอบสตริงว่าง 3 ครั้ง): GLM-4.6 คิดก่อนตอบ และ **token ความคิดถูกหักจากงบ
+`max_tokens` ก้อนเดียวกับคำตอบ** — คิดยาวก็ช้าจนเกิน timeout, คิดยาวเกินงบก็ได้ 200 ที่ `content`
+ว่างเปล่า วัดกับ prompt ของ risk scorer เอง: **23.7 วิ / 984 output token** ตอนเปิดคิด เทียบกับ
+**2.1 วิ / 55 token** ตอนปิด
 
-| อาการ | จำนวน | คืออะไร |
-|-------|-------|---------|
-| `openai.APITimeoutError` | 3 | call เดียวใช้เกิน `LLM_TIMEOUT_SECONDS` (120 วิ) |
-| structured output ตอบสตริงว่าง | 3 | `_RiskAssessment` ×2, `_LLMVerdict` ×1 — พังตอน validate JSON (`ContractMetadata` ก็โดนอีก 1 ครั้ง) |
+สิ่งที่แก้ไป (รายละเอียดใน [README ของ backend](apps/backend-fastapi/README.md#thinking-mode-llm_thinking)):
 
-pipeline ทำงานตามที่ออกแบบไว้ทุกอย่าง: clause ที่ล้มกลายเป็น `unknown` + "manual review required"
-รายงานยังออกครบ และ UI ขึ้น banner เตือนว่า "ยังไม่ได้วิเคราะห์ ไม่ใช่ว่าไม่มีความเสี่ยง" —
-แต่ **ตัวเลข accuracy ชุดนี้วัด provider ไม่ได้วัด pipeline** จึงยังไม่ควรเอาไปอ้างอิง
+1. **`LLM_THINKING=disabled` เป็นค่า default** — ส่ง `thinking: {"type": "disabled"}` ให้ host แบบ
+   OpenAI-compatible; host ที่ไม่รู้จักพารามิเตอร์นี้ตอบ 400 → adapter เลิกส่งแล้วจำไว้
+2. **retry ชั้นบน SDK** — SDK ของทุกค่าย retry แค่ปัญหา transport แต่ 200 ที่ตอบว่างหรือ JSON พัง
+   มันถือว่า "สำเร็จ" `LLMClient._call` จึงยิงซ้ำเองเฉพาะ failure ที่ถามใหม่แล้วมีโอกาสได้
+3. **เจอบั๊กเก่าตอนทดสอบจริง** — Z.AI ไม่ได้ปฏิเสธ `json_schema` แต่ **รับแล้วตอบ markdown มา**
+   โค้ดเดิมอาศัย error ตรงนั้นเป็นสัญญาณ fallback ไป `json_object` ซึ่งทำให้ timeout ครั้งเดียวก็
+   ปิด strict validation ทิ้งทั้ง run เงื่อนไขตอนนี้แยก "host ตอบไม่ตรงรูป" ออกจาก "เน็ตมีปัญหา"
+   และจะจำว่า host ทำไม่ได้ ก็ต่อเมื่อ fallback ทำงานสำเร็จจริง
 
-**ก่อนจะรันเต็มชุด (1,300+ call) ควรแก้เรื่องนี้ก่อน** ไม่งั้นจะจ่ายค่า LLM ทั้งชุดเพื่อได้ตัวเลขที่
-แปลไม่ได้ ทางที่น่าลอง: เพิ่ม `LLM_TIMEOUT_SECONDS`, ตรวจว่า `max_tokens` ของ GLM ถูกโหมด
-thinking กินจนไม่เหลือให้ตอบหรือเปล่า, หรือสลับกลับไป `LLM_PROVIDER=gemini` ที่เคยรันผ่านมาก่อน
+**สิ่งที่ยังไม่ได้แปล:** `risk_accuracy` 25% มาจาก gold label 4 ข้อ — 2 ข้อที่ยังไม่ตรงคือ clause ที่
+LLM ตอบว่า "จุดยืนใน playbook ที่ retrieve มาไม่เกี่ยวกับ clause นี้" (exclusivity, payment terms)
+ซึ่งเป็นคำตอบที่ซื่อสัตย์กว่าการเดา คอขวดถัดไปจึงเป็น **ความครอบคลุมของ playbook** ไม่ใช่ provider
 
 ---
 
 ## Roadmap ที่เหลือ
 
-เส้นทางหลัก (login → upload → review → accept/override → export → เปิดรายงานเดิม) ใช้งานได้จริง
-ครบแล้ว และ roadmap เดิม 3 ใน 4 ข้อ (accept risk / เก็บรายงานถาวร / contract metadata) ปิดไปแล้ว
-เมื่อ 2026-07-30 เหลือ:
+เส้นทางหลัก (login → upload → review → accept/override → เปิดรายงานเดิม) ใช้งานได้จริงครบแล้ว
+และ roadmap เดิมปิดไปหมดแล้วเมื่อ 2026-07-30 — accept risk / เก็บรายงานถาวร / contract metadata /
+LLM call ที่ผ่านสม่ำเสมอ / data-retention job ส่วน export ถูกตัดออกจากขอบเขต เหลือ:
 
-1. **ทำให้ LLM call ผ่านอย่างสม่ำเสมอ** — ดูหัวข้อผล evaluation ด้านบน นี่คือคอขวดจริงของทั้งระบบ
-   ตอนนี้ ไม่ใช่แค่เรื่องของ eval
-2. **รัน evaluation เต็มชุด** — gold set 12 ฉบับ 327 clause พร้อมแล้ว รันบางส่วนก่อนได้:
+1. **รัน evaluation เต็มชุด** — gold set 12 ฉบับ 327 clause พร้อมแล้ว และตอนนี้คุ้มที่จะรันแล้ว
+   เพราะตัวเลขไม่ได้วัด provider อีก (~1,300 call, ราว 22 วิ/clause):
 
    ```bash
    cd apps/backend-fastapi
@@ -398,7 +427,7 @@ thinking กินจนไม่เหลือให้ตอบหรือ�
    .venv/bin/python -m scripts.run_eval                # เต็มชุด
    ```
 
-3. **Export ฝั่ง server** — ตอนนี้ทำในเบราว์เซอร์ทั้งหมด (JSON/CSV/Print) จะต้องมี endpoint
-   ก็ต่อเมื่ออยาก export โดยไม่เปิดหน้าเว็บ เช่น ส่งเมลหรือทำเป็นแบตช์
-4. **Data-retention policy** — พอรายงานเก็บถาวรใน Postgres แล้วก็ไม่มีอะไรลบตัวเองอีก
-   ถ้าต้องมีนโยบายลบตามอายุ ต้องเขียน job เอง
+2. **เพิ่มความครอบคลุมของ playbook** — คอขวดถัดไปของ `risk_accuracy`: clause ที่ playbook ไม่มี
+   จุดยืนตรง ๆ จะได้ `unknown` พร้อมเหตุผลว่าจุดยืนที่ retrieve มาไม่เกี่ยวข้อง (เจอ 2 ใน 8 ข้อ)
+3. **ตั้ง cron ให้ retention job** — สคริปต์มีแล้ว (`python -m scripts.purge_reports`) แต่ต้องมี
+   cron/systemd timer เรียกจริง ไม่งั้นตั้ง `REPORT_RETENTION_DAYS` ไว้ก็ไม่มีอะไรถูกลบ

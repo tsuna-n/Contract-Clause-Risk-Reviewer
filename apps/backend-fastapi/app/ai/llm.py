@@ -9,17 +9,22 @@ setting (see :mod:`app.ai.providers`).
 
 from __future__ import annotations
 
+import time
+from collections.abc import Callable
 from pathlib import Path
 
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 from pydantic import BaseModel
 
-from app.ai.providers import ChatBackend, Usage, build_chat_backend
+from app.ai.providers import ChatBackend, Usage, build_chat_backend, is_transient
 from app.config import get_settings
+from app.logger import get_logger
 
 # ``Usage`` lives with the backends that populate it, but is re-exported here
 # because this is where the pipeline reads it from.
 __all__ = ["LLMClient", "Usage", "render_prompt"]
+
+logger = get_logger(__name__)
 
 # --- prompt templates --------------------------------------------------------
 
@@ -42,10 +47,11 @@ def render_prompt(template_name: str, **context: object) -> str:
 class LLMClient:
     """Provider-agnostic wrapper over whichever vendor ``.env`` selects.
 
-    Centralizes model selection, timeouts, and usage accounting so the agents
-    don't each re-implement it. The vendor SDKs retry transient errors
-    themselves; this wrapper adds cost tracking and a single place to set
-    defaults.
+    Centralizes model selection, timeouts, retries, and usage accounting so the
+    agents don't each re-implement it. The vendor SDKs retry their own transport
+    errors; the retry here is a layer above that, because the failures that
+    actually cost this pipeline clauses are ones the SDK considers a successful
+    request — a 200 whose ``content`` is empty most of all.
     """
 
     def __init__(
@@ -54,9 +60,19 @@ class LLMClient:
         timeout_seconds: int | None = None,
         backend: ChatBackend | None = None,
     ) -> None:
+        settings = get_settings()
         self._backend = backend or build_chat_backend(
-            get_settings(), model=model, timeout_seconds=timeout_seconds
+            settings, model=model, timeout_seconds=timeout_seconds
         )
+        self._max_attempts = max(1, settings.llm_max_attempts)
+        self._backoff_seconds = max(0.0, settings.llm_retry_backoff_seconds)
+        # Retries are bounded by wall clock as well as by count, because the two
+        # transient failures here cost wildly different amounts of time: an
+        # empty answer comes back in seconds and is worth asking again, while a
+        # timeout has already spent the ceiling and asking twice more would put
+        # a single clause past six minutes. One call's timeout is the whole
+        # extra budget, however it gets spent.
+        self._retry_budget_seconds = timeout_seconds or settings.llm_timeout_seconds
         self.usage = Usage()
 
     @property
@@ -73,11 +89,12 @@ class LLMClient:
         effort: str = "high",
     ) -> str:
         """Run a single completion and return the text."""
-        text, usage = self._backend.complete(
-            system=system, prompt=prompt, max_tokens=max_tokens, effort=effort
+        return self._call(
+            lambda: self._backend.complete(
+                system=system, prompt=prompt, max_tokens=max_tokens, effort=effort
+            ),
+            what="completion",
         )
-        self.usage.add(usage)
-        return text
 
     def complete_structured[T: BaseModel](
         self,
@@ -93,11 +110,51 @@ class LLMClient:
         re-validates through pydantic, so a clause the model answers badly
         fails here rather than reaching the guardrails half-formed.
         """
-        parsed, usage = self._backend.complete_structured(
-            system=system,
-            prompt=prompt,
-            response_model=response_model,
-            max_tokens=max_tokens,
+        return self._call(
+            lambda: self._backend.complete_structured(
+                system=system,
+                prompt=prompt,
+                response_model=response_model,
+                max_tokens=max_tokens,
+            ),
+            what=response_model.__name__,
         )
-        self.usage.add(usage)
-        return parsed
+
+    def _call[T](self, attempt: Callable[[], tuple[T, Usage]], *, what: str) -> T:
+        """Run ``attempt``, asking again while the failure looks survivable.
+
+        Only the failures in :func:`~app.ai.providers.is_transient` are retried:
+        a 400 or a rejected key answers the same way however often it is asked,
+        and the orchestrator's per-clause isolation means the honest thing to do
+        with the rest is degrade this one clause rather than stall the report.
+
+        ``usage`` is accumulated per answer, not per attempt — a failed attempt
+        raises before its token count is in hand, so a retried call is billed
+        by the vendor and undercounted here. The gap is visible in the retry
+        warnings below.
+        """
+        deadline = time.monotonic() + self._retry_budget_seconds
+        number = 1
+        while True:
+            try:
+                result, usage = attempt()
+            except Exception as exc:
+                out_of_attempts = number >= self._max_attempts
+                out_of_time = time.monotonic() >= deadline
+                if out_of_attempts or out_of_time or not is_transient(exc):
+                    raise
+                delay = self._backoff_seconds * 2 ** (number - 1)
+                logger.warning(
+                    "%s attempt %d/%d failed (%s: %s); retrying in %.1fs",
+                    what,
+                    number,
+                    self._max_attempts,
+                    type(exc).__name__,
+                    exc,
+                    delay,
+                )
+                time.sleep(delay)
+                number += 1
+            else:
+                self.usage.add(usage)
+                return result

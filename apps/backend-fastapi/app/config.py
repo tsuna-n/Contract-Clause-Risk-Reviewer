@@ -61,6 +61,26 @@ class Settings(BaseSettings):
     # isolates a failed clause, so a timeout degrades that clause to
     # "needs manual review" instead of sinking the whole report.
     llm_timeout_seconds: int = 120
+    # Whether a reasoning model may think before answering, on
+    # OpenAI-compatible hosts that expose the switch (Z.AI's GLM models do).
+    #
+    # Defaults to off because reasoning tokens come out of the same
+    # ``max_tokens`` budget as the answer: a model that thinks past the budget
+    # returns a 200 with empty ``content``, which is exactly how three clauses
+    # were lost in the 2026-07-30 eval run. Measured on GLM-4.6 with one of the
+    # scoring prompts, the same call took 23.7s / 984 output tokens thinking and
+    # 2.1s / 55 without. ``auto`` restores the model's own default for a host
+    # where the extra reasoning is worth the latency and the failure mode.
+    llm_thinking: Literal["auto", "disabled"] = "disabled"
+    # How many times one logical call may be attempted before the clause is
+    # given up on. Retries cover exactly the failures a second attempt can
+    # survive - a timeout, a 429/5xx, an empty answer (see
+    # ``providers.is_transient``) - never a 400 or a bad key.
+    llm_max_attempts: int = 3
+    # First backoff, doubling per attempt. Deliberately short: the retry budget
+    # is wall clock the reviewer is already waiting through, not a background
+    # queue.
+    llm_retry_backoff_seconds: float = 1.0
 
     # --- rag / storage ---
     redis_url: str = "redis://localhost:6379/0"
@@ -101,6 +121,16 @@ class Settings(BaseSettings):
     # hour was short enough to 404 on people mid-session. Kept below the token
     # lifetime so the session always outlives the data it points at.
     retention_ttl_seconds: int = 60 * 60 * 8
+    # How long a stored report may be kept (``REPORT_STORAGE=postgres``).
+    # ``None`` — the default — means "until its owner deletes it", which is the
+    # behaviour that makes history a record of everything a reviewer has run.
+    #
+    # This is the policy, not the mechanism: nothing in the request path reads
+    # it, because deleting other people's data is not something an upload should
+    # do on the way past. ``python -m scripts.purge_reports`` enforces it, and
+    # until that is scheduled (cron, a systemd timer) setting this deletes
+    # nothing.
+    report_retention_days: int | None = None
 
 
 @lru_cache

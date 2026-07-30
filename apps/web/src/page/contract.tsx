@@ -4,8 +4,6 @@ import {
   OriginalContract,
   AIRiskAnalysis,
   ContractMetadataPanel,
-  ExportMenu,
-  PrintableReport,
   IncompleteReviewNotice,
 } from "../component/contract";
 import type { ContractReport, RiskLevel } from "../component/contract/types";
@@ -173,11 +171,6 @@ export default function ContractPage() {
                 {report.overallRisk} RISK
               </p>
             </div>
-
-            <ExportMenu
-              report={report}
-              className="flex items-center gap-2 px-4 py-2 rounded-xl border border-slate-600 text-sm font-semibold text-slate-300 hover:bg-slate-700/50 hover:text-white hover:border-slate-500 transition-colors"
-            />
           </div>
         )}
       </header>
@@ -244,9 +237,6 @@ export default function ContractPage() {
           onAccept={handleAccept}
         />
       </main>
-
-      {/* Hidden on screen; the print stylesheet swaps it in for the app. */}
-      {report && <PrintableReport report={report} />}
     </div>
   );
 }

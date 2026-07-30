@@ -48,7 +48,7 @@ Backend สำหรับระบบ **วิเคราะห์ความ
 | `app/main.py` | สร้าง FastAPI app, CORS, middleware, mount router | `server.js` / `app.js` |
 | `app/config.py` | อ่าน `.env` เป็น `Settings` ชุดเดียวของทั้งระบบ | `config/index.js` |
 | `app/database.py` | engine, `SessionLocal`, `Base`, `get_db` | `config/db.js` |
-| `app/models.py` | ตาราง SQLAlchemy ทั้งหมด (`users`, `audit_overrides`, `playbook_embeddings`) | `models/` |
+| `app/models.py` | ตาราง SQLAlchemy ทั้งหมด (`users`, `audit_overrides`, `playbook_embeddings`, `contract_reports`) | `models/` |
 | `app/schemas.py` | Pydantic DTO + enum (`ClauseType`, `RiskLevel`) ที่ใช้ร่วมกันทั้งระบบ | `validators/` (DTO) |
 | `app/errors.py` | `DomainError` + handler แปลงเป็น JSON response | `middlewares/errorHandler.js` |
 | `app/security.py` | เซ็น/ตรวจ JWT + Google OAuth client (Authlib) | `utils/jwt.js` + passport config |
@@ -57,7 +57,7 @@ Backend สำหรับระบบ **วิเคราะห์ความ
 | `app/dependencies.py` | ประกอบ object graph ทั้งระบบ (DI) + `get_current_user` | `middlewares/auth.js` + DI container |
 | `app/routes/` | 1 ไฟล์ = 1 กลุ่ม endpoint, `__init__.py` รวมเป็น `api_router` | `routes/*.js` + `routes/index.js` |
 | `app/services/` | business logic — review / override / evaluation | `services/*.js` |
-| `app/repositories/` | ชั้นเข้าถึงข้อมูล — contract + report (Redis), audit (Postgres) | `repositories/*.js` |
+| `app/repositories/` | ชั้นเข้าถึงข้อมูล — contract (Redis), report (Postgres, สลับเป็น Redis ได้), audit (Postgres) | `repositories/*.js` |
 | `app/ai/` | เครื่องยนต์ AI ทั้งหมด — LLM, RAG, agents, guardrails, pipeline | (domain เฉพาะของโปรเจกต์นี้) |
 
 > กฎง่าย ๆ: `routes/` ห้ามมี business logic (แค่รับ request → เรียก service → คืน response),
@@ -107,14 +107,15 @@ apps/backend-fastapi/
 ├── scripts/
 │   ├── ingest_playbook.py      # positions.yaml → embedding → pgvector
 │   ├── build_cuad_fixtures.py  # CUAD v1 → data/contracts + data/gold + data/samples
-│   └── run_eval.py             # รัน evaluation harness ผ่าน CLI
+│   ├── run_eval.py             # รัน evaluation harness ผ่าน CLI
+│   └── purge_reports.py        # ลบรายงานเก่ากว่า REPORT_RETENTION_DAYS (ต้องตั้ง cron เอง)
 ├── data/
 │   ├── contracts/              # สัญญาจริงจาก CUAD 12 ฉบับ (.txt) — input ของ eval
 │   ├── samples/                # 3 ฉบับในนั้นแปลงเป็น .docx ไว้ลองอัปโหลดที่ UI
 │   ├── gold/annotations.jsonl  # ground truth สำหรับวัดผล (span + clause_type + risk)
 │   └── playbook/positions.yaml # จุดยืน/ภาษามาตรฐานของบริษัท (36 ตำแหน่ง ครบ 12 clause type)
 └── tests/
-    ├── unit/                   # guardrails, parsers, segmenter, metrics, timeouts
+    ├── unit/                   # guardrails, parsers, segmenter, metrics, timeouts, providers/retry, report repo
     ├── integration/            # health, auth, contracts API
     └── eval/                   # regression gate (skip ไว้ เพราะต้องเรียก LLM จริง)
 ```
@@ -156,11 +157,17 @@ judge บอกว่า ungrounded, และ isolate failure ต่อ clause 
   termination) → ได้ report ที่ classify/match/score ถูกต้อง, citation อ้างอิง playbook position
   จริง, `verified=True` (ผ่าน grounding judge)
 - **RAG แบบ hybrid** — dense (pgvector cosine) + BM25 rerank, ทดสอบว่า retrieve ตรง clause type จริง
-- **LLM client (Gemini)** — retry ผ่าน SDK, cost tracking (`Usage`), structured output ผ่าน
-  `response_schema` + fallback validate ด้วย pydantic, **timeout ต่อ call** (`LLM_TIMEOUT_SECONDS`,
-  ค่า default 120s — ส่งเข้า SDK เป็น ms ผ่าน `HttpOptions.timeout`) กัน call ที่ค้างยึด worker ไว้
-  ตลอดกาล; call ที่ timeout จะทำให้ clause นั้นตกเป็น `unknown` + "manual review required"
+- **LLM client** — cost tracking (`Usage`), structured output ตามวิธีของแต่ละค่าย + validate ด้วย
+  pydantic, **timeout ต่อ call** (`LLM_TIMEOUT_SECONDS`, ค่า default 120s — ส่งเข้า SDK เป็น ms ผ่าน
+  `HttpOptions.timeout` ของ Gemini, เป็นวินาทีของ Anthropic/OpenAI) กัน call ที่ค้างยึด worker ไว้
+  ตลอดกาล; call ที่ล้มจนหมด retry จะทำให้ clause นั้นตกเป็น `unknown` + "manual review required"
   ไม่ทำให้ทั้ง report ล่ม
+- **Retry ชั้นบน SDK** — `LLMClient._call` ยิงซ้ำเฉพาะ failure ที่ "ถามใหม่แล้วมีโอกาสได้"
+  (`providers.is_transient`): timeout / 429 / 5xx **และคำตอบที่พังเอง** — 200 ที่ `content` ว่าง
+  (`EmptyCompletionError`) หรือ JSON ที่ validate ไม่ผ่าน ซึ่ง SDK ของทุกค่ายถือว่า request สำเร็จ
+  แล้วจึงไม่ retry ให้; 400/401/404 ไม่ retry เพราะตอบเหมือนเดิมทุกครั้ง งบ retry จำกัดสองชั้น —
+  `LLM_MAX_ATTEMPTS` (default 3) และเวลาจริงอีก 1 timeout (`LLM_TIMEOUT_SECONDS`) เพื่อไม่ให้
+  clause เดียวกิน 3×120 วิ
 - **Guardrails wiring** — judge เช็ค citation validity + excerpt grounding + no-invented-fallback
   แบบ deterministic ก่อน แล้วค่อยถาม LLM เพิ่มสำหรับเช็ค rationale ที่ overreach
 - **Override + audit log** — override เปลี่ยน risk level, re-aggregate summary, เขียน audit log ลง
@@ -184,6 +191,14 @@ judge บอกว่า ungrounded, และ isolate failure ต่อ clause 
   แล้วเก็บถาวรใน Postgres (`RETENTION_TTL_SECONDS` มีผลเฉพาะตอน `REPORT_STORAGE=redis`
   ซึ่งถ้าใช้ต้องตั้งไว้ **ต่ำกว่า** `ACCESS_TOKEN_EXPIRE_MINUTES` เสมอ เพื่อไม่ให้ report หมดอายุ
   ช้ากว่า token ที่ใช้ดึงมัน)
+- **Data-retention job** — `python -m scripts.purge_reports` ลบรายงานที่เก่ากว่า
+  `REPORT_RETENTION_DAYS` (default `None` = เก็บจนเจ้าของสั่งลบ) ผ่าน
+  `PostgresReportRepository.purge_older_than()` — `--dry-run` นับก่อนได้ด้วย query เดียวกับที่ลบจริง,
+  `--older-than-days N` สั่งทับค่าใน `.env` ได้ **ไม่มีอะไรในแอปเรียกมันเอง**: การลบข้อมูลของคนอื่น
+  ไม่ควรเป็นผลพลอยได้ของการอัปโหลดครั้งถัดไป จึงต้องตั้ง cron/systemd timer เอง (ตัวอย่างอยู่ใน
+  docstring ของสคริปต์) และ `purge_older_than` เจตนาไม่อยู่ใน `ReportRepository` protocol เพื่อให้
+  โค้ดที่ทำงานตอน request เอื้อมข้าม session ไม่ได้ — ตอน `REPORT_STORAGE=redis` สคริปต์จบทันที
+  เพราะคีย์มี TTL ของตัวเองอยู่แล้ว
 - **Evaluation harness** — `run_eval` รันทั้ง pipeline จริงต่อ gold contract, คำนวณ
   segmentation F1 / classification accuracy / risk accuracy / citation validity;
   fixture ทั้งหมดสร้างด้วย `scripts.build_cuad_fixtures` จึงตรงกับ offset ของ
@@ -229,19 +244,19 @@ judge บอกว่า ungrounded, และ isolate failure ต่อ clause 
   audit DB (SQLite): happy path คืน report ถูกต้อง, ต้อง auth (`401` ถ้าไม่ส่ง token), unsupported
   file type → `422`, override เปลี่ยน risk + re-aggregate `overall_risk` + เขียน audit record
   ถูกต้อง (`old_risk`/`new_risk`/`actor`), report/clause ไม่มีจริง → `404`
-- **Tests** — 191 unit/integration tests ผ่านหมด (`pytest tests/`; อีก 1 test เป็น eval regression
+- **Tests** — 217 unit/integration tests ผ่านหมด (`pytest tests/`; อีก 1 test เป็น eval regression
   gate ที่ skip ไว้เพราะต้องเรียก LLM จริง)
 
 ---
 
 ## ❌ สิ่งที่ยังไม่ได้ทำ
 
-- **Export ฝั่ง server**: ยังไม่มี endpoint export — frontend ทำ JSON/CSV/Print เองจากรายงานที่
-  โหลดมาแล้ว จะต้องมี endpoint ก็ต่อเมื่ออยาก export โดยไม่เปิดหน้าเว็บ (ส่งเมล/แบตช์)
-- **Data-retention policy**: รายงานอยู่ถาวรใน Postgres แล้ว ไม่มีอะไรลบตัวเอง — ถ้าต้องลบตามอายุ
-  ต้องเขียน job เอง หรือกลับไปใช้ `REPORT_STORAGE=redis`
+- **Export ทุกรูปแบบ**: ตัดออกจากขอบเขตแล้ว (2026-07-30) — ทั้ง endpoint ฝั่ง server และปุ่ม
+  JSON/CSV/Print ฝั่ง frontend ถูกลบทิ้ง ไม่มีทางเอารายงานออกจากระบบนอกจากอ่านบนหน้าเว็บ
 - **Eval regression gate** (`tests/eval/test_regression.py`) — ยัง skip ไว้เพราะต้องเรียก LLM จริง
   (มี cost + ต้องมี quota); รันเองได้ผ่าน `python -m scripts.run_eval` (ดู `--limit` / `--contract`)
+- **รัน evaluation เต็มชุด** — gold set 12 ฉบับ / 327 clause พร้อมแล้ว แต่ยังรันจริงแค่ 1 ฉบับ
+  (ดูหัวข้อผล evaluation ใน [README หลัก](../../README.md)) เต็มชุดคือ ~1,300 LLM call
 
 ---
 
@@ -269,7 +284,14 @@ JWT_SECRET_KEY=<random-secret>
 
 # Storage + feature flags (ค่าที่เห็นคือ default — ไม่ใส่ก็ได้)
 REPORT_STORAGE=postgres            # postgres = เก็บถาวร | redis = หมดอายุตาม TTL
+REPORT_RETENTION_DAYS=             # ว่าง = เก็บจนเจ้าของสั่งลบ; ตั้งแล้วต้องมี cron เรียก purge_reports
 ENABLE_METADATA_EXTRACTION=true    # false = ประหยัด 1 LLM call/ฉบับ แลกกับไม่มีแผงคู่สัญญา/วันที่
+
+# ความทนทานของ LLM call (ค่าที่เห็นคือ default)
+LLM_THINKING=disabled              # disabled | auto — ดูหัวข้อ "thinking mode" ด้านล่าง
+LLM_MAX_ATTEMPTS=3                 # จำนวนครั้งต่อ 1 logical call (นับครั้งแรกด้วย)
+LLM_RETRY_BACKOFF_SECONDS=1.0      # หน่วงครั้งแรก แล้วคูณสองทุกครั้ง
+LLM_TIMEOUT_SECONDS=120            # เพดานต่อ call — เป็นงบเวลาของ retry ทั้งชุดด้วย
 ```
 > ⚠️ `.env` อยู่ใน `.gitignore` และเคยถูก purge ออกจาก git history — **ห้าม commit เข้า git**
 >
@@ -328,6 +350,30 @@ EMBEDDING_BASE_URL=...
 fallback เป็น `json_object` พร้อมแนบ schema ไปใน system prompt ถ้า host นั้นไม่รองรับ (จำผลไว้
 ต่อ instance ไม่ยิงซ้ำทุก clause) — ทุกทางจบด้วย pydantic validate เหมือนกัน guardrail จึงไม่ต้องแยกเคส
 
+> **Z.AI ไม่ได้ "ปฏิเสธ" `json_schema` — มันรับแล้วตอบ markdown มาเฉย ๆ** (ทดสอบกับ
+> `api.z.ai` จริงเมื่อ 2026-07-30) เงื่อนไข fallback จึงเช็ค 2 อย่าง: host ปฏิเสธพารามิเตอร์ (400)
+> **หรือ** ตอบมาแล้ว validate ไม่ผ่าน (`is_malformed_answer`) — ส่วน timeout/5xx ไม่นับ เพราะไม่ได้
+> บอกอะไรเกี่ยวกับความสามารถของ host และ flag นี้จำไว้ตลอด process (timeout ครั้งเดียวไม่ควรทำให้
+> ทั้ง run เสีย strict validation) และจะตั้งเป็น "host นี้ทำไม่ได้" ก็ต่อเมื่อ fallback ทำงานสำเร็จจริง
+
+### thinking mode: `LLM_THINKING`
+
+reasoning model กิน token ความคิดจาก **งบ `max_tokens` ก้อนเดียวกับคำตอบ** — คิดยาวเกินงบก็ได้
+200 ที่ `content` ว่างเปล่ากลับมา ซึ่งคือสาเหตุที่ eval รอบ 2026-07-30 เสีย 3 clause
+(`_RiskAssessment` ×2, `_LLMVerdict` ×1) และเป็นเหตุผลที่ค่า default คือ `disabled`
+
+วัดกับ GLM-4.6 ด้วย prompt ของ risk scorer เอง (call เดียว, prompt เดียวกัน):
+
+| `LLM_THINKING` | เวลา | output token | reasoning |
+|----------------|------|--------------|-----------|
+| `auto` (คิดก่อนตอบ) | 23.7 วิ | 984 | 4,556 ตัวอักษร |
+| `disabled` | **2.1 วิ** | 55 | — |
+
+พารามิเตอร์นี้เป็นของ Z.AI (`thinking: {"type": "disabled"}` ส่งผ่าน `extra_body`) ไม่ใช่ของ OpenAI
+host อื่นที่ไม่รู้จักจะตอบ 400 → adapter จะเลิกส่งแล้วจำไว้ (probe-and-remember แบบเดียวกับ
+`json_schema`) ส่วน Gemini/Anthropic ไม่ต้องสั่ง: Gemini ขอ thinking level เป็นราย call อยู่แล้ว และ
+Anthropic ไม่คิดยาวถ้าไม่ส่ง `effort`
+
 ### 2) ยก infrastructure (Postgres + Redis)
 ```bash
 docker compose -f ../../infrastructure/docker-compose.yml up -d postgres redis
@@ -375,6 +421,19 @@ python -m scripts.run_eval --contract ticketscominc-sponsorship-agreement   # �
 > (หลักชั่วโมง) ลองน้อย ๆ ก่อนด้วย `--contract` ซึ่งเลือกฉบับสั้นได้ ต่างจาก `--limit` ที่ตัด
 > จากหัวไฟล์ (ฉบับแรกในไฟล์คือฉบับที่มี 47 clause) — `POST /evaluate` ก็ส่ง `limit` ได้เหมือนกัน
 > (จำนวน**สัญญา** ไม่ใช่ clause)
+
+### ลบรายงานเก่าตามนโยบาย retention
+```bash
+python -m scripts.purge_reports --dry-run              # นับก่อน ไม่ลบ
+python -m scripts.purge_reports --older-than-days 90   # ลบที่เก่ากว่า 90 วัน
+python -m scripts.purge_reports                        # ใช้ REPORT_RETENTION_DAYS จาก .env
+```
+
+> ⚠️ ลบแล้วไม่มีทางกู้ และตัวสัญญาหายไปด้วย (`payload` เก็บ clause text ทั้งฉบับ) — สคริปต์จึงบังคับ
+> ให้ระบุกรอบเวลาแบบชัดเจน ไม่มี default ซ่อนไว้ ถ้าไม่ตั้ง `REPORT_RETENTION_DAYS` และไม่ส่ง flag
+> มันจะบอกว่า "ไม่มีนโยบาย retention" แล้วจบด้วย exit 0 โดยไม่ลบอะไร
+>
+> **ไม่มีอะไรเรียกมันเอง** — ต้องตั้ง cron/systemd timer ถ้าอยากให้นโยบายมีผลจริง
 
 ### สร้าง data fixtures ใหม่จาก CUAD
 ```bash
@@ -437,15 +496,13 @@ python -m scripts.build_cuad_fixtures --cuad ~/project/cuad   # ต้องม�
 **Backend ใช้งานได้ครบทุกเส้นทางหลักแล้ว** (รวม Google OAuth ที่ login จริงผ่านแล้ว, ประวัติรายงาน
 ถาวร, accept/override + audit และ metadata ของสัญญา) เหลือ:
 
-0. **LLM call ล้มบ่อยกับคอนฟิกปัจจุบัน** — eval 1 สัญญา (2026-07-30, `zai`/`glm-4.6`, timeout
-   120 วิ) มี 6 ใน 8 clause ล้ม: timeout 3 ครั้ง + structured output ตอบสตริงว่าง 3 ครั้ง
-   (`_RiskAssessment` ×2, `_LLMVerdict` ×1) pipeline degrade ถูกต้องทุกครั้ง (clause เป็น
-   `unknown`) แต่แปลว่ารายงานจริงก็จะเต็มไปด้วย `unknown` เหมือนกัน — ดูหัวข้อผล evaluation
-   ใน [README หลัก](../../README.md)
 1. **รัน evaluation เต็มชุด** — gold set พร้อมแล้ว แต่ ~1,300 LLM call ยังไม่ได้รันครบ
-   (และยังไม่ควรรันจนกว่าข้อ 0 จะแก้ ไม่งั้นได้ตัวเลขที่แปลไม่ได้)
-2. **Export ฝั่ง server (PDF/CSV)** — ตอนนี้ frontend ทำเองในเบราว์เซอร์
-3. **Data-retention job** — รายงานไม่หมดอายุอีกแล้ว ถ้าต้องมีนโยบายลบต้องเขียนเอง
+   (รันจริงแล้ว 1 ฉบับหลังแก้ thinking mode: 8/8 clause ได้คำตอบ ไม่มี clause ไหนล้มเพราะ provider
+   อีก — ดูหัวข้อผล evaluation ใน [README หลัก](../../README.md))
+2. **playbook ยังครอบไม่พอ** — คอขวดที่เหลือของ `risk_accuracy` ไม่ใช่ provider แล้ว: clause ที่
+   retrieve มาแล้ว LLM บอกว่า "จุดยืนที่ได้มาไม่เกี่ยวกับ clause นี้" ยังตอบ `unknown` อยู่ (2 ใน 8
+   ของฉบับที่ทดสอบ) ซึ่งเป็นคำตอบที่ตรงไปตรงมา แต่ก็แปลว่าต้องเพิ่มจุดยืนใน
+   `data/playbook/positions.yaml` ให้ครอบ clause ประเภทนั้น
 
 ---
 
@@ -841,10 +898,29 @@ class Settings(BaseSettings):
     llm_timeout_seconds: int = 120
     # ↑ หน่วยเป็น "วินาที" ตรงนี้ เพราะคนตั้งค่าอ่านง่ายกว่า
     #   แต่ SDK ของ Gemini รับเป็น "มิลลิวินาที" → ต้อง *1000 ตอนส่งเข้า (ดูขั้น [8])
+    #   ⚠️ ค่านี้ทำสองหน้าที่: เพดานต่อ 1 call **และ** งบเวลาของ retry ทั้งชุด (ดู llm_max_attempts)
+
+    llm_thinking: Literal["auto", "disabled"] = "disabled"
+    # ↑ 🔑 reasoning model คิดก่อนตอบ และ token ความคิดถูกหักจาก max_tokens "ก้อนเดียวกับคำตอบ"
+    #   คิดยาวเกินงบ = ได้ HTTP 200 ที่ content ว่างเปล่า — ไม่ใช่ error ที่ SDK จับให้
+    #   วัดกับ GLM-4.6 ด้วย prompt ของ risk scorer เอง: 23.7 วิ / 984 output token ตอนเปิดคิด
+    #   เทียบกับ 2.1 วิ / 55 token ตอนปิด → default จึงเป็น disabled
+    #   ❓ ทำไมเป็น Literal ไม่ใช่ bool? เพราะ "auto" ไม่ได้แปลว่า "เปิด" แต่แปลว่า
+    #     "ไม่สั่งอะไร ปล่อยตาม default ของโมเดล" ซึ่งเป็นคนละความหมายกับการสั่งให้คิด
+
+    llm_max_attempts: int = 3
+    # ↑ นับครั้งแรกด้วย (3 = ยิงแรก + retry 2) retry เฉพาะ failure ที่ providers.is_transient()
+    #   บอกว่า "ถามใหม่แล้วมีโอกาสได้" — 400/401 ไม่ retry เพราะตอบเหมือนเดิมทุกครั้ง
 
     retention_ttl_seconds: int = 60 * 60 * 8
     # ↑ เขียน 60*60*8 แทน 28800 เพราะอ่านแล้วรู้ทันทีว่า "8 ชั่วโมง"
     #   Python คำนวณให้ตอน import ครั้งเดียว ไม่มีต้นทุน runtime
+    #   ⚠️ มีผลเฉพาะ REPORT_STORAGE=redis — ฝั่ง Postgres ไม่มีอะไรหมดอายุเอง
+
+    report_retention_days: int | None = None
+    # ↑ None = เก็บจนเจ้าของสั่งลบ (ค่า default) ตั้งเป็นตัวเลข = "นโยบาย" ไม่ใช่ "กลไก":
+    #   ไม่มีโค้ดใน request path อ่านค่านี้เลย เพราะการลบข้อมูลของคนอื่นไม่ควรเป็นผลพลอยได้
+    #   ของการอัปโหลดครั้งถัดไป — ต้องมี cron เรียก scripts/purge_reports.py เอง
 
 
 @lru_cache
@@ -1378,6 +1454,13 @@ class Segmenter(Agent[ParsedDocument, list[Clause]]):
 > รองรับหลายค่าย — `LLMClient` เหลือแค่ facade ที่เลือก backend ตาม `LLM_PROVIDER` แล้วสะสม `Usage`
 > **หลักการทุกข้อที่อธิบายไว้ยังใช้ได้เหมือนเดิม** (lazy client, timeout เป็น ms เฉพาะฝั่ง Gemini,
 > ทางสำรองตอน `parsed` เป็น `None`) แค่ย้ายไปอยู่ในไฟล์ adapter ของแต่ละค่าย
+>
+> 📌 **อัปเดต 2026-07-30:** `complete`/`complete_structured` ไม่เรียก backend ตรง ๆ อีกแล้ว —
+> ทั้งคู่ผ่าน `LLMClient._call()` ที่ยิงซ้ำให้เมื่อ failure เป็นชนิดที่ถามใหม่แล้วมีโอกาสได้
+> (`providers.is_transient`) และสะสม `Usage` เฉพาะครั้งที่ได้คำตอบ ส่วน "ทางสำรองตอน `parsed`
+> เป็น `None`" ที่อธิบายไว้ด้านล่างยังอยู่ แต่ถ้าคำตอบว่างเปล่าจริง ๆ ตอนนี้จะโยน
+> `EmptyCompletionError` ที่บอกว่า **หมดงบ token ไปกับการคิด** แทนที่จะให้ pydantic ฟ้อง
+> `EOF while parsing a value` ซึ่งชี้ไปที่ schema ทั้งที่ต้นเหตุอยู่ที่ `LLM_THINKING`
 
 ```python
 # ── ส่วนที่ 1: โหลด prompt จากไฟล์ ────────────────────────────────────────────
@@ -2197,14 +2280,14 @@ monkeypatch.setattr(oauth.google, "authorize_access_token", fake_authorize_acces
 | **import ของหนักไว้ข้างในฟังก์ชัน** | `fitz`, `google.genai`, `rank_bm25` — boot เร็วขึ้น และเทสต์รันได้แม้ไม่มี dependency ครบ |
 | **`@lru_cache` = ของระดับ process, ฟังก์ชันธรรมดา = ของระดับ request** | ของที่ผูกกับ DB session ห้าม cache เด็ดขาด |
 | **`services/` ห้าม import `fastapi`** | business logic ต้องเรียกใช้จาก CLI/worker ได้ ไม่ผูกกับเว็บ |
-| **แยก store ตามอายุข้อมูล ไม่ใช่ตามชนิดข้อมูล** | สัญญา/รายงาน = Redis + TTL (ต้องหาย), audit log = Postgres (ต้องอยู่ตลอด) |
+| **แยก store ตามอายุข้อมูล ไม่ใช่ตามชนิดข้อมูล** | สัญญาดิบ = Redis + TTL (ต้องหาย), รายงาน + audit log = Postgres (ต้องอยู่จนเจ้าของสั่งลบ — รายงานย้ายฝั่งมาเมื่อ 2026-07-30 เพราะ TTL ทำให้ต้องจ่ายค่า pipeline ใหม่ทั้งฉบับ) |
 
 ---
 
-## ⚠️ ข้อควรระวังที่ยังไม่ได้แก้ (จาก code review 2026-07-26)
+## ⚠️ ข้อควรระวังที่ยังไม่ได้แก้ (จาก code review 2026-07-26, ทวนกับโค้ดจริงอีกครั้ง 2026-07-30)
 
 เขียนไว้ตรงนี้เพื่อไม่ให้เอกสารอธิบาย logic ไปโดยไม่บอกจุดที่ยังมีปัญหา —
-รายละเอียดและวิธีแก้อยู่ในผลรีวิว:
+รายละเอียดและวิธีแก้อยู่ในผลรีวิว (ข้อที่แก้ไปแล้วถูกย้ายไปท้ายหัวข้อ):
 
 1. **Endpoint เป็น `async def` แต่ข้างในเป็น blocking I/O ล้วน**
    (`routes/contracts.py`, `playbook.py`, `evaluate.py`) — FastAPI รัน `async def` บน event loop
@@ -2212,13 +2295,20 @@ monkeypatch.setattr(oauth.google, "authorize_access_token", fake_authorize_acces
    1 ms → 2.7 s) แก้ด้วย `run_in_threadpool()` หรือเปลี่ยนเป็น `def` ธรรมดา
 2. **`POST /evaluate` และ `GET /playbook/search` ยังไม่ต้อง auth** — ทั้งคู่เรียก LLM/embedding
    ได้โดยไม่ต้อง login และ `EvalRequest.gold_set_path` เป็นพาธที่ client ส่งมาเอง
-3. **`override_risk()` ไม่ได้เทียบ `report.session_id` กับ user ที่ยิงเข้ามา** — ใครที่รู้
-   `report_id` ก็แก้ report ของคนอื่นได้ และ response คืน report ฉบับเต็มกลับไปด้วย
-4. **ไม่มีเพดานขนาดไฟล์อัปโหลดและจำนวน clause** — `LLM_TIMEOUT_SECONDS` จำกัดแค่ *เวลาต่อ
-   1 call* ไม่ได้จำกัด *จำนวน call*
-5. **retry ตอน ungrounded ส่ง prompt เดิมเป๊ะ ๆ** (`pipeline.py`) ทั้งที่มี `verdict.reason` อยู่แล้ว
-   — โอกาสได้คำตอบเดิมสูง เท่ากับจ่าย token สองเท่าเปล่า ๆ
-6. **`is_grounded()` เป็น substring check ล้วน** — excerpt สั้น ๆ อย่าง `"the"` ผ่านได้เสมอ
+3. **ไม่มีเพดานขนาดไฟล์อัปโหลดและจำนวน clause** — `LLM_TIMEOUT_SECONDS` จำกัดแค่ *เวลาต่อ
+   1 call* ไม่ได้จำกัด *จำนวน call* (retry ทำให้จำนวน call ต่อ clause ขยับได้อีก แต่มีงบเวลาคุมอยู่)
+4. **retry ตอน ungrounded ส่ง prompt เดิมเป๊ะ ๆ** (`pipeline.py`) ทั้งที่มี `verdict.reason` อยู่แล้ว
+   — โอกาสได้คำตอบเดิมสูง เท่ากับจ่าย token สองเท่าเปล่า ๆ (คนละชั้นกับ retry ใน `LLMClient`
+   ซึ่งยิงซ้ำเฉพาะตอน call ล้ม ไม่ใช่ตอนคำตอบ ungrounded)
+5. **`is_grounded()` เป็น substring check ล้วน** — excerpt สั้น ๆ อย่าง `"the"` ผ่านได้เสมอ
    ควรมีความยาวขั้นต่ำหรือวัด token overlap
-7. **`known_positions` อ่านจาก YAML แต่ retrieval อ่านจาก Postgres** — ถ้าสองฝั่งไม่ตรงกัน
-   citation จะถูกตีตกทั้งหมดแบบเงียบ ๆ
+
+**2 ข้อจากรีวิวรอบนั้นที่แก้ไปแล้ว** (ทวนกับโค้ดจริงเมื่อ 2026-07-30 — เดิมยังค้างอยู่ในลิสต์นี้
+ทั้งที่ไม่จริงแล้ว):
+
+- ~~`override_risk()` ไม่ได้เทียบ `report.session_id`~~ — ตรวจแล้วที่
+  `services/override.py` (`_locate()`: `report.session_id != session_id` → `404`) และใช้ร่วมกับ
+  `accept` ด้วย รายงานของคนอื่นตอบ `404` ไม่ใช่ `403`
+- ~~`known_positions` อ่านจาก YAML แต่ retrieval อ่านจาก Postgres~~ — `get_known_positions()`
+  อ่านจาก vector store แล้ว (YAML เหลือเป็น fallback ตอน DB ยังไม่ ingest) และเจตนาไม่ cache
+  เพื่อให้ position ที่เพิ่มผ่าน `/playbook` ไม่ถูก judge ตีว่า "unknown"

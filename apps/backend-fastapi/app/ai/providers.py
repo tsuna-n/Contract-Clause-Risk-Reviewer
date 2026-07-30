@@ -22,7 +22,7 @@ import json
 from dataclasses import dataclass
 from typing import Any, Protocol
 
-from pydantic import BaseModel
+from pydantic import BaseModel, ValidationError
 
 from app.config import Settings
 
@@ -97,6 +97,71 @@ class ProviderConfigError(RuntimeError):
     runtime condition to recover from — it fails on the first call with a
     message naming the ``.env`` field to fix.
     """
+
+
+class EmptyCompletionError(RuntimeError):
+    """Raised when a call returns a 200 with no text to parse.
+
+    Its own type because it is retryable and because the pydantic error it
+    replaces (``Invalid JSON: EOF while parsing a value``) named the schema
+    rather than the reason. The two causes are a refusal and, far more often on
+    a reasoning model, a turn that spent its whole ``max_tokens`` budget
+    thinking and had nothing left to answer with.
+    """
+
+
+#: Exception type names that mean "ask again", across vendors. Matched by name
+#: because the alternative is importing three SDKs at call time to catch their
+#: classes — and every one of these is the same thing wearing a different label.
+_TRANSIENT_ERROR_NAMES = (
+    "timeout",  # openai APITimeoutError, anthropic APITimeoutError
+    "connection",  # APIConnectionError
+    "ratelimit",  # 429 with a retry-after
+    "resourceexhausted",  # gemini's spelling of 429
+    "internalserver",  # 5xx
+    "serviceunavailable",
+    "unavailable",
+    "overloaded",  # anthropic 529
+    "deadlineexceeded",  # gemini's spelling of a timeout
+    "servererror",  # google.genai.errors.ServerError
+)
+
+#: HTTP statuses worth another attempt. 400/401/403/404 are not here on
+#: purpose: a bad request or a bad key answers the same way however many times
+#: it is asked, and retrying only delays the message that says so.
+_TRANSIENT_STATUS_CODES = frozenset({408, 409, 429, 500, 502, 503, 504, 529})
+
+
+def is_malformed_answer(exc: BaseException) -> bool:
+    """Whether ``exc`` means the host answered, just not with what was asked for.
+
+    Worth its own predicate because it is the one failure that says something
+    about the *host* rather than about the network: a request that came back
+    200 carrying prose is how a host that ignores ``response_format`` announces
+    itself, which is what the fallback in
+    :meth:`OpenAICompatibleChatBackend.complete_structured` turns on.
+    """
+    return isinstance(exc, EmptyCompletionError | ValidationError)
+
+
+def is_transient(exc: BaseException) -> bool:
+    """Whether ``exc`` is the kind of failure a second attempt could survive.
+
+    Vendor knowledge belongs in this module, so the retry loop in
+    :mod:`app.ai.llm` asks this instead of knowing which SDK raised what.
+
+    A malformed answer counts: output is sampled, so it is a roll of the dice
+    rather than a verdict on the schema, and the price of not asking again is a
+    clause that reads ``unknown`` in the report.
+    """
+    if is_malformed_answer(exc):
+        return True
+    for attr in ("status_code", "code"):
+        status = getattr(exc, attr, None)
+        if isinstance(status, int) and status in _TRANSIENT_STATUS_CODES:
+            return True
+    name = type(exc).__name__.lower()
+    return any(marker in name for marker in _TRANSIENT_ERROR_NAMES)
 
 
 # --- usage accounting --------------------------------------------------------
@@ -212,7 +277,17 @@ class GeminiChatBackend:
         parsed = response.parsed
         if isinstance(parsed, response_model):
             return parsed, self._usage(response)
-        return response_model.model_validate_json(response.text), self._usage(response)
+        text = response.text or ""
+        if not text.strip():
+            # ``parsed`` is None with no text when the turn was blocked or
+            # stopped at ``max_output_tokens``. ``response.text`` is None there
+            # rather than "", which pydantic answers with a TypeError.
+            candidates = getattr(response, "candidates", None) or []
+            reason = getattr(candidates[0], "finish_reason", None) if candidates else None
+            raise EmptyCompletionError(
+                f"{response_model.__name__}: model returned no content (finish_reason={reason!r})"
+            )
+        return response_model.model_validate_json(_json_object(text)), self._usage(response)
 
 
 # --- anthropic ---------------------------------------------------------------
@@ -319,7 +394,12 @@ class AnthropicChatBackend:
         # refusal); re-validate the raw text so the caller sees a pydantic
         # error naming the missing field rather than an AttributeError on None.
         text = "".join(block.text for block in response.content if block.type == "text")
-        return response_model.model_validate_json(text), self._usage(response)
+        if not text.strip():
+            raise EmptyCompletionError(
+                f"{response_model.__name__}: model returned no content "
+                f"(stop_reason={getattr(response, 'stop_reason', None)!r})"
+            )
+        return response_model.model_validate_json(_json_object(text)), self._usage(response)
 
 
 # --- openai-compatible (OpenAI, Z.AI/GLM, DeepSeek, Ollama, vLLM, ...) --------
@@ -353,6 +433,19 @@ def _strict_json_schema(schema: dict[str, Any]) -> dict[str, Any]:
     return out
 
 
+def _json_object(text: str) -> str:
+    """Return the outermost JSON object in ``text``.
+
+    JSON mode is a request, not a guarantee: hosts that only implement
+    ``json_object`` still hand back ```` ```json ```` fences or a line of
+    prose before the brace often enough to matter over a few hundred calls.
+    Text with no brace at all is returned untouched so pydantic reports the
+    real content rather than a slice of it.
+    """
+    start, end = text.find("{"), text.rfind("}")
+    return text[start : end + 1] if 0 <= start < end else text
+
+
 class OpenAICompatibleChatBackend:
     """Any OpenAI-shaped chat completions API, including Z.AI's GLM models.
 
@@ -363,10 +456,23 @@ class OpenAICompatibleChatBackend:
     and remembers a rejection, falling back to JSON mode with the schema
     inlined in the system prompt. Either way pydantic validates the result, so
     the guardrails downstream see the same contract.
+
+    ``disable_thinking`` asks a reasoning model to answer directly. It matters
+    more than it sounds: reasoning tokens are billed and counted inside the
+    same ``max_tokens`` budget as the answer, so a model that thinks too long
+    returns a 200 with empty ``content``. Measured on GLM-4.6 with one of this
+    pipeline's own scoring prompts, the same call took 23.7s and 984 output
+    tokens thinking versus 2.1s and 55 without.
     """
 
     def __init__(
-        self, *, model: str, api_key: str | None, base_url: str | None, timeout_seconds: int
+        self,
+        *,
+        model: str,
+        api_key: str | None,
+        base_url: str | None,
+        timeout_seconds: int,
+        disable_thinking: bool = False,
     ) -> None:
         self.model = model
         self._api_key = api_key
@@ -374,6 +480,8 @@ class OpenAICompatibleChatBackend:
         self._timeout_seconds = timeout_seconds
         self._client = None  # lazily constructed openai.OpenAI
         self._supports_json_schema = True
+        self._disable_thinking = disable_thinking
+        self._supports_thinking_param = True
 
     def _get_client(self):
         """Lazily construct the underlying ``openai.OpenAI`` client."""
@@ -401,10 +509,7 @@ class OpenAICompatibleChatBackend:
             cache_read_input_tokens=cached or 0,
         )
 
-    def _chat(self, *, system: str, prompt: str, max_tokens: int, response_format: Any | None):
-        kwargs: dict[str, Any] = {}
-        if response_format is not None:
-            kwargs["response_format"] = response_format
+    def _create(self, *, system: str, prompt: str, max_tokens: int, **kwargs: Any):
         return self._get_client().chat.completions.create(
             model=self.model,
             max_tokens=max_tokens,
@@ -414,6 +519,30 @@ class OpenAICompatibleChatBackend:
             ],
             **kwargs,
         )
+
+    def _chat(self, *, system: str, prompt: str, max_tokens: int, response_format: Any | None):
+        kwargs: dict[str, Any] = {}
+        if response_format is not None:
+            kwargs["response_format"] = response_format
+
+        # ``thinking`` is Z.AI's parameter, not part of the OpenAI schema, so a
+        # host that has never heard of it answers 400. Same probe-and-remember
+        # shape as ``json_schema`` above - asked once per backend, not once per
+        # clause - except a transient failure is re-raised rather than read as
+        # "unsupported", or one timeout would switch thinking back on for the
+        # rest of the run and cause the next one.
+        sending_thinking = self._disable_thinking and self._supports_thinking_param
+        if sending_thinking:
+            kwargs["extra_body"] = {"thinking": {"type": "disabled"}}
+
+        try:
+            return self._create(system=system, prompt=prompt, max_tokens=max_tokens, **kwargs)
+        except Exception as exc:
+            if not sending_thinking or is_transient(exc):
+                raise
+            self._supports_thinking_param = False
+            kwargs.pop("extra_body")
+            return self._create(system=system, prompt=prompt, max_tokens=max_tokens, **kwargs)
 
     def complete(
         self, *, system: str, prompt: str, max_tokens: int, effort: str
@@ -430,8 +559,9 @@ class OpenAICompatibleChatBackend:
         self, *, system: str, prompt: str, response_model: type[T], max_tokens: int
     ) -> tuple[T, Usage]:
         schema = _strict_json_schema(response_model.model_json_schema())
+        probing = self._supports_json_schema
 
-        if self._supports_json_schema:
+        if probing:
             try:
                 response = self._chat(
                     system=system,
@@ -447,11 +577,15 @@ class OpenAICompatibleChatBackend:
                     },
                 )
                 return self._parse(response, response_model)
-            except Exception:  # noqa: BLE001 - host may not implement json_schema
-                # Remembered so the whole pipeline pays this probe once, not
-                # once per clause. A network failure lands here too and is
-                # re-raised by the JSON-mode attempt below.
-                self._supports_json_schema = False
+            except Exception as exc:
+                # Two ways a host says it can't do this: rejecting the parameter
+                # (a 400) and accepting it, then answering prose anyway - which
+                # is what Z.AI does, and the reason this fallback exists at all.
+                # A timeout or a 5xx says nothing about the host's capabilities,
+                # so it is raised for the retry loop instead of being read as an
+                # answer about them.
+                if is_transient(exc) and not is_malformed_answer(exc):
+                    raise
 
         response = self._chat(
             system=(
@@ -463,15 +597,37 @@ class OpenAICompatibleChatBackend:
             max_tokens=max_tokens,
             response_format={"type": "json_object"},
         )
-        return self._parse(response, response_model)
+        parsed = self._parse(response, response_model)
+        # Only settled once the fallback has actually produced an object: one
+        # garbled answer under a host that does enforce schemas would otherwise
+        # give up strict validation for the rest of the process.
+        if probing:
+            self._supports_json_schema = False
+        return parsed
 
     @staticmethod
     def _parse[T: BaseModel](response, response_model: type[T]) -> tuple[T, Usage]:
-        text = response.choices[0].message.content or ""
-        return (
-            response_model.model_validate_json(text),
-            OpenAICompatibleChatBackend._usage(response),
-        )
+        choice = response.choices[0]
+        usage = OpenAICompatibleChatBackend._usage(response)
+        text = choice.message.content or ""
+
+        if not text.strip():
+            # Spell out what an empty 200 means here rather than letting
+            # pydantic report "EOF while parsing a value", which names the
+            # schema and not the cause.
+            reasoning = getattr(choice.message, "reasoning_content", None) or ""
+            spent_thinking = (
+                f", {usage.output_tokens} output tokens of which {len(reasoning)} chars "
+                "went to reasoning"
+                if reasoning
+                else f", {usage.output_tokens} output tokens"
+            )
+            raise EmptyCompletionError(
+                f"{response_model.__name__}: model returned no content "
+                f"(finish_reason={getattr(choice, 'finish_reason', None)!r}{spent_thinking})"
+            )
+
+        return response_model.model_validate_json(_json_object(text)), usage
 
 
 # --- selection ---------------------------------------------------------------
@@ -594,5 +750,12 @@ def build_chat_backend(
             model=resolved_model, api_key=api_key, base_url=base_url, timeout_seconds=timeout
         )
     return OpenAICompatibleChatBackend(
-        model=resolved_model, api_key=api_key, base_url=base_url, timeout_seconds=timeout
+        model=resolved_model,
+        api_key=api_key,
+        base_url=base_url,
+        timeout_seconds=timeout,
+        # Only this family takes the parameter. Gemini is asked for a thinking
+        # level per call, and Anthropic does no extended thinking unless
+        # ``effort`` is passed, so neither needs telling to stop.
+        disable_thinking=settings.llm_thinking == "disabled",
     )

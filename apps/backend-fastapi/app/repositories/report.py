@@ -271,6 +271,46 @@ class PostgresReportRepository:
         """
         return []
 
+    def count_older_than(self, cutoff: datetime) -> int:
+        """Count the reports :meth:`purge_older_than` would delete.
+
+        Same filter as the delete, so a dry run reports the number that would
+        actually go rather than an estimate from a differently-worded query.
+        """
+        with self._session() as session:
+            return (
+                session.query(ContractReport.report_id)
+                .filter(ContractReport.created_at < cutoff)
+                .count()
+            )
+
+    def purge_older_than(self, cutoff: datetime) -> list[str]:
+        """Delete every report created before ``cutoff``, whoever owns it.
+
+        The only way a row leaves this table other than its owner asking, and
+        deliberately not reachable from a request: a retention policy is
+        something an operator schedules (``python -m scripts.purge_reports``),
+        not a side effect the next upload performs on data belonging to other
+        people. Not part of :class:`ReportRepository` for the same reason — no
+        request-time code should be able to reach across sessions like this.
+
+        Returns the ids it destroyed, because after the commit nothing else
+        records that those reviews ever existed.
+        """
+        with self._session() as session:
+            purged = [
+                report_id
+                for (report_id,) in session.query(ContractReport.report_id).filter(
+                    ContractReport.created_at < cutoff
+                )
+            ]
+            if purged:
+                session.query(ContractReport).filter(
+                    ContractReport.created_at < cutoff
+                ).delete(synchronize_session=False)
+                session.commit()
+        return purged
+
     def delete(self, report_id: str, session_id: str) -> bool:
         with self._session() as session:
             deleted = (

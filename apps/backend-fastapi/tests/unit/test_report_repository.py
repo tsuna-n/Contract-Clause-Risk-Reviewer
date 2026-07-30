@@ -231,6 +231,78 @@ def test_postgres_reports_never_expire() -> None:
         engine.dispose()
 
 
+# --- retention ---------------------------------------------------------------
+#
+# The one path that deletes reports nobody asked to delete, so what it leaves
+# behind matters as much as what it removes. Driven by `scripts/purge_reports`
+# on a schedule, never from a request.
+
+
+def test_purge_older_than_removes_only_what_predates_the_cutoff() -> None:
+    repo, engine = sqlite_report_repo()
+    try:
+        day = 60 * 60 * 24
+        repo.save(make_report("last-year", age_seconds=365 * day))
+        repo.save(make_report("last-week", age_seconds=7 * day))
+        repo.save(make_report("today"))
+
+        cutoff = datetime.now(UTC) - timedelta(days=30)
+        assert repo.purge_older_than(cutoff) == ["last-year"]
+
+        # And the ones inside the window are untouched, not just unlisted.
+        assert repo.get("last-year") is None
+        assert repo.get("last-week") is not None
+        assert [r.report_id for r in repo.list_for_session("user-1")] == ["today", "last-week"]
+    finally:
+        engine.dispose()
+
+
+def test_purge_older_than_crosses_sessions() -> None:
+    """Retention is a property of the data, not of whoever is logged in.
+
+    Every other read here is scoped to one session; this one deliberately is
+    not, which is why it lives outside the request-time interface.
+    """
+    repo, engine = sqlite_report_repo()
+    try:
+        repo.save(make_report("mine", "user-1", age_seconds=60 * 60 * 24 * 90))
+        repo.save(make_report("theirs", "user-2", age_seconds=60 * 60 * 24 * 90))
+
+        purged = repo.purge_older_than(datetime.now(UTC) - timedelta(days=30))
+
+        assert sorted(purged) == ["mine", "theirs"]
+    finally:
+        engine.dispose()
+
+
+def test_a_dry_run_counts_exactly_what_a_purge_would_delete() -> None:
+    repo, engine = sqlite_report_repo()
+    try:
+        repo.save(make_report("old", age_seconds=60 * 60 * 24 * 90))
+        repo.save(make_report("new"))
+        cutoff = datetime.now(UTC) - timedelta(days=30)
+
+        counted = repo.count_older_than(cutoff)
+
+        assert counted == 1
+        # Counting is not deleting: the point of --dry-run is that it is safe.
+        assert repo.get("old") is not None
+        assert len(repo.purge_older_than(cutoff)) == counted
+    finally:
+        engine.dispose()
+
+
+def test_purging_an_empty_window_deletes_nothing() -> None:
+    repo, engine = sqlite_report_repo()
+    try:
+        repo.save(make_report("r1"))
+
+        assert repo.purge_older_than(datetime.now(UTC) - timedelta(days=3650)) == []
+        assert repo.get("r1") is not None
+    finally:
+        engine.dispose()
+
+
 def test_a_report_stored_before_the_newer_fields_still_loads() -> None:
     """Stored reports outlive the schema now, so old payloads must still open.
 
