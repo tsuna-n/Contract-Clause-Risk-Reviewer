@@ -257,10 +257,20 @@ judge บอกว่า ungrounded, และ isolate failure ต่อ clause 
 
 ## ❌ สิ่งที่ยังไม่ได้ทำ
 
+**ไม่มีข้อไหนที่เป็นฟีเจอร์ขาด** — สองข้อแรกคือ "ยังไม่ได้รัน" (มีคำสั่งพร้อมแล้ว) ข้อสุดท้ายคือ
+เทสต์ที่ต้องเขียนใหม่ 1 ตัว ซึ่งติดเรื่องค่า LLM ต่อการรัน ไม่ใช่ติดเรื่องโค้ดของแอป:
+
+- **รัน evaluation บน gold label ชุดใหม่** — label ซ่อมแล้วเมื่อ 2026-07-30 (91 → 82 label,
+  span 327 ข้อไม่เปลี่ยน — ดู [เพดานของ gold label](#เพดานของ-gold-label-ที่มาจาก-cuad)) แต่ตัวเลข
+  ที่บันทึกไว้ทุกชุดวัดกับ label เก่า **จึงเทียบกับไม้บรรทัดใหม่ไม่ได้** รันจริงไปแล้ว 3 ฉบับ /
+  90 clause บน label เก่า (`classification 57.69%`, `risk 50.00%`, ไม่มี clause ล้มเพราะ provider);
+  `--limit 3` (~33 นาที) คือทางที่ถูกสุดที่จะได้เลขเทียบกันตรง ๆ, เต็มชุดคือ ~1,300 LLM call
 - **Eval regression gate** (`tests/eval/test_regression.py`) — ยัง skip ไว้เพราะต้องเรียก LLM จริง
   (มี cost + ต้องมี quota); รันเองได้ผ่าน `python -m scripts.run_eval` (ดู `--limit` / `--contract`)
-- **รัน evaluation เต็มชุด** — gold set 12 ฉบับ / 327 clause พร้อมแล้ว แต่ยังรันจริงแค่ 1 ฉบับ
-  (ดูหัวข้อผล evaluation ใน [README หลัก](../../README.md)) เต็มชุดคือ ~1,300 LLM call
+- **integration test ที่ยิง LLM จริง** — เทสต์ 268 ตัวทั้งหมด mock ที่ขอบ provider ซึ่งจับบั๊ก
+  ชนิด "host รับพารามิเตอร์แล้วไม่ทำตาม" ไม่ได้ (Z.AI รับ `json_schema` แล้วตอบ markdown — เจอ
+  ตอนรันจริงเท่านั้น) เส้นที่คุ้มสุดคือ `data/samples/thai-nda-short.txt` 3 clause ~45 วินาที
+  และไม่ควรผูกกับ CI ปกติเพราะจ่ายทุก push
 
 ---
 

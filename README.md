@@ -107,12 +107,43 @@
 
 ## ❌ สิ่งที่ยังไม่ทำ
 
+> ### สรุปสั้น: ฟีเจอร์ฝั่ง backend ปิดครบแล้ว
+>
+> **ไม่มีข้อไหนใน 3 ข้อข้างล่างที่เป็นฟีเจอร์ขาด** เส้นทางใช้งานจริงทั้งเส้น — login → upload →
+> review → accept/override → เปิดรายงานเดิม — ทำงานได้ครบ และมีเทสต์ 268 ตัวคุมอยู่ ที่เหลือคือ:
+>
+> | ข้อ | ต้องทำอะไร | ทำไมยังไม่ทำ |
+> |---|---|---|
+> | eval บน label ชุดใหม่ | รันคำสั่งที่มีอยู่ (~33 นาที) | เจ้าของโปรเจกต์เลือกข้าม ประหยัดเวลา + ค่า LLM |
+> | cron ของ retention job | ตั้ง `.env` + crontab | เจ้าของโปรเจกต์เลือกไม่ตั้ง ยังไม่มีนโยบายเก็บข้อมูล |
+> | integration test ที่ยิง LLM จริง | **เขียนเทสต์ใหม่ 1 ตัว** | จ่ายค่า LLM ทุกครั้งที่รัน ต้องตัดสินใจก่อนว่าให้รันที่ไหน |
+>
+> วิธีปิดทีละข้อพร้อมคำสั่ง: [ถ้าจะปิดทั้ง 3 ข้อ ต้องทำอะไร](#ถ้าจะปิดทั้ง-3-ข้อ-ต้องทำอะไร) ท้ายตาราง
+
 | ส่วน | รายการ | รายละเอียด |
 |------|--------|------------|
-| Backend | eval บน gold label ชุดใหม่ | ตัว label ซ่อมแล้ว (91 → 82, span ไม่เปลี่ยน) แต่ยังไม่ได้รัน eval บนไม้บรรทัดใหม่ — ตัวเลขที่บันทึกไว้ทั้งหมดยังเป็นของ label เก่า |
+| Backend | eval บน gold label ชุดใหม่ | **ไม่ใช่งานโค้ด — เป็นการวัด** ตัว label ซ่อมแล้ว (91 → 82, span ไม่เปลี่ยน) แต่ตัวเลขที่บันทึกไว้ทั้งหมด (`classification 57.69%` / `risk 50.00%` จาก 3 ฉบับ 90 clause) วัดกับ label ชุดเก่า จึงเทียบกับไม้บรรทัดใหม่ไม่ได้ — รัน `run_eval --limit 3` (~33 นาที) ได้เลขเทียบกันตรง ๆ, เต็มชุด 327 clause ≈ 1,300 call (~2 ชม.) |
 | Backend | integration test ที่ยิง LLM จริง | เทสต์ทั้ง 268 ตัว mock ที่ขอบ provider — บั๊กแบบ "Z.AI รับ `json_schema` แล้วตอบ markdown" ผ่าน mock ได้สบาย เจอตอนรันจริงเท่านั้น |
-| Backend | Clause-level accuracy เต็มชุด | รันแล้ว 3 ฉบับ / 90 clause (gold label 26 ข้อ): `classification 57.69%`, `risk 50.00%`, `segmentation 100%`, `citation 100%`, ไม่มี clause ล้มเพราะ provider เลย — เหลือเต็มชุด 12 ฉบับ / 327 clause (≈ 1,300 call, ~2 ชม.) |
 | Backend | cron ของ retention job | **ตั้งใจไม่ตั้ง** — ตัว job พร้อมใช้แล้ว (`scripts/purge_reports.py`) แต่ค่า default คือเก็บรายงานไว้จนเจ้าของสั่งลบ เพราะการลบกู้คืนไม่ได้และตัวสัญญาหายไปด้วย ให้ตั้ง `REPORT_RETENTION_DAYS` + cron ตอนมีนโยบายเก็บข้อมูลจริง (ตัวอย่าง crontab อยู่ใน docstring ของสคริปต์) |
+
+### ถ้าจะปิดทั้ง 3 ข้อ ต้องทำอะไร
+
+```bash
+# 1) eval บน gold label ชุดใหม่ — มีคำสั่งพร้อม ไม่ต้องแก้โค้ด (~33 นาที, ยิง LLM จริง)
+cd apps/backend-fastapi
+.venv/bin/python -m scripts.run_eval --limit 3     # เทียบกับ 57.69% / 50.00% ที่บันทึกไว้บน label เก่า
+.venv/bin/python -m scripts.run_eval               # เต็มชุด 327 clause (~2 ชม.)
+
+# 3) cron ของ retention job — เลือกกรอบเวลาเองก่อน (ลบแล้วกู้ไม่ได้)
+echo "REPORT_RETENTION_DAYS=90" >> apps/backend-fastapi/.env
+.venv/bin/python -m scripts.purge_reports --dry-run   # นับก่อนว่าจะลบกี่รายงาน
+crontab -e   # 15 3 * * * cd /path/to/apps/backend-fastapi && .venv/bin/python -m scripts.purge_reports
+```
+
+**ข้อ 2 เป็นข้อเดียวที่ต้องเขียนของใหม่** — ปลด skip ที่ `tests/eval/test_regression.py` แล้วผูกกับ
+`.env` ที่มีคีย์จริง พร้อมตัดสินใจว่าจะให้มันรันที่ไหน (ไม่ควรอยู่ใน CI ปกติเพราะจ่ายทุก push)
+ขอบเขตที่คุ้มค่าสุดคือสัญญา 1 ฉบับ 3 clause (`data/samples/thai-nda-short.txt`, ~45 วินาที)
+เพื่อจับบั๊กชนิดที่ mock จับไม่ได้ — อย่าง Z.AI ที่รับ `json_schema` แล้วตอบ markdown กลับมา
 
 ---
 
