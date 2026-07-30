@@ -27,13 +27,30 @@ Three things about the labels, since they decide what the metrics mean:
   reviewer works in whole clauses. So the document is segmented on its own
   numbered headings and each segment becomes one gold span - a complete
   segmentation, which is what ``segmentation_f1`` needs to be meaningful.
-* **clause_type** comes from the CUAD annotation whose highlight falls inside
-  the segment, mapped through :data:`CATEGORY_CLAUSE_TYPES`. Segments CUAD did
-  not annotate are emitted *without* a type: CUAD's 41 categories don't cover
-  the whole taxonomy (there is no confidentiality or force-majeure category),
-  so labelling those segments ourselves would score the pipeline against
-  guesses. ``run_eval`` counts an unlabelled segment for segmentation and skips
-  it for classification/risk.
+* **clause_type** comes from the CUAD annotation that *covers most of* the
+  segment, mapped through :data:`CATEGORY_CLAUSE_TYPES`, and only when that
+  coverage reaches :data:`MIN_LABEL_COVERAGE`. Segments CUAD did not annotate -
+  and segments where its highlight is only an incidental phrase - are emitted
+  *without* a type: CUAD's 41 categories don't cover the whole taxonomy (there
+  is no confidentiality or force-majeure category), so labelling those segments
+  ourselves would score the pipeline against guesses. ``run_eval`` counts an
+  unlabelled segment for segmentation and skips it for classification/risk.
+
+  Coverage, rather than "which clause does the highlight start in", because
+  CUAD answers 41 questions *about a contract*; it does not classify clauses.
+  Its highlight is the phrase that answers one question, and that phrase very
+  often sits inside a clause about something else. Measured over the 12
+  contracts in this gold set, 16 of 91 annotated segments had a best-category
+  coverage under 20% - among them a ``Governing Law`` phrase inside a rate
+  clause (3.0%), ``Cap On Liability`` inside a shipment clause (7.4%), and
+  ``Change Of Control`` inside a clause headed "6.02. Termination" (11.0%),
+  which is how a termination clause came to be labelled ``other`` while the
+  classifier answering ``termination`` was scored wrong.
+
+  This is a change to the yardstick, so it invalidates comparisons: metrics
+  recorded before 2026-07-30 were scored against the old labels and cannot be
+  compared with anything measured after. The label distribution and the exact
+  set of labels that moved are in the root README.
 * **risk_level** is a policy call, not data: CUAD says a clause *is* a
   liability cap, not whether that is acceptable. :data:`CATEGORY_RISK` records
   the risk appetite the playbook encodes, from the perspective of the party
@@ -245,8 +262,11 @@ class Candidate:
 
     title: str
     text: str
-    #: category -> raw-text offsets where the annotator highlighted an answer.
-    annotations: dict[str, list[int]]
+    #: category -> raw-text ``(start, end)`` spans the annotator highlighted.
+    #: The end matters as much as the start: it is what makes "this highlight is
+    #: what the clause is about" distinguishable from "this highlight is a
+    #: sentence inside it" (see :data:`MIN_LABEL_COVERAGE`).
+    annotations: dict[str, list[tuple[int, int]]]
     heading_count: int
 
     @property
@@ -266,6 +286,32 @@ class Candidate:
 MIN_CHARS, MAX_CHARS = 8_000, 20_000
 MIN_HEADINGS = 8
 MIN_CATEGORIES = 8
+
+#: How much of a segment a CUAD highlight must cover before it may name that
+#: segment's clause type.
+#:
+#: Measured over these 12 contracts rather than guessed, and the first guess was
+#: wrong. Coverage is bimodal - of the 91 segments carrying an annotation, 33 sit
+#: above 80% (the highlight *is* the clause) and 16 below 20% (a phrase inside a
+#: clause about something else) - which suggested a cut somewhere in the middle.
+#: At 0.3 the fixtures lost 25 labels and the previews showed why that was too
+#: blunt: it dropped ``governing_law`` off a clause headed "9.05. Applicable
+#: Law" and ``warranty`` off "5.01. Products Warranty", where CUAD had correctly
+#: highlighted one sentence of a long clause.
+#:
+#: 0.15 removes only the bottom tail, where "incidental" is not arguable: a
+#: ``Governing Law`` phrase inside a rate clause (3.0%), ``Cap On Liability``
+#: inside a shipment clause (7.4%), ``Minimum Commitment`` inside a definitions
+#: clause (10.1%), ``Change Of Control`` inside "6.02. Termination" (11.0%) and
+#: ``Anti-Assignment`` inside "9.07. Successors and Assigns" - which the old rule
+#: labelled ``payment_terms`` outright (11.3%).
+#:
+#: The cost, stated because it is real: 9 of 91 labels go, and two of those
+#: ("5. Consideration" as ``payment_terms``, "22. Assignment" as ``other``) were
+#: defensible labels on short highlights. A benchmark that keeps a clearly wrong
+#: label is worse than one with a slightly smaller sample, but this is a trade,
+#: not a free win.
+MIN_LABEL_COVERAGE = 0.15
 
 
 def load_candidates(cuad_dir: Path) -> list[Candidate]:
@@ -289,13 +335,16 @@ def load_candidates(cuad_dir: Path) -> list[Candidate]:
         if heading_count < MIN_HEADINGS:
             continue
 
-        annotations: dict[str, list[int]] = {}
+        annotations: dict[str, list[tuple[int, int]]] = {}
         for qa in paragraph["qas"]:
             if not qa["answers"]:
                 continue
             # CUAD ids are "<title>__<Category>".
             category = qa["id"].rsplit("__", 1)[-1]
-            annotations[category] = [answer["answer_start"] for answer in qa["answers"]]
+            annotations[category] = [
+                (answer["answer_start"], answer["answer_start"] + len(answer["text"]))
+                for answer in qa["answers"]
+            ]
         if len(annotations) < MIN_CATEGORIES:
             continue
 
@@ -362,32 +411,61 @@ def contract_id(title: str) -> str:
     return f"{company}-{kind}"
 
 
-def _pick_label(categories: list[str]) -> tuple[ClauseType, RiskLevel]:
-    """Resolve the several CUAD categories inside one clause to one label.
+def covered_characters(spans: list[tuple[int, int]], start: int, end: int) -> int:
+    """Characters of ``[start, end)`` covered by ``spans``, counting each once.
 
-    A "4. Term and Termination" clause typically carries three termination
-    categories and one stray pricing one, so the type with the most
-    annotations wins - counting categories, not picking the riskiest one,
-    is what keeps that clause labelled ``termination``.
-
-    Risk is then the worst risk within the winning type: a clause that caps
-    liability and then carves an uncapped exception out of the cap is an
-    uncapped-liability clause as far as the reviewer is concerned. Ties break
-    towards the riskier type and then alphabetically, so the label never
-    depends on dict ordering.
+    A category can be highlighted several times in one clause, and CUAD's
+    highlights for the same category do sometimes overlap each other - summing
+    them raw produced coverage over 100% on real contracts, which would make a
+    ratio meaningless.
     """
-    by_type: dict[ClauseType, list[str]] = {}
-    for category in categories:
-        by_type.setdefault(CATEGORY_CLAUSE_TYPES[category], []).append(category)
+    total = 0
+    reach = start
+    for span_start, span_end in sorted(spans):
+        low = max(span_start, reach, start)
+        high = min(span_end, end)
+        if high > low:
+            total += high - low
+            reach = high
+    return total
 
-    def worst_risk(members: list[str]) -> RiskLevel:
-        return min((CATEGORY_RISK[c] for c in members), key=_RISK_ORDER.index)
 
-    clause_type = min(
-        by_type,
-        key=lambda t: (-len(by_type[t]), _RISK_ORDER.index(worst_risk(by_type[t])), t.value),
+def _pick_label(
+    coverage_by_category: dict[str, int], clause_length: int
+) -> tuple[ClauseType, RiskLevel, float] | None:
+    """Resolve the CUAD categories overlapping one clause into one label.
+
+    The category covering the most of the clause wins, and the label is dropped
+    entirely below :data:`MIN_LABEL_COVERAGE`: a highlight that is a tenth of
+    the clause is evidence about a sentence, not about what the clause *is*.
+    Returning ``None`` leaves the segment unlabelled, which ``run_eval`` already
+    handles - it counts for segmentation and is skipped for classification.
+
+    Risk is then the worst risk among the categories of the winning type that
+    are present: a clause that caps liability and then carves an uncapped
+    exception out of the cap is an uncapped-liability clause as far as the
+    reviewer is concerned. Ties break towards more coverage, then the riskier
+    category, then alphabetically, so the label never depends on dict ordering.
+    """
+    if not coverage_by_category or clause_length <= 0:
+        return None
+
+    best_category = min(
+        coverage_by_category,
+        key=lambda c: (
+            -coverage_by_category[c],
+            _RISK_ORDER.index(CATEGORY_RISK[c]),
+            c,
+        ),
     )
-    return clause_type, worst_risk(by_type[clause_type])
+    coverage = min(1.0, coverage_by_category[best_category] / clause_length)
+    if coverage < MIN_LABEL_COVERAGE:
+        return None
+
+    clause_type = CATEGORY_CLAUSE_TYPES[best_category]
+    same_type = [c for c in coverage_by_category if CATEGORY_CLAUSE_TYPES[c] is clause_type]
+    risk = min((CATEGORY_RISK[c] for c in same_type), key=_RISK_ORDER.index)
+    return clause_type, risk, coverage
 
 
 def build_record(candidate: Candidate) -> dict:
@@ -408,29 +486,43 @@ def build_record(candidate: Candidate) -> dict:
     # pipeline. Segmenter.run never touches the LLM, so ``None`` is enough.
     clauses = Segmenter(None).run(document)  # type: ignore[arg-type]
 
-    starts = [clause.span.start for clause in clauses]
-    per_clause: dict[int, list[str]] = {}
-    for category, raw_offsets in candidate.annotations.items():
+    # category -> highlighted spans, in normalized offsets.
+    highlights: dict[str, list[tuple[int, int]]] = {}
+    for category, raw_spans in candidate.annotations.items():
         if category not in CATEGORY_CLAUSE_TYPES:
             continue
-        for raw_offset in raw_offsets:
-            offset = raw_to_normalized(index_map, raw_offset)
-            if offset is None:
+        for raw_start, raw_end in raw_spans:
+            start = raw_to_normalized(index_map, raw_start)
+            if start is None:
                 continue
-            # bisect_right - 1 is the clause whose span contains the offset.
-            index = bisect.bisect_right(starts, offset) - 1
-            if index >= 0:
-                per_clause.setdefault(index, []).append(category)
+            # A highlight running into stripped trailing whitespace ends at the
+            # end of the normalized text rather than being thrown away.
+            end = raw_to_normalized(index_map, raw_end) or len(normalized)
+            if end > start:
+                highlights.setdefault(category, []).append((start, end))
 
     gold_clauses = []
-    for index, clause in enumerate(clauses):
+    for clause in clauses:
         entry: dict = {"span": {"start": clause.span.start, "end": clause.span.end}}
-        categories = per_clause.get(index)
-        if categories:
-            clause_type, risk = _pick_label(categories)
+        coverage_by_category = {
+            category: covered
+            for category, spans in highlights.items()
+            if (covered := covered_characters(spans, clause.span.start, clause.span.end))
+        }
+        label = _pick_label(coverage_by_category, clause.span.end - clause.span.start)
+        if label is not None:
+            clause_type, risk, coverage = label
             entry["clause_type"] = clause_type.value
             entry["risk_level"] = risk.value
-            entry["cuad_categories"] = sorted(set(categories))
+            entry["cuad_categories"] = sorted(coverage_by_category)
+            # Written into the fixture so a reader can see how well-supported
+            # each label is without re-deriving it from CUAD.
+            entry["label_coverage"] = round(coverage, 3)
+        elif coverage_by_category:
+            # Annotated, but only incidentally. Recorded without a label so the
+            # difference between "CUAD said nothing here" and "CUAD said
+            # something too small to label with" stays visible.
+            entry["cuad_categories"] = sorted(coverage_by_category)
         gold_clauses.append(entry)
 
     return {
