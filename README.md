@@ -40,6 +40,15 @@
 > ฝั่งเบราว์เซอร์ + แผนทำ endpoint ฝั่ง server) และเพิ่ม **job ลบรายงานตามอายุ**
 > (`scripts/purge_reports.py`) ซึ่งเป็น roadmap ข้อสุดท้ายที่ค้าง
 >
+> **ปิด roadmap ครบทุกข้อ (2026-07-31)** — สามข้อสุดท้ายเคลียร์แล้ว: **รัน eval บน gold label
+> ชุดใหม่** (3 ฉบับ / 90 clause / 18 นาที — `segmentation_f1` 100%, `citation_validity` 100%,
+> `classification` 45.45%, `risk` 50.00%; ตัวเลข classification ที่ลดจาก 57.69% มาจาก
+> **ไม้บรรทัดที่เปลี่ยน ไม่ใช่ pipeline ที่แย่ลง** — อธิบายที่ [ผล eval บน label
+> ชุดใหม่](#ผล-eval-บน-label-ชุดใหม่-2026-07-31)), **เพิ่มชุดเทสต์ที่ยิง LLM จริง 11 ตัว**
+> (`pytest -m live_llm`, ~3 นาที — deselect เป็น default จึงไม่ทำให้ `pytest` เปล่า ๆ เสียเงิน) และ
+> **ยืนยันว่า cron ของ retention job จะไม่ตั้ง** จนกว่าจะมีนโยบายเก็บข้อมูลจริง ตอนนี้เทสต์คือ
+> **268 ตัวออฟไลน์ ไม่มี skip เหลือ + 11 ตัว live**
+>
 > **เลิกใช้ mock data ทั้งระบบ + ประวัติรายงานใช้งานได้ (2026-07-26)** — fixture ของ backend
 > สร้างจาก **CUAD v1** (สัญญาการค้าจริง 510 ฉบับ annotate โดยผู้เชี่ยวชาญ) ผ่าน
 > `scripts/build_cuad_fixtures.py`, playbook ขยายเป็น 36 จุดยืนครอบทั้ง 12 clause type,
@@ -85,7 +94,8 @@
 | Backend | **Report history** | `GET /contracts` (สรุปรายงานของตัวเอง เรียงใหม่→เก่า) + `GET /contracts/{report_id}` (ฉบับเต็ม) + `DELETE /contracts/{report_id}` — Postgres ใช้ index `(session_id, created_at)`, Redis ใช้ sorted set ต่อ session, รายงานของคนอื่นตอบ `404` ไม่ใช่ `403` |
 | Backend | **Data fixtures จาก CUAD** | `scripts/build_cuad_fixtures.py` แปลง CUAD v1 → สัญญาจริง 12 ฉบับ + gold 327 clause (82 clause มี label — เฉพาะข้อที่ไฮไลต์ของ CUAD ครอบคลุมมากพอ ดู `MIN_LABEL_COVERAGE`) + `.docx` ให้ลองอัปโหลด 3 ไฟล์ |
 | Backend | **Playbook 36 จุดยืน** | ครบทั้ง 12 clause type อ้างอิงหมวดรีวิว 41 หมวดของ CUAD — `preferred`/`fallback` เป็นภาษาสัญญาจริงที่ guardrail ใช้เทียบ verbatim ได้ |
-| Backend | Tests | 268 unit/integration tests ผ่านหมด (1 skipped — eval regression gate ที่ต้องยิง LLM จริง) |
+| Backend | Tests | **268 unit/integration tests ผ่านหมด ไม่มี skip เหลือ** (`pytest` — ฟรี ออฟไลน์ ~3 วิ) |
+| Backend | **Live tests (2026-07-31)** | **11 ตัวที่ยิง Z.AI + pgvector จริง** (`pytest -m live_llm`, ~3 นาที) — `tests/live/` 10 ตัว (structured output ต้องได้ data ไม่ใช่ markdown, ทุก clause ต้องได้คำตอบจริง, citation ชี้ position จริง + excerpt คำต่อคำ, fallback มาจาก playbook, metadata อยู่ในเอกสารจริง) + eval regression gate ที่เลิก skip แล้ว; deselect เป็น default ผ่าน `addopts` จึงไม่จ่ายค่า LLM ทุกครั้งที่รัน `pytest` |
 | Backend | **หัวข้อสัญญาไทย** | `_HEADING_RE` รับ `ข้อ 1.` / `๑.` / เลขอารบิกตามด้วยตัวอักษรไทย (พยัญชนะ + สระหน้า `เ แ โ ใ ไ`) และ prefix `Section`/`Article`/`Clause` — สัญญาไทยตัด clause ตามข้อจริงแทน paragraph fallback โดยอังกฤษ 12 ฉบับเดิมไม่กระทบ |
 | Frontend | Scaffold | React 19 + Vite + Tailwind + routing (`/login`, `/auth/callback`, `/manual`, `/contract`) |
 | Frontend | Login UI | หน้า login + components (Google button, brand header, card, ฯลฯ) |
@@ -107,43 +117,25 @@
 
 ## ❌ สิ่งที่ยังไม่ทำ
 
-> ### สรุปสั้น: ฟีเจอร์ฝั่ง backend ปิดครบแล้ว
+> ### สรุปสั้น: ไม่เหลืองานโค้ดค้างแล้ว (2026-07-31)
 >
-> **ไม่มีข้อไหนใน 3 ข้อข้างล่างที่เป็นฟีเจอร์ขาด** เส้นทางใช้งานจริงทั้งเส้น — login → upload →
-> review → accept/override → เปิดรายงานเดิม — ทำงานได้ครบ และมีเทสต์ 268 ตัวคุมอยู่ ที่เหลือคือ:
+> เส้นทางใช้งานจริงทั้งเส้น — login → upload → review → accept/override → เปิดรายงานเดิม —
+> ทำงานได้ครบ มีเทสต์ **268 ตัวออฟไลน์ (ไม่มี skip) + 11 ตัวที่ยิง provider จริง** คุมอยู่
+> **3 ข้อที่เคยค้างตรงนี้ปิดหมดแล้ว:**
 >
-> | ข้อ | ต้องทำอะไร | ทำไมยังไม่ทำ |
-> |---|---|---|
-> | eval บน label ชุดใหม่ | รันคำสั่งที่มีอยู่ (~33 นาที) | เจ้าของโปรเจกต์เลือกข้าม ประหยัดเวลา + ค่า LLM |
-> | cron ของ retention job | ตั้ง `.env` + crontab | เจ้าของโปรเจกต์เลือกไม่ตั้ง ยังไม่มีนโยบายเก็บข้อมูล |
-> | integration test ที่ยิง LLM จริง | **เขียนเทสต์ใหม่ 1 ตัว** | จ่ายค่า LLM ทุกครั้งที่รัน ต้องตัดสินใจก่อนว่าให้รันที่ไหน |
->
-> วิธีปิดทีละข้อพร้อมคำสั่ง: [ถ้าจะปิดทั้ง 3 ข้อ ต้องทำอะไร](#ถ้าจะปิดทั้ง-3-ข้อ-ต้องทำอะไร) ท้ายตาราง
+> | ข้อเดิม | สถานะ |
+> |---|---|
+> | eval บน label ชุดใหม่ | ✅ รันแล้ว 18 นาที 10 วิ — [ผลอยู่ด้านล่าง](#ผล-eval-บน-label-ชุดใหม่-2026-07-31) |
+> | integration test ที่ยิง LLM จริง | ✅ `tests/live/` + eval regression gate ที่เลิก skip = 11 ตัวใต้ `pytest -m live_llm` |
+> | cron ของ retention job | ✅ ตัดสินใจแล้วว่า **จะไม่ตั้ง** — ไม่ใช่งานค้างอีกต่อไป (เหตุผลด้านล่าง) |
 
-| ส่วน | รายการ | รายละเอียด |
-|------|--------|------------|
-| Backend | eval บน gold label ชุดใหม่ | **ไม่ใช่งานโค้ด — เป็นการวัด** ตัว label ซ่อมแล้ว (91 → 82, span ไม่เปลี่ยน) แต่ตัวเลขที่บันทึกไว้ทั้งหมด (`classification 57.69%` / `risk 50.00%` จาก 3 ฉบับ 90 clause) วัดกับ label ชุดเก่า จึงเทียบกับไม้บรรทัดใหม่ไม่ได้ — รัน `run_eval --limit 3` (~33 นาที) ได้เลขเทียบกันตรง ๆ, เต็มชุด 327 clause ≈ 1,300 call (~2 ชม.) |
-| Backend | integration test ที่ยิง LLM จริง | เทสต์ทั้ง 268 ตัว mock ที่ขอบ provider — บั๊กแบบ "Z.AI รับ `json_schema` แล้วตอบ markdown" ผ่าน mock ได้สบาย เจอตอนรันจริงเท่านั้น |
-| Backend | cron ของ retention job | **ตั้งใจไม่ตั้ง** — ตัว job พร้อมใช้แล้ว (`scripts/purge_reports.py`) แต่ค่า default คือเก็บรายงานไว้จนเจ้าของสั่งลบ เพราะการลบกู้คืนไม่ได้และตัวสัญญาหายไปด้วย ให้ตั้ง `REPORT_RETENTION_DAYS` + cron ตอนมีนโยบายเก็บข้อมูลจริง (ตัวอย่าง crontab อยู่ใน docstring ของสคริปต์) |
+**สิ่งที่ตั้งใจไม่ทำ ไม่ใช่สิ่งที่ทำไม่เสร็จ:**
 
-### ถ้าจะปิดทั้ง 3 ข้อ ต้องทำอะไร
-
-```bash
-# 1) eval บน gold label ชุดใหม่ — มีคำสั่งพร้อม ไม่ต้องแก้โค้ด (~33 นาที, ยิง LLM จริง)
-cd apps/backend-fastapi
-.venv/bin/python -m scripts.run_eval --limit 3     # เทียบกับ 57.69% / 50.00% ที่บันทึกไว้บน label เก่า
-.venv/bin/python -m scripts.run_eval               # เต็มชุด 327 clause (~2 ชม.)
-
-# 3) cron ของ retention job — เลือกกรอบเวลาเองก่อน (ลบแล้วกู้ไม่ได้)
-echo "REPORT_RETENTION_DAYS=90" >> apps/backend-fastapi/.env
-.venv/bin/python -m scripts.purge_reports --dry-run   # นับก่อนว่าจะลบกี่รายงาน
-crontab -e   # 15 3 * * * cd /path/to/apps/backend-fastapi && .venv/bin/python -m scripts.purge_reports
-```
-
-**ข้อ 2 เป็นข้อเดียวที่ต้องเขียนของใหม่** — ปลด skip ที่ `tests/eval/test_regression.py` แล้วผูกกับ
-`.env` ที่มีคีย์จริง พร้อมตัดสินใจว่าจะให้มันรันที่ไหน (ไม่ควรอยู่ใน CI ปกติเพราะจ่ายทุก push)
-ขอบเขตที่คุ้มค่าสุดคือสัญญา 1 ฉบับ 3 clause (`data/samples/thai-nda-short.txt`, ~45 วินาที)
-เพื่อจับบั๊กชนิดที่ mock จับไม่ได้ — อย่าง Z.AI ที่รับ `json_schema` แล้วตอบ markdown กลับมา
+| ส่วน | รายการ | ทำไมถึงไม่ทำ |
+|------|--------|--------------|
+| Backend | cron ของ retention job | **ตัดสินใจแล้วว่าไม่ตั้ง (2026-07-31)** — ตัว job พร้อมใช้ (`scripts/purge_reports.py`) แต่ค่า default คือเก็บรายงานไว้จนเจ้าของสั่งลบ เพราะการลบกู้คืนไม่ได้และตัวสัญญาหายไปด้วย การตั้ง cron ที่ลบข้อมูลของคนอื่นทุกคืนควรมาจากนโยบายเก็บข้อมูล ไม่ใช่มาจากความอยากให้ตาราง roadmap ว่าง — ถ้าจะตั้งทีหลัง: `echo "REPORT_RETENTION_DAYS=90" >> .env` แล้ว `--dry-run` ดูก่อนเสมอ |
+| Backend | eval เต็มชุด 327 clause | เลือกหยุดที่ `--limit 3` (n=22) เพราะเทียบกับตัวเลขชุดเก่าได้ตรงแล้ว เต็มชุดคือ ~1,300 call / ~2 ชม. — `.venv/bin/python -m scripts.run_eval` ถ้าอยากได้ |
+| Backend | ดัน `classification_accuracy` ให้สูงขึ้น | **เพดานอยู่ที่ gold label ไม่ใช่ที่ pipeline** — CUAD ตอบคำถาม 41 ข้อเกี่ยวกับสัญญา ไม่ได้จำแนกประเภทข้อสัญญา จะดันให้สูงอย่างมีความหมายต้อง annotate เองด้วยคน ส่วนการแก้ prompt ให้เดาตาม label คือวัด pipeline เทียบกับ heuristic ของตัวเอง |
 
 ---
 
@@ -408,8 +400,10 @@ fallback ทั้งฉบับ ตอนนี้ `_HEADING_RE` รับเ�
 นับหัวข้อได้เท่าเดิมทุกฉบับ (0/12 เปลี่ยน)** และฝั่ง frontend ตัดเลขซ้ำออกจาก title แล้ว
 (`CLAUSE_NUMBERING` ใน `lib/contracts.ts`) ไม่งั้นจะได้ `1. ข้อ 1. การรักษาความลับ`
 
-> ⚠️ **ยังไม่มีการจำกัดขนาดไฟล์** — route อ่านไฟล์ทั้งก้อนเข้า memory (`await file.read()`)
-> ไฟล์ใหญ่มากจะกินแรมและใช้เวลานาน (ราว 22 วิ/clause หลังปิด thinking mode)
+> ⚠️ **มีเพดานขนาดไฟล์แล้ว** (แก้เมื่อ 2026-07-30 — ย่อหน้านี้เคยเขียนว่ายังไม่มี): route อ่านแบบ
+> bounded ตาม `MAX_UPLOAD_BYTES` (default 10 MB) แล้วตอบ `413` โดยไม่ buffer ไฟล์ทั้งก้อนก่อน และ
+> มี `MAX_CLAUSES` (default 300) เช็คหลัง segment ก่อนจ่ายค่า LLM → `413` เหมือนกัน
+> ที่เหลือคือเรื่องเวลาล้วน ๆ: ราว 22 วิ/clause หลังปิด thinking mode
 
 ---
 
@@ -515,35 +509,81 @@ fallback ทั้งฉบับ ตอนนี้ `_HEADING_RE` รับเ�
 (`11. Trademarks` จาก `intellectual_property` → `other` เพราะตอนนี้ coverage ตัดสินแทนการนับ
 จำนวน category)
 
-**ยังไม่มีตัวเลข eval บน label ชุดใหม่** — ตั้งใจข้ามไปตามที่ตัดสินใจร่วมกัน (ประหยัด ~2 ชม.
-กับค่า LLM) ตัวเลขในหัวข้อก่อนหน้าทั้งหมดยังเป็นของ label ชุดเก่า อยากได้ของใหม่รัน:
-`.venv/bin/python -m scripts.run_eval --limit 3` (~33 นาที) แล้วเทียบกับ 57.69% / 50.00% ที่บันทึกไว้
-
 **ตรวจแล้วว่า harness อ่านไฟล์ใหม่ได้** — รัน `run_eval` กับ stub orchestrator (ไม่ยิง LLM):
 `segmentation_f1` 100%, ให้คะแนน 82 sample, ไม่พังกับฟิลด์ `label_coverage` หรือข้อที่มี
 `cuad_categories` แต่ไม่มี label
 
 ---
 
+## ผล eval บน label ชุดใหม่ (2026-07-31)
+
+รัน `.venv/bin/python -m scripts.run_eval --limit 3` — 3 ฉบับ / 90 clause / label 22 ข้อ ใช้เวลา
+**18 นาที 10 วินาที** (เร็วกว่า ~33 นาทีที่เคยประเมินไว้) คอนฟิกเดียวกับรอบก่อนทุกอย่าง
+(`LLM_PROVIDER=zai`, `glm-4.6`, `LLM_THINKING=disabled`) — เปลี่ยนแค่ไม้บรรทัด:
+
+| เมตริก | label เก่า (n=26) | **label ใหม่ (n=22)** | อ่านยังไง |
+|--------|-------------------|----------------------|-----------|
+| `segmentation_f1` | 100.00% | **100.00%** | เทียบข้ามกันได้จริง เพราะ span 327 ข้อไม่ถูกแตะ และขั้นนี้ไม่ใช้ LLM |
+| `classification_accuracy` | 57.69% | **45.45%** | **ลดลง 12 จุด — อธิบายด้านล่าง** |
+| `risk_accuracy` | 50.00% | **50.00%** | ยืนเท่าเดิม |
+| `citation_validity` | 100.00% | **100.00%** | ไม่มี citation ที่ชี้ playbook position ปลอมเลยสักอัน |
+
+### ตัวเลขที่ลดลงไม่ได้แปลว่า pipeline แย่ลง
+
+**โค้ดของ pipeline ไม่ถูกแตะระหว่างสองรอบนี้เลย** สิ่งที่เปลี่ยนคือ gold label และมันเปลี่ยนไปใน
+ทางที่ตัด label ที่ classifier เคยตอบถูกออกด้วย:
+
+- 57.69% ของ 26 = ถูก **15** ข้อ
+- 45.45% ของ 22 = ถูก **10** ข้อ
+- label หายไป 4 ข้อ แต่ข้อที่เคยถูกหายไป **5** ข้อ
+
+นี่คือราคาที่รู้อยู่แล้วตอนเลือกเกณฑ์ `MIN_LABEL_COVERAGE` — ตอนนั้นบันทึกไว้เองว่า label ที่หาย
+9 อันมี 2 อันที่เถียงได้ว่าถูก การที่ตัวเลขลดจึงเป็นผลของการทำ label ให้เข้มขึ้น ไม่ใช่สัญญาณถดถอย
+**เมตริกที่เทียบข้ามการเปลี่ยน label ได้จริง (`segmentation_f1`, `citation_validity`) ยืนที่ 100%
+ทั้งคู่**
+
+**จุดที่เพี้ยนหนักสุดคือ `non_compete`** (n=7, acc 28.57%) โดยตอบเป็น `intellectual_property`
+ไป 3 ข้อ — ซึ่งตรงกับตัวเอกสาร เพราะข้อห้ามแข่งขันใน CUAD มักเขียนรวมอยู่กับข้อสงวนสิทธิ์ในทรัพย์สิน
+ทางปัญญา ส่วน `termination` (3/3) และ `governing_law` (3/3) ยังเต็มทั้งคู่เหมือนรอบก่อน
+
+### สิ่งที่ log จับได้แต่เมตริกไม่ได้บอก
+
+ระหว่าง 90 clause นั้น GLM-4.6 ตอบกลับมาเป็น **list ของข้อความภาษาจีนที่ไม่เกี่ยวกับสัญญาเลย**
+แทนที่จะเป็น object ตาม schema อยู่ 1 ครั้ง:
+
+```
+_RiskAssessment attempt 1/3 failed (ValidationError: 1 validation error for _RiskAssessment
+  Input should be an object [type=model_type, input_value=['尔擔任嘉義縣議...'], input_type=list]);
+  retrying in 1.0s
+```
+
+retry ชั้นบน SDK จับได้และยิงซ้ำจนได้คำตอบที่ถูกรูป clause นั้นจึงไม่หายไปจากรายงาน — **นี่คือ
+failure ชนิดที่ mock มองไม่เห็น** และเป็นเหตุผลตรง ๆ ที่ `tests/live/` มีอยู่
+
+---
+
 ## Roadmap ที่เหลือ
 
-เส้นทางหลัก (login → upload → review → accept/override → เปิดรายงานเดิม) ใช้งานได้จริงครบแล้ว
-และ roadmap เดิมปิดไปหมดแล้วเมื่อ 2026-07-30 — accept risk / เก็บรายงานถาวร / contract metadata /
-LLM call ที่ผ่านสม่ำเสมอ / data-retention job ส่วน export ถูกตัดออกจากขอบเขต เหลือ:
+**ปิดครบแล้วเมื่อ 2026-07-31 — ไม่เหลืองานโค้ดค้าง** เส้นทางหลัก (login → upload → review →
+accept/override → เปิดรายงานเดิม) ใช้งานได้จริงครบ, roadmap รอบ 2026-07-30 ปิดไปแล้ว (accept risk /
+เก็บรายงานถาวร / contract metadata / LLM call ที่ผ่านสม่ำเสมอ / data-retention job; export ถูกตัด
+ออกจากขอบเขต) และ 3 ข้อสุดท้ายปิดในรอบนี้:
 
-1. **รัน evaluation กับ gold label ชุดใหม่** — งานเดียวที่เหลือของ eval: ตัว label ซ่อมแล้ว
-   (ดู [ซ่อม gold label](#ซ่อม-gold-label-2026-07-30)) แต่ยังไม่มีตัวเลขบนไม้บรรทัดใหม่
-   เริ่มจาก `--limit 3` (~33 นาที) เพื่อเทียบกับ 57.69% / 50.00% ที่บันทึกไว้บน label เก่า
-2. **integration test ที่ยิง LLM จริงอย่างน้อย 1 เส้น** — เทสต์ 268 ตัว mock ที่ขอบ provider
-   ทั้งหมด บั๊กแบบ "Z.AI รับ `json_schema` แล้วตอบ markdown มา" ผ่าน mock ได้สบาย ๆ
-3. **ตั้ง cron ให้ retention job** — สคริปต์พร้อมแล้ว (`python -m scripts.purge_reports`) ตั้งใจ
-   ไม่ตั้งให้ เพราะกรอบเวลาเก็บข้อมูลเป็นนโยบายที่ต้องตัดสินใจเอง (ลบแล้วกู้ไม่ได้)
-
-รันชุดวัดผลได้ตามนี้:
+1. ✅ **eval บน gold label ชุดใหม่** — รันแล้ว ผลอยู่ที่ [หัวข้อด้านบน](#ผล-eval-บน-label-ชุดใหม่-2026-07-31)
+2. ✅ **test ที่ยิง LLM จริง** — `tests/live/` 10 ตัว + eval regression gate ที่เลิก skip แล้ว
+   รวม 11 ตัวใต้ marker `live_llm` ซึ่ง deselect เป็น default
+3. ✅ **cron ของ retention job** — ตัดสินใจแล้วว่า**ไม่ตั้ง** จนกว่าจะมีนโยบายเก็บข้อมูล ไม่ใช่
+   งานค้างอีกต่อไป
 
 ```bash
 cd apps/backend-fastapi
+
+# --- เทสต์ ---
+.venv/bin/pytest                    # 268 ตัว ออฟไลน์ ฟรี ~3 วินาที
+.venv/bin/pytest -m live_llm        # 11 ตัว ยิง provider จริง ~3 นาที (เสียค่า LLM)
+
+# --- วัดผล ---
 .venv/bin/python -m scripts.run_eval --contract ticketscominc-sponsorship-agreement  # ฉบับสั้นสุด
-.venv/bin/python -m scripts.run_eval --limit 3      # 3 ฉบับแรก (~33 นาที)
-.venv/bin/python -m scripts.run_eval                # เต็มชุด 327 clause (~2 ชม.)
+.venv/bin/python -m scripts.run_eval --limit 3      # 3 ฉบับแรก (~18 นาที) ← ตัวเลขที่บันทึกไว้
+.venv/bin/python -m scripts.run_eval                # เต็มชุด 327 clause (~2 ชม.) ยังไม่เคยรัน
 ```

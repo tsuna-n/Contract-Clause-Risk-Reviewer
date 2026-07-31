@@ -117,7 +117,8 @@ apps/backend-fastapi/
 └── tests/
     ├── unit/                   # guardrails, parsers, segmenter, metrics, timeouts, providers/retry, report repo
     ├── integration/            # health, auth, contracts API
-    └── eval/                   # regression gate (skip ไว้ เพราะต้องเรียก LLM จริง)
+    ├── live/                   # ยิง provider จริง — deselect เป็น default (`pytest -m live_llm`)
+    └── eval/                   # regression gate บน gold set (live_llm เหมือนกัน)
 ```
 
 ### 🔍 หมายเหตุที่ควรรู้
@@ -250,27 +251,30 @@ judge บอกว่า ungrounded, และ isolate failure ต่อ clause 
   bounded → `413` ไม่ buffer ไฟล์ทั้งก้อนก่อน) กับ `MAX_CLAUSES` (เช็คหลัง segment ก่อนจ่ายค่า LLM),
   และ `/auth/dev-login` ต้องเปิด 2 กลอน (`APP_ENV=development` **และ** `ENABLE_DEV_LOGIN=true`)
   — ทุกข้อยืนยันด้วย `curl` กับเซิร์ฟเวอร์จริง ดูรายละเอียดในหัวข้อข้อควรระวังท้ายไฟล์
-- **Tests** — 258 unit/integration tests ผ่านหมด (`pytest tests/`; อีก 1 test เป็น eval regression
-  gate ที่ skip ไว้เพราะต้องเรียก LLM จริง)
+- **Tests** — **268 unit/integration ผ่านหมด ไม่มี skip เหลือ** (`pytest`) บวก **11 live test
+  ที่ยิง provider จริง** ซึ่ง deselect เป็น default (`pytest -m live_llm`, ~3 นาที)
+- **Live test ที่ยิง LLM จริง (2026-07-31)** — `tests/live/` + `tests/eval/test_regression.py`
+  ปิดช่องที่ mock มองไม่เห็น: schema-constrained output ต้องได้ data ไม่ใช่ markdown, ทุก clause
+  ต้องได้คำตอบจริง (ไม่ตกไปที่ `"Automated review failed"`), citation ต้องชี้ playbook position ที่มี
+  อยู่จริงและ excerpt ต้องเป็นคำต่อคำ, fallback ต้องมาจาก playbook, metadata ต้องอยู่ในเอกสารจริง
+  — รายละเอียดที่ [Live tests](#live-tests-ที่ยิง-provider-จริง)
 
 ---
 
 ## ❌ สิ่งที่ยังไม่ได้ทำ
 
-**ไม่มีข้อไหนที่เป็นฟีเจอร์ขาด** — สองข้อแรกคือ "ยังไม่ได้รัน" (มีคำสั่งพร้อมแล้ว) ข้อสุดท้ายคือ
-เทสต์ที่ต้องเขียนใหม่ 1 ตัว ซึ่งติดเรื่องค่า LLM ต่อการรัน ไม่ใช่ติดเรื่องโค้ดของแอป:
+**ไม่เหลือข้อไหนที่เป็นงานค้างแล้ว (2026-07-31)** — สามข้อที่เคยอยู่ตรงนี้ปิดครบ:
 
-- **รัน evaluation บน gold label ชุดใหม่** — label ซ่อมแล้วเมื่อ 2026-07-30 (91 → 82 label,
-  span 327 ข้อไม่เปลี่ยน — ดู [เพดานของ gold label](#เพดานของ-gold-label-ที่มาจาก-cuad)) แต่ตัวเลข
-  ที่บันทึกไว้ทุกชุดวัดกับ label เก่า **จึงเทียบกับไม้บรรทัดใหม่ไม่ได้** รันจริงไปแล้ว 3 ฉบับ /
-  90 clause บน label เก่า (`classification 57.69%`, `risk 50.00%`, ไม่มี clause ล้มเพราะ provider);
-  `--limit 3` (~33 นาที) คือทางที่ถูกสุดที่จะได้เลขเทียบกันตรง ๆ, เต็มชุดคือ ~1,300 LLM call
-- **Eval regression gate** (`tests/eval/test_regression.py`) — ยัง skip ไว้เพราะต้องเรียก LLM จริง
-  (มี cost + ต้องมี quota); รันเองได้ผ่าน `python -m scripts.run_eval` (ดู `--limit` / `--contract`)
-- **integration test ที่ยิง LLM จริง** — เทสต์ 268 ตัวทั้งหมด mock ที่ขอบ provider ซึ่งจับบั๊ก
-  ชนิด "host รับพารามิเตอร์แล้วไม่ทำตาม" ไม่ได้ (Z.AI รับ `json_schema` แล้วตอบ markdown — เจอ
-  ตอนรันจริงเท่านั้น) เส้นที่คุ้มสุดคือ `data/samples/thai-nda-short.txt` 3 clause ~45 วินาที
-  และไม่ควรผูกกับ CI ปกติเพราะจ่ายทุก push
+| ข้อเดิม | สถานะ |
+|---------|-------|
+| รัน evaluation บน gold label ชุดใหม่ | ✅ รันแล้ว 2026-07-31 (3 ฉบับ / 90 clause, 18 นาที) — ดู [ผลบน label ชุดใหม่](#ผล-eval-บน-label-ชุดใหม่-2026-07-31) |
+| Eval regression gate ที่ skip ไว้ | ✅ เลิก skip แล้ว — เป็น `live_llm` gate บนสัญญาสั้นสุด 1 ฉบับ (~3 นาที) |
+| integration test ที่ยิง LLM จริง | ✅ `tests/live/` 10 ตัว ยิง Z.AI + pgvector จริง |
+
+เหลือแค่ข้อเดียวที่ **ตั้งใจไม่ทำ** และไม่ใช่งานโค้ด: **cron ของ retention job** — ตัว job
+(`python -m scripts.purge_reports`) พร้อมใช้แล้ว แต่ค่า default คือเก็บรายงานไว้จนเจ้าของสั่งลบ
+เพราะการลบกู้คืนไม่ได้และตัวสัญญาหายไปด้วย ยืนยันอีกครั้งเมื่อ 2026-07-31 ว่าจะไม่ตั้ง จนกว่าจะมี
+นโยบายเก็บข้อมูลจริง
 
 ---
 
@@ -442,6 +446,32 @@ python -m scripts.run_eval --contract ticketscominc-sponsorship-agreement   # �
 > จากหัวไฟล์ (ฉบับแรกในไฟล์คือฉบับที่มี 47 clause) — `POST /evaluate` ก็ส่ง `limit` ได้เหมือนกัน
 > (จำนวน**สัญญา** ไม่ใช่ clause)
 
+### Live tests ที่ยิง provider จริง
+
+```bash
+pytest                       # 268 ตัว — mock ที่ขอบ provider, ฟรี, ออฟไลน์, ~3 วินาที
+pytest -m live_llm           # 11 ตัว — ยิง Z.AI + pgvector จริง, ~3 นาที, เสียค่า LLM
+pytest -m live_llm -k structured   # 1 call ~3 วินาที: เช็คแค่ว่า structured output ยังใช้ได้
+```
+
+`live_llm` ถูก **deselect เป็นค่า default** ผ่าน `addopts` ใน `pyproject.toml` — `pytest` เปล่า ๆ
+จึงยังฟรีและออฟไลน์เหมือนเดิม ส่วน `-m` ที่พิมพ์เองจะ override ตัวใน `addopts` ให้อัตโนมัติ
+(pytest ใช้ตัวหลังสุด) ซึ่งคือกลไกที่ทำให้ `-m live_llm` เป็นการ "สั่งให้ยิงจริง" อย่างจงใจ
+
+| ไฟล์ | เช็คอะไร |
+|------|----------|
+| `tests/live/test_live_pipeline.py` | 10 ตัว — structured output ต้องได้ data ไม่ใช่ markdown, ทุก clause ต้องได้คำตอบจริง, สัญญาไทยตัดได้ 3 ข้อ, citation ชี้ position จริง + excerpt คำต่อคำ ≥ 4 คำ, fallback มาจาก playbook, metadata อยู่ในเอกสารจริง, badge `verified` ต้องมีอะไรรองรับ |
+| `tests/eval/test_regression.py` | 1 ตัว — รัน eval harness บนสัญญาสั้นสุด 1 ฉบับ แล้วกัน `segmentation_f1` ≥ 95% กับ `citation_validity` = 100% |
+
+**ทำไม regression gate ไม่กัน `classification_accuracy` / `risk_accuracy` ด้วย** — สัญญาฉบับนั้นมี
+label แค่ 4 ข้อ ขยับ 1 ข้อ = ขยับตัวเลข 25 จุด ตั้ง threshold ตรงนั้นคือตั้งให้ fail เพราะ noise
+สองตัวนั้นวัดด้วย `scripts.run_eval` บน sample ที่ใหญ่พอแทน (ดู [ผล eval บน label
+ชุดใหม่](#ผล-eval-บน-label-ชุดใหม่-2026-07-31))
+
+> ⚠️ ต้องมี `.env` ที่มีคีย์จริง + Postgres ที่ ingest playbook แล้ว ถ้าไม่มี provider ที่ใช้ได้
+> ชุดนี้จะ **skip พร้อมบอกเหตุผล** ไม่ใช่ fail — เพราะ "คีย์หมดอายุ" กับ "โมเดลแย่ลง" ไม่ควรอ่าน
+> เหมือนกัน
+
 ### ลบรายงานเก่าตามนโยบาย retention
 ```bash
 python -m scripts.purge_reports --dry-run              # นับก่อน ไม่ลบ
@@ -507,7 +537,35 @@ python -m scripts.purge_reports                        # ใช้ REPORT_RETENT
 ให้คะแนนจากหัวข้อของ clause (`13. Warranty` → `warranty`) — นั่นคือวัด pipeline เทียบกับ heuristic
 ของตัวเอง ไม่ใช่เทียบกับผู้เชี่ยวชาญ
 
-**ยังไม่ได้รัน eval บน label ชุดใหม่** — ตัวเลขที่บันทึกไว้ทั้งหมดยังเป็นของชุดเก่า
+### ผล eval บน label ชุดใหม่ (2026-07-31)
+
+รัน `python -m scripts.run_eval --limit 3` (3 ฉบับ / 90 clause / label 22 ข้อ) ใช้เวลา **18 นาที
+10 วินาที** — เร็วกว่า ~33 นาทีที่ประเมินไว้ คอนฟิกเดียวกับรอบก่อน (`zai` / `glm-4.6` /
+`LLM_THINKING=disabled`) ต่างกันแค่ไม้บรรทัด:
+
+| เมตริก | label เก่า (n=26) | **label ใหม่ (n=22)** | อ่านยังไง |
+|--------|-------------------|----------------------|-----------|
+| `segmentation_f1` | 100.00% | **100.00%** | เทียบข้ามได้จริงเพราะ span 327 ข้อไม่ถูกแตะ — และไม่ใช้ LLM |
+| `classification_accuracy` | 57.69% | **45.45%** | **ลดลง 12 จุด** — อธิบายด้านล่าง |
+| `risk_accuracy` | 50.00% | **50.00%** | ยืนเท่าเดิม |
+| `citation_validity` | 100.00% | **100.00%** | ไม่มี citation ที่ชี้ position ปลอมเลย |
+
+**ตัวเลข classification ที่ลดลงไม่ได้แปลว่า pipeline แย่ลง — pipeline ไม่ถูกแตะเลย** ไม้บรรทัด
+เปลี่ยนอย่างเดียว และเปลี่ยนไปในทางที่ **ตัด label ที่ classifier เคยตอบถูกออก**: 57.69% ของ 26 คือ
+ถูก 15 ข้อ, 45.45% ของ 22 คือถูก 10 ข้อ — label หายไป 4 แต่ข้อที่ถูกหายไป 5 นั่นคือราคาที่รู้อยู่แล้ว
+ตอนเลือกเกณฑ์ `MIN_LABEL_COVERAGE` (ดูหัวข้อก่อนหน้า: label ที่เถียงได้ว่าถูกก็หายไปด้วย 2 อัน)
+
+**ที่เพี้ยนหนักสุดคือ `non_compete`** (n=7, acc 28.57%) โดยตอบเป็น `intellectual_property` ไป 3 ข้อ
+— ซึ่งสมเหตุสมผลกับตัวเอกสาร เพราะข้อห้ามแข่งขันใน CUAD มักเขียนรวมอยู่กับข้อสงวนสิทธิ์ในทรัพย์สิน
+ทางปัญญา ส่วน `termination` (3/3) กับ `governing_law` (3/3) ยังเต็มทั้งคู่
+
+**ข้อสังเกตจาก log ที่ไม่โผล่ในเมตริก:** GLM-4.6 ตอบกลับมาเป็น **list ของข้อความภาษาจีนที่ไม่
+เกี่ยวอะไรเลย** แทนที่จะเป็น object ตาม schema อยู่ 1 ครั้ง — retry ชั้นบน SDK จับได้และยิงซ้ำจนได้
+คำตอบที่ถูกรูป (`attempt 1/3 failed (ValidationError ...); retrying in 1.0s`) นี่คือ failure ชนิดที่
+mock มองไม่เห็นและเป็นเหตุผลที่ `tests/live/` มีอยู่
+
+**ยังไม่ได้รันเต็มชุด 327 clause** — ตัดสินใจว่าพอแค่ `--limit 3` (2026-07-31) เพราะ n=22 พอให้เทียบ
+กับตัวเลขเก่าได้ตรง ๆ แล้ว ส่วนเต็มชุดคือ ~1,300 call / ~2 ชม.
 
 ### สร้าง data fixtures ใหม่จาก CUAD
 ```bash
@@ -571,16 +629,20 @@ python -m scripts.build_cuad_fixtures --cuad ~/project/cuad   # ต้องม�
 
 ## Roadmap ที่เหลือ
 
-**Backend ใช้งานได้ครบทุกเส้นทางหลักแล้ว** (รวม Google OAuth ที่ login จริงผ่านแล้ว, ประวัติรายงาน
-ถาวร, accept/override + audit และ metadata ของสัญญา) เหลือ:
+**Backend ใช้งานได้ครบทุกเส้นทางหลักแล้ว และ roadmap เดิมปิดหมดแล้วเมื่อ 2026-07-31** (รวม Google
+OAuth ที่ login จริงผ่านแล้ว, ประวัติรายงานถาวร, accept/override + audit, metadata ของสัญญา, gold
+label ที่ให้จาก coverage, eval บนไม้บรรทัดใหม่ และ live test ที่ยิง provider จริง)
 
-1. **สร้าง gold label ให้ตรงกับ clause จริง** — งานที่เหลือชิ้นใหญ่สุดและเป็นคอขวดของทุกตัวเลข
-   ความแม่น: label ปัจจุบันมาจาก CUAD annotation ที่บังเอิญตกอยู่ในข้อนั้น ทำให้ข้อที่ขึ้นหัวว่า
-   `13. Warranty` เป็น gold `other` (ดู [เพดานของ gold
-   label](#เพดานของ-gold-label-ที่มาจาก-cuad)) ทางที่ตั้งใจไว้คือใช้ span ของไฮไลต์ที่ CUAD ให้มา
-   (`answer["text"]` ซึ่งตอนนี้ถูกทิ้ง) แทนการใช้ offset เริ่มต้นตัวเดียว
-2. **integration test ที่ยิง LLM จริงอย่างน้อย 1 เส้น** — bug อย่าง "Z.AI รับ `json_schema` แล้วตอบ
-   markdown" ผ่าน unit test ที่ mock ที่ขอบ provider ได้สบาย ๆ กว่าจะเจอก็ตอนรันจริง
+**ไม่มีงานโค้ดค้างแล้ว** สิ่งที่เหลือเป็นการตัดสินใจเชิงนโยบายกับงานวัดผลที่เลือกไม่ทำ:
+
+- **cron ของ retention job** — ตั้งใจไม่ตั้ง (ยืนยัน 2026-07-31) จนกว่าจะมีนโยบายเก็บข้อมูลจริง
+  ตัว job พร้อมใช้แล้ว: `python -m scripts.purge_reports --dry-run`
+- **eval เต็มชุด 327 clause** — เลือกหยุดที่ `--limit 3` (n=22) เพราะเทียบกับตัวเลขเก่าได้ตรงแล้ว
+  เต็มชุดคือ ~1,300 call / ~2 ชม. ถ้าอยากได้: `python -m scripts.run_eval`
+- **คุณภาพ gold label ยังเป็นเพดานของตัวเลขความแม่น** — ไม่ใช่บั๊ก แต่เป็นข้อจำกัดที่รู้ตัว: CUAD
+  ไม่ได้จำแนกประเภทข้อสัญญา การจะดัน `classification_accuracy` ให้สูงกว่านี้อย่างมีความหมายต้อง
+  annotate เองโดยคน ไม่ใช่แก้ prompt (ดู [เพดานของ gold
+  label](#เพดานของ-gold-label-ที่มาจาก-cuad))
 
 ---
 
@@ -2367,14 +2429,26 @@ monkeypatch.setattr(oauth.google, "authorize_access_token", fake_authorize_acces
 เขียนไว้ตรงนี้เพื่อไม่ให้เอกสารอธิบาย logic ไปโดยไม่บอกจุดที่ยังมีปัญหา —
 รายละเอียดและวิธีแก้อยู่ในผลรีวิว (ข้อที่แก้ไปแล้วถูกย้ายไปท้ายหัวข้อ):
 
-1. **ยังไม่มีตัวเลข eval บน gold label ชุดใหม่** — label ซ่อมแล้วเมื่อ 2026-07-30 (91 → 82,
-   ดู [เพดานของ gold label](#เพดานของ-gold-label-ที่มาจาก-cuad)) แต่ตัวเลขทุกชุดที่บันทึกไว้
-   วัดกับ label เก่า จึงเทียบกับของใหม่ไม่ได้
-2. **ไม่มี integration test ที่ยิง LLM จริง** — เทสต์ทั้งหมด mock ที่ขอบ provider ส่วน eval
-   regression gate ยัง skip ไว้ (มี cost) การพังแบบที่ mock จับไม่ได้ (เช่น Z.AI รับ `json_schema`
-   แล้วตอบ markdown) จึงเจอตอนรันจริงเท่านั้น
+1. **คุณภาพ gold label เป็นเพดานของ `classification_accuracy` / `risk_accuracy`** — ไม่ใช่บั๊กที่
+   แก้ได้ในโค้ด: CUAD ตอบคำถาม 41 ข้อเกี่ยวกับสัญญา ไม่ได้จำแนกประเภทข้อสัญญา label จาก coverage
+   (2026-07-30) แม่นกว่าเดิมแต่ยังเป็นการอนุมาน (ดู [เพดานของ gold
+   label](#เพดานของ-gold-label-ที่มาจาก-cuad)) — วัดบนไม้บรรทัดใหม่แล้วเมื่อ 2026-07-31 ได้
+   `classification 45.45%` / `risk 50.00%` และ **ตัวเลขที่ลดลงมาจากไม้บรรทัด ไม่ใช่จาก pipeline**
+   (ดู [ผลรอบล่าสุด](#ผล-eval-บน-label-ชุดใหม่-2026-07-31))
+2. **`non_compete` ถูกจำแนกเป็น `intellectual_property` บ่อย** (3 ใน 7 ข้อที่มี label) — ยังไม่ได้
+   แก้ เพราะข้อห้ามแข่งขันใน CUAD มักเขียนรวมกับข้อสงวนสิทธิ์ IP จริง ๆ การจะรู้ว่าใครผิดต้องอ่าน
+   ทีละข้อด้วยคน ไม่ใช่ขยับ prompt ตามตัวเลข
 
-**7 ข้อที่แก้ไปแล้ว** (5 ข้อล่างแก้เมื่อ 2026-07-30 พร้อมยืนยันด้วย `curl`/รันจริง):
+**9 ข้อที่แก้ไปแล้ว** (2 ข้อบนสุดแก้เมื่อ 2026-07-31, 5 ข้อล่างแก้เมื่อ 2026-07-30 พร้อมยืนยันด้วย
+`curl`/รันจริง):
+
+- ~~ยังไม่มีตัวเลข eval บน gold label ชุดใหม่~~ — รันแล้ว 2026-07-31 (`--limit 3`, 90 clause,
+  18 นาที 10 วิ): `segmentation_f1` 100%, `citation_validity` 100%, `classification` 45.45%,
+  `risk` 50.00%
+- ~~ไม่มี integration test ที่ยิง LLM จริง~~ — `tests/live/` (10 ตัว) +
+  `tests/eval/test_regression.py` ที่เลิก skip แล้ว รวม 11 ตัวใต้ marker `live_llm` ซึ่ง deselect
+  เป็น default; รอบแรกที่รันจริงจับได้เลยว่า GLM-4.6 เคยตอบ list ภาษาจีนแทน object ตาม schema
+  (retry ชั้นบน SDK กู้คืนได้)
 
 - ~~retry ตอน ungrounded ส่ง prompt เดิมเป๊ะ ๆ~~ — `RiskScorerInput.feedback` ส่ง `verdict.reason`
   กลับเข้า prompt รอบสอง (`risk_scorer.v1.jinja` มีบล็อก "your previous answer was rejected")
