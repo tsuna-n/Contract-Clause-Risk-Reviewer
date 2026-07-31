@@ -65,3 +65,10 @@ extend-immutable-calls = ["fastapi.Depends"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 asyncio_mode = "auto"
+markers = [
+    "live_llm: calls the real model vendor - costs money and minutes (tests/live)",
+]
+# Deselected by default so `pytest` stays free, offline, and fast. A
+# command-line `-m` overrides this one, which is what makes
+# `pytest -m live_llm` the way to ask for the live run on purpose.
+addopts = "-m 'not live_llm'"
