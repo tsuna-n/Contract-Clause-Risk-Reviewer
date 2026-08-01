@@ -9,6 +9,8 @@ become citations (:func:`make_citation`).
 from __future__ import annotations
 
 import hashlib
+import json
+import time
 from pathlib import Path
 from typing import Protocol
 
@@ -18,6 +20,7 @@ from sqlalchemy.dialects.postgresql import insert
 from app.ai.providers import (
     GEMINI,
     ProviderConfigError,
+    is_transient,
     resolve_api_key,
     resolve_base_url,
     resolve_embedding_model,
@@ -25,6 +28,7 @@ from app.ai.providers import (
 )
 from app.config import Settings, get_settings
 from app.database import SessionLocal
+from app.logger import get_logger
 from app.models import PlaybookEmbedding
 from app.schemas import (
     Citation,
@@ -35,6 +39,8 @@ from app.schemas import (
     RetrievalSource,
     RiskLevel,
 )
+
+logger = get_logger(__name__)
 
 # --- embedding ---------------------------------------------------------------
 
@@ -170,18 +176,207 @@ class OpenAICompatibleEmbedder:
         return vectors
 
 
-def build_embedder(settings: Settings | None = None) -> Embedder:
+class EmbeddingCache(Protocol):
+    """Somewhere to keep vectors between calls."""
+
+    def get_many(self, keys: list[str]) -> dict[str, list[float]]:
+        """Return the vectors present for ``keys``; missing keys are absent."""
+        ...
+
+    def set_many(self, vectors: dict[str, list[float]]) -> None:
+        """Store each key's vector."""
+        ...
+
+
+class InMemoryEmbeddingCache:
+    """Process-local cache. The default, and all a script or a test needs."""
+
+    def __init__(self) -> None:
+        self._vectors: dict[str, list[float]] = {}
+
+    def get_many(self, keys: list[str]) -> dict[str, list[float]]:
+        """Return the vectors present for ``keys``."""
+        return {key: self._vectors[key] for key in keys if key in self._vectors}
+
+    def set_many(self, vectors: dict[str, list[float]]) -> None:
+        """Store each key's vector for the life of the process."""
+        self._vectors.update(vectors)
+
+
+class RedisEmbeddingCache:
+    """Cache shared across workers and across restarts.
+
+    Every operation is best-effort. A cache is an optimization, and Redis being
+    down has to cost a review some quota rather than cost it a report — so a
+    failed read is a miss and a failed write is dropped, both with a warning
+    and nothing else. Redis is already in the stack for contract and report
+    storage (see ``app/dependencies.py``), so this adds no new dependency.
+    """
+
+    def __init__(self, client, ttl_seconds: int) -> None:  # noqa: ANN001 - redis.Redis
+        self._client = client
+        self._ttl_seconds = ttl_seconds
+
+    def get_many(self, keys: list[str]) -> dict[str, list[float]]:
+        """Return the vectors Redis holds for ``keys``, or none of them."""
+        if not keys:
+            return {}
+        try:
+            raw = self._client.mget(keys)
+        except Exception:  # noqa: BLE001 - a cache miss is the safe reading
+            logger.warning("embedding cache read failed; treating as a miss", exc_info=True)
+            return {}
+        found: dict[str, list[float]] = {}
+        for key, value in zip(keys, raw, strict=True):
+            if not value:
+                continue
+            try:
+                found[key] = json.loads(value)
+            except (TypeError, ValueError):
+                # A corrupt entry re-embeds and overwrites itself on the way
+                # back through ``set_many``.
+                logger.warning("embedding cache entry %s is not valid JSON; ignoring", key)
+        return found
+
+    def set_many(self, vectors: dict[str, list[float]]) -> None:
+        """Store each key's vector under the configured TTL."""
+        if not vectors:
+            return
+        try:
+            pipe = self._client.pipeline()
+            for key, vector in vectors.items():
+                pipe.set(key, json.dumps(vector), ex=self._ttl_seconds)
+            pipe.execute()
+        except Exception:  # noqa: BLE001 - losing a write only costs quota later
+            logger.warning("embedding cache write failed; vectors not stored", exc_info=True)
+
+
+class RetryingEmbedder:
+    """Embedder decorator that asks again while the failure looks survivable.
+
+    The chat side has had this since the beginning (``LLMClient._call``); the
+    embedding side had nothing, so a single 429 — which on a free tier means
+    "next minute", not "no" — ended that clause as ``unknown`` with the
+    pipeline's per-clause isolation swallowing the reason. Same predicate and
+    same settings as the chat retries, so the two behave alike.
+    """
+
+    def __init__(self, inner: Embedder, *, max_attempts: int, backoff_seconds: float) -> None:
+        self.inner = inner
+        self._max_attempts = max(1, max_attempts)
+        self._backoff_seconds = max(0.0, backoff_seconds)
+
+    def embed(self, texts: list[str]) -> list[list[float]]:
+        """Embed ``texts``, retrying transient failures with a growing delay."""
+        number = 1
+        while True:
+            try:
+                return self.inner.embed(texts)
+            except Exception as exc:
+                if number >= self._max_attempts or not is_transient(exc):
+                    raise
+                delay = self._backoff_seconds * 2 ** (number - 1)
+                logger.warning(
+                    "embedding attempt %d/%d failed (%s: %s); retrying in %.1fs",
+                    number,
+                    self._max_attempts,
+                    type(exc).__name__,
+                    exc,
+                    delay,
+                )
+                time.sleep(delay)
+                number += 1
+
+
+class CachingEmbedder:
+    """Embedder decorator that reuses known vectors and batches the rest.
+
+    Two savings, both aimed at request count rather than tokens, because that
+    is what the free tiers meter:
+
+    * text already embedded costs nothing — a re-review of the same contract,
+      or a second eval pass over the same fixtures, sends no request at all;
+    * a call for many texts sends *one* request for whichever of them are
+      missing, which is what makes :meth:`Retriever.prewarm` worth doing —
+      the whole document embeds in one call and the per-clause retrievals that
+      follow are cache reads.
+
+    The key carries the provider, model and width alongside the text, so
+    switching any of them starts from an empty cache instead of silently
+    mixing vector spaces.
+    """
+
+    def __init__(self, inner: Embedder, cache: EmbeddingCache, *, namespace: str) -> None:
+        self.inner = inner
+        self.cache = cache
+        self._namespace = namespace
+
+    def _key(self, text: str) -> str:
+        digest = hashlib.sha256(text.encode("utf-8")).hexdigest()
+        return f"emb:{self._namespace}:{digest}"
+
+    def embed(self, texts: list[str]) -> list[list[float]]:
+        """Return one vector per input text, embedding only what isn't cached."""
+        if not texts:
+            return []
+
+        keys = [self._key(text) for text in texts]
+        known = self.cache.get_many(list(dict.fromkeys(keys)))
+
+        # A document repeats itself - identical clauses, a heading quoted twice
+        # - so the misses are deduplicated before the request, not after.
+        missing: dict[str, str] = {}
+        for key, text in zip(keys, texts, strict=True):
+            if key not in known:
+                missing.setdefault(key, text)
+
+        if missing:
+            vectors = self.inner.embed(list(missing.values()))
+            fresh = dict(zip(missing.keys(), vectors, strict=True))
+            self.cache.set_many(fresh)
+            known.update(fresh)
+
+        return [known[key] for key in keys]
+
+    def prewarm(self, texts: list[str]) -> None:
+        """Fill the cache for ``texts`` in a single request."""
+        self.embed(texts)
+
+
+def build_embedder(
+    settings: Settings | None = None, cache: EmbeddingCache | None = None
+) -> Embedder:
     """Construct the embedder described by settings.
 
-    Separate from the chat provider on purpose: Anthropic has no embedding API,
-    so a Claude-reviewed deployment still retrieves through Gemini (or any
-    OpenAI-compatible host) without the two settings fighting each other.
+    Separate from the chat provider on purpose: neither Anthropic nor Z.AI
+    serves an embedding model this app can reach, so a Claude- or GLM-reviewed
+    deployment still retrieves through Gemini (or any OpenAI-compatible host)
+    without the two settings fighting each other. It has to stay whichever
+    provider filled ``playbook_embeddings``, too — vectors from two different
+    models share a table but not a space, and cosine distance between them is
+    noise that still returns five confident-looking hits.
+
+    The provider client is wrapped in retry and (unless
+    ``ENABLE_EMBEDDING_CACHE=false``) caching. ``cache`` defaults to a
+    process-local dict, which is right for scripts and tests; the app passes a
+    Redis-backed one so the vectors outlive a restart.
     """
     settings = settings or get_settings()
     provider = resolve_embedding_provider(settings)
-    if provider == GEMINI:
-        return GeminiEmbedder()
-    return OpenAICompatibleEmbedder(provider=provider)
+    base = GeminiEmbedder() if provider == GEMINI else OpenAICompatibleEmbedder(provider=provider)
+
+    embedder: Embedder = RetryingEmbedder(
+        base,
+        max_attempts=settings.llm_max_attempts,
+        backoff_seconds=settings.llm_retry_backoff_seconds,
+    )
+    if not settings.enable_embedding_cache:
+        return embedder
+    return CachingEmbedder(
+        embedder,
+        cache if cache is not None else InMemoryEmbeddingCache(),
+        namespace=f"{provider}:{base.model}:{base.dim}",
+    )
 
 
 class DummyEmbedder:
@@ -310,6 +505,20 @@ class Retriever:
     def __init__(self, embedder: Embedder, store: VectorStore) -> None:
         self.embedder = embedder
         self.store = store
+
+    def prewarm(self, clauses: list[Clause]) -> None:
+        """Embed a whole document in one request, ahead of the per-clause work.
+
+        :meth:`retrieve` embeds one clause at a time because that is the shape
+        of the pipeline, and free-tier quotas count requests — so an eight
+        clause contract spent eight of them on work one request could do. With
+        a :class:`CachingEmbedder` underneath, those eight calls now read back
+        what this stored. Without one there is nothing to read back from, so
+        this would be a wasted request and is skipped instead.
+        """
+        if not isinstance(self.embedder, CachingEmbedder) or not clauses:
+            return
+        self.embedder.prewarm([clause.text for clause in clauses])
 
     def retrieve(self, clause: Clause, top_k: int = 5) -> list[RetrievalHit]:
         """Return the top playbook positions for ``clause``.

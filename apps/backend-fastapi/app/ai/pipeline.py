@@ -102,6 +102,7 @@ class Orchestrator:
                 f"document has {len(clauses)} clauses, above the {max_clauses}-clause "
                 "limit for one review"
             )
+        self._prewarm_embeddings(clauses)
         reviews = [self._review_clause(clause) for clause in clauses]
         summary, overall = aggregate(reviews)
 
@@ -115,6 +116,20 @@ class Orchestrator:
             metadata=self._extract_metadata(document),
             disclaimer=disclaimer_text(),
         )
+
+    def _prewarm_embeddings(self, clauses: list[Clause]) -> None:
+        """Embed the whole document in one request, or carry on without it.
+
+        Turns N embedding requests per review into one (see
+        :meth:`~app.ai.retrieval.Retriever.prewarm`). Isolated like every other
+        step here: if the pre-warm fails, each clause embeds on its own the way
+        it always did, and the retry inside the embedder gets a second chance
+        at whatever went wrong — so a failure here costs quota, never a report.
+        """
+        try:
+            self.matcher.prewarm(clauses)
+        except Exception:
+            logger.warning("embedding pre-warm failed; clauses will embed one by one")
 
     def _extract_metadata(self, document: ParsedDocument) -> ContractMetadata:
         """Read the contract's header facts, or return empty if that fails.

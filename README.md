@@ -195,7 +195,7 @@ LLM_PROVIDER=anthropic
 ANTHROPIC_API_KEY=sk-ant-api03-...
 LLM_MODEL=claude-haiku-4-5
 
-# --- Embeddings: ยังเป็น Gemini (Anthropic ไม่มี embedding API) ---
+# --- Embeddings: ยังเป็น Gemini (ทั้ง Anthropic และ Z.AI ไม่มี embedding ให้ใช้) ---
 EMBEDDING_PROVIDER=gemini
 GEMINI_API_KEY=AIza...
 EMBEDDING_MODEL=gemini-embedding-001
@@ -217,18 +217,18 @@ print('embed:', type(e).__name__, '->', e.model, f'({e.dim} dim)')
 "
 ```
 
-คอนฟิกที่ `.env` ของ repo นี้ใช้อยู่ตอนนี้คือ **Z.AI GLM-4.6 อ่านสัญญา + Gemini ทำ embedding**
-(ผลจริงของคำสั่งด้านบน เมื่อ 2026-07-30):
+คอนฟิกที่ `.env` ของ repo นี้ใช้อยู่ตอนนี้คือ **Z.AI GLM-4.7-flash อ่านสัญญา + Gemini ทำ embedding**
+(ผลจริงของคำสั่งด้านบน เมื่อ 2026-08-01):
 
 ```
-chat : OpenAICompatibleChatBackend -> glm-4.6
+chat : OpenAICompatibleChatBackend -> glm-4.7-flash
 embed: GeminiEmbedder -> gemini-embedding-001 (768 dim)
 ```
 
 `zai` ใช้ adapter ตัวเดียวกับ `openai` ชื่อคลาสที่ขึ้นจึงเป็น `OpenAICompatibleChatBackend` —
 ไม่ได้แปลว่าตั้งค่าผิด
 
-**5 ข้อที่ต้องรู้ก่อนสลับ:**
+**6 ข้อที่ต้องรู้ก่อนสลับ:**
 
 1. **สลับค่ายแล้วต้องแก้ `LLM_MODEL` ด้วย** — ตั้ง `LLM_PROVIDER=anthropic` ทั้งที่
    `LLM_MODEL=gemini-3.5-flash` จะฟ้อง `ProviderConfigError` ตั้งแต่เรียกครั้งแรก แทนที่จะไปเจอ
@@ -238,9 +238,16 @@ embed: GeminiEmbedder -> gemini-embedding-001 (768 dim)
 3. **เปลี่ยน embedding = ต้อง re-ingest** — vector จากคนละโมเดลเทียบ cosine กันไม่ได้ ถ้า
    `EMBEDDING_DIM` เปลี่ยนด้วยต้องมี Alembic migration ใหม่ (`0c41a8268ed0` hardcode `VECTOR(768)`)
    แล้วรัน `python -m scripts.ingest_playbook`
-4. **restart เสมอ** — `get_settings()` / `get_llm_client()` / `get_embedder()` เป็น `@lru_cache`
+4. **`zai` ทำ embedding ไม่ได้ มีแต่ chat** — `api.z.ai` เสิร์ฟเฉพาะโมเดล GLM (`/models` คืน 8 ตัว
+   ไม่มี `embedding-*` เลย ขอไปได้ `400 code 1211 Unknown Model`) ชื่อ `embedding-2/3` เป็นของ
+   BigModel ของ Zhipu คนละแพลตฟอร์มกัน ดังนั้น `EMBEDDING_PROVIDER=zai` เฉย ๆ จะถูกปฏิเสธพร้อม
+   บอกว่าต้องตั้งอะไร — ตั้ง `EMBEDDING_PROVIDER=gemini` (หรือไม่ตั้งเลยก็ fallback ไป Gemini ให้)
+   ถ้าบัญชีคุณมี embedding ที่ host อื่นค่อยระบุ `EMBEDDING_MODEL` + `EMBEDDING_BASE_URL` เอง
+   (เคยตั้ง `EMBEDDING_PROVIDER=zai` + `EMBEDDING_MODEL=embedding-1` ไว้จริงเมื่อ 2026-08-01 ผลคือ
+   ทุก clause กลายเป็น `unknown` เพราะ `400` ถูกกลืนตามข้อ 2 — vector ใน DB ไม่ได้เสียหายอะไร)
+5. **restart เสมอ** — `get_settings()` / `get_llm_client()` / `get_embedder()` เป็น `@lru_cache`
    ทั้งหมด และ `uvicorn --reload` จับแค่ไฟล์ `.py` ไม่จับ `.env`
-5. **ย้ายไปค่ายที่เป็น reasoning model ให้ดู `LLM_THINKING`** — ค่า default คือ `disabled` เพราะ
+6. **ย้ายไปค่ายที่เป็น reasoning model ให้ดู `LLM_THINKING`** — ค่า default คือ `disabled` เพราะ
    token ความคิดถูกหักจากงบ `max_tokens` ก้อนเดียวกับคำตอบ (GLM-4.6: 23.7 วิ/984 token ตอนเปิด
    เทียบกับ 2.1 วิ/55 token ตอนปิด — และคิดเกินงบ = ได้ 200 ที่ `content` ว่าง) พารามิเตอร์นี้ส่งให้
    host แบบ OpenAI-compatible เท่านั้น; ตั้ง `LLM_THINKING=auto` ถ้าอยากได้คุณภาพจากการคิดยาว

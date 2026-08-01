@@ -128,6 +128,16 @@ class Settings(BaseSettings):
     # two different models aren't comparable, and a length mismatch is stored
     # as a zero vector rather than rejected.
     embedding_dim: int = 768
+    # Reuse vectors for text already embedded instead of asking again. Worth a
+    # flag because it is the difference between one embedding request per
+    # review and one per clause: the free tiers that make this project cheap to
+    # run count *requests*, so re-reviewing a contract, or a second eval pass
+    # over the same fixtures, otherwise spends quota on answers already known.
+    enable_embedding_cache: bool = True
+    # A vector is a pure function of (provider, model, dim, text) and the key
+    # carries all four, so entries never go stale - the TTL is only here to
+    # keep Redis from growing without bound.
+    embedding_cache_ttl_seconds: int = 60 * 60 * 24 * 7
 
     # --- feature flags ---
     enable_judge: bool = True

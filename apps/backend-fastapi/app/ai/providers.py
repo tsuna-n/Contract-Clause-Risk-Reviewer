@@ -44,17 +44,29 @@ _DEFAULT_CHAT_MODELS = {
     ZAI: "glm-4.6",
 }
 
-#: Same, for ``EMBEDDING_MODEL``. Anthropic has no embedding API at all.
+#: Same, for ``EMBEDDING_MODEL``. Two providers are absent: Anthropic has no
+#: embedding API at all, and ``api.z.ai`` serves chat models only — its
+#: ``/models`` list is eight GLM entries with no ``embedding-*`` among them, and
+#: asking for one answers ``400 code 1211 Unknown Model``. The ``embedding-2``
+#: and ``embedding-3`` names belong to Zhipu's separate BigModel platform, so
+#: reaching them takes an explicit ``EMBEDDING_MODEL`` and ``EMBEDDING_BASE_URL``
+#: rather than a default that only works for some accounts.
 _DEFAULT_EMBEDDING_MODELS = {
     GEMINI: "gemini-embedding-001",
     OPENAI: "text-embedding-3-small",
-    ZAI: "embedding-3",
 }
 
-#: Providers that can embed. ``embedding_provider`` falls back to Gemini when
-#: the chat provider isn't one of these, which is what makes "Claude for review,
-#: Gemini for retrieval" work without extra configuration.
-EMBEDDING_PROVIDERS = (GEMINI, OPENAI, ZAI)
+#: Providers that can embed with nothing configured beyond a key.
+#: ``embedding_provider`` falls back to Gemini when the chat provider isn't one
+#: of these, which is what makes "Claude (or GLM) for review, Gemini for
+#: retrieval" work without extra configuration.
+EMBEDDING_PROVIDERS = (GEMINI, OPENAI)
+
+#: Why a provider has no default embedding model, in the words the error uses.
+_NO_EMBEDDING_MODEL_REASONS = {
+    ANTHROPIC: "has no embedding API",
+    ZAI: "serves no embedding model on api.z.ai",
+}
 
 _BASE_URLS = {ZAI: "https://api.z.ai/api/paas/v4"}
 
@@ -706,9 +718,11 @@ def resolve_embedding_model(provider: str, configured: str | None) -> str:
         _reject_mismatched_model(configured, provider, field="EMBEDDING_MODEL", default=default)
         return configured
     if default is None:
+        reason = _NO_EMBEDDING_MODEL_REASONS.get(provider, "has no default embedding model")
         raise ProviderConfigError(
-            f"{provider} has no embedding API; set EMBEDDING_PROVIDER to one of "
-            f"{', '.join(EMBEDDING_PROVIDERS)}"
+            f"{provider} {reason}; set EMBEDDING_PROVIDER to one of "
+            f"{', '.join(EMBEDDING_PROVIDERS)}, or name a model this host really serves "
+            "with EMBEDDING_MODEL (plus EMBEDDING_BASE_URL if it lives elsewhere)"
         )
     return default
 
@@ -723,7 +737,12 @@ def resolve_embedding_provider(settings: Settings) -> str:
 
     Defaults to the chat provider so a single-vendor setup needs one setting,
     but falls back to Gemini when that vendor can't embed — which is how
-    "Claude reviews, Gemini retrieves" works with nothing extra configured.
+    "Claude (or GLM) reviews, Gemini retrieves" works with nothing extra
+    configured. An explicit ``EMBEDDING_PROVIDER`` still wins, including one
+    that has no default model: that combination is an error naming the setting
+    to fix, which is the point — a chat vendor that can't embed otherwise fails
+    once per clause, deep inside a review, as a report of nothing but
+    ``unknown``.
     """
     if settings.embedding_provider:
         return resolve_provider(settings.embedding_provider, field="EMBEDDING_PROVIDER")

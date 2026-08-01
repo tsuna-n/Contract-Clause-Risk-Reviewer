@@ -25,7 +25,7 @@ Backend สำหรับระบบ **วิเคราะห์ความ
 | Database | PostgreSQL (`pgvector/pgvector:pg16`) + SQLAlchemy 2.0 (psycopg 3) |
 | Cache / queue | Redis 7 — contract/report repo (session-scoped, native TTL) |
 | LLM | สลับค่ายได้ผ่าน `LLM_PROVIDER`: Gemini (default) / Anthropic Claude / OpenAI-compatible (Z.AI GLM, DeepSeek, vLLM) — ดู [สลับค่าย AI](#สลับค่าย-ai-ผ่าน-env) |
-| Embeddings | ตั้งแยกจาก LLM ผ่าน `EMBEDDING_PROVIDER` (default: Gemini `gemini-embedding-001`, 768 มิติ) |
+| Embeddings | ตั้งแยกจาก LLM ผ่าน `EMBEDDING_PROVIDER` (default: Gemini `gemini-embedding-001`, 768 มิติ) — **1 request ต่อการรีวิว 1 ฉบับ** ไม่ใช่ต่อ clause และเป็น 0 ถ้าเคยรีวิวไฟล์เดิม (cache บน Redis) |
 | Retrieval | Hybrid: pgvector cosine (dense) + BM25 rerank (`rank-bm25`) |
 | Parsing | PyMuPDF (PDF), python-docx (DOCX) |
 | Auth | Google OAuth (Authlib) + JWT (python-jose) |
@@ -338,7 +338,7 @@ LLM_TIMEOUT_SECONDS=120            # เพดานต่อ call — เป็
 |------|--------------|---------------|----------|
 | Gemini | `LLM_PROVIDER=gemini` + `GEMINI_API_KEY` | `gemini-3.5-flash` | ค่าเดิมของโปรเจกต์ |
 | Claude | `LLM_PROVIDER=anthropic` + `ANTHROPIC_API_KEY` | `claude-opus-5` | ไม่มี embedding API → retrieval ตกไปใช้ Gemini อัตโนมัติ |
-| Z.AI (GLM) | `LLM_PROVIDER=zai` + `ZAI_API_KEY` | `glm-4.6` | เติม `https://api.z.ai/api/paas/v4` ให้เอง |
+| Z.AI (GLM) | `LLM_PROVIDER=zai` + `ZAI_API_KEY` | `glm-4.6` | เติม `https://api.z.ai/api/paas/v4` ให้เอง; **ไม่มี embedding model บน host นี้** → retrieval ตกไปใช้ Gemini อัตโนมัติเหมือน Claude |
 | OpenAI-compatible | `LLM_PROVIDER=openai` + `OPENAI_API_KEY` + `LLM_MODEL` + `LLM_BASE_URL` | — | ครอบคลุม OpenAI, DeepSeek, Ollama, vLLM; **ต้องระบุ `LLM_MODEL` เอง** |
 
 ตัวแปรที่เพิ่มมา (ไม่ตั้งก็ได้ทั้งหมด ยกเว้นคีย์ของค่ายที่เลือก):
@@ -351,10 +351,22 @@ LLM_MODEL=claude-opus-5         # ไม่ตั้ง = ใช้ default ข�
 LLM_BASE_URL=...                # เฉพาะ host แบบ OpenAI-compatible
 
 EMBEDDING_PROVIDER=gemini       # ไม่ตั้ง = ตามค่าย LLM ถ้าค่ายนั้น embed ได้ ไม่งั้นเป็น gemini
+                                # embed ได้จริงมีแค่ gemini กับ openai (anthropic/zai ไม่มี)
 EMBEDDING_MODEL=gemini-embedding-001
 EMBEDDING_API_KEY=...           # ไม่ตั้ง = ใช้คีย์ของ EMBEDDING_PROVIDER
 EMBEDDING_BASE_URL=...
+
+ENABLE_EMBEDDING_CACHE=true     # เก็บ vector ที่เคย embed ไว้ใน Redis (ค่า default)
+EMBEDDING_CACHE_TTL_SECONDS=604800
 ```
+
+**เรื่องโควตา:** การรีวิว 1 ฉบับยิง embedding **1 request** ไม่ใช่ 1 request ต่อ clause —
+`Orchestrator.review()` เรียก `Retriever.prewarm()` ยัดทุก clause ไปในคำขอเดียวก่อน แล้ว
+`retrieve()` รายข้อจึงอ่านจาก cache ต่อ ถ้าเคยรีวิวไฟล์นั้นแล้วก็เป็น **0 request** (key คือ
+`emb:{provider}:{model}:{dim}:{sha256(text)}` เปลี่ยนโมเดลเมื่อไหร่จึงเริ่มนับใหม่ ไม่ปนกัน)
+และ 429 ฝั่ง embedding ถูก retry ตาม `LLM_MAX_ATTEMPTS` เหมือนฝั่ง chat แล้ว — เดิมพลาดครั้งเดียว
+clause นั้นกลายเป็น `unknown` ทันที ปิด cache ได้ด้วย `ENABLE_EMBEDDING_CACHE=false`
+(Redis ล่มไม่ทำให้รีวิวพัง แค่กลับไปเสียโควตาเท่าเดิม)
 
 **ข้อควรระวัง 3 ข้อ:**
 

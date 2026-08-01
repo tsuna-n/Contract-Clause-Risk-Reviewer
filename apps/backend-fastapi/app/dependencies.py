@@ -31,6 +31,7 @@ from app.ai.pipeline import Orchestrator
 from app.ai.retrieval import (
     Embedder,
     PgVectorStore,
+    RedisEmbeddingCache,
     Retriever,
     VectorStore,
     build_embedder,
@@ -142,8 +143,20 @@ def get_llm_client() -> LLMClient:
 
 @lru_cache
 def get_embedder() -> Embedder:
-    """Return the shared embedder for the configured provider."""
-    return build_embedder()
+    """Return the shared embedder for the configured provider.
+
+    Backed by the same Redis the contract and report stores use, so a vector
+    survives a restart and is shared between workers: the process-local cache
+    ``build_embedder`` falls back to would start empty on every reload, which
+    is exactly when a re-review costs quota it doesn't have to.
+    """
+    settings = get_settings()
+    cache = (
+        RedisEmbeddingCache(get_redis_client(), settings.embedding_cache_ttl_seconds)
+        if settings.enable_embedding_cache
+        else None
+    )
+    return build_embedder(settings, cache=cache)
 
 
 @lru_cache

@@ -122,9 +122,11 @@ def test_api_key_falls_back_to_the_providers_own_env_var() -> None:
 
 
 def test_embedding_provider_follows_chat_unless_that_vendor_cannot_embed() -> None:
-    assert resolve_embedding_provider(_settings(llm_provider="zai")) == ZAI
-    # Anthropic has no embedding API, so retrieval quietly stays on Gemini.
+    assert resolve_embedding_provider(_settings(llm_provider="openai")) == OPENAI
+    # Anthropic has no embedding API and api.z.ai serves chat models only, so
+    # retrieval quietly stays on Gemini for both.
     assert resolve_embedding_provider(_settings(llm_provider="anthropic")) == GEMINI
+    assert resolve_embedding_provider(_settings(llm_provider="zai")) == GEMINI
     # An explicit setting wins over both.
     assert (
         resolve_embedding_provider(
@@ -134,12 +136,23 @@ def test_embedding_provider_follows_chat_unless_that_vendor_cannot_embed() -> No
     )
 
 
-def test_embedding_model_defaults_per_provider_and_rejects_anthropic() -> None:
+def test_embedding_model_defaults_per_provider_and_rejects_the_ones_that_cannot() -> None:
     assert resolve_embedding_model(GEMINI, None) == "gemini-embedding-001"
-    assert resolve_embedding_model(ZAI, None) == "embedding-3"
+    assert resolve_embedding_model(OPENAI, None) == "text-embedding-3-small"
 
     with pytest.raises(ProviderConfigError, match="no embedding API"):
         resolve_embedding_model(ANTHROPIC, None)
+
+    # Z.AI had `embedding-3` as its default until api.z.ai was asked for it and
+    # answered `400 Unknown Model` - the name belongs to Zhipu's BigModel
+    # platform, not this endpoint. A default nobody can call is worse than none:
+    # it turns a config mistake into a per-clause 400 the pipeline swallows, so
+    # the whole report comes back `unknown` with nothing naming the cause.
+    with pytest.raises(ProviderConfigError, match="serves no embedding model on api.z.ai"):
+        resolve_embedding_model(ZAI, None)
+
+    # Pointed at a host that does serve one, it is still allowed through.
+    assert resolve_embedding_model(ZAI, "embedding-3") == "embedding-3"
 
 
 @pytest.mark.parametrize(

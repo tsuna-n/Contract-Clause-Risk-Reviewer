@@ -248,6 +248,10 @@ class Matcher(Agent[Clause, list[RetrievalHit]]):
         """Return playbook positions matching ``payload``."""
         return self.retriever.retrieve(payload)
 
+    def prewarm(self, clauses: list[Clause]) -> None:
+        """Embed every clause in one request before the per-clause work starts."""
+        self.retriever.prewarm(clauses)
+
 
 # --- 4. score ----------------------------------------------------------------
 
