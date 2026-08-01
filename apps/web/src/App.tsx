@@ -9,6 +9,7 @@ import ContractPage from "./page/contract";
 import PlaybookPage from "./page/playbook";
 import EvaluatePage from "./page/evaluate";
 import SystemPage from "./page/system";
+import NotFoundPage from "./page/not-found";
 
 /**
  * "/" is the login screen for signed-out visitors and a shortcut into the app
@@ -49,8 +50,8 @@ const router = createBrowserRouter([
   },
   {
     // Playbook management (CRUD) + semantic search. Reached from the sidebar's
-    // Tools links; guarded like the rest of the app even though the playbook
-    // API itself doesn't require a bearer token.
+    // Tools links. Guarded, and the calls it makes carry the bearer token —
+    // every /playbook endpoint requires one.
     path: "/playbook",
     element: (
       <RequireAuth>
@@ -92,6 +93,9 @@ const router = createBrowserRouter([
   // bookmarks still land somewhere.
   { path: "/chat", element: <Navigate to="/manual" replace /> },
   { path: "/layout/chat-layout", element: <Navigate to="/manual" replace /> },
+  // Anything else. Without this react-router answers a bad URL with its own
+  // developer-facing error screen ("Unexpected Application Error!").
+  { path: "*", element: <NotFoundPage /> },
 ]);
 
 export default function App() {
