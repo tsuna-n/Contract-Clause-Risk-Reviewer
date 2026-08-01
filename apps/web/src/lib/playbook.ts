@@ -45,9 +45,16 @@ export interface UpdatePlaybookPayload {
   tags?: string[];
 }
 
+// Every call here goes out with the bearer token (apiFetch's default). The
+// backend's playbook router declares `Depends(get_current_user)` on the router
+// itself, so *all six* endpoints need it — the playbook is what the judge
+// grounds citations against, so write access to it is write access to every
+// verdict. Sending the calls unauthenticated doesn't just fail: apiFetch clears
+// the stored token on any 401, so one anonymous read here would sign the user
+// out of the whole app.
 export async function fetchPlaybookPositions(clauseType?: string): Promise<PlaybookPosition[]> {
   const query = clauseType ? `?clause_type=${encodeURIComponent(clauseType)}` : "";
-  return apiFetch<PlaybookPosition[]>(`/playbook${query}`, { auth: false });
+  return apiFetch<PlaybookPosition[]>(`/playbook${query}`);
 }
 
 /** A single scored retrieval result — mirrors `RetrievalHit` in app/schemas.py. */
@@ -65,18 +72,17 @@ export interface RetrievalHit {
 export async function searchPlaybook(q: string, topK = 5): Promise<RetrievalHit[]> {
   const params = new URLSearchParams({ q });
   if (topK) params.set("top_k", String(topK));
-  return apiFetch<RetrievalHit[]>(`/playbook/search?${params.toString()}`, { auth: false });
+  return apiFetch<RetrievalHit[]>(`/playbook/search?${params.toString()}`);
 }
 
 export async function getPlaybookPosition(id: string): Promise<PlaybookPosition> {
-  return apiFetch<PlaybookPosition>(`/playbook/${encodeURIComponent(id)}`, { auth: false });
+  return apiFetch<PlaybookPosition>(`/playbook/${encodeURIComponent(id)}`);
 }
 
 export async function createPlaybookPosition(payload: CreatePlaybookPayload): Promise<PlaybookPosition> {
   return apiFetch<PlaybookPosition>("/playbook", {
     method: "POST",
     json: payload,
-    auth: false,
   });
 }
 
@@ -87,13 +93,11 @@ export async function updatePlaybookPosition(
   return apiFetch<PlaybookPosition>(`/playbook/${encodeURIComponent(id)}`, {
     method: "PUT",
     json: payload,
-    auth: false,
   });
 }
 
 export async function deletePlaybookPosition(id: string): Promise<void> {
   return apiFetch<void>(`/playbook/${encodeURIComponent(id)}`, {
     method: "DELETE",
-    auth: false,
   });
 }

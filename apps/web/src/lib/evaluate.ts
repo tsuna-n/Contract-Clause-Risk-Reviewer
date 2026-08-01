@@ -28,12 +28,17 @@ export interface EvalRequest {
  */
 const EVAL_TIMEOUT_MS = 30 * 60_000;
 
-/** Run the evaluation harness against a gold set. */
+/**
+ * Run the evaluation harness against a gold set.
+ *
+ * Goes out with the bearer token: the backend's evaluate router declares
+ * `Depends(get_current_user)`. Anonymous would 401, and apiFetch clears the
+ * stored token on a 401 — so a failed run would also sign the user out.
+ */
 export function runEvaluation(request: EvalRequest = {}): Promise<EvalMetrics> {
   return apiFetch<EvalMetrics>("/evaluate", {
     method: "POST",
     json: request,
-    auth: false,
     timeoutMs: EVAL_TIMEOUT_MS,
   });
 }
