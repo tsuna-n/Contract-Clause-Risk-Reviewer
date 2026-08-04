@@ -127,7 +127,9 @@ def test_the_eval_harness_runs_without_a_ceiling() -> None:
 
 
 def test_the_default_gold_set_path_is_accepted() -> None:
-    assert resolve_gold_set_path("data/gold/annotations.jsonl").endswith(
+    from pathlib import Path
+
+    assert Path(resolve_gold_set_path("data/gold/annotations.jsonl")).as_posix().endswith(
         "data/gold/annotations.jsonl"
     )
 

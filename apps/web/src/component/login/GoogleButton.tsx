@@ -33,8 +33,8 @@ function GoogleIcon() {
 }
 
 /**
- * GoogleButton — black-theme "Continue with Google" button.
- * Dark fill with a subtle white border on black background.
+ * GoogleButton — navy-theme "Continue with Google" button.
+ * Dark navy fill with a subtle border on the navy background.
  */
 export default function GoogleButton({
   onClick,
@@ -56,12 +56,12 @@ export default function GoogleButton({
       }
       className={[
         "group relative flex w-full items-center justify-center gap-3",
-        "rounded-xl border border-white/10 bg-white/5 px-6 py-3.5",
-        "text-sm font-medium text-zinc-200 backdrop-blur-sm",
+        "rounded-xl border border-navy-600 bg-navy-800/60 px-6 py-3.5",
+        "text-sm font-medium text-navy-100 backdrop-blur-sm",
         "transition-all duration-200",
-        "hover:border-white/20 hover:bg-white/10 hover:text-white",
-        "hover:-translate-y-0.5 hover:shadow-lg hover:shadow-black/50",
-        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/20 focus-visible:ring-offset-2 focus-visible:ring-offset-black",
+        "hover:border-navy-400 hover:bg-navy-700/60 hover:text-white",
+        "hover:-translate-y-0.5 hover:shadow-lg hover:shadow-navy-950/70",
+        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-navy-400/40 focus-visible:ring-offset-2 focus-visible:ring-offset-navy-950",
         "active:translate-y-0 active:shadow-none",
         inert ? "cursor-not-allowed opacity-50" : "",
       ]
