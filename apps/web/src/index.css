@@ -1,9 +1,30 @@
 @import "tailwindcss";
 
+/* ─── Navy blue theme tokens ──────────────────────────────────────────────────
+   Single source of truth for the brand palette. Every page references these
+   via utilities (bg-navy-*, text-navy-*, border-navy-*, ring-navy-*) so no
+   brand colour is hardcoded. Semantic colours (risk / error / success /
+   warning) stay on the standard Tailwind palette because they convey meaning,
+   not branding — swapping them for navy would erase the signal.
+*/
+@theme {
+  --color-navy-50:  #eef3fb;
+  --color-navy-100: #d8e3f4;
+  --color-navy-200: #b3c6e6;
+  --color-navy-300: #84a3d2;
+  --color-navy-400: #5680bf;
+  --color-navy-500: #3a64a8;
+  --color-navy-600: #2c4d82;
+  --color-navy-700: #213a63;
+  --color-navy-800: #182843;
+  --color-navy-900: #101e36;
+  --color-navy-950: #0a1424;
+}
+
 /* ─── Base styles ──────────────────────────────────────────────────────────── */
 @layer base {
   body {
-    @apply bg-black text-slate-100 antialiased font-sans selection:bg-teal-500/20 selection:text-teal-200;
+    @apply bg-navy-950 text-slate-100 antialiased font-sans selection:bg-navy-500/30 selection:text-navy-100;
   }
 }
 
@@ -42,6 +63,6 @@
 
 /* ─── Custom scrollbar ─────────────────────────────────────────────────────── */
 ::-webkit-scrollbar           { width: 6px; height: 6px; }
-::-webkit-scrollbar-track     { background: rgba(15, 23, 42, 0.3); }
-::-webkit-scrollbar-thumb     { background: rgba(148, 163, 184, 0.2); border-radius: 4px; }
-::-webkit-scrollbar-thumb:hover { background: rgba(148, 163, 184, 0.4); }
+::-webkit-scrollbar-track     { background: rgba(16, 30, 54, 0.4); }
+::-webkit-scrollbar-thumb     { background: rgba(84, 128, 191, 0.25); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(84, 128, 191, 0.45); }

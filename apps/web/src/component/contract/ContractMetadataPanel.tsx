@@ -73,14 +73,14 @@ export default function ContractMetadataPanel({
 
   return (
     <dl
-      className={`flex flex-wrap gap-x-8 gap-y-3 rounded-xl border border-white/10 bg-white/5 px-4 py-3 ${className}`}
+      className={`sticky top-0 z-20 flex flex-wrap gap-x-8 gap-y-3 rounded-2xl border border-navy-800 bg-navy-950/95 px-4 py-3 backdrop-blur-sm ${className}`}
     >
       {fields.map((field) => (
         <div key={field.label} className="min-w-0 space-y-0.5">
-          <dt className="text-[10px] font-bold uppercase tracking-widest text-slate-500">
+          <dt className="text-[10px] font-bold uppercase tracking-widest text-navy-300">
             {field.label}
           </dt>
-          <dd className="text-sm text-slate-200 break-words">{field.value}</dd>
+          <dd className="text-sm text-slate-100 break-words">{field.value}</dd>
         </div>
       ))}
     </dl>
