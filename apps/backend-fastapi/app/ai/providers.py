@@ -6,10 +6,10 @@ schema". :class:`~app.ai.llm.LLMClient` and the agents above it only ever see
 ``complete``/``complete_structured``, so switching vendors is an ``.env`` edit
 rather than a code change.
 
-Four providers, three backends: ``zai`` is the OpenAI-compatible backend with
-Z.AI's endpoint and model pre-filled, because that is the whole difference.
-The same backend serves any other OpenAI-shaped API (DeepSeek, Ollama, vLLM)
-by setting ``LLM_BASE_URL`` and ``LLM_MODEL``.
+Five providers, three backends: ``zai`` and ``openrouter`` are both the
+OpenAI-compatible backend with their vendor's endpoint pre-filled, because
+that is the whole difference. The same backend serves any other OpenAI-shaped
+API (DeepSeek, Ollama, vLLM) by setting ``LLM_BASE_URL`` and ``LLM_MODEL``.
 
 SDKs are imported lazily inside ``_get_client`` for the same reason the Gemini
 client always was: the app must boot, and the tests must run, on a machine that
@@ -33,12 +33,16 @@ GEMINI = "gemini"
 ANTHROPIC = "anthropic"
 OPENAI = "openai"
 ZAI = "zai"
+OPENROUTER = "openrouter"
 
-PROVIDERS = (GEMINI, ANTHROPIC, OPENAI, ZAI)
+PROVIDERS = (GEMINI, ANTHROPIC, OPENAI, ZAI, OPENROUTER)
 
-#: Model used when ``LLM_MODEL`` is unset. ``openai`` has no entry on purpose:
-#: the OpenAI catalogue turns over fast enough that a stale default would fail
-#: with a confusing 404 instead of an honest "tell me which model".
+#: Model used when ``LLM_MODEL`` is unset. ``openai`` and ``openrouter`` have
+#: no entry on purpose: OpenAI's catalogue turns over fast enough that a stale
+#: default would fail with a confusing 404 instead of an honest "tell me which
+#: model", and OpenRouter's is the union of every vendor's catalogue - there is
+#: no model that belongs to it as a default the way ``glm-4.6`` belongs to
+#: Z.AI.
 _DEFAULT_CHAT_MODELS = {
     GEMINI: "gemini-3.5-flash",
     ANTHROPIC: "claude-opus-5",
@@ -67,9 +71,13 @@ EMBEDDING_PROVIDERS = (GEMINI, OPENAI)
 _NO_EMBEDDING_MODEL_REASONS = {
     ANTHROPIC: "has no embedding API",
     ZAI: "serves no embedding model on api.z.ai",
+    OPENROUTER: "has no embeddings endpoint - it routes chat completions only",
 }
 
-_BASE_URLS = {ZAI: "https://api.z.ai/api/paas/v4"}
+_BASE_URLS = {
+    ZAI: "https://api.z.ai/api/paas/v4",
+    OPENROUTER: "https://openrouter.ai/api/v1",
+}
 
 #: Which ``.env`` key each provider reads when ``LLM_API_KEY`` isn't set. The
 #: per-vendor names are kept because they're what the SDKs and every other tool
@@ -79,16 +87,23 @@ _API_KEY_FIELDS = {
     ANTHROPIC: "anthropic_api_key",
     OPENAI: "openai_api_key",
     ZAI: "zai_api_key",
+    OPENROUTER: "openrouter_api_key",
 }
 
 #: Effort levels the Anthropic API accepts. Anything else is dropped rather
 #: than passed through, since an unknown value is a 400 for the whole request.
 _ANTHROPIC_EFFORT_LEVELS = frozenset({"low", "medium", "high", "xhigh", "max"})
 
-#: Which wire protocol each provider speaks. ``openai`` and ``zai`` share one,
-#: which is why a GLM model served over an OpenAI-compatible host is a valid
-#: pairing and not a mistake.
-_BACKEND_FAMILY = {GEMINI: GEMINI, ANTHROPIC: ANTHROPIC, OPENAI: OPENAI, ZAI: OPENAI}
+#: Which wire protocol each provider speaks. ``openai``, ``zai`` and
+#: ``openrouter`` share one, which is why a GLM model served over an
+#: OpenAI-compatible host is a valid pairing and not a mistake.
+_BACKEND_FAMILY = {
+    GEMINI: GEMINI,
+    ANTHROPIC: ANTHROPIC,
+    OPENAI: OPENAI,
+    ZAI: OPENAI,
+    OPENROUTER: OPENAI,
+}
 
 #: Model-name prefixes each provider is known to own. These exist to catch the
 #: half-switched ``.env`` - ``LLM_PROVIDER`` moved to Anthropic while
@@ -96,6 +111,12 @@ _BACKEND_FAMILY = {GEMINI: GEMINI, ANTHROPIC: ANTHROPIC, OPENAI: OPENAI, ZAI: OP
 #: a vendor 404 with nothing pointing at the setting that caused it. An
 #: unrecognized prefix is left alone: self-hosted and fine-tuned models can be
 #: named anything.
+#:
+#: ``openrouter`` has none here on purpose: it re-sells every other vendor's
+#: catalogue under that vendor's own name (``anthropic/claude-...``,
+#: ``google/gemini-...``), so a name that looks like it belongs to Gemini or
+#: Anthropic is exactly what a correct OpenRouter config looks like, not a
+#: half-switched one.
 _MODEL_PREFIX_OWNERS = (
     (("gemini-",), GEMINI),
     (("claude-",), ANTHROPIC),

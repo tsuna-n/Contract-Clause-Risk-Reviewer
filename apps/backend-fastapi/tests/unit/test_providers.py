@@ -17,6 +17,7 @@ from app.ai.providers import (
     ANTHROPIC,
     GEMINI,
     OPENAI,
+    OPENROUTER,
     ZAI,
     AnthropicChatBackend,
     EmptyCompletionError,
@@ -73,7 +74,7 @@ def test_provider_names_are_normalized_and_validated() -> None:
         resolve_provider("grok", field="LLM_PROVIDER")
 
 
-def test_each_provider_has_a_default_model_except_openai() -> None:
+def test_each_provider_has_a_default_model_except_openai_and_openrouter() -> None:
     assert resolve_chat_model(GEMINI, None) == "gemini-3.5-flash"
     assert resolve_chat_model(ANTHROPIC, None) == "claude-opus-5"
     assert resolve_chat_model(ZAI, None) == "glm-4.6"
@@ -83,6 +84,12 @@ def test_each_provider_has_a_default_model_except_openai() -> None:
     # OpenAI's catalogue turns over too fast to guess at: say so instead of 404ing.
     with pytest.raises(ProviderConfigError, match="LLM_MODEL must be set"):
         resolve_chat_model(OPENAI, None)
+
+    # OpenRouter re-sells every vendor's catalogue, so there is no model that
+    # belongs to it as a default the way glm-4.6 belongs to Z.AI.
+    with pytest.raises(ProviderConfigError, match="LLM_MODEL must be set"):
+        resolve_chat_model(OPENROUTER, None)
+    assert resolve_chat_model(OPENROUTER, "anthropic/claude-opus-5") == "anthropic/claude-opus-5"
 
 
 def test_a_half_switched_env_is_rejected_by_name_rather_than_by_404() -> None:
@@ -107,26 +114,32 @@ def test_a_half_switched_env_is_rejected_by_name_rather_than_by_404() -> None:
 def test_zai_fills_in_its_own_host_and_an_override_still_wins() -> None:
     assert resolve_base_url(ZAI, None) == "https://api.z.ai/api/paas/v4"
     assert resolve_base_url(ZAI, "http://localhost:8080/v1") == "http://localhost:8080/v1"
+    assert resolve_base_url(OPENROUTER, None) == "https://openrouter.ai/api/v1"
     # Gemini and Anthropic talk to their own SDK defaults.
     assert resolve_base_url(GEMINI, None) is None
 
 
 def test_api_key_falls_back_to_the_providers_own_env_var() -> None:
-    settings = _settings(gemini_api_key="gem", anthropic_api_key="ant", zai_api_key="zai")
+    settings = _settings(
+        gemini_api_key="gem", anthropic_api_key="ant", zai_api_key="zai", openrouter_api_key="or"
+    )
 
     assert resolve_api_key(settings, GEMINI, override=None) == "gem"
     assert resolve_api_key(settings, ANTHROPIC, override=None) == "ant"
     assert resolve_api_key(settings, ZAI, override=None) == "zai"
+    assert resolve_api_key(settings, OPENROUTER, override=None) == "or"
     # LLM_API_KEY overrides whichever provider is selected.
     assert resolve_api_key(settings, ANTHROPIC, override="explicit") == "explicit"
 
 
 def test_embedding_provider_follows_chat_unless_that_vendor_cannot_embed() -> None:
     assert resolve_embedding_provider(_settings(llm_provider="openai")) == OPENAI
-    # Anthropic has no embedding API and api.z.ai serves chat models only, so
-    # retrieval quietly stays on Gemini for both.
+    # Anthropic has no embedding API, api.z.ai serves chat models only, and
+    # OpenRouter routes chat completions only - retrieval quietly stays on
+    # Gemini for all three.
     assert resolve_embedding_provider(_settings(llm_provider="anthropic")) == GEMINI
     assert resolve_embedding_provider(_settings(llm_provider="zai")) == GEMINI
+    assert resolve_embedding_provider(_settings(llm_provider="openrouter")) == GEMINI
     # An explicit setting wins over both.
     assert (
         resolve_embedding_provider(
@@ -154,6 +167,9 @@ def test_embedding_model_defaults_per_provider_and_rejects_the_ones_that_cannot(
     # Pointed at a host that does serve one, it is still allowed through.
     assert resolve_embedding_model(ZAI, "embedding-3") == "embedding-3"
 
+    with pytest.raises(ProviderConfigError, match="routes chat completions only"):
+        resolve_embedding_model(OPENROUTER, None)
+
 
 @pytest.mark.parametrize(
     ("provider", "model", "expected"),
@@ -162,6 +178,7 @@ def test_embedding_model_defaults_per_provider_and_rejects_the_ones_that_cannot(
         ("anthropic", None, AnthropicChatBackend),
         ("zai", None, OpenAICompatibleChatBackend),
         ("openai", "gpt-5", OpenAICompatibleChatBackend),
+        ("openrouter", "anthropic/claude-opus-5", OpenAICompatibleChatBackend),
     ],
 )
 def test_build_chat_backend_picks_the_right_adapter(provider, model, expected) -> None:
