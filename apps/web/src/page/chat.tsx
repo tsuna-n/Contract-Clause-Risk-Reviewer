@@ -121,7 +121,7 @@ export default function FileUploadPage({
   const removeEntry = (id: number) => setEntries((prev) => prev.filter((e) => e.id !== id));
 
   return (
-    <div className="h-full w-full bg-black text-white font-sans flex flex-col items-center justify-center px-6 py-8 overflow-y-auto">
+    <div className="h-full w-full bg-navy-950 text-white font-sans flex flex-col items-center justify-center px-6 py-8 overflow-y-auto">
       <style>{`
         .font-sans { font-family: 'Inter', ui-sans-serif, system-ui, sans-serif; }
         .font-mono-tix { font-family: ui-monospace, SFMono-Regular, monospace; }
@@ -147,8 +147,8 @@ export default function FileUploadPage({
           }}
           onDragLeave={() => setDragging(false)}
           onDrop={onDrop}
-          className={`w-full shrink-0 rounded-2xl border-2 border-dashed px-8 py-10 text-center cursor-pointer transition-colors duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#7C5CFC]
-            ${dragging ? "border-[#7C5CFC] bg-[#7C5CFC]/[0.08]" : "border-[#3A3D47] bg-[#111114] hover:border-[#4A4D57]"}`}
+          className={`w-full shrink-0 rounded-2xl border-2 border-dashed px-8 py-10 text-center cursor-pointer transition-colors duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-navy-500
+            ${dragging ? "border-navy-500 bg-navy-500/10" : "border-navy-700 bg-navy-900 hover:border-navy-600"}`}
         >
           <input
             ref={inputRef}
@@ -163,18 +163,18 @@ export default function FileUploadPage({
               e.target.value = "";
             }}
           />
-          <div className="w-11 h-11 mx-auto mb-4 rounded-[10px] bg-[#1A1A1E] border border-[#2A2C33] flex items-center justify-center">
+          <div className="w-11 h-11 mx-auto mb-4 rounded-[10px] bg-navy-800 border border-navy-700 flex items-center justify-center">
             <UploadCloud
               size={20}
-              className={dragging ? "text-[#7C5CFC]" : "text-[#9A9DA6]"}
+              className={dragging ? "text-navy-400" : "text-slate-400"}
               strokeWidth={1.75}
             />
           </div>
           <div className="text-[15px]">
-            <span className="text-[#A78BFA] font-semibold">คลิกเพื่อเลือกไฟล์</span>
+            <span className="text-navy-300 font-semibold">คลิกเพื่อเลือกไฟล์</span>
             <span className="text-white"> หรือลากมาวางตรงนี้</span>
           </div>
-          <div className="text-[13px] text-[#8A8D96] mt-1.5">
+          <div className="text-[13px] text-slate-400 mt-1.5">
             รองรับ {ACCEPTED_EXTENSIONS.join(" และ ")} — ตรวจหนึ่งฉบับใช้เวลาหลายนาที
           </div>
         </div>
@@ -182,7 +182,7 @@ export default function FileUploadPage({
         {/* Manifest list */}
         {entries.length > 0 && (
           <div className="w-full mt-6 max-h-[40vh] overflow-y-auto pr-1">
-            <div className="font-mono-tix text-[11px] tracking-[0.1em] text-[#8A8D96] uppercase mb-3 flex justify-between">
+            <div className="font-mono-tix text-[11px] tracking-[0.1em] text-slate-400 uppercase mb-3 flex justify-between">
               <span>Manifest</span>
               <span>
                 {entries.length} item{entries.length > 1 ? "s" : ""}
@@ -194,17 +194,17 @@ export default function FileUploadPage({
                 <div
                   key={entry.id}
                   onClick={() => entry.report && onReviewComplete?.(entry.report)}
-                  className={`manifest-item flex items-center bg-[#111114] border rounded-xl overflow-hidden ${
-                    entry.status === "failed" ? "border-[#7F2A34]" : "border-[#2A2C33]"
-                  } ${entry.report ? "cursor-pointer hover:border-[#4A4D57]" : ""}`}
+                  className={`manifest-item flex items-center bg-navy-900 border rounded-xl overflow-hidden ${
+                    entry.status === "failed" ? "border-rose-500/40" : "border-navy-800"
+                  } ${entry.report ? "cursor-pointer hover:border-navy-600" : ""}`}
                 >
                   {/* sequence stub */}
-                  <div className="w-11 self-stretch flex items-center justify-center font-mono-tix text-xs text-[#6A6D76] border-r border-dashed border-[#2A2C33]">
+                  <div className="w-11 self-stretch flex items-center justify-center font-mono-tix text-xs text-slate-500 border-r border-dashed border-navy-800">
                     {String(entries.length - idx).padStart(2, "0")}
                   </div>
 
-                  <div className="w-10 h-10 m-3.5 rounded-lg bg-[#1A1A1E] border border-[#2A2C33] flex-shrink-0 flex items-center justify-center">
-                    <FileText size={18} className="text-[#9A9DA6]" strokeWidth={1.75} />
+                  <div className="w-10 h-10 m-3.5 rounded-lg bg-navy-800 border border-navy-700 flex-shrink-0 flex items-center justify-center">
+                    <FileText size={18} className="text-slate-400" strokeWidth={1.75} />
                   </div>
 
                   {/* meta */}
@@ -212,7 +212,7 @@ export default function FileUploadPage({
                     <div className="text-sm font-medium text-white overflow-hidden text-ellipsis whitespace-nowrap">
                       {entry.name}
                     </div>
-                    <div className="font-mono-tix text-[11.5px] text-[#8A8D96] mt-0.5">
+                    <div className="font-mono-tix text-[11.5px] text-slate-400 mt-0.5">
                       {formatBytes(entry.size)}
                       {entry.status === "reviewing" && " · กำลังตรวจ…"}
                       {entry.status === "done" &&
@@ -220,7 +220,7 @@ export default function FileUploadPage({
                         ` · ${entry.report.clauses.length} ข้อสัญญา`}
                     </div>
                     {entry.message && (
-                      <div className="text-[11.5px] text-[#F87171] mt-1 leading-snug">
+                      <div className="text-[11.5px] text-rose-400 mt-1 leading-snug">
                         {entry.message}
                       </div>
                     )}
@@ -229,13 +229,13 @@ export default function FileUploadPage({
                   {/* status / remove */}
                   <div className="flex items-center gap-2.5 px-3.5 flex-shrink-0">
                     {entry.status === "reviewing" && (
-                      <span className="w-4 h-4 rounded-full border-2 border-[#7C5CFC] border-t-transparent animate-spin" />
+                      <span className="w-4 h-4 rounded-full border-2 border-navy-500 border-t-transparent animate-spin" />
                     )}
                     {entry.status === "done" && (
-                      <CheckCircle2 size={16} className="text-[#34D399]" strokeWidth={2} />
+                      <CheckCircle2 size={16} className="text-emerald-400" strokeWidth={2} />
                     )}
                     {entry.status === "failed" && (
-                      <AlertTriangle size={16} className="text-[#F87171]" strokeWidth={2} />
+                      <AlertTriangle size={16} className="text-rose-400" strokeWidth={2} />
                     )}
                     <button
                       onClick={(e) => {
@@ -243,7 +243,7 @@ export default function FileUploadPage({
                         removeEntry(entry.id);
                       }}
                       aria-label={`Remove ${entry.name}`}
-                      className="bg-transparent border-none text-[#8A8D96] cursor-pointer p-1 flex rounded-md hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#7C5CFC]"
+                      className="bg-transparent border-none text-slate-400 cursor-pointer p-1 flex rounded-md hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy-500"
                     >
                       <X size={15} strokeWidth={2} />
                     </button>

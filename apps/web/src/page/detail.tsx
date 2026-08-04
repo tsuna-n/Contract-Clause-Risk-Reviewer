@@ -40,9 +40,9 @@ function Detail({ report, loading = false, error = null, onBack, onRetry }: Deta
 
   if (loading) {
     return (
-      <div className="h-full bg-neutral-950 flex items-center justify-center">
-        <div className="flex items-center gap-3 text-sm text-neutral-400">
-          <span className="w-3.5 h-3.5 rounded-full border-2 border-amber-400 border-t-transparent animate-spin" />
+      <div className="h-full bg-navy-950 flex items-center justify-center">
+        <div className="flex items-center gap-3 text-sm text-slate-400">
+          <span className="w-3.5 h-3.5 rounded-full border-2 border-navy-400 border-t-transparent animate-spin" />
           กำลังโหลดรายงาน...
         </div>
       </div>
@@ -51,14 +51,14 @@ function Detail({ report, loading = false, error = null, onBack, onRetry }: Deta
 
   if (error || !report) {
     return (
-      <div className="h-full bg-neutral-950 flex items-center justify-center px-6">
+      <div className="h-full bg-navy-950 flex items-center justify-center px-6">
         <div className="text-center max-w-sm">
           <p className="text-sm text-rose-300 mb-4">{error ?? 'ไม่พบรายงานฉบับนี้'}</p>
           <div className="flex items-center justify-center gap-2">
             {onRetry && (
               <button
                 onClick={onRetry}
-                className="text-xs px-3 py-1.5 rounded-lg bg-neutral-900 border border-neutral-800 text-neutral-300 hover:border-amber-500/40 hover:text-amber-300 transition-colors"
+                className="text-xs px-3 py-1.5 rounded-lg bg-navy-900 border border-navy-800 text-slate-300 hover:border-navy-500/50 hover:text-navy-200 transition-colors"
               >
                 ลองใหม่
               </button>
@@ -66,7 +66,7 @@ function Detail({ report, loading = false, error = null, onBack, onRetry }: Deta
             {onBack && (
               <button
                 onClick={onBack}
-                className="text-xs px-3 py-1.5 rounded-lg bg-neutral-900 border border-neutral-800 text-neutral-300 hover:border-amber-500/40 hover:text-amber-300 transition-colors"
+                className="text-xs px-3 py-1.5 rounded-lg bg-navy-900 border border-navy-800 text-slate-300 hover:border-navy-500/50 hover:text-navy-200 transition-colors"
               >
                 กลับไปหน้าอัปโหลด
               </button>
@@ -78,26 +78,26 @@ function Detail({ report, loading = false, error = null, onBack, onRetry }: Deta
   }
 
   return (
-    <div className="relative h-full bg-neutral-950 overflow-hidden">
+    <div className="relative h-full bg-navy-950 overflow-hidden">
       {/* ส่วนเนื้อหา — scroll ได้อิสระ ไม่กระทบตำแหน่งปุ่มด้านล่าง */}
       <div className="h-full overflow-y-auto flex justify-center py-10 px-4">
         <div className="w-full max-w-2xl pb-28">
           {/* หัวข้อ + ปุ่มย้อนกลับ */}
-          <div className="mb-8 border-b border-neutral-800 pb-5">
+          <div className="mb-8 border-b border-navy-800 pb-5">
             {onBack && (
               <button
                 onClick={onBack}
-                className="mb-4 text-xs text-neutral-500 hover:text-amber-400 transition-colors flex items-center gap-1"
+                className="mb-4 text-xs text-slate-400 hover:text-navy-200 transition-colors flex items-center gap-1"
               >
                 ← กลับไปหน้าอัปโหลด
               </button>
             )}
             <div className="min-w-0">
-              <p className="text-xs uppercase tracking-[0.2em] text-amber-500/70 mb-1">
+              <p className="text-xs uppercase tracking-[0.2em] text-navy-300 mb-1">
                 {formatDate(report.createdAt)}
               </p>
               <h1
-                className="text-2xl font-semibold text-neutral-100 leading-snug break-words"
+                className="text-2xl font-semibold text-white leading-snug break-words"
                 style={{ fontFamily: 'Georgia, "Noto Serif Thai", serif' }}
               >
                 {report.filename || report.contractId}
@@ -114,7 +114,7 @@ function Detail({ report, loading = false, error = null, onBack, onRetry }: Deta
             >
               รวม: {riskLabel[report.overallRisk] ?? report.overallRisk}
             </span>
-            <span className="px-3 py-1 rounded-full text-[11px] font-medium bg-neutral-800 text-neutral-300 ring-1 ring-neutral-700">
+            <span className="px-3 py-1 rounded-full text-[11px] font-medium bg-navy-800 text-slate-300 ring-1 ring-navy-700">
               {report.clauses.length} ข้อสัญญา
             </span>
           </div>
@@ -137,7 +137,7 @@ function Detail({ report, loading = false, error = null, onBack, onRetry }: Deta
           {/* รายการข้อสัญญา — กดเพื่อกาง/พับรายละเอียด */}
           <div className="space-y-2.5">
             {report.clauses.length === 0 ? (
-              <p className="text-center text-neutral-600 py-12 text-sm border border-dashed border-neutral-800 rounded-xl">
+              <p className="text-center text-slate-500 py-12 text-sm border border-dashed border-navy-800 rounded-xl">
                 ไม่พบข้อสัญญาในไฟล์นี้
               </p>
             ) : (
@@ -152,7 +152,7 @@ function Detail({ report, loading = false, error = null, onBack, onRetry }: Deta
                     onClick={() => setSelectedClauseId(open ? null : clause.id)}
                   >
                     <div className="flex items-start justify-between gap-3">
-                      <h3 className="text-[15px] font-medium text-neutral-100 leading-snug">
+                      <h3 className="text-[15px] font-medium text-white leading-snug">
                         {clause.title}
                       </h3>
                       <span
@@ -164,18 +164,18 @@ function Detail({ report, loading = false, error = null, onBack, onRetry }: Deta
                       </span>
                     </div>
 
-                    <p className="mt-2 text-sm text-neutral-400 leading-relaxed">
+                    <p className="mt-2 text-sm text-slate-400 leading-relaxed">
                       {open ? clause.text : clause.excerpt}
                     </p>
 
                     {open && (
-                      <div className="mt-4 space-y-3 border-t border-white/10 pt-3">
+                      <div className="mt-4 space-y-3 border-t border-navy-800 pt-3">
                         {clause.rationale && (
                           <div>
-                            <p className="text-xs uppercase tracking-wide text-neutral-500 mb-1">
+                            <p className="text-xs uppercase tracking-wide text-slate-400 mb-1">
                               เหตุผลของ AI
                             </p>
-                            <p className="text-sm text-neutral-200 leading-relaxed">
+                            <p className="text-sm text-slate-200 leading-relaxed">
                               {clause.rationale}
                             </p>
                           </div>
@@ -183,10 +183,10 @@ function Detail({ report, loading = false, error = null, onBack, onRetry }: Deta
 
                         {clause.suggestedFallback && (
                           <div>
-                            <p className="text-xs uppercase tracking-wide text-neutral-500 mb-1">
+                            <p className="text-xs uppercase tracking-wide text-slate-400 mb-1">
                               ภาษาสำรองที่เสนอ
                             </p>
-                            <p className="text-sm text-neutral-300 leading-relaxed italic">
+                            <p className="text-sm text-slate-300 leading-relaxed italic">
                               {clause.suggestedFallback}
                             </p>
                           </div>
@@ -194,16 +194,16 @@ function Detail({ report, loading = false, error = null, onBack, onRetry }: Deta
 
                         {clause.citations.length > 0 && (
                           <div>
-                            <p className="text-xs uppercase tracking-wide text-neutral-500 mb-1.5">
+                            <p className="text-xs uppercase tracking-wide text-slate-400 mb-1.5">
                               อ้างอิง playbook
                             </p>
                             <ul className="space-y-1.5">
                               {clause.citations.map((citation) => (
                                 <li
                                   key={citation.id}
-                                  className="text-xs text-neutral-400 leading-relaxed"
+                                  className="text-xs text-slate-400 leading-relaxed"
                                 >
-                                  <span className="text-amber-400/80 font-mono">
+                                  <span className="text-navy-300 font-mono">
                                     {citation.playbookPositionId}
                                   </span>
                                   {' — '}
@@ -250,14 +250,14 @@ function Detail({ report, loading = false, error = null, onBack, onRetry }: Deta
             {/* override ต้องดูคู่กับสัญญาต้นฉบับ จึงส่งต่อไปหน้า workspace */}
             <Link
               to={`/contract?report=${encodeURIComponent(report.reportId)}`}
-              className="pointer-events-auto rounded-full bg-amber-500 px-5 py-3 text-xs font-semibold text-neutral-950 whitespace-nowrap text-center hover:bg-amber-400 transition-colors"
+              className="pointer-events-auto rounded-full bg-navy-600 px-5 py-3 text-xs font-semibold text-white whitespace-nowrap text-center hover:bg-navy-500 transition-colors"
             >
               แก้ระดับความเสี่ยง
             </Link>
 
             <button
               onClick={() => setShowOverview(true)}
-              className="pointer-events-auto w-28 rounded-full bg-neutral-900 border border-neutral-800 px-5 py-3 text-xs font-medium text-neutral-300 ring-1 ring-neutral-700 whitespace-nowrap text-center hover:text-amber-300 hover:ring-amber-500/30 transition-all duration-300"
+              className="pointer-events-auto w-28 rounded-full bg-navy-900 border border-navy-800 px-5 py-3 text-xs font-medium text-slate-300 ring-1 ring-navy-700 whitespace-nowrap text-center hover:text-navy-200 hover:ring-navy-500/40 transition-all duration-300"
             >
               ภาพรวม
             </button>

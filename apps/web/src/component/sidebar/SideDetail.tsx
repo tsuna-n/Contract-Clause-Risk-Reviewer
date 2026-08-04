@@ -46,23 +46,23 @@ function SideDetail({ report, onClose }: SideDetailProps) {
       {/* ฉากหลังจาง ๆ คลิกเพื่อปิด */}
       <div
         onClick={onClose}
-        className="fixed inset-0 z-40 bg-neutral-950/60 backdrop-blur-sm transition-opacity duration-200"
+        className="fixed inset-0 z-40 bg-navy-950/70 backdrop-blur-sm transition-opacity duration-200"
         aria-hidden="true"
       />
 
       {/* แผง sidebar ทางขวา */}
       <aside
-        className="fixed inset-y-0 right-0 z-50 w-full max-w-sm border-l border-neutral-800 bg-neutral-950 shadow-2xl shadow-black/50 overflow-y-auto transition-transform duration-300 ease-out"
+        className="fixed inset-y-0 right-0 z-50 w-full max-w-sm border-l border-navy-800 bg-navy-950 shadow-2xl shadow-navy-950/50 overflow-y-auto transition-transform duration-300 ease-out"
         role="dialog"
         aria-label="ภาพรวมรายงาน"
       >
         <div className="px-6 py-6">
           {/* หัวแผง */}
-          <div className="mb-6 flex items-start justify-between gap-3 border-b border-neutral-800 pb-5">
+          <div className="mb-6 flex items-start justify-between gap-3 border-b border-navy-800 pb-5">
             <div className="min-w-0">
-              <p className="text-xs uppercase tracking-[0.2em] text-amber-500/70 mb-1">ภาพรวม</p>
+              <p className="text-xs uppercase tracking-[0.2em] text-navy-300 mb-1">ภาพรวม</p>
               <h2
-                className="text-lg font-semibold text-neutral-100 leading-snug break-words"
+                className="text-lg font-semibold text-white leading-snug break-words"
                 style={{ fontFamily: 'Georgia, "Noto Serif Thai", serif' }}
               >
                 {report.filename || report.contractId}
@@ -70,7 +70,7 @@ function SideDetail({ report, onClose }: SideDetailProps) {
             </div>
             <button
               onClick={onClose}
-              className="shrink-0 rounded-full p-1.5 text-neutral-500 hover:text-amber-400 hover:bg-neutral-900 transition-colors"
+              className="shrink-0 rounded-full p-1.5 text-slate-500 hover:text-navy-200 hover:bg-navy-900 transition-colors"
               aria-label="ปิดแผงภาพรวม"
             >
               ✕
@@ -86,14 +86,14 @@ function SideDetail({ report, onClose }: SideDetailProps) {
             >
               รวม: {riskLabel[report.overallRisk] ?? report.overallRisk}
             </span>
-            <span className="px-3 py-1 rounded-full text-[11px] font-medium bg-neutral-800 text-neutral-300 ring-1 ring-neutral-700">
+            <span className="px-3 py-1 rounded-full text-[11px] font-medium bg-navy-800 text-slate-300 ring-1 ring-navy-700">
               {total} ข้อสัญญา
             </span>
           </div>
 
           {/* กระจายความเสี่ยง — แถบสัดส่วนอ่านเร็วกว่าตัวเลขล้วน */}
-          <div className="rounded-xl bg-neutral-900 border border-neutral-800 px-4 py-4 mb-4">
-            <p className="text-xs uppercase tracking-wide text-neutral-500 mb-3">
+          <div className="rounded-xl bg-navy-900 border border-navy-800 px-4 py-4 mb-4">
+            <p className="text-xs uppercase tracking-wide text-slate-400 mb-3">
               กระจายความเสี่ยง
             </p>
             <div className="space-y-2.5">
@@ -102,7 +102,7 @@ function SideDetail({ report, onClose }: SideDetailProps) {
                   <span className={`w-24 shrink-0 text-xs ${riskAccent[level]}`}>
                     {riskLabel[level]}
                   </span>
-                  <div className="flex-1 h-1.5 rounded-full bg-neutral-800 overflow-hidden">
+                  <div className="flex-1 h-1.5 rounded-full bg-navy-800 overflow-hidden">
                     <div
                       className={`h-full rounded-full ${
                         level === 'HIGH'
@@ -116,7 +116,7 @@ function SideDetail({ report, onClose }: SideDetailProps) {
                       style={{ width: total ? `${(counts[level] / total) * 100}%` : '0%' }}
                     />
                   </div>
-                  <span className="w-6 shrink-0 text-right text-xs text-neutral-300">
+                  <span className="w-6 shrink-0 text-right text-xs text-slate-300">
                     {counts[level]}
                   </span>
                 </div>
@@ -126,15 +126,15 @@ function SideDetail({ report, onClose }: SideDetailProps) {
 
           {/* ประเภทข้อสัญญาที่พบ */}
           {byType.length > 0 && (
-            <div className="rounded-xl bg-neutral-900 border border-neutral-800 px-4 py-4 mb-4">
-              <p className="text-xs uppercase tracking-wide text-neutral-500 mb-2">
+            <div className="rounded-xl bg-navy-900 border border-navy-800 px-4 py-4 mb-4">
+              <p className="text-xs uppercase tracking-wide text-slate-400 mb-2">
                 ประเภทข้อสัญญาที่พบ
               </p>
               <div className="flex flex-wrap gap-2">
                 {byType.map(([type, count]) => (
                   <span
                     key={type}
-                    className="px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-amber-500/10 text-amber-300 ring-1 ring-amber-500/30"
+                    className="px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-navy-500/10 text-navy-300 ring-1 ring-navy-500/30"
                   >
                     {type.replace(/_/g, ' ')} · {count}
                   </span>
@@ -144,14 +144,14 @@ function SideDetail({ report, onClose }: SideDetailProps) {
           )}
 
           {/* ข้อมูลรายงาน */}
-          <div className="rounded-xl bg-neutral-900 border border-neutral-800 px-4 py-4 mb-4 space-y-3">
+          <div className="rounded-xl bg-navy-900 border border-navy-800 px-4 py-4 mb-4 space-y-3">
             <div>
-              <p className="text-xs uppercase tracking-wide text-neutral-500 mb-1">ตรวจเมื่อ</p>
-              <p className="text-sm text-neutral-200">{formatDate(report.createdAt)}</p>
+              <p className="text-xs uppercase tracking-wide text-slate-400 mb-1">ตรวจเมื่อ</p>
+              <p className="text-sm text-slate-200">{formatDate(report.createdAt)}</p>
             </div>
             <div>
-              <p className="text-xs uppercase tracking-wide text-neutral-500 mb-1">Report ID</p>
-              <p className="text-xs text-neutral-300 font-mono break-all">{report.reportId}</p>
+              <p className="text-xs uppercase tracking-wide text-slate-400 mb-1">Report ID</p>
+              <p className="text-xs text-slate-300 font-mono break-all">{report.reportId}</p>
             </div>
           </div>
 

@@ -11,8 +11,8 @@ import GoogleButton from "./GoogleButton";
 import SignUpLink from "./SignUpLink";
 
 /**
- * LoginCard — black-theme glassmorphism card.
- * Nearly-black fill, white/8 border, strong shadow.
+ * LoginCard — navy-theme glassmorphism card.
+ * Navy fill, navy border, strong shadow.
  */
 export default function LoginCard() {
   const [isLoading, setIsLoading] = useState(false);
@@ -39,14 +39,14 @@ export default function LoginCard() {
 
   return (
     <div
-      className="w-full rounded-2xl border border-white/8 bg-white/[0.03] p-7 backdrop-blur-xl"
+      className="w-full rounded-2xl border border-navy-600/80 bg-navy-900/70 p-7 backdrop-blur-xl"
       style={{
         boxShadow:
-          "0 8px 48px rgba(0,0,0,0.7), inset 0 1px 0 rgba(255,255,255,0.04)",
+          "0 8px 48px rgba(0,0,0,0.7), inset 0 1px 0 rgba(132,163,210,0.06)",
       }}
     >
       {/* Hint text */}
-      <p className="mb-5 text-center text-sm text-zinc-500">
+      <p className="mb-5 text-center text-sm text-navy-300">
         Sign in to your workspace
       </p>
 
@@ -74,7 +74,7 @@ export default function LoginCard() {
           <button
             type="button"
             onClick={handleDevSignIn}
-            className="w-full rounded-xl border border-zinc-700/60 bg-zinc-800/40 py-2.5 text-xs font-medium text-zinc-300 transition-colors hover:bg-zinc-800 hover:text-white"
+            className="w-full rounded-xl border border-navy-700 bg-navy-800/60 py-2.5 text-xs font-medium text-navy-200 transition-colors hover:bg-navy-700 hover:text-white"
           >
             ⚡ Dev Mode Quick Sign In (skip Google OAuth)
           </button>
@@ -92,7 +92,7 @@ export default function LoginCard() {
           <button
             type="button"
             onClick={handleDevSignIn}
-            className="mt-3 w-full rounded-xl border border-white/10 bg-white/5 px-6 py-3.5 text-sm font-medium text-zinc-200 backdrop-blur-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-white/20 hover:bg-white/10 hover:text-white"
+            className="mt-3 w-full rounded-xl border border-navy-600 bg-navy-800/60 px-6 py-3.5 text-sm font-medium text-navy-100 backdrop-blur-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-navy-400 hover:bg-navy-700/70 hover:text-white"
           >
             ⚡ Dev Mode Quick Sign In
           </button>

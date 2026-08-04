@@ -29,9 +29,20 @@ def create_app() -> FastAPI:
     app = FastAPI(title="Contract Clause Risk Reviewer", version="0.1.0", lifespan=lifespan)
     register_exception_handlers(app)
 
+    # `localhost` and `127.0.0.1` are the same machine but distinct origins to
+    # the browser's CORS check. On Windows the browser may resolve `localhost`
+    # to either `::1` (IPv6) or `127.0.0.1` (IPv4), and a backend bound to only
+    # one stack is unreachable from the other — so the page may be served from
+    # either form. Allow both so CORS never blocks a legitimate loopback caller.
+    cors_origins = {settings.frontend_url}
+    if "localhost" in settings.frontend_url:
+        cors_origins.add(settings.frontend_url.replace("localhost", "127.0.0.1"))
+    if "127.0.0.1" in settings.frontend_url:
+        cors_origins.add(settings.frontend_url.replace("127.0.0.1", "localhost"))
+
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=[settings.frontend_url],
+        allow_origins=list(cors_origins),
         allow_credentials=True,
         allow_methods=["*"],
         allow_headers=["*"],

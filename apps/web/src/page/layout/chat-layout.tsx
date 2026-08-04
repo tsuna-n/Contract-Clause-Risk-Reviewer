@@ -163,7 +163,7 @@ function Chat() {
 
       {/* Main Content */}
       <div className="flex-[3] m-3 rounded-lg flex flex-col h-[calc(100vh-1.5rem)]">
-        <div className="flex-1 min-h-0 border-2 border-gray-400 rounded-lg my-1 overflow-hidden">
+        <div className="flex-1 min-h-0 border-2 border-navy-700 rounded-lg my-1 overflow-hidden">
           {showDetail ? (
             <Detail
               report={selected}

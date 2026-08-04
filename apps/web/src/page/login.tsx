@@ -35,18 +35,18 @@ export default function LoginPage() {
           </div>
 
           {/* Footer legal */}
-          <p className="animate-fade-in-up anim-delay-2 text-center text-xs text-zinc-700">
+          <p className="animate-fade-in-up anim-delay-2 text-center text-xs text-navy-400">
             By continuing you agree to our{" "}
             <a
               href="#"
-              className="text-zinc-600 underline-offset-2 transition-colors hover:text-zinc-400 hover:underline"
+              className="text-navy-300 underline-offset-2 transition-colors hover:text-navy-100 hover:underline"
             >
               Terms of Service
             </a>{" "}
             &amp;{" "}
             <a
               href="#"
-              className="text-zinc-600 underline-offset-2 transition-colors hover:text-zinc-400 hover:underline"
+              className="text-navy-300 underline-offset-2 transition-colors hover:text-navy-100 hover:underline"
             >
               Privacy Policy
             </a>
