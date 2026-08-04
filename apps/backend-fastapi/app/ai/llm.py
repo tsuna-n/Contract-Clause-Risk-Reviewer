@@ -9,6 +9,7 @@ setting (see :mod:`app.ai.providers`).
 
 from __future__ import annotations
 
+import threading
 import time
 from collections.abc import Callable
 from pathlib import Path
@@ -74,6 +75,12 @@ class LLMClient:
         # extra budget, however it gets spent.
         self._retry_budget_seconds = timeout_seconds or settings.llm_timeout_seconds
         self.usage = Usage()
+        # One ``LLMClient`` is shared by every agent and, since the
+        # orchestrator reviews several clauses at once (see
+        # ``review_concurrency``), called from several threads at the same
+        # time - so accumulating into ``self.usage`` needs its own lock rather
+        # than relying on the caller to serialize it.
+        self._usage_lock = threading.Lock()
 
     @property
     def model(self) -> str:
@@ -156,5 +163,6 @@ class LLMClient:
                 time.sleep(delay)
                 number += 1
             else:
-                self.usage.add(usage)
+                with self._usage_lock:
+                    self.usage.add(usage)
                 return result

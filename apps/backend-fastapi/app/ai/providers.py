@@ -19,6 +19,7 @@ has neither the key nor the SDK for a provider it isn't using.
 from __future__ import annotations
 
 import json
+import threading
 from dataclasses import dataclass
 from typing import Any, Protocol
 
@@ -230,19 +231,27 @@ class GeminiChatBackend:
         self._api_key = api_key
         self._timeout_seconds = timeout_seconds
         self._client = None  # lazily constructed google.genai.Client
+        # Clauses review concurrently (see ``review_concurrency``), so the
+        # first call of a run can reach this from several threads before
+        # ``_client`` is set - the lock makes construction happen once instead
+        # of once per thread that got there first.
+        self._client_lock = threading.Lock()
 
     def _get_client(self):
         """Lazily construct the underlying ``google.genai.Client``."""
         if self._client is None:
-            from google import genai
-            from google.genai import types
+            with self._client_lock:
+                if self._client is None:
+                    from google import genai
+                    from google.genai import types
 
-            self._client = genai.Client(
-                api_key=self._api_key,
-                # HttpOptions.timeout is milliseconds. Set on the client so it
-                # covers every call made through it, structured output included.
-                http_options=types.HttpOptions(timeout=self._timeout_seconds * 1000),
-            )
+                    self._client = genai.Client(
+                        api_key=self._api_key,
+                        # HttpOptions.timeout is milliseconds. Set on the client
+                        # so it covers every call made through it, structured
+                        # output included.
+                        http_options=types.HttpOptions(timeout=self._timeout_seconds * 1000),
+                    )
         return self._client
 
     @staticmethod
@@ -323,17 +332,23 @@ class AnthropicChatBackend:
         self._timeout_seconds = timeout_seconds
         self._client = None  # lazily constructed anthropic.Anthropic
         self._supports_effort = True
+        self._client_lock = threading.Lock()
 
     def _get_client(self):
         """Lazily construct the underlying ``anthropic.Anthropic`` client."""
         if self._client is None:
-            import anthropic
+            with self._client_lock:
+                if self._client is None:
+                    import anthropic
 
-            # The Anthropic SDK takes seconds, not milliseconds like Gemini.
-            kwargs: dict[str, Any] = {"api_key": self._api_key, "timeout": self._timeout_seconds}
-            if self._base_url:
-                kwargs["base_url"] = self._base_url
-            self._client = anthropic.Anthropic(**kwargs)
+                    # The Anthropic SDK takes seconds, not milliseconds like Gemini.
+                    kwargs: dict[str, Any] = {
+                        "api_key": self._api_key,
+                        "timeout": self._timeout_seconds,
+                    }
+                    if self._base_url:
+                        kwargs["base_url"] = self._base_url
+                    self._client = anthropic.Anthropic(**kwargs)
         return self._client
 
     @staticmethod
@@ -494,18 +509,21 @@ class OpenAICompatibleChatBackend:
         self._supports_json_schema = True
         self._disable_thinking = disable_thinking
         self._supports_thinking_param = True
+        self._client_lock = threading.Lock()
 
     def _get_client(self):
         """Lazily construct the underlying ``openai.OpenAI`` client."""
         if self._client is None:
-            import openai
+            with self._client_lock:
+                if self._client is None:
+                    import openai
 
-            # The OpenAI SDK takes seconds, like Anthropic's.
-            self._client = openai.OpenAI(
-                api_key=self._api_key,
-                base_url=self._base_url,
-                timeout=self._timeout_seconds,
-            )
+                    # The OpenAI SDK takes seconds, like Anthropic's.
+                    self._client = openai.OpenAI(
+                        api_key=self._api_key,
+                        base_url=self._base_url,
+                        timeout=self._timeout_seconds,
+                    )
         return self._client
 
     @staticmethod

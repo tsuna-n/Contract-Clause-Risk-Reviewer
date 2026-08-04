@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import uuid
+from concurrent.futures import ThreadPoolExecutor
 
 from app.ai.agents import (
     Classifier,
@@ -14,6 +15,7 @@ from app.ai.agents import (
     Segmenter,
 )
 from app.ai.guardrails import disclaimer_text
+from app.config import get_settings
 from app.errors import PayloadTooLargeError
 from app.logger import get_logger
 from app.parsers import ParsedDocument
@@ -103,7 +105,7 @@ class Orchestrator:
                 "limit for one review"
             )
         self._prewarm_embeddings(clauses)
-        reviews = [self._review_clause(clause) for clause in clauses]
+        reviews, metadata = self._run_clauses_and_metadata(clauses, document)
         summary, overall = aggregate(reviews)
 
         return ContractReviewReport(
@@ -113,9 +115,33 @@ class Orchestrator:
             overall_risk=overall,
             summary=summary,
             reviews=reviews,
-            metadata=self._extract_metadata(document),
+            metadata=metadata,
             disclaimer=disclaimer_text(),
         )
+
+    def _run_clauses_and_metadata(
+        self, clauses: list[Clause], document: ParsedDocument
+    ) -> tuple[list[ClauseReview], ContractMetadata]:
+        """Review every clause and extract document metadata concurrently.
+
+        Both are dominated by network latency, not CPU, and neither depends on
+        the other, so running them on worker threads overlaps their wall clock
+        instead of summing it - metadata extraction used to run only after
+        every clause had finished, for no reason but the order they were
+        written in. ``executor.map`` preserves input order in its results even
+        though the work completes out of order, so ``reviews`` still lines up
+        with ``clauses``.
+        """
+        if not clauses:
+            return [], self._extract_metadata(document)
+
+        concurrency = max(1, get_settings().review_concurrency)
+        workers = min(concurrency, len(clauses)) + (1 if self.metadata_extractor else 0)
+        with ThreadPoolExecutor(max_workers=workers) as executor:
+            metadata_future = executor.submit(self._extract_metadata, document)
+            reviews = list(executor.map(self._review_clause, clauses))
+            metadata = metadata_future.result()
+        return reviews, metadata
 
     def _prewarm_embeddings(self, clauses: list[Clause]) -> None:
         """Embed the whole document in one request, or carry on without it.

@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import threading
 import time
 from pathlib import Path
 from typing import Protocol
@@ -71,18 +72,25 @@ class GeminiEmbedder:
         )
         self._timeout_seconds = timeout_seconds or settings.llm_timeout_seconds
         self._client = None  # lazily constructed google.genai.Client
+        # Only reached concurrently when ``Retriever.prewarm`` fails and
+        # clauses fall back to embedding one at a time on the review's worker
+        # threads (see ``review_concurrency``) - the lock keeps that fallback
+        # from racing to construct the client twice.
+        self._client_lock = threading.Lock()
 
     def _get_client(self):
         """Lazily construct the underlying ``google.genai.Client``."""
         if self._client is None:
-            from google import genai
-            from google.genai import types
+            with self._client_lock:
+                if self._client is None:
+                    from google import genai
+                    from google.genai import types
 
-            self._client = genai.Client(
-                api_key=self._api_key,
-                # HttpOptions.timeout is milliseconds.
-                http_options=types.HttpOptions(timeout=self._timeout_seconds * 1000),
-            )
+                    self._client = genai.Client(
+                        api_key=self._api_key,
+                        # HttpOptions.timeout is milliseconds.
+                        http_options=types.HttpOptions(timeout=self._timeout_seconds * 1000),
+                    )
         return self._client
 
     def embed(self, texts: list[str]) -> list[list[float]]:
@@ -134,18 +142,21 @@ class OpenAICompatibleEmbedder:
         self._timeout_seconds = timeout_seconds or settings.llm_timeout_seconds
         self._client = None  # lazily constructed openai.OpenAI
         self._supports_dimensions = True
+        self._client_lock = threading.Lock()
 
     def _get_client(self):
         """Lazily construct the underlying ``openai.OpenAI`` client."""
         if self._client is None:
-            import openai
+            with self._client_lock:
+                if self._client is None:
+                    import openai
 
-            # The OpenAI SDK takes seconds, unlike Gemini's milliseconds.
-            self._client = openai.OpenAI(
-                api_key=self._api_key,
-                base_url=self._base_url,
-                timeout=self._timeout_seconds,
-            )
+                    # The OpenAI SDK takes seconds, unlike Gemini's milliseconds.
+                    self._client = openai.OpenAI(
+                        api_key=self._api_key,
+                        base_url=self._base_url,
+                        timeout=self._timeout_seconds,
+                    )
         return self._client
 
     def embed(self, texts: list[str]) -> list[list[float]]:

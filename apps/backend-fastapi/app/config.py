@@ -112,6 +112,24 @@ class Settings(BaseSettings):
     # is wall clock the reviewer is already waiting through, not a background
     # queue.
     llm_retry_backoff_seconds: float = 1.0
+    # How many clauses the orchestrator reviews at once. Each clause is 3-4
+    # independent LLM calls in sequence (classify, match, score, judge) and
+    # network latency dominates every one of them, so running several clauses'
+    # calls concurrently can cut wall clock roughly by this factor instead of
+    # summing every clause serially - *if* the vendor's rate limit tolerates
+    # it.
+    #
+    # Defaults to 1 (no induced concurrency beyond the one dedicated slot
+    # metadata extraction always gets) because it doesn't, here: live-tested
+    # 2026-08-04 against this project's paid Z.AI glm-4.7 key with a 3-clause
+    # contract, concurrency=2 and concurrency=4 both tripped its per-request
+    # rate limit (``code 1302``) hard enough that a clause exhausted its
+    # retries and degraded to ``unknown`` - a worse outcome than the extra
+    # wall clock it was spent chasing. Only raise this after confirming the
+    # configured provider's actual rate limit can take it; a vendor with a
+    # generous per-second budget (or a higher paid tier) is exactly what this
+    # setting is for.
+    review_concurrency: int = 1
 
     # --- rag / storage ---
     redis_url: str = "redis://localhost:6379/0"
