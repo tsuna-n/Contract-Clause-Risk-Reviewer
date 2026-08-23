@@ -13,6 +13,8 @@ import {
   type CreatePlaybookPayload,
 } from "../lib/playbook";
 
+// รายการประเภท clause ที่หน้า playbook ใช้เป็น filter และ dropdown
+// ช่วยให้ admin เลือกดูตำแหน่งในแต่ละหมวดได้ง่ายขึ้น
 const CLAUSE_TYPES: ClauseType[] = [
   "confidentiality",
   "indemnification",
@@ -28,29 +30,32 @@ const CLAUSE_TYPES: ClauseType[] = [
   "other",
 ];
 
+// ระดับความเสี่ยงที่สามารถตั้งให้กับ playbook position ได้
 const RISK_LEVELS: RiskLevel[] = ["low", "medium", "high", "unknown"];
 
 export default function PlaybookPage() {
+  // รายการ playbook ที่ดึงมาจาก backend เพื่อแสดงบนตาราง
   const [positions, setPositions] = useState<PlaybookPosition[]>([]);
   const [error, setError] = useState<string | null>(null);
-  /**
-   * Bumped to ask for the list again after a create/update/delete. It is part
-   * of the request key below, so a reload is one state write from an event
-   * handler rather than a flag the effect has to raise synchronously.
-   */
+
+  // generation ใช้บอกว่า list ถูก refresh ไปแล้วกี่รอบ
+  // มีไว้เพื่อให้ fetch หลัง create/update/delete ทำงานแบบ deterministic
+  // โดยไม่ต้องเพิ่ม flag ซ้อนกันใน effect
   const [generation, setGeneration] = useState<number>(0);
-  /** The request key the list on screen reflects; `null` until the first load. */
+
+  // loadedKey = key ของ request ล่าสุดที่โหลดเสร็จแล้ว
+  // ถ้า loadedKey ไม่ตรงกับ requestedKey แปลว่ารอ fetch ใหม่หรือกำลังโหลด
   const [loadedKey, setLoadedKey] = useState<string | null>(null);
 
-  // Filters
+  // --- Filter / search state สำหรับกรองรายการในตาราง ---
   const [selectedType, setSelectedType] = useState<string>("");
   const [searchQuery, setSearchQuery] = useState<string>("");
 
-  // Modal State
+  // --- Modal state สำหรับหน้าต่าง create/edit position ---
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [editingPosition, setEditingPosition] = useState<PlaybookPosition | null>(null);
 
-  // Form State
+  // --- Form state สำหรับข้อมูลที่กรอกใน modal ---
   const [formId, setFormId] = useState<string>("");
   const [formClauseType, setFormClauseType] = useState<ClauseType>("confidentiality");
   const [formTitle, setFormTitle] = useState<string>("");
@@ -60,23 +65,34 @@ export default function PlaybookPage() {
   const [formTags, setFormTags] = useState<string>("");
   const [submitting, setSubmitting] = useState<boolean>(false);
 
-  // Semantic search (GET /playbook/search) — ค้นตามความหมายทั้ง playbook
-  // แยกจาก searchQuery ซึ่งกรอง client-side แค่ในรายการที่โหลดมาแล้ว
+  // FIX: แก้ไขการตั้งค่าเริ่มต้นของ resInfo - ลบ as PlaybookPosition และใช้ medium แทน low
+  const [resInfo, setResInfo] = useState<PlaybookPosition>({
+    id: '',
+    clause_type: 'confidentiality',
+    title: '',
+    preferred_language: '',
+    fallback_language: '',
+    risk_if_absent: 'medium',  // แก้ไขจาก 'low' เป็น 'medium'
+    tags: [],
+  });
+
+  // --- Semantic search state: ค้นหาตามความหมายทั้ง playbook ออกจาก backend ---
+  // ตรงนี้แยกจาก searchQuery เพราะ searchQuery เป็นการกรองเฉพาะข้อมูลที่โหลดมาแล้วบน client
   const [semanticQ, setSemanticQ] = useState<string>("");
   const [semanticResults, setSemanticResults] = useState<RetrievalHit[] | null>(null);
   const [semanticLoading, setSemanticLoading] = useState<boolean>(false);
   const [semanticError, setSemanticError] = useState<string | null>(null);
 
-  // What the list *should* show right now. "Loading" is the gap between this
-  // and what it does show — derived rather than stored, so the fetch below can
-  // keep every state write inside a settled-promise callback instead of
-  // raising a flag in the effect body and cascading a render.
+  // requestedKey = key ของรายการที่หน้าอยากให้แสดงตอนนี้
+  // loading จะเท่ากับ true ในช่วงรอ fetch ใหม่ เพื่อให้ UI แสดงสถานะ loading
+  // และหลีกเลี่ยงปัญหา old request land บน top of new request
   const requestedKey = `${generation}:${selectedType}`;
   const loading = loadedKey !== requestedKey;
 
+  // --- ดึงรายการ playbook จาก backend ตาม filter ที่เลือก ---
+  // effect นี้ทำงานทุกครั้งที่ generation หรือ selectedType เปลี่ยน
+  // เพื่อให้ fetch ไม่สะท้อนผลลัพธ์เก่าบนคำขอใหม่
   useEffect(() => {
-    // A filter change while a request is in flight makes the old answer stale,
-    // and it must not land on top of the new one.
     let cancelled = false;
 
     fetchPlaybookPositions(selectedType || undefined).then(
@@ -97,11 +113,32 @@ export default function PlaybookPage() {
     return () => {
       cancelled = true;
     };
+    // FIX: ลบ setResInfo ที่อยู่นอก return statement ออก
+    // setResInfo ไม่ควรอยู่ใน useEffect นี้ เพราะมันไม่เกี่ยวข้องกับการดึงข้อมูล
   }, [requestedKey, selectedType]);
 
-  /** Re-fetch the list after a write. */
+  // หลังจาก create/update/delete ให้เรียก reload เพื่อ fetch list ใหม่
   const reload = () => setGeneration((n) => n + 1);
 
+  // FIX: เพิ่มฟังก์ชัน buildPayload เพื่อสร้างข้อมูลที่จะส่ง
+  const buildPayload = () => {
+    const tagsList = formTags
+      .split(",")
+      .map((t) => t.trim())
+      .filter((t) => t.length > 0);
+
+    return {
+      id: formId.trim() || undefined,
+      clause_type: formClauseType,
+      title: formTitle,
+      preferred_language: formPreferred,
+      fallback_language: formFallback,
+      risk_if_absent: formRisk,
+      tags: tagsList,
+    };
+  };
+
+  // --- Modal helpers สำหรับ create/edit position ---
   const openCreateModal = () => {
     setEditingPosition(null);
     setFormId("");
@@ -111,6 +148,16 @@ export default function PlaybookPage() {
     setFormFallback("");
     setFormRisk("medium");
     setFormTags("");
+    // FIX: reset resInfo ด้วย
+    setResInfo({
+      id: '',
+      clause_type: 'confidentiality',
+      title: '',
+      preferred_language: '',
+      fallback_language: '',
+      risk_if_absent: 'medium',
+      tags: [],
+    });
     setIsModalOpen(true);
   };
 
@@ -123,65 +170,66 @@ export default function PlaybookPage() {
     setFormFallback(pos.fallback_language);
     setFormRisk(pos.risk_if_absent);
     setFormTags(pos.tags ? pos.tags.join(", ") : "");
+    // FIX: ตั้งค่า resInfo ด้วยข้อมูลที่จะแก้ไข
+    setResInfo(pos);
     setIsModalOpen(true);
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!formTitle.trim() || !formPreferred.trim() || !formFallback.trim()) {
-      alert("Please fill in Title, Preferred Language, and Fallback Language");
-      return;
-    }
+  // FIX: แก้ไข handleSubmit ให้ใช้ form state โดยตรง
+  const handleSubmit = async (e: React.FormEvent) => {                                                                        
+      e.preventDefault();                                                                                                       
+                                                                                                                                
+      if (!formTitle.trim() || !formPreferred.trim() || !formFallback.trim()) {                                                 
+        alert("Please fill in Title, Preferred Language, and Fallback Language");                                               
+        return;                                                                                                                 
+      }                                                                                                                         
+                                                                                                                                
+      const payload = buildPayload();                                                                                           
+                                                                                                                                
+      try {                                                                                                                     
+        setSubmitting(true);                                                                                                    
+        setError(null);                                                                                                         
+                                                                                                                                
+        let data: PlaybookPosition;                                                                                             
+        if (editingPosition) {                                                                                                  
+          data = await updatePlaybookPosition(editingPosition.id, payload);                                                     
+        } else {                                                                                                                
+          data = await createPlaybookPosition(payload);                                                                         
+        }                                                                                                                       
+                                                                                                                                
+        setResInfo(data);                                                                                                       
+        setIsModalOpen(false);                                                                                                  
+        reload();                                                                                                               
+                                                                                                                                
+        // Reset form                                                                                                           
+        setFormId("");                                                                                                          
+        setFormClauseType("confidentiality");                                                                                   
+        setFormTitle("");                                                                                                       
+        setFormPreferred("");                                                                                                   
+        setFormFallback("");                                                                                                    
+        setFormRisk("medium");                                                                                                  
+        setFormTags("");                                                                                                        
+      } catch (err: any) {                                                                                                      
+        setError(err instanceof Error ? err.message : "Failed to submit form");                                                 
+        alert(err.message || "Error saving position");                                                                          
+      } finally {                                                                                                               
+        setSubmitting(false);                                                                                                   
+      }                                                                                                                         
+    };
 
-    const tagsList = formTags
-      .split(",")
-      .map((t) => t.trim())
-      .filter((t) => t.length > 0);
-
-    try {
-      setSubmitting(true);
-      if (editingPosition) {
-        // Update
-        await updatePlaybookPosition(editingPosition.id, {
-          clause_type: formClauseType,
-          title: formTitle,
-          preferred_language: formPreferred,
-          fallback_language: formFallback,
-          risk_if_absent: formRisk,
-          tags: tagsList,
-        });
-      } else {
-        // Create
-        const payload: CreatePlaybookPayload = {
-          id: formId.trim() || undefined,
-          clause_type: formClauseType,
-          title: formTitle,
-          preferred_language: formPreferred,
-          fallback_language: formFallback,
-          risk_if_absent: formRisk,
-          tags: tagsList,
-        };
-        await createPlaybookPosition(payload);
-      }
-      setIsModalOpen(false);
-      reload();
-    } catch (err: unknown) {
-      alert(err instanceof Error ? err.message : "Error saving position");
-    } finally {
-      setSubmitting(false);
-    }
-  };
-
+  // --- ลบ playbook item หลังจากยืนยันแล้ว ---
   const handleDelete = async (id: string) => {
     if (!confirm(`Are you sure you want to delete position "${id}"?`)) return;
     try {
       await deletePlaybookPosition(id);
       reload();
-    } catch (err: unknown) {
+    } catch (err: any) {
       alert(err instanceof Error ? err.message : "Error deleting position");
     }
   };
 
+  // --- Semantic search แบบค้นหาตามความหมายของ playbook ทั้งหมด ---
+  // ไม่ใช่กรองบน client และใช้ endpoint GET /playbook/search
   const runSemanticSearch = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!semanticQ.trim()) return;
@@ -204,6 +252,7 @@ export default function PlaybookPage() {
     setSemanticQ("");
   };
 
+  // --- กรองรายการที่แสดงบนตารางตาม title/id/preferred text ---
   const filteredPositions = positions.filter((p) => {
     if (!searchQuery.trim()) return true;
     const q = searchQuery.toLowerCase();
@@ -216,7 +265,7 @@ export default function PlaybookPage() {
 
   return (
     <div className="min-h-screen bg-neutral-950 text-neutral-100 flex flex-col font-sans">
-      {/* Top Navbar */}
+      {/* --- Top bar: header ของหน้า + ปุ่มกลับสู่ app + ปุ่มเพิ่ม position --- */}
       <header className="border-b border-neutral-800 bg-neutral-900/80 backdrop-blur px-6 py-4 flex items-center justify-between">
         <div className="flex items-center space-x-4">
           <Link to="/manual" className="text-amber-500 font-serif text-xl font-bold tracking-wide">
@@ -241,9 +290,9 @@ export default function PlaybookPage() {
         </div>
       </header>
 
-      {/* Main Container */}
+      {/* --- Main content container: toolbar + table/list + semantic search --- */}
       <main className="flex-1 max-w-7xl w-full mx-auto p-6 space-y-6">
-        {/* Filter & Search Toolbar */}
+        {/* --- Toolbar สำหรับกำหนด category filter และ text search ของรายการที่แสดงอยู่ --- */}
         <div className="bg-neutral-900 border border-neutral-800 rounded-xl p-4 flex flex-col sm:flex-row gap-4 items-center justify-between">
           <div className="flex items-center gap-3 w-full sm:w-auto">
             <label className="text-xs uppercase tracking-wider text-neutral-400 font-medium">
@@ -274,8 +323,7 @@ export default function PlaybookPage() {
           </div>
         </div>
 
-        {/* Semantic search (GET /playbook/search) — ค้นตามความหมาย
-            แยกจากช่องกรองด้านบน ซึ่งกรองแค่ในรายการที่โหลดมาแล้ว */}
+        {/* --- Semantic search panel: ค้นหาตามความหมายเต็ม playbook ไม่ใช่แค่ filter local --- */}
         <form
           onSubmit={runSemanticSearch}
           className="bg-neutral-900 border border-neutral-800 rounded-xl p-4 flex flex-col sm:flex-row gap-3 items-stretch sm:items-center"
@@ -313,7 +361,7 @@ export default function PlaybookPage() {
           </div>
         )}
 
-        {/* Content Table / Cards */}
+        {/* --- เนื้อหาหลัก: แสดงผลลัพธ์ semantic search หรือตาราง playbook ปกติ --- */}
         {semanticResults !== null ? (
           semanticResults.length === 0 ? (
             <div className="bg-neutral-900/60 border border-dashed border-neutral-800 rounded-xl py-16 text-center text-neutral-500">
@@ -371,19 +419,23 @@ export default function PlaybookPage() {
                   <th className="py-3.5 px-4 font-semibold">Title</th>
                   <th className="py-3.5 px-4 font-semibold">Risk If Absent</th>
                   <th className="py-3.5 px-4 font-semibold">Preferred Standard</th>
+                  <th className="py-3.5 px-4 font-semibold">Fallback Language</th>
+                  <th className="py-3.5 px-4 font-semibold">Tags</th>
                   <th className="py-3.5 px-4 font-semibold text-right">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-neutral-800">
                 {filteredPositions.map((pos) => (
-                  <tr key={pos.id} className="hover:bg-neutral-850 transition">
+                  <tr key={pos.id} className="hover:bg-neutral-850 transition align-top">
                     <td className="py-3.5 px-4 font-mono text-xs text-neutral-400">{pos.id}</td>
                     <td className="py-3.5 px-4">
                       <span className="px-2.5 py-1 rounded-full text-xs font-medium bg-amber-500/10 text-amber-300 border border-amber-500/20">
                         {pos.clause_type}
                       </span>
                     </td>
-                    <td className="py-3.5 px-4 font-medium text-neutral-100">{pos.title}</td>
+                    <td className="py-3.5 px-4 font-medium text-neutral-100 max-w-[220px]">
+                      {pos.title}
+                    </td>
                     <td className="py-3.5 px-4">
                       <span
                         className={`px-2 py-0.5 rounded text-xs font-semibold uppercase ${
@@ -397,10 +449,29 @@ export default function PlaybookPage() {
                         {pos.risk_if_absent}
                       </span>
                     </td>
-                    <td className="py-3.5 px-4 text-xs text-neutral-400 max-w-xs truncate">
-                      {pos.preferred_language}
+                    <td className="py-3.5 px-4 text-xs text-neutral-400 max-w-[240px] align-top">
+                      <div className="line-clamp-3">{pos.preferred_language}</div>
                     </td>
-                    <td className="py-3.5 px-4 text-right space-x-2">
+                    <td className="py-3.5 px-4 text-xs text-neutral-400 max-w-[240px] align-top">
+                      <div className="line-clamp-3">{pos.fallback_language}</div>
+                    </td>
+                    <td className="py-3.5 px-4 align-top">
+                      {pos.tags && pos.tags.length > 0 ? (
+                        <div className="flex flex-wrap gap-1.5 max-w-[180px]">
+                          {pos.tags.map((tag) => (
+                            <span
+                              key={`${pos.id}-${tag}`}
+                              className="px-2 py-0.5 rounded-full text-[10px] bg-neutral-800 text-neutral-300 border border-neutral-700"
+                            >
+                              {tag}
+                            </span>
+                          ))}
+                        </div>
+                      ) : (
+                        <span className="text-[11px] text-neutral-500">—</span>
+                      )}
+                    </td>
+                    <td className="py-3.5 px-4 text-right space-x-2 align-top">
                       <button
                         onClick={() => openEditModal(pos)}
                         className="px-3 py-1 text-xs font-medium bg-neutral-800 text-neutral-200 hover:bg-neutral-700 rounded transition"
@@ -422,7 +493,7 @@ export default function PlaybookPage() {
         )}
       </main>
 
-      {/* Create / Edit Modal */}
+      {/* --- Modal สำหรับสร้าง/แก้ไข playbook position --- */}
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
           <div className="bg-neutral-900 border border-neutral-800 rounded-2xl max-w-lg w-full p-6 shadow-2xl space-y-4">
