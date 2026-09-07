@@ -64,17 +64,7 @@ export default function PlaybookPage() {
   const [formRisk, setFormRisk] = useState<RiskLevel>("medium");
   const [formTags, setFormTags] = useState<string>("");
   const [submitting, setSubmitting] = useState<boolean>(false);
-
-  // FIX: แก้ไขการตั้งค่าเริ่มต้นของ resInfo - ลบ as PlaybookPosition และใช้ medium แทน low
-  const [resInfo, setResInfo] = useState<PlaybookPosition>({
-    id: '',
-    clause_type: 'confidentiality',
-    title: '',
-    preferred_language: '',
-    fallback_language: '',
-    risk_if_absent: 'medium',  // แก้ไขจาก 'low' เป็น 'medium'
-    tags: [],
-  });
+  const [formError, setFormError] = useState<string | null>(null);
 
   // --- Semantic search state: ค้นหาตามความหมายทั้ง playbook ออกจาก backend ---
   // ตรงนี้แยกจาก searchQuery เพราะ searchQuery เป็นการกรองเฉพาะข้อมูลที่โหลดมาแล้วบน client
@@ -113,15 +103,12 @@ export default function PlaybookPage() {
     return () => {
       cancelled = true;
     };
-    // FIX: ลบ setResInfo ที่อยู่นอก return statement ออก
-    // setResInfo ไม่ควรอยู่ใน useEffect นี้ เพราะมันไม่เกี่ยวข้องกับการดึงข้อมูล
   }, [requestedKey, selectedType]);
 
   // หลังจาก create/update/delete ให้เรียก reload เพื่อ fetch list ใหม่
   const reload = () => setGeneration((n) => n + 1);
 
-  // FIX: เพิ่มฟังก์ชัน buildPayload เพื่อสร้างข้อมูลที่จะส่ง
-  const buildPayload = () => {
+  const buildPayload = (): CreatePlaybookPayload => {
     const tagsList = formTags
       .split(",")
       .map((t) => t.trim())
@@ -140,6 +127,7 @@ export default function PlaybookPage() {
 
   // --- Modal helpers สำหรับ create/edit position ---
   const openCreateModal = () => {
+    setFormError(null);
     setEditingPosition(null);
     setFormId("");
     setFormClauseType("confidentiality");
@@ -148,20 +136,11 @@ export default function PlaybookPage() {
     setFormFallback("");
     setFormRisk("medium");
     setFormTags("");
-    // FIX: reset resInfo ด้วย
-    setResInfo({
-      id: '',
-      clause_type: 'confidentiality',
-      title: '',
-      preferred_language: '',
-      fallback_language: '',
-      risk_if_absent: 'medium',
-      tags: [],
-    });
     setIsModalOpen(true);
   };
 
   const openEditModal = (pos: PlaybookPosition) => {
+    setFormError(null);
     setEditingPosition(pos);
     setFormId(pos.id);
     setFormClauseType(pos.clause_type);
@@ -170,52 +149,34 @@ export default function PlaybookPage() {
     setFormFallback(pos.fallback_language);
     setFormRisk(pos.risk_if_absent);
     setFormTags(pos.tags ? pos.tags.join(", ") : "");
-    // FIX: ตั้งค่า resInfo ด้วยข้อมูลที่จะแก้ไข
-    setResInfo(pos);
     setIsModalOpen(true);
   };
 
-  // FIX: แก้ไข handleSubmit ให้ใช้ form state โดยตรง
-  const handleSubmit = async (e: React.FormEvent) => {                                                                        
-      e.preventDefault();                                                                                                       
-                                                                                                                                
-      if (!formTitle.trim() || !formPreferred.trim() || !formFallback.trim()) {                                                 
-        alert("Please fill in Title, Preferred Language, and Fallback Language");                                               
-        return;                                                                                                                 
-      }                                                                                                                         
-                                                                                                                                
-      const payload = buildPayload();                                                                                           
-                                                                                                                                
-      try {                                                                                                                     
-        setSubmitting(true);                                                                                                    
-        setError(null);                                                                                                         
-                                                                                                                                
-        let data: PlaybookPosition;                                                                                             
-        if (editingPosition) {                                                                                                  
-          data = await updatePlaybookPosition(editingPosition.id, payload);                                                     
-        } else {                                                                                                                
-          data = await createPlaybookPosition(payload);                                                                         
-        }                                                                                                                       
-                                                                                                                                
-        setResInfo(data);                                                                                                       
-        setIsModalOpen(false);                                                                                                  
-        reload();                                                                                                               
-                                                                                                                                
-        // Reset form                                                                                                           
-        setFormId("");                                                                                                          
-        setFormClauseType("confidentiality");                                                                                   
-        setFormTitle("");                                                                                                       
-        setFormPreferred("");                                                                                                   
-        setFormFallback("");                                                                                                    
-        setFormRisk("medium");                                                                                                  
-        setFormTags("");                                                                                                        
-      } catch (err: any) {                                                                                                      
-        setError(err instanceof Error ? err.message : "Failed to submit form");                                                 
-        alert(err.message || "Error saving position");                                                                          
-      } finally {                                                                                                               
-        setSubmitting(false);                                                                                                   
-      }                                                                                                                         
-    };
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (submitting) return;
+    if (!formTitle.trim() || !formPreferred.trim() || !formFallback.trim()) {
+      setFormError("Please fill in Title, Preferred Language, and Fallback Language");
+      return;
+    }
+
+    try {
+      setSubmitting(true);
+      setFormError(null);
+      const payload = buildPayload();
+      if (editingPosition) {
+        await updatePlaybookPosition(editingPosition.id, payload);
+      } else {
+        await createPlaybookPosition(payload);
+      }
+      setIsModalOpen(false);
+      reload();
+    } catch (err: unknown) {
+      setFormError(err instanceof Error ? err.message : "Failed to save position");
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
   // --- ลบ playbook item หลังจากยืนยันแล้ว ---
   const handleDelete = async (id: string) => {
@@ -223,7 +184,7 @@ export default function PlaybookPage() {
     try {
       await deletePlaybookPosition(id);
       reload();
-    } catch (err: any) {
+    } catch (err: unknown) {
       alert(err instanceof Error ? err.message : "Error deleting position");
     }
   };
@@ -501,6 +462,7 @@ export default function PlaybookPage() {
               {editingPosition ? "Edit Playbook Position" : "Create Playbook Position"}
             </h2>
             <form onSubmit={handleSubmit} className="space-y-4">
+              {formError && <p role="alert" className="text-sm text-rose-400">{formError}</p>}
               {!editingPosition && (
                 <div>
                   <label className="block text-xs font-medium text-neutral-400 mb-1">

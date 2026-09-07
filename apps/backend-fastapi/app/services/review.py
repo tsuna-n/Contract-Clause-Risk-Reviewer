@@ -55,6 +55,12 @@ class ReviewService:
         except Exception as exc:  # noqa: BLE001 - surfaced to the client as 422
             raise DocumentParseError(f"failed to parse {filename}: {exc}") from exc
 
+        if not document.text.strip():
+            raise DocumentParseError(
+                "No readable text found. Upload a document containing text; "
+                "scanned PDFs must be processed with OCR before uploading."
+            )
+
         contract_id = uuid.uuid4().hex
         self.contracts.save(contract_id, document)
         try:

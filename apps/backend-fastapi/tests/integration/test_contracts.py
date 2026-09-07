@@ -233,6 +233,29 @@ def test_history_lists_this_session_newest_first(client: TestClient) -> None:
     assert rows[0]["overall_risk"] == "medium"
 
 
+@pytest.mark.parametrize("filename, content", [("empty.txt", b""), ("blank.txt", b" \n\t")])
+def test_empty_upload_is_rejected_without_creating_a_report(
+    client: TestClient, filename: str, content: bytes
+) -> None:
+    response = client.post("/contracts/review", files={"file": (filename, content)})
+    assert response.status_code == 422
+    assert "No readable text" in response.json()["message"]
+    assert client.get("/contracts").json() == []
+
+
+def test_scanned_pdf_is_rejected_with_ocr_guidance(client: TestClient) -> None:
+    import fitz
+
+    with fitz.open() as document:
+        document.new_page()
+        data = document.write()
+
+    response = client.post("/contracts/review", files={"file": ("scan.pdf", data)})
+    assert response.status_code == 422
+    assert "OCR" in response.json()["message"]
+    assert client.get("/contracts").json() == []
+
+
 def test_history_is_empty_before_any_upload(client: TestClient) -> None:
     assert client.get("/contracts").json() == []
 
@@ -502,4 +525,3 @@ def test_delete_another_sessions_report_is_404(client: TestClient) -> None:
 
 def test_delete_report_requires_auth() -> None:
     assert TestClient(create_app()).delete("/contracts/report-1").status_code == 401
-

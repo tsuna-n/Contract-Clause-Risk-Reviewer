@@ -7,7 +7,7 @@ interface ContractUiState {
   clauses: ClauseView[];
   selectedClauseId: string | null;
   decisionStates: Record<string, ClauseDecisionState>;
-  contextKey: string;
+  reportId: string | null;
 }
 
 const listeners = new Set<() => void>();
@@ -16,17 +16,11 @@ let state: ContractUiState = {
   clauses: [],
   selectedClauseId: null,
   decisionStates: {},
-  contextKey: "",
+  reportId: null,
 };
 
 function emit() {
   for (const listener of listeners) listener();
-}
-
-function buildContextKey(clauses: ClauseView[], selectedClauseId: string | null) {
-  return `${selectedClauseId ?? ""}::${clauses
-    .map((clause) => `${clause.id}:${clause.accepted ? 1 : 0}:${clause.riskLevel}`)
-    .join("|")}`;
 }
 
 function pruneDecisionStates(clauses: ClauseView[], decisionStates: Record<string, ClauseDecisionState>) {
@@ -42,17 +36,24 @@ function pruneDecisionStates(clauses: ClauseView[], decisionStates: Record<strin
   return nextDecisionStates;
 }
 
-export function setContractContext(clauses: ClauseView[], selectedClauseId: string | null) {
+export function setContractContext(
+  reportId: string,
+  clauses: ClauseView[],
+  selectedClauseId: string | null
+) {
   const normalizedSelectedClauseId = selectedClauseId ?? null;
-  const contextKey = buildContextKey(clauses, normalizedSelectedClauseId);
 
-  if (state.contextKey === contextKey) return;
+  if (
+    state.reportId === reportId && state.clauses === clauses &&
+    state.selectedClauseId === normalizedSelectedClauseId
+  ) return;
 
   state = {
-    clauses: [...clauses],
+    clauses,
     selectedClauseId: normalizedSelectedClauseId,
-    decisionStates: pruneDecisionStates(clauses, state.decisionStates),
-    contextKey,
+    decisionStates: state.reportId === reportId
+      ? pruneDecisionStates(clauses, state.decisionStates) : {},
+    reportId,
   };
   emit();
 }
@@ -62,12 +63,17 @@ export function setSelectedClauseId(selectedClauseId: string | null) {
   state = {
     ...state,
     selectedClauseId,
-    contextKey: buildContextKey(state.clauses, selectedClauseId),
   };
   emit();
 }
 
-export function setClauseDecisionState(clauseId: string, decisionState: ClauseDecisionState | null) {
+export function setClauseDecisionState(
+  reportId: string,
+  clauseId: string,
+  decisionState: ClauseDecisionState | null
+) {
+  // A mutation from a report we already left must not update the next one.
+  if (state.reportId !== reportId) return;
   const current = state.decisionStates[clauseId] ?? null;
   if (current === decisionState) return;
 
@@ -85,13 +91,15 @@ export function setClauseDecisionState(clauseId: string, decisionState: ClauseDe
   emit();
 }
 
+function subscribe(listener: () => void) {
+  listeners.add(listener);
+  return () => listeners.delete(listener);
+}
+
+export function getContractUiSnapshot() {
+  return state;
+}
+
 export function useContractUiState() {
-  return useSyncExternalStore(
-    (listener) => {
-      listeners.add(listener);
-      return () => listeners.delete(listener);
-    },
-    () => state,
-    () => state
-  );
+  return useSyncExternalStore(subscribe, getContractUiSnapshot, getContractUiSnapshot);
 }

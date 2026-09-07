@@ -9,6 +9,7 @@ import {
 } from "./contractUiStore.ts";
 
 interface OriginalContractProps {
+  reportId: string;
   clauses: ClauseView[];
   selectedClauseId: string | null;
   onClauseSelect: (id: string) => void;
@@ -24,6 +25,7 @@ interface OriginalContractProps {
 }
 
 export default function OriginalContract({
+  reportId,
   clauses,
   selectedClauseId,
   onClauseSelect,
@@ -32,8 +34,8 @@ export default function OriginalContract({
   const { decisionStates } = useContractUiState();
 
   useEffect(() => {
-    setContractContext(clauses, selectedClauseId);
-  }, [clauses, selectedClauseId]);
+    setContractContext(reportId, clauses, selectedClauseId);
+  }, [reportId, clauses, selectedClauseId]);
 
   const selectedClauseIds = useMemo(
     () => new Set(clauses.filter((clause) => clause.accepted).map((clause) => clause.id)),

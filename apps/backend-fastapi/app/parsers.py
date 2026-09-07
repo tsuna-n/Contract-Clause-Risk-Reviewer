@@ -8,6 +8,7 @@ source instead of trusting the model.
 from __future__ import annotations
 
 import re
+from collections.abc import Iterator
 from dataclasses import dataclass, field
 from io import BytesIO
 
@@ -147,10 +148,30 @@ def parse_docx(data: bytes) -> ParsedDocument:
     DOCX has no real pages, so the whole document is a single synthetic page.
     """
     from docx import Document
+    from docx.table import Table
+    from docx.text.paragraph import Paragraph
 
     document = Document(BytesIO(data))
-    paragraphs = [p.text for p in document.paragraphs if p.text.strip()]
-    text = normalize("\n\n".join(paragraphs))
+
+    def paragraphs_in_order(container) -> Iterator[str]:
+        # Tables often contain payment terms and liability limits. Walk them
+        # where they occur, including nested tables, so clause offsets retain
+        # the same order as the source document.
+        for block in container.iter_inner_content():
+            if isinstance(block, Paragraph):
+                if block.text.strip():
+                    yield block.text
+            elif isinstance(block, Table):
+                seen_cells = set()
+                for row in block.rows:
+                    for cell in row.cells:
+                        # Merged cells appear at multiple grid positions.
+                        if cell._tc in seen_cells:
+                            continue
+                        seen_cells.add(cell._tc)
+                        yield from paragraphs_in_order(cell)
+
+    text = normalize("\n\n".join(paragraphs_in_order(document)))
     span = TextSpan(start=0, end=len(text), page=1)
     return ParsedDocument(text=text, spans=[span], page_map={1: (0, len(text))})
 

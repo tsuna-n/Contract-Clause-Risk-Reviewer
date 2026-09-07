@@ -51,7 +51,11 @@ function riskIcon(level: RiskLevel) {
   }
 }
 
-export default function AIRiskAnalysis({
+export default function AIRiskAnalysis(props: AIRiskAnalysisProps) {
+  return <ClauseAnalysis key={`${props.reportId}:${props.clause?.id}`} {...props} />;
+}
+
+function ClauseAnalysis({
   clause,
   reportId,
   onOverride,
@@ -61,6 +65,7 @@ export default function AIRiskAnalysis({
   const [overrideConfirmOpen, setOverrideConfirmOpen] = useState(false);
   /** Accepting is a round trip now, so the button has to say it's mid-flight. */
   const [accepting, setAccepting] = useState(false);
+  const [acceptError, setAcceptError] = useState<string | null>(null);
   const [expandedRationale, setExpandedRationale] = useState(false);
   const [canExpandRationale, setCanExpandRationale] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
@@ -75,21 +80,16 @@ export default function AIRiskAnalysis({
 
   useEffect(() => {
     contentRef.current?.scrollTo({ top: 0, behavior: "smooth" });
-    setExpandedRationale(false);
   }, [clause?.id]);
 
   useEffect(() => {
     const element = rationaleMeasureRef.current;
-    if (!element) {
-      setCanExpandRationale(false);
-      return;
-    }
+    if (!element) return;
 
     const update = () => {
       setCanExpandRationale(element.scrollHeight > element.clientHeight + 2);
     };
 
-    update();
     const observer = new ResizeObserver(update);
     observer.observe(element);
     return () => observer.disconnect();
@@ -98,12 +98,15 @@ export default function AIRiskAnalysis({
   const acceptLabel = clause && (clause.accepted ? "✓ Accepted — Undo" : "Accept Risk");
 
   const handleAccept = async () => {
-    if (!clause || !onAccept) return;
+    if (!clause || !onAccept || !reportId || accepting) return;
     const nextAccepted = !clause.accepted;
     setAccepting(true);
+    setAcceptError(null);
     try {
       await onAccept(clause.id, nextAccepted);
-      setClauseDecisionState(clause.id, nextAccepted ? "accepted" : null);
+      setClauseDecisionState(reportId, clause.id, nextAccepted ? "accepted" : null);
+    } catch (err: unknown) {
+      setAcceptError(err instanceof Error ? err.message : "Failed to save sign-off");
     } finally {
       setAccepting(false);
     }
@@ -328,6 +331,9 @@ export default function AIRiskAnalysis({
         )}
 
         {/* Action Buttons */}
+        {acceptError && (
+          <p role="alert" className="px-6 py-2 text-sm text-rose-400">{acceptError}</p>
+        )}
         <div className="px-6 py-4 border-t border-navy-800 bg-navy-900/60 grid grid-cols-2 gap-3">
           {/* Sign-off is persisted (POST /contracts/{id}/accept) and reversible
               — clicking again withdraws it, which is also audited. */}
@@ -417,7 +423,7 @@ export default function AIRiskAnalysis({
           onClose={() => setOverrideSidebarOpen(false)}
           onSubmit={async (newRisk, reason) => {
             await onOverride(clause.id, newRisk, reason);
-            setClauseDecisionState(clause.id, "overridden");
+            setClauseDecisionState(reportId, clause.id, "overridden");
           }}
         />
       )}

@@ -1,0 +1,21 @@
+{
+  "source": "Benchmark process log, /tmp/contract-feature-benchmark.log",
+  "http_status_is_not_quality_success": true,
+  "llm_client_retry_events": 3,
+  "upload_provider_failures": 0,
+  "evaluation": {
+    "contract": "ticketscominc-sponsorship-agreement",
+    "clauses": 8,
+    "labeled_clauses": 4,
+    "status": "partial_success",
+    "failed_clause": "clause-3",
+    "failure_timestamp_utc": "2026-09-07T15:33:52.294654Z",
+    "reason": "_RiskAssessment ValidationError: Invalid JSON, trailing characters",
+    "http_status": 200
+  },
+  "thai_nda": {
+    "answered_clauses": 3,
+    "verified_clauses": 1,
+    "unverified_clauses": 2
+  }
+}
