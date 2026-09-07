@@ -35,6 +35,42 @@ def test_parse_docx_joins_paragraphs_as_single_page() -> None:
     assert parsed.page_map == {1: (0, len(parsed.text))}
 
 
+def test_parse_docx_preserves_tables_nested_cells_and_document_order() -> None:
+    from docx import Document
+
+    document = Document()
+    document.add_paragraph("1. Scope")
+    table = document.add_table(rows=1, cols=2)
+    table.cell(0, 0).text = "2. Payment terms"
+    table.cell(0, 1).text = "ชำระเงินภายใน 30 วัน"
+    nested = table.cell(0, 1).add_table(rows=1, cols=1)
+    nested.cell(0, 0).text = "Late fee: 2 percent"
+    document.add_paragraph("3. Termination")
+    buf = BytesIO()
+    document.save(buf)
+
+    parsed = parse_docx(buf.getvalue())
+
+    assert parsed.text.split("\n\n") == [
+        "1. Scope", "2. Payment terms", "ชำระเงินภายใน 30 วัน",
+        "Late fee: 2 percent", "3. Termination",
+    ]
+    assert parsed.page_map == {1: (0, len(parsed.text))}
+    assert parsed.page_for_offset(parsed.text.index("Late fee")) == 1
+
+
+def test_parse_docx_reads_merged_cells_once() -> None:
+    from docx import Document
+
+    document = Document()
+    table = document.add_table(rows=2, cols=2)
+    table.cell(0, 0).merge(table.cell(1, 1)).text = "Unlimited liability"
+    buf = BytesIO()
+    document.save(buf)
+
+    assert parse_docx(buf.getvalue()).text == "Unlimited liability"
+
+
 def test_parse_txt_keeps_paragraph_breaks_as_single_page() -> None:
     raw = "1. Confidentiality.\n\nEach party shall keep information secret.\n"
 

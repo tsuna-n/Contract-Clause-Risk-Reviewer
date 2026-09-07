@@ -1,0 +1,20 @@
+{
+  "method": "Existing live structured-output pytest; measured test call duration, one call per configuration",
+  "probes": [
+    {
+      "model": "gpt/gpt-oss-20b",
+      "configuration": "Original .env",
+      "duration_seconds": 1.30,
+      "status": "failed",
+      "http_status": 400,
+      "reason": "gpt/gpt-oss-20b is not a valid model ID"
+    },
+    {
+      "model": "openai/gpt-oss-20b",
+      "configuration": "Temporary process override; .env unchanged",
+      "duration_seconds": 2.52,
+      "status": "passed"
+    }
+  ],
+  "model_reference": "https://openrouter.ai/openai/gpt-oss-20b"
+}

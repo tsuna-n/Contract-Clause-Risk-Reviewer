@@ -5,8 +5,9 @@ from __future__ import annotations
 import pytest
 from fastapi.testclient import TestClient
 
+from app.ai.retrieval import DummyEmbedder, Retriever
 from app.config import get_settings
-from app.dependencies import get_current_user, get_playbook_service
+from app.dependencies import get_current_user, get_playbook_service, get_retriever
 from app.main import create_app
 from app.models import PlaybookEmbedding, User
 from app.services.playbook import PlaybookService
@@ -79,6 +80,14 @@ def _app_with_playbook_service():
     repo = MemoryPlaybookRepository()
     service = PlaybookService(repo, embedder=None)
     app.dependency_overrides[get_playbook_service] = lambda: service
+    # Authorization tests must not reach the real embedding vendor or DB.
+    # Search uses its own dependency, separate from the CRUD service.
+    class EmptyVectorStore:
+        def query(self, vector, top_k=5):
+            return []
+
+    retriever = Retriever(DummyEmbedder(), EmptyVectorStore())
+    app.dependency_overrides[get_retriever] = lambda: retriever
     return app
 
 

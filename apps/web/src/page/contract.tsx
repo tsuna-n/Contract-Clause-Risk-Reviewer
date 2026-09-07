@@ -174,6 +174,7 @@ export default function ContractPage() {
         setReport(await acceptClause({ reportId: report.reportId, clauseId, accepted }));
       } catch (err) {
         handleApiError(err);
+        throw err;
       }
     },
     [report, handleApiError]
@@ -333,6 +334,7 @@ export default function ContractPage() {
             {report ? (
               <div className="h-full min-h-0 overflow-hidden rounded-2xl border border-navy-800 bg-navy-900/30 shadow-lg shadow-black/10">
                 <OriginalContract
+                  reportId={report.reportId}
                   clauses={report.clauses}
                   selectedClauseId={selectedClauseId}
                   onClauseSelect={handleClauseSelect}

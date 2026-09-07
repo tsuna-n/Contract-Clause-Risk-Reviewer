@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Sidebar from "../../component/sidebar/Sidebar";
 import type { ContractReport, ReportSummary } from "../../component/contract/types";
@@ -34,6 +34,10 @@ function Chat() {
   const [selected, setSelected] = useState<ContractReport | null>(null);
   const [reportLoading, setReportLoading] = useState(false);
   const [reportError, setReportError] = useState<string | null>(null);
+  const reportRequest = useRef<AbortController | null>(null);
+  const selectedIdRef = useRef<string | null>(null);
+
+  useEffect(() => () => reportRequest.current?.abort(), []);
 
   /** session ตายแล้วกู้ในหน้านี้ไม่ได้ — ส่งกลับไป login */
   const handleApiError = useCallback(
@@ -52,23 +56,23 @@ function Chat() {
 
     // ประวัติอาจตอบกลับมาหลังผู้ใช้ออกจากหน้านี้ไปแล้ว — ธงนี้กันไม่ให้เขียน
     // state ทับของใหม่
-    let cancelled = false;
+    const controller = new AbortController();
 
-    fetchReportHistory().then(
+    fetchReportHistory(controller.signal).then(
       (rows) => {
-        if (cancelled) return;
+        if (controller.signal.aborted) return;
         setReports(rows);
         setHistoryStatus("ready");
       },
       (err: unknown) => {
-        if (cancelled) return;
+        if (controller.signal.aborted) return;
         setHistoryError(handleApiError(err, "โหลดประวัติไม่สำเร็จ"));
         setHistoryStatus("failed");
       }
     );
 
     return () => {
-      cancelled = true;
+      controller.abort();
     };
   }, [historyStatus, handleApiError]);
 
@@ -80,24 +84,34 @@ function Chat() {
   /** เปิดรายงานจากประวัติ — summary ไม่มี clause ต้องดึงฉบับเต็มก่อน */
   const openReport = useCallback(
     async (reportId: string) => {
+      reportRequest.current?.abort();
+      const controller = new AbortController();
+      reportRequest.current = controller;
+      selectedIdRef.current = reportId;
       setSelectedId(reportId);
       setSelected(null);
       setReportLoading(true);
       setReportError(null);
       try {
-        setSelected(await fetchReport(reportId));
+        const report = await fetchReport(reportId, controller.signal);
+        if (!controller.signal.aborted) setSelected(report);
       } catch (err) {
-        setReportError(handleApiError(err, "เปิดรายงานไม่สำเร็จ"));
+        if (!controller.signal.aborted) {
+          setReportError(handleApiError(err, "เปิดรายงานไม่สำเร็จ"));
+        }
       } finally {
-        setReportLoading(false);
+        if (!controller.signal.aborted) setReportLoading(false);
       }
     },
     [handleApiError]
   );
 
   const clearSelection = useCallback(() => {
+    reportRequest.current?.abort();
+    selectedIdRef.current = null;
     setSelectedId(null);
     setSelected(null);
+    setReportLoading(false);
     setReportError(null);
   }, []);
 
@@ -105,7 +119,7 @@ function Chat() {
     async (reportId: string) => {
       try {
         await deleteReport(reportId);
-        if (selectedId === reportId) {
+        if (selectedIdRef.current === reportId) {
           clearSelection();
         }
         reloadHistory();
@@ -113,7 +127,7 @@ function Chat() {
         setHistoryError(handleApiError(err, "ลบรายงานไม่สำเร็จ"));
       }
     },
-    [selectedId, clearSelection, reloadHistory, handleApiError]
+    [clearSelection, reloadHistory, handleApiError]
   );
 
   /**
@@ -123,8 +137,11 @@ function Chat() {
    */
   const handleReviewComplete = useCallback(
     (report: ContractReport) => {
+      reportRequest.current?.abort();
+      selectedIdRef.current = report.reportId;
       setSelectedId(report.reportId);
       setSelected(report);
+      setReportLoading(false);
       setReportError(null);
       reloadHistory();
     },

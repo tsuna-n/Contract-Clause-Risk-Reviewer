@@ -83,7 +83,7 @@
 | Backend | **Contract metadata** | agent `MetadataExtractor` ยิง LLM 1 ครั้งต่อ**ฉบับ** (ไม่ใช่ต่อ clause) อ่านหัว+ท้ายเอกสาร → คู่สัญญา / วันที่ทำสัญญา / วันมีผล / วันสิ้นสุด / มูลค่า / กฎหมายที่ใช้บังคับ; ทุกค่าถูกเช็คกับตัวเอกสารแบบคำต่อคำ ค่าที่หาไม่เจอถูกทิ้ง (`ENABLE_METADATA_EXTRACTION=false` ปิดได้) |
 | Backend | **Redis-backed repos** | contract repo อยู่บน Redis (native TTL) — ตัว report repo ย้ายไป Postgres แล้ว แต่ Redis ยังเป็นตัวเลือกอยู่ |
 | Backend | **Playbook search + eval** | `GET /playbook/search`, `POST /evaluate` — ใช้งานได้จริง |
-| Backend | **LLM client + RAG (สลับค่ายได้)** | provider adapter (`app/ai/providers.py`) — Gemini / Anthropic Claude / OpenAI-compatible (Z.AI GLM, DeepSeek, vLLM) เลือกด้วย `LLM_PROVIDER` ตัวเดียว, structured output ตามวิธีของแต่ละค่าย, hybrid retrieval (pgvector cosine + BM25) |
+| Backend | **LLM client + RAG (สลับค่ายได้)** | provider adapter (`app/ai/providers.py`) — Gemini / Anthropic Claude / OpenAI-compatible (Z.AI GLM, OpenRouter, DeepSeek, vLLM) เลือกด้วย `LLM_PROVIDER` ตัวเดียว, structured output ตามวิธีของแต่ละค่าย, hybrid retrieval (pgvector cosine + BM25) |
 | Backend | **LLM call ทนทานขึ้น** | `LLM_THINKING=disabled` (default) ปิด thinking ของ reasoning model ที่กินงบ `max_tokens` จนตอบว่าง + retry ชั้นบน SDK เฉพาะ failure ที่ถามใหม่แล้วมีโอกาสได้ (timeout/429/5xx/คำตอบว่าง/JSON พัง) จำกัดด้วย `LLM_MAX_ATTEMPTS` และงบเวลา 1 timeout — 400/401 ไม่ retry |
 | Backend | **Data-retention job** | `python -m scripts.purge_reports` ลบรายงานเก่ากว่า `REPORT_RETENTION_DAYS` (`--dry-run` นับก่อนได้) — ต้องตั้ง cron เอง เพราะการลบข้อมูลของคนอื่นไม่ควรเป็นผลพลอยได้ของ request |
 | Backend | **Guardrail + สิทธิ์ playbook (2026-07-30)** | `is_grounded()` ไม่ใช่ substring ล้วนแล้ว — judge บังคับ excerpt ยาว ≥ 4 คำ (`MIN_CITATION_EXCERPT_WORDS`) เพราะเดิมอ้าง `"the"` ก็ผ่านและได้ badge "ตรวจสอบแล้ว" ส่วน metadata ยังใช้ 1 คำเพราะค่าอย่าง `"กฎหมายไทย"` สั้นโดยธรรมชาติ; retry ตอน ungrounded ส่ง `verdict.reason` กลับเข้า prompt แล้ว (เดิมส่ง prompt เดิมเป๊ะ ๆ = จ่าย token 2 เท่าเพื่อคำตอบเดิม); เขียน playbook จำกัดด้วย `PLAYBOOK_ADMIN_EMAILS` → `403` (อ่านยังเปิดให้ทุกคนที่ login) |
@@ -174,10 +174,12 @@ pnpm dev                         # http://localhost:5173
 
 ## เลือกค่าย AI (สลับได้ด้วย `.env` อย่างเดียว)
 
-`LLM_PROVIDER` ตัวเดียวเลือกได้ 4 ค่าย โดยมี adapter จริง 3 ตัวใน
-[`app/ai/providers.py`](apps/backend-fastapi/app/ai/providers.py) — `zai` คือ adapter แบบ
-OpenAI-compatible ที่เติม endpoint/model ของ Z.AI ให้แล้ว ตัวเดียวกันนี้จึงใช้กับ DeepSeek, Ollama,
-vLLM ได้ด้วยการตั้ง `LLM_BASE_URL` เอง SDK ทั้งสามติดตั้งมาให้ครบและ `import` แบบ lazy —
+`LLM_PROVIDER` ตัวเดียวเลือกได้ 5 ค่าย โดยมี adapter จริง 3 ตัวใน
+[`app/ai/providers.py`](apps/backend-fastapi/app/ai/providers.py) — `zai` และ `openrouter` คือ
+adapter แบบ OpenAI-compatible ที่เติม endpoint ของแต่ละเจ้าให้แล้ว (Z.AI ยังเติม model default
+`glm-4.6` ให้ด้วย ส่วน OpenRouter ต้องระบุ `LLM_MODEL` เอง เพราะ catalogue เป็นของทุกค่ายรวมกัน
+ไม่มีตัวไหน "เป็นของ" OpenRouter โดยตรง) ตัวเดียวกันนี้จึงใช้กับ DeepSeek, Ollama, vLLM ได้ด้วยการตั้ง
+`LLM_BASE_URL` เอง SDK ทั้งสามติดตั้งมาให้ครบและ `import` แบบ lazy —
 **ไม่ต้องแก้โค้ด ไม่ต้อง rebuild image**
 
 | ค่าย | `LLM_PROVIDER` | คีย์ที่ต้องมี | model default |
@@ -185,6 +187,7 @@ vLLM ได้ด้วยการตั้ง `LLM_BASE_URL` เอง SDK ท
 | Google Gemini | `gemini` | `GEMINI_API_KEY` | `gemini-3.5-flash` |
 | Anthropic Claude | `anthropic` | `ANTHROPIC_API_KEY` | `claude-opus-5` |
 | Z.AI (GLM) | `zai` | `ZAI_API_KEY` | `glm-4.6` |
+| OpenRouter | `openrouter` | `OPENROUTER_API_KEY` + `LLM_MODEL` | — (ต้องระบุเอง เช่น `anthropic/claude-opus-5`) |
 | OpenAI-compatible | `openai` | `OPENAI_API_KEY` + `LLM_MODEL` + `LLM_BASE_URL` | — (ต้องระบุเอง) |
 
 **ตัวอย่าง: เปลี่ยนไปใช้ Claude Haiku 4.5**
@@ -203,6 +206,29 @@ EMBEDDING_MODEL=gemini-embedding-001
 
 เคสนี้ **ไม่ต้อง re-ingest playbook** เพราะ embedding ยังเป็นโมเดลเดิม vector ใน pgvector จึงใช้ต่อได้
 ทั้งหมด — เปลี่ยนแค่ว่าใครเป็นคนอ่านสัญญา
+
+**ตัวอย่าง: เปลี่ยนไปใช้ OpenRouter**
+
+OpenRouter คือ router เดียวที่พาไปหาโมเดลของหลายค่ายพร้อมกัน (Anthropic, Google, DeepSeek, Meta ฯลฯ)
+ผ่านคีย์ใบเดียว — เข้ากับ adapter แบบ OpenAI-compatible ตัวเดียวกับ `zai` พอดี ต่างกันแค่ endpoint กับ
+การที่ต้องระบุ `LLM_MODEL` เอง (ไม่มี default เพราะ catalogue เป็นของทุกค่ายรวมกัน):
+
+```env
+# --- LLM: OpenRouter (พาไปหา Claude Opus 5 ที่วิ่งผ่าน OpenRouter) ---
+LLM_PROVIDER=openrouter
+OPENROUTER_API_KEY=sk-or-v1-...
+LLM_MODEL=anthropic/claude-opus-5   # ต้องมี prefix ของค่ายจริงเสมอ — ดูข้อ 7 ด้านล่าง
+
+# --- Embeddings: ยังเป็น Gemini (OpenRouter ไม่มี endpoint embedding ให้เลย) ---
+EMBEDDING_PROVIDER=gemini
+GEMINI_API_KEY=AIza...
+EMBEDDING_MODEL=gemini-embedding-001
+```
+
+ชื่อโมเดลอื่นที่ใช้ได้ตามรูปแบบ `<ค่าย>/<model>` เดียวกัน เช่น `google/gemini-3.5-flash`,
+`deepseek/deepseek-chat`, `meta-llama/llama-3.3-70b-instruct` — ดูรายชื่อทั้งหมดที่
+[openrouter.ai/models](https://openrouter.ai/models) เคสนี้ก็ **ไม่ต้อง re-ingest playbook**
+เหมือนกัน เพราะ embedding ยังเป็น Gemini ตัวเดิม
 
 ตรวจว่าได้ค่ายที่ตั้งใจหลัง restart:
 
@@ -225,10 +251,10 @@ chat : OpenAICompatibleChatBackend -> glm-4.7-flash
 embed: GeminiEmbedder -> gemini-embedding-001 (768 dim)
 ```
 
-`zai` ใช้ adapter ตัวเดียวกับ `openai` ชื่อคลาสที่ขึ้นจึงเป็น `OpenAICompatibleChatBackend` —
-ไม่ได้แปลว่าตั้งค่าผิด
+`zai` และ `openrouter` ใช้ adapter ตัวเดียวกับ `openai` ชื่อคลาสที่ขึ้นจึงเป็น
+`OpenAICompatibleChatBackend` — ไม่ได้แปลว่าตั้งค่าผิด
 
-**6 ข้อที่ต้องรู้ก่อนสลับ:**
+**7 ข้อที่ต้องรู้ก่อนสลับ:**
 
 1. **สลับค่ายแล้วต้องแก้ `LLM_MODEL` ด้วย** — ตั้ง `LLM_PROVIDER=anthropic` ทั้งที่
    `LLM_MODEL=gemini-3.5-flash` จะฟ้อง `ProviderConfigError` ตั้งแต่เรียกครั้งแรก แทนที่จะไปเจอ
@@ -238,13 +264,15 @@ embed: GeminiEmbedder -> gemini-embedding-001 (768 dim)
 3. **เปลี่ยน embedding = ต้อง re-ingest** — vector จากคนละโมเดลเทียบ cosine กันไม่ได้ ถ้า
    `EMBEDDING_DIM` เปลี่ยนด้วยต้องมี Alembic migration ใหม่ (`0c41a8268ed0` hardcode `VECTOR(768)`)
    แล้วรัน `python -m scripts.ingest_playbook`
-4. **`zai` ทำ embedding ไม่ได้ มีแต่ chat** — `api.z.ai` เสิร์ฟเฉพาะโมเดล GLM (`/models` คืน 8 ตัว
-   ไม่มี `embedding-*` เลย ขอไปได้ `400 code 1211 Unknown Model`) ชื่อ `embedding-2/3` เป็นของ
-   BigModel ของ Zhipu คนละแพลตฟอร์มกัน ดังนั้น `EMBEDDING_PROVIDER=zai` เฉย ๆ จะถูกปฏิเสธพร้อม
-   บอกว่าต้องตั้งอะไร — ตั้ง `EMBEDDING_PROVIDER=gemini` (หรือไม่ตั้งเลยก็ fallback ไป Gemini ให้)
-   ถ้าบัญชีคุณมี embedding ที่ host อื่นค่อยระบุ `EMBEDDING_MODEL` + `EMBEDDING_BASE_URL` เอง
-   (เคยตั้ง `EMBEDDING_PROVIDER=zai` + `EMBEDDING_MODEL=embedding-1` ไว้จริงเมื่อ 2026-08-01 ผลคือ
-   ทุก clause กลายเป็น `unknown` เพราะ `400` ถูกกลืนตามข้อ 2 — vector ใน DB ไม่ได้เสียหายอะไร)
+4. **`zai` และ `openrouter` ทำ embedding ไม่ได้ มีแต่ chat** — `api.z.ai` เสิร์ฟเฉพาะโมเดล GLM
+   (`/models` คืน 8 ตัว ไม่มี `embedding-*` เลย ขอไปได้ `400 code 1211 Unknown Model`) ชื่อ
+   `embedding-2/3` เป็นของ BigModel ของ Zhipu คนละแพลตฟอร์มกัน ส่วน OpenRouter ไม่มี endpoint
+   embedding ให้เลย (route แต่ chat completion) ดังนั้น `EMBEDDING_PROVIDER=zai` หรือ `openrouter`
+   เฉย ๆ จะถูกปฏิเสธพร้อมบอกว่าต้องตั้งอะไร — ตั้ง `EMBEDDING_PROVIDER=gemini` (หรือไม่ตั้งเลยก็
+   fallback ไป Gemini ให้) ถ้าบัญชีคุณมี embedding ที่ host อื่นค่อยระบุ `EMBEDDING_MODEL` +
+   `EMBEDDING_BASE_URL` เอง (เคยตั้ง `EMBEDDING_PROVIDER=zai` + `EMBEDDING_MODEL=embedding-1` ไว้จริง
+   เมื่อ 2026-08-01 ผลคือทุก clause กลายเป็น `unknown` เพราะ `400` ถูกกลืนตามข้อ 2 — vector ใน DB
+   ไม่ได้เสียหายอะไร)
 5. **restart เสมอ** — `get_settings()` / `get_llm_client()` / `get_embedder()` เป็น `@lru_cache`
    ทั้งหมด และ `uvicorn --reload` จับแค่ไฟล์ `.py` ไม่จับ `.env`
 6. **ย้ายไปค่ายที่เป็น reasoning model ให้ดู `LLM_THINKING`** — ค่า default คือ `disabled` เพราะ
@@ -252,6 +280,11 @@ embed: GeminiEmbedder -> gemini-embedding-001 (768 dim)
    เทียบกับ 2.1 วิ/55 token ตอนปิด — และคิดเกินงบ = ได้ 200 ที่ `content` ว่าง) พารามิเตอร์นี้ส่งให้
    host แบบ OpenAI-compatible เท่านั้น; ตั้ง `LLM_THINKING=auto` ถ้าอยากได้คุณภาพจากการคิดยาว
    แล้วต้องขยับ `LLM_TIMEOUT_SECONDS` ตามด้วย
+7. **`LLM_MODEL` บน `openrouter` ต้องมี prefix ของค่ายจริง** — OpenRouter re-sell โมเดลของทุกค่าย
+   ภายใต้ชื่อเดิมของเจ้านั้น เช่น `anthropic/claude-opus-5`, `google/gemini-3.5-flash`,
+   `deepseek/deepseek-chat` — ตัวเช็ค "โมเดลเจ้านี้ผิดค่าย" ในข้อ 1 จะไม่ทำงานกับ `openrouter` เพราะชื่อ
+   ที่ขึ้นต้นด้วย `anthropic/` หรือ `google/` คือของถูกต้องอยู่แล้ว ไม่ใช่ `.env` ที่สลับค่ายไม่สุด —
+   พิมพ์ผิด prefix จะไปเจอ 404 ของ OpenRouter ตรง ๆ แทน
 
 ตารางเต็ม + ตัวแปรทุกตัว (`LLM_API_KEY`, `EMBEDDING_API_KEY`, `LLM_BASE_URL` ฯลฯ):
 [README ของ backend → สลับค่าย AI](apps/backend-fastapi/README.md#สลับค่าย-ai-ผ่าน-env)

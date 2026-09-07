@@ -1,0 +1,101 @@
+{
+  "transport": "Production build, headless Chromium, desktop 1440x1000, loopback",
+  "measurements": [
+    {
+      "feature": "Cold page /login run 1",
+      "ms": 1758.804854,
+      "status": "passed"
+    },
+    {
+      "feature": "Cold page /login run 2",
+      "ms": 114.01507700000002,
+      "status": "passed"
+    },
+    {
+      "feature": "Cold page /login run 3",
+      "ms": 98.58706799999982,
+      "status": "passed"
+    },
+    {
+      "feature": "Cold page /manual run 1",
+      "ms": 494.26783499999965,
+      "status": "passed"
+    },
+    {
+      "feature": "Cold page /manual run 2",
+      "ms": 434.5483720000002,
+      "status": "passed"
+    },
+    {
+      "feature": "Cold page /manual run 3",
+      "ms": 417.18706999999995,
+      "status": "passed"
+    },
+    {
+      "feature": "Cold page /playbook run 1",
+      "ms": 862.1812749999999,
+      "status": "passed"
+    },
+    {
+      "feature": "Cold page /playbook run 2",
+      "ms": 880.5374240000001,
+      "status": "passed"
+    },
+    {
+      "feature": "Cold page /playbook run 3",
+      "ms": 882.6810619999997,
+      "status": "passed"
+    },
+    {
+      "feature": "Cold page /system run 1",
+      "ms": 436.6114010000001,
+      "status": "passed"
+    },
+    {
+      "feature": "Cold page /system run 2",
+      "ms": 405.492021,
+      "status": "passed"
+    },
+    {
+      "feature": "Cold page /system run 3",
+      "ms": 445.52822000000015,
+      "status": "passed"
+    },
+    {
+      "feature": "Cold page /evaluate run 1",
+      "ms": 879.9730570000002,
+      "status": "passed"
+    },
+    {
+      "feature": "Cold page /evaluate run 2",
+      "ms": 865.3232690000004,
+      "status": "passed"
+    },
+    {
+      "feature": "Cold page /evaluate run 3",
+      "ms": 863.2809890000008,
+      "status": "passed"
+    },
+    {
+      "feature": "Open real AI report workspace",
+      "ms": 419.3525870000012,
+      "status": "passed"
+    },
+    {
+      "feature": "Open clause analysis panel",
+      "ms": 47.54496800000015,
+      "status": "passed"
+    },
+    {
+      "feature": "Accept clause in browser",
+      "ms": 394.800369999999,
+      "status": "passed"
+    },
+    {
+      "feature": "Withdraw acceptance in browser",
+      "ms": 60.99678200000017,
+      "status": "passed"
+    }
+  ],
+  "errors": []
+}

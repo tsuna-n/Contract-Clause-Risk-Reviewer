@@ -329,29 +329,31 @@ LLM_TIMEOUT_SECONDS=120            # เพดานต่อ call — เป็
 
 ### สลับค่าย AI ผ่าน `.env`
 
-`LLM_PROVIDER` รับ 4 ค่า — `gemini` (default) / `anthropic` / `openai` / `zai` — โดยมี adapter จริง
-3 ตัวใน `app/ai/providers.py` (`zai` คือ adapter แบบ OpenAI-compatible ที่เติม endpoint กับ model
-ของ Z.AI ให้แล้ว) SDK ทั้งสามติดตั้งมาให้ครบตั้งแต่แรกและ `import` แบบ lazy ตัวที่ไม่ได้ใช้จึงไม่ถูก
-โหลด — **สลับค่ายคือแก้ `.env` แล้ว restart เท่านั้น ไม่ต้องแตะโค้ด**
+`LLM_PROVIDER` รับ 5 ค่า — `gemini` (default) / `anthropic` / `openai` / `zai` / `openrouter` — โดยมี
+adapter จริง 3 ตัวใน `app/ai/providers.py` (`zai` และ `openrouter` เป็น adapter แบบ OpenAI-compatible
+ที่เติม endpoint ให้แล้ว — Z.AI เติม model default ให้ด้วย ส่วน OpenRouter ต้องระบุ `LLM_MODEL` เอง
+เพราะ catalogue เป็นของทุกค่ายรวมกัน) SDK ทั้งสามติดตั้งมาให้ครบตั้งแต่แรกและ `import` แบบ lazy
+ตัวที่ไม่ได้ใช้จึงไม่ถูกโหลด — **สลับค่ายคือแก้ `.env` แล้ว restart เท่านั้น ไม่ต้องแตะโค้ด**
 
 | ค่าย | ตั้งใน `.env` | model default | หมายเหตุ |
 |------|--------------|---------------|----------|
 | Gemini | `LLM_PROVIDER=gemini` + `GEMINI_API_KEY` | `gemini-3.5-flash` | ค่าเดิมของโปรเจกต์ |
 | Claude | `LLM_PROVIDER=anthropic` + `ANTHROPIC_API_KEY` | `claude-opus-5` | ไม่มี embedding API → retrieval ตกไปใช้ Gemini อัตโนมัติ |
 | Z.AI (GLM) | `LLM_PROVIDER=zai` + `ZAI_API_KEY` | `glm-4.6` | เติม `https://api.z.ai/api/paas/v4` ให้เอง; **ไม่มี embedding model บน host นี้** → retrieval ตกไปใช้ Gemini อัตโนมัติเหมือน Claude |
+| OpenRouter | `LLM_PROVIDER=openrouter` + `OPENROUTER_API_KEY` + `LLM_MODEL` | — | เติม `https://openrouter.ai/api/v1` ให้เอง; `LLM_MODEL` ต้องมี prefix ของค่ายจริง เช่น `anthropic/claude-opus-5`, `deepseek/deepseek-chat`; **ไม่มี embedding endpoint** → retrieval ตกไปใช้ Gemini อัตโนมัติเหมือน Z.AI |
 | OpenAI-compatible | `LLM_PROVIDER=openai` + `OPENAI_API_KEY` + `LLM_MODEL` + `LLM_BASE_URL` | — | ครอบคลุม OpenAI, DeepSeek, Ollama, vLLM; **ต้องระบุ `LLM_MODEL` เอง** |
 
 ตัวแปรที่เพิ่มมา (ไม่ตั้งก็ได้ทั้งหมด ยกเว้นคีย์ของค่ายที่เลือก):
 
 ```env
-LLM_PROVIDER=anthropic          # gemini | anthropic | openai | zai
-ANTHROPIC_API_KEY=sk-ant-...    # หรือ OPENAI_API_KEY / ZAI_API_KEY ตามค่าย
+LLM_PROVIDER=anthropic          # gemini | anthropic | openai | zai | openrouter
+ANTHROPIC_API_KEY=sk-ant-...    # หรือ OPENAI_API_KEY / ZAI_API_KEY / OPENROUTER_API_KEY ตามค่าย
 LLM_API_KEY=...                 # คีย์กลาง ใช้แทนคีย์รายค่ายด้านบนได้
-LLM_MODEL=claude-opus-5         # ไม่ตั้ง = ใช้ default ของค่ายนั้น
-LLM_BASE_URL=...                # เฉพาะ host แบบ OpenAI-compatible
+LLM_MODEL=claude-opus-5         # ไม่ตั้ง = ใช้ default ของค่ายนั้น (openai/openrouter ไม่มี default ต้องตั้งเอง)
+LLM_BASE_URL=...                # เฉพาะ host แบบ OpenAI-compatible ที่ไม่ใช่ zai/openrouter (สองตัวนี้เติมให้เอง)
 
 EMBEDDING_PROVIDER=gemini       # ไม่ตั้ง = ตามค่าย LLM ถ้าค่ายนั้น embed ได้ ไม่งั้นเป็น gemini
-                                # embed ได้จริงมีแค่ gemini กับ openai (anthropic/zai ไม่มี)
+                                # embed ได้จริงมีแค่ gemini กับ openai (anthropic/zai/openrouter ไม่มี)
 EMBEDDING_MODEL=gemini-embedding-001
 EMBEDDING_API_KEY=...           # ไม่ตั้ง = ใช้คีย์ของ EMBEDDING_PROVIDER
 EMBEDDING_BASE_URL=...
@@ -368,18 +370,24 @@ EMBEDDING_CACHE_TTL_SECONDS=604800
 clause นั้นกลายเป็น `unknown` ทันที ปิด cache ได้ด้วย `ENABLE_EMBEDDING_CACHE=false`
 (Redis ล่มไม่ทำให้รีวิวพัง แค่กลับไปเสียโควตาเท่าเดิม)
 
-**ข้อควรระวัง 3 ข้อ:**
+**ข้อควรระวัง 4 ข้อ:**
 
 1. **สลับค่ายแล้วต้องแก้ `LLM_MODEL` ด้วย** ถ้าเคยตั้งไว้ — ระบบตรวจให้แล้ว: ตั้ง
    `LLM_PROVIDER=anthropic` ทั้งที่ `LLM_MODEL=gemini-3.5-flash` จะขึ้น
    `ProviderConfigError: LLM_MODEL='gemini-3.5-flash' is a gemini model but the provider is
    anthropic` ตั้งแต่เรียกครั้งแรก แทนที่จะไปเจอ 404 ของฝั่ง vendor ที่ไม่บอกว่าตัวไหนผิด
-   (ชื่อ model ที่ไม่รู้จัก เช่น fine-tune ของตัวเอง ปล่อยผ่านหมด)
+   (ชื่อ model ที่ไม่รู้จัก เช่น fine-tune ของตัวเอง ปล่อยผ่านหมด — `openrouter` ก็ปล่อยผ่านหมดเช่นกัน
+   ดูข้อ 4)
 2. **เปลี่ยน embedding = ต้อง re-ingest** — vector จากคนละ model เทียบ cosine กันไม่ได้ ถ้า
    `EMBEDDING_DIM` เปลี่ยนด้วยต้องเขียน Alembic migration ใหม่ (`ALTER COLUMN`) เพราะ migration
    `0c41a8268ed0` hardcode `VECTOR(dim=768)` ไว้ แล้วรัน `python -m scripts.ingest_playbook`
 3. **restart เสมอ** — `get_settings()`, `get_llm_client()`, `get_embedder()` เป็น `@lru_cache`
    ทั้งหมด แก้ `.env` ระหว่างรันไม่มีผล และ `uvicorn --reload` ก็ไม่ reload เพราะจับแค่ไฟล์ `.py`
+4. **`openrouter` ไม่ผ่านตัวเช็คโมเดล-ผิดค่ายในข้อ 1** — OpenRouter re-sell โมเดลของทุกค่ายภายใต้
+   ชื่อเดิมของเจ้านั้น (`anthropic/claude-opus-5`, `google/gemini-3.5-flash`,
+   `deepseek/deepseek-chat`) ชื่อที่ขึ้นต้นด้วย `anthropic/` หรือ `google/` จึงเป็นค่าที่ถูกต้องอยู่แล้ว
+   ไม่ใช่ `.env` ที่สลับค่ายไม่สุด ตัวเช็คจึงไม่ทำงานกับ provider นี้ — พิมพ์ผิด prefix (หรือลืม prefix
+   ไปเลย) จะไปเจอ 404 ตรง ๆ จาก `openrouter.ai` แทน ไม่มีอะไรเตือนก่อน
 
 **Structured output** ต่างกันตามค่าย แต่ agent ไม่ต้องรู้: Gemini ใช้ `response_schema`, Claude ใช้
 `messages.parse(output_format=...)`, ส่วน OpenAI-compatible ลอง `json_schema` แบบ strict ก่อน แล้ว

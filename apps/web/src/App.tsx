@@ -1,15 +1,18 @@
+import { lazy, Suspense } from "react";
 import { createBrowserRouter, Navigate, RouterProvider } from "react-router-dom";
 import Login from "./page/login";
 import AuthCallback from "./page/callback";
 import RequireAuth from "./component/RequireAuth";
 import { getToken } from "./lib/auth";
 import AuthProvider from "./component/AuthProvider";
-import Chat from "./page/layout/chat-layout";
-import ContractPage from "./page/contract";
-import PlaybookPage from "./page/playbook";
-import EvaluatePage from "./page/evaluate";
-import SystemPage from "./page/system";
 import NotFoundPage from "./page/not-found";
+
+// Load signed-in screens on demand; login does not need the review UI.
+const Chat = lazy(() => import("./page/layout/chat-layout"));
+const ContractPage = lazy(() => import("./page/contract"));
+const PlaybookPage = lazy(() => import("./page/playbook"));
+const EvaluatePage = lazy(() => import("./page/evaluate"));
+const SystemPage = lazy(() => import("./page/system"));
 
 /**
  * "/" is the login screen for signed-out visitors and a shortcut into the app
@@ -103,7 +106,13 @@ export default function App() {
   // navigation: fetched once on load, not re-fetched on every route change.
   return (
     <AuthProvider>
-      <RouterProvider router={router} />
+      <Suspense fallback={
+        <div role="status" className="flex min-h-screen items-center justify-center bg-navy-950 text-slate-300">
+          กำลังโหลดหน้า…
+        </div>
+      }>
+        <RouterProvider router={router} />
+      </Suspense>
     </AuthProvider>
   );
 }

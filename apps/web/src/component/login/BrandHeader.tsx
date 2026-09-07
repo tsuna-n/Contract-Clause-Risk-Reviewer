@@ -29,9 +29,6 @@ export default function BrandHeader() {
         >
           UrRisk
         </h1>
-        <p className="text-sm text-navy-300">
-      
-        </p>
       </div>
     </div>
   );

@@ -71,10 +71,12 @@ class Settings(BaseSettings):
     # Which vendor answers the review. Everything else in this block is
     # resolved per provider (see ``app/ai/providers.py``), so moving between
     # Gemini, Claude, and any OpenAI-compatible host - Z.AI's GLM models,
-    # DeepSeek, a local vLLM - is an ``.env`` edit, not a code change.
-    llm_provider: str = "gemini"  # gemini | anthropic | openai | zai
-    # ``None`` means "the provider's default model"; ``openai`` has no default
-    # and requires this to be set.
+    # OpenRouter, DeepSeek, a local vLLM - is an ``.env`` edit, not a code
+    # change.
+    llm_provider: str = "gemini"  # gemini | anthropic | openai | zai | openrouter
+    # ``None`` means "the provider's default model"; ``openai`` and
+    # ``openrouter`` have no default and require this to be set - both serve a
+    # catalogue that turns over too fast for a hardcoded name to stay valid.
     llm_model: str | None = None
     # One key to override them all. Left unset, each provider reads its own
     # conventional variable below - which is what the SDKs and every other tool
@@ -84,6 +86,7 @@ class Settings(BaseSettings):
     anthropic_api_key: str | None = None
     openai_api_key: str | None = None
     zai_api_key: str | None = None
+    openrouter_api_key: str | None = None
     # Only meaningful for OpenAI-compatible hosts; ``zai`` fills its own in.
     llm_base_url: str | None = None
     # Per-call ceiling, not per-review: one review fans out to dozens of calls
