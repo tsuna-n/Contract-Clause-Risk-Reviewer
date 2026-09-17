@@ -89,6 +89,9 @@ class Settings(BaseSettings):
     openrouter_api_key: str | None = None
     # Only meaningful for OpenAI-compatible hosts; ``zai`` fills its own in.
     llm_base_url: str | None = None
+    # Optional OpenRouter allow-list for endpoints verified with our prompts.
+    # Empty leaves routing open to every endpoint supporting the parameters.
+    llm_openrouter_providers: list[str] = []
     # Per-call ceiling, not per-review: one review fans out to dozens of calls
     # (segment, then classify/match/score/judge for every clause). Without it
     # a single hung call pins a worker forever. The orchestrator already

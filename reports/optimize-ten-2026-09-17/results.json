@@ -1,0 +1,84 @@
+{
+  "started_at": "2026-09-17T16:20:14.307498+00:00",
+  "status": "interrupted",
+  "git_revision": "68ada1cdbc130024177ada432dca42b8f0cfc9b8",
+  "gold_sha256": "e91c31899d6be84efd92af36a0a2cfda03805eeedd7933671951685b8fe3d2c5",
+  "fixture_sha256": {
+    "americasshoppingmallinc-site-development-and-hosting-agreement": "800a8e3e69cecab83863c1f6ff97587419bd873245d7f98b59e460a747f03228",
+    "blackboxstocksinc-distributor-agreement": "0d2edecafe20a5de97f47ed19b08e2df988b3471e3da810944017ec8675adba5",
+    "legacytechnologyholdings-inc-distributor-agreement": "b4322d0d017a7c697dee87ca9b3d5aa963c4b5ca6f8b136c583fcc87e5f0e5c4",
+    "ecosciencesolutionsinc-endorsement-agreement": "4294c59e488ca8db726621f1a024bfe8213ae06fa6c88226b6bcd20b23cb0ec8",
+    "kiromicbiopharma-inc-consulting-agreement": "aacd48ab914fdede120150e2da4e222b342fa4f963a830384f8c848e9bf738a9",
+    "datacalltechnologies-content-license-agreement": "20f0f1630d8ae7ba221fbbf9d0449a593605989dfa3c779cafdb9c233bb6ebe7",
+    "gainscoinc-sponsorship-agreement": "c9c939c124076c8aeec0cbdf6f0cd6f3328a1c3ce5f1afe90d11449172122a4c",
+    "martinmidstreampartnerslp-transportation-services-agreement": "db9503241d99bb769627041be15e098f5f21b7fc0a14140e015f3bd0ddd007f4",
+    "ticketscominc-sponsorship-agreement": "4928e56782c0c6c8d589f9ceb019dc418e38b7b324be28f49a20a81b03d1eaa7",
+    "tuniucorp-cooperation-agreement": "de64f561a87663b8a6fb9d4be477fd0c0eba01695499870e754f108474440e8d"
+  },
+  "playbook_sha256": "afe53e42bb084f1bfdc72847db32f418c611ac43ab722b429bd41e26236bc9f7",
+  "config": {
+    "provider": "openrouter",
+    "model": "openai/gpt-oss-20b",
+    "embedding_provider": "openrouter",
+    "embedding_model": "google/gemini-embedding-001",
+    "embedding_dim": 768,
+    "enable_judge": true,
+    "thinking": "disabled",
+    "concurrency": 4,
+    "timeout_seconds": 120,
+    "max_attempts": 3
+  },
+  "expected": {
+    "contracts": 10,
+    "clauses": 281,
+    "labelled_clauses": 72
+  },
+  "completed_contracts": [
+    {
+      "contract_id": "ticketscominc-sponsorship-agreement",
+      "elapsed_seconds": 2.7496706599995377,
+      "gold_clauses": 8,
+      "predicted_clauses": 8,
+      "labelled_clauses": 4,
+      "segmentation_f1": 1.0,
+      "verified_clauses": 0,
+      "unknown_risk_clauses": 8,
+      "failed_clauses": 8,
+      "citations": 0,
+      "valid_citations": 0
+    },
+    {
+      "contract_id": "americasshoppingmallinc-site-development-and-hosting-agreement",
+      "elapsed_seconds": 3.644859775000441,
+      "gold_clauses": 47,
+      "predicted_clauses": 47,
+      "labelled_clauses": 9,
+      "segmentation_f1": 1.0,
+      "verified_clauses": 0,
+      "unknown_risk_clauses": 47,
+      "failed_clauses": 47,
+      "citations": 0,
+      "valid_citations": 0
+    },
+    {
+      "contract_id": "blackboxstocksinc-distributor-agreement",
+      "elapsed_seconds": 2.658930089999558,
+      "gold_clauses": 21,
+      "predicted_clauses": 21,
+      "labelled_clauses": 5,
+      "segmentation_f1": 1.0,
+      "verified_clauses": 0,
+      "unknown_risk_clauses": 21,
+      "failed_clauses": 21,
+      "citations": 0,
+      "valid_citations": 0
+    }
+  ],
+  "comparison": {
+    "iteration_2": "Awaiting source baseline; not identified in repository.",
+    "prd_thresholds": "Awaiting PRD; repository regression gates are separate."
+  },
+  "elapsed_seconds": 10.09657130999949,
+  "error_type": "KeyboardInterrupt",
+  "finished_at": "2026-09-17T16:20:24.405844+00:00"
+}

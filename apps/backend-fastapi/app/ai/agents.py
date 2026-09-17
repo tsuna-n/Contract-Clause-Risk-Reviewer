@@ -13,12 +13,12 @@ attributed to the exact prompt template that produced it.
 
 from __future__ import annotations
 
-import re
 from abc import ABC, abstractmethod
 from collections.abc import Callable
-from dataclasses import dataclass
+from dataclasses import dataclass, field
+from typing import Literal
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, create_model
 
 from app.ai.guardrails import (
     MIN_CITATION_EXCERPT_WORDS,
@@ -35,6 +35,7 @@ from app.schemas import (
     ClauseReview,
     ClauseType,
     ContractMetadata,
+    ContractSource,
     PlaybookPosition,
     RetrievalHit,
     RiskLevel,
@@ -216,11 +217,12 @@ class Classifier(Agent[Clause, ClauseType]):
     """Assigns a :class:`ClauseType` to a clause."""
 
     name = "classifier"
+    prompt_version = "v2"
 
     def run(self, payload: Clause) -> ClauseType:
         """Classify ``payload`` into a clause type."""
         prompt = render_prompt(
-            "classifier.v1.jinja",
+            "classifier.v2.jinja",
             clause_types=[t.value for t in ClauseType],
             clause_text=payload.text,
         )
@@ -256,13 +258,6 @@ class Matcher(Agent[Clause, list[RetrievalHit]]):
 # --- 4. score ----------------------------------------------------------------
 
 _SCORER_SYSTEM_PROMPT = "You are a meticulous, grounded contract risk reviewer."
-_LABEL_PREFIX_RE = re.compile(r"^\s*(preferred|fallback)\s*:\s*", re.IGNORECASE)
-_WRAPPING_QUOTES = "\"'“”‘’"
-
-
-def _clean_excerpt(text: str) -> str:
-    """Strip a stray "Preferred:"/"Fallback:" label and wrapping quotes the model may echo back."""
-    return _LABEL_PREFIX_RE.sub("", text).strip().strip(_WRAPPING_QUOTES).strip()
 
 
 @dataclass
@@ -276,66 +271,98 @@ class RiskScorerInput:
     #: was wrong - re-sending the identical prompt mostly bought the identical
     #: answer at twice the token cost.
     feedback: str | None = None
+    contract_sources: list[ContractSource] = field(default_factory=list)
 
 
 class _CitedPoint(BaseModel):
     playbook_position_id: str
-    excerpt: str
+    language: Literal["preferred", "fallback"] = "preferred"
 
 
 class _RiskAssessment(BaseModel):
     risk_level: RiskLevel
     rationale: str
     citations: list[_CitedPoint] = Field(default_factory=list)
-    suggested_fallback: str | None = None
+    suggested_fallback_position_id: str | None = None
 
 
 class RiskScorer(Agent[RiskScorerInput, ClauseReview]):
     """Produces a grounded risk assessment for a clause."""
 
     name = "risk_scorer"
+    prompt_version = "v6"
 
     def run(self, payload: RiskScorerInput) -> ClauseReview:
         """Assess ``payload.clause`` against the retrieved positions.
 
-        The LLM cites positions by their id and quotes an excerpt; grounding
-        of that excerpt (and of any suggested fallback) is verified downstream
-        by the judge, not here.
+        The model selects existing source IDs and language variants; the code
+        copies citations and fallback wording directly from those sources.
+        The judge still verifies that the assessment follows from the evidence.
         """
         if not payload.hits:
             return ClauseReview(
                 clause=payload.clause,
+                contract_sources=payload.contract_sources,
                 risk_level=RiskLevel.UNKNOWN,
                 rationale="No matching playbook position was retrieved for this clause.",
             )
 
         hits_by_id = {hit.position.id: hit for hit in payload.hits}
+        allowed_ids = Literal[tuple(hits_by_id)]
+        cited_point = create_model(
+            "_RetrievedCitedPoint",
+            __base__=_CitedPoint,
+            playbook_position_id=(allowed_ids, ...),
+        )
+        assessment_model = create_model(
+            "_RetrievedRiskAssessment",
+            __base__=_RiskAssessment,
+            citations=(list[cited_point], Field(default_factory=list)),
+            suggested_fallback_position_id=(allowed_ids | None, None),
+        )
         prompt = render_prompt(
-            "risk_scorer.v1.jinja",
+            "risk_scorer.v6.jinja",
             clause_type=payload.clause.clause_type.value,
             clause_text=payload.clause.text,
             hits=[
                 {"citation_id": hit.position.id, "position": hit.position} for hit in payload.hits
             ],
             feedback=payload.feedback,
+            contract_sources=payload.contract_sources,
         )
         assessment = self.llm.complete_structured(
             system=_SCORER_SYSTEM_PROMPT,
             prompt=prompt,
-            response_model=_RiskAssessment,
+            response_model=assessment_model,
         )
 
-        citations = [
-            make_citation(hits_by_id[c.playbook_position_id], _clean_excerpt(c.excerpt))
-            for c in assessment.citations
-            if c.playbook_position_id in hits_by_id
-        ]
-        suggested_fallback = (
-            _clean_excerpt(assessment.suggested_fallback) if assessment.suggested_fallback else None
-        )
+        citations = []
+        seen = set()
+        for selected in assessment.citations:
+            key = (selected.playbook_position_id, selected.language)
+            if key in seen:
+                continue
+            seen.add(key)
+            hit = hits_by_id[selected.playbook_position_id]
+            excerpt = (
+                hit.position.preferred_language
+                if selected.language == "preferred"
+                else hit.position.fallback_language
+            )
+            if excerpt:
+                citations.append(make_citation(hit, excerpt))
+        suggested_fallback = None
+        if assessment.suggested_fallback_position_id:
+            hit = hits_by_id[assessment.suggested_fallback_position_id]
+            suggested_fallback = hit.position.fallback_language or None
+            if suggested_fallback and not any(
+                citation.playbook_position_id == hit.position.id for citation in citations
+            ):
+                citations.append(make_citation(hit, suggested_fallback))
 
         return ClauseReview(
             clause=payload.clause,
+            contract_sources=payload.contract_sources,
             risk_level=assessment.risk_level,
             rationale=assessment.rationale,
             citations=citations,
@@ -366,6 +393,7 @@ class Judge(Agent[ClauseReview, Verdict]):
     """Checks that a review is grounded in its cited sources."""
 
     name = "judge"
+    prompt_version = "v5"
 
     def __init__(
         self,
@@ -393,6 +421,13 @@ class Judge(Agent[ClauseReview, Verdict]):
         known_positions = self._positions()
         known_ids = set(known_positions)
 
+        if not payload.citations:
+            return Verdict(
+                grounded=False,
+                reason="assessment has no playbook citations supporting its risk and rationale",
+                should_retry=payload.risk_level != RiskLevel.UNKNOWN,
+            )
+
         unknown = invalid_citations(payload, known_ids)
         if unknown:
             return Verdict(
@@ -404,9 +439,7 @@ class Judge(Agent[ClauseReview, Verdict]):
         for citation in payload.citations:
             position = known_positions[citation.playbook_position_id]
             source_text = f"{position.preferred_language} {position.fallback_language}"
-            if not is_grounded(
-                citation.excerpt, source_text, min_words=MIN_CITATION_EXCERPT_WORDS
-            ):
+            if not is_grounded(citation.excerpt, source_text, min_words=MIN_CITATION_EXCERPT_WORDS):
                 return Verdict(
                     grounded=False,
                     reason=(
@@ -426,7 +459,16 @@ class Judge(Agent[ClauseReview, Verdict]):
         if not get_settings().enable_judge:
             return Verdict(grounded=True, reason="deterministic checks passed")
 
-        prompt = render_prompt("judge.v1.jinja", clause_text=payload.clause.text, review=payload)
+        cited_positions = {
+            citation.playbook_position_id: known_positions[citation.playbook_position_id]
+            for citation in payload.citations
+        }
+        prompt = render_prompt(
+            "judge.v5.jinja",
+            clause_text=payload.clause.text,
+            review=payload,
+            positions=list(cited_positions.values()),
+        )
         llm_verdict = self.llm.complete_structured(
             system=_JUDGE_SYSTEM_PROMPT,
             prompt=prompt,

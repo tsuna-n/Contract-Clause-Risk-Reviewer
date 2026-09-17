@@ -1,0 +1,236 @@
+{
+  "complete_comparison": false,
+  "matching_contracts": [
+    "americasshoppingmallinc-site-development-and-hosting-agreement",
+    "blackboxstocksinc-distributor-agreement",
+    "legacytechnologyholdings-inc-distributor-agreement",
+    "ticketscominc-sponsorship-agreement"
+  ],
+  "missing_baseline": [],
+  "missing_candidate": [
+    "datacalltechnologies-content-license-agreement",
+    "ecosciencesolutionsinc-endorsement-agreement",
+    "gainscoinc-sponsorship-agreement",
+    "kiromicbiopharma-inc-consulting-agreement",
+    "martinmidstreampartnerslp-transportation-services-agreement",
+    "tuniucorp-cooperation-agreement"
+  ],
+  "baseline_config": {
+    "provider": "openrouter",
+    "model": "openai/gpt-oss-120b",
+    "embedding_provider": "openrouter",
+    "embedding_model": "google/gemini-embedding-001",
+    "embedding_dim": 768,
+    "enable_judge": true,
+    "thinking": "disabled",
+    "concurrency": 4,
+    "timeout_seconds": 120,
+    "max_attempts": 3,
+    "judge_prompt_version": "v2",
+    "openrouter_providers": [
+      "Groq",
+      "Cerebras"
+    ]
+  },
+  "candidate_config": {
+    "provider": "openrouter",
+    "model": "openai/gpt-oss-120b",
+    "embedding_provider": "openrouter",
+    "embedding_model": "google/gemini-embedding-001",
+    "embedding_dim": 768,
+    "enable_judge": true,
+    "thinking": "disabled",
+    "concurrency": 4,
+    "timeout_seconds": 120,
+    "max_attempts": 3,
+    "judge_prompt_version": "v2",
+    "scorer_prompt_version": "v2",
+    "openrouter_providers": [
+      "Groq",
+      "Cerebras"
+    ]
+  },
+  "baseline": {
+    "metrics": {
+      "segmentation_f1": 1.0,
+      "classification_accuracy": 0.5384615384615384,
+      "risk_accuracy": 0.5769230769230769,
+      "citation_validity": 1.0,
+      "per_type": [
+        {
+          "clause_type": "intellectual_property",
+          "support": 1,
+          "accuracy": 0.0
+        },
+        {
+          "clause_type": "payment_terms",
+          "support": 4,
+          "accuracy": 0.25
+        },
+        {
+          "clause_type": "other",
+          "support": 4,
+          "accuracy": 0.25
+        },
+        {
+          "clause_type": "termination",
+          "support": 4,
+          "accuracy": 1.0
+        },
+        {
+          "clause_type": "limitation_of_liability",
+          "support": 2,
+          "accuracy": 0.5
+        },
+        {
+          "clause_type": "non_compete",
+          "support": 7,
+          "accuracy": 0.42857142857142855
+        },
+        {
+          "clause_type": "governing_law",
+          "support": 3,
+          "accuracy": 1.0
+        },
+        {
+          "clause_type": "warranty",
+          "support": 1,
+          "accuracy": 1.0
+        }
+      ],
+      "classification_confusion": {
+        "intellectual_property": {
+          "other": 1
+        },
+        "payment_terms": {
+          "termination": 1,
+          "payment_terms": 1,
+          "other": 2
+        },
+        "other": {
+          "other": 1,
+          "intellectual_property": 1,
+          "warranty": 1,
+          "governing_law": 1
+        },
+        "termination": {
+          "termination": 4
+        },
+        "limitation_of_liability": {
+          "termination": 1,
+          "limitation_of_liability": 1
+        },
+        "non_compete": {
+          "non_compete": 3,
+          "intellectual_property": 2,
+          "other": 1,
+          "payment_terms": 1
+        },
+        "governing_law": {
+          "governing_law": 3
+        },
+        "warranty": {
+          "warranty": 1
+        }
+      }
+    },
+    "elapsed_seconds": 96.70917346499846,
+    "clauses": 98,
+    "failed_clauses": 0,
+    "unknown_risk_clauses": 0,
+    "verified_clauses": 53
+  },
+  "candidate": {
+    "metrics": {
+      "segmentation_f1": 1.0,
+      "classification_accuracy": 0.5384615384615384,
+      "risk_accuracy": 0.6153846153846154,
+      "citation_validity": 1.0,
+      "per_type": [
+        {
+          "clause_type": "intellectual_property",
+          "support": 1,
+          "accuracy": 1.0
+        },
+        {
+          "clause_type": "payment_terms",
+          "support": 4,
+          "accuracy": 0.25
+        },
+        {
+          "clause_type": "other",
+          "support": 4,
+          "accuracy": 0.0
+        },
+        {
+          "clause_type": "termination",
+          "support": 4,
+          "accuracy": 1.0
+        },
+        {
+          "clause_type": "limitation_of_liability",
+          "support": 2,
+          "accuracy": 0.5
+        },
+        {
+          "clause_type": "non_compete",
+          "support": 7,
+          "accuracy": 0.42857142857142855
+        },
+        {
+          "clause_type": "governing_law",
+          "support": 3,
+          "accuracy": 1.0
+        },
+        {
+          "clause_type": "warranty",
+          "support": 1,
+          "accuracy": 1.0
+        }
+      ],
+      "classification_confusion": {
+        "intellectual_property": {
+          "intellectual_property": 1
+        },
+        "payment_terms": {
+          "termination": 1,
+          "payment_terms": 1,
+          "other": 2
+        },
+        "other": {
+          "payment_terms": 1,
+          "intellectual_property": 1,
+          "warranty": 1,
+          "governing_law": 1
+        },
+        "termination": {
+          "termination": 4
+        },
+        "limitation_of_liability": {
+          "termination": 1,
+          "limitation_of_liability": 1
+        },
+        "non_compete": {
+          "non_compete": 3,
+          "intellectual_property": 2,
+          "other": 1,
+          "payment_terms": 1
+        },
+        "governing_law": {
+          "governing_law": 3
+        },
+        "warranty": {
+          "warranty": 1
+        }
+      }
+    },
+    "elapsed_seconds": 75.7383004559997,
+    "clauses": 98,
+    "failed_clauses": 0,
+    "unknown_risk_clauses": 36,
+    "verified_clauses": 57
+  },
+  "speedup": 1.276885972919102,
+  "classification_accuracy_delta": 0.0,
+  "risk_accuracy_delta": 0.03846153846153855
+}

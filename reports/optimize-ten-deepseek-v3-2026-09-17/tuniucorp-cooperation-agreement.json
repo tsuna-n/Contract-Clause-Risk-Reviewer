@@ -1,0 +1,1620 @@
+{
+  "report_id": "79676568e76748eead5e6a931302e29a",
+  "contract_id": "tuniucorp-cooperation-agreement",
+  "session_id": "eval",
+  "filename": "",
+  "created_at": "2026-09-17T16:56:26.742469Z",
+  "overall_risk": "high",
+  "summary": {
+    "high": 15,
+    "medium": 18,
+    "low": 3,
+    "unknown": 21
+  },
+  "reviews": [
+    {
+      "clause": {
+        "id": "clause-1",
+        "text": "1. Party A is a company with exclusively domestic capital incorporated under the laws of the People's Republic of China, mainly engaged in the internet-based sale, promotion of tour products, room reservation and conference affairs services.",
+        "span": {
+          "start": 638,
+          "end": 881,
+          "page": 1
+        },
+        "clause_type": "other",
+        "heading": "1. Party A is a company with exclusively domestic capital incorporated under the laws of the People's Republic of China, mainly engaged in the internet-based sale, promotion of tour products, room reservation and conference affairs services."
+      },
+      "risk_level": "unknown",
+      "rationale": "The clause is a party-identification/background recital describing Party A's incorporation and business scope; it imposes no obligation and does not address governing law, exclusivity, assignment, third-party beneficiaries, or revenue sharing. None of the retrieved playbook positions is relevant to this recital, so no supported assessment can be made.",
+      "citations": [],
+      "suggested_fallback": null,
+      "verified": false,
+      "verification_reason": "assessment has no playbook citations supporting its risk and rationale",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-2",
+        "text": "2. Party B is a limited liability company incorporated under the laws of the People's Republic of China, mainly engaged in research and development of computer software technology, technology transfer, technical consultancy and technical services, computer technology training, technical services and business consultancy services in relation to the internet-based sale and promotion of tour products.",
+        "span": {
+          "start": 881,
+          "end": 1284,
+          "page": 1
+        },
+        "clause_type": "other",
+        "heading": "2. Party B is a limited liability company incorporated under the laws of the People's Republic of China, mainly engaged in research and development of computer software technology, technology transfer, technical consultancy and technical services, computer technology training, technical services and business consultancy services in relation to the internet-based sale and promotion of tour products."
+      },
+      "risk_level": "unknown",
+      "rationale": "The clause is solely a description of Party B's legal incorporation under PRC law and its business scope (software R&D, technology transfer, consultancy, internet-based tour product sales/promotion). It contains no obligation, restriction, licence, exclusivity, non-compete, governing-law/venue, or assignment term. None of the retrieved playbook positions (non-compete-bounded, no-exclusivity, governing-law-and-venue, licence-scope-limited, assignment-change-of-control) is engaged by this descriptive language, so no supplied position supports an assessment.",
+      "citations": [],
+      "suggested_fallback": null,
+      "verified": false,
+      "verification_reason": "assessment has no playbook citations supporting its risk and rationale",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-3",
+        "text": "3. Party A intends to authorize Party B to provide to Party A and its subsidiaries the technical services and business consultancy services in relation to the internet-based sale and promotion of tour products, including but not limited to development, operation, maintenance of internet technology platform as well as consultancy services relating to sale and promotion of tour products or cooperation provided by Party B in other forms as required under this Agreement, and Party B agrees to accept such authorization.",
+        "span": {
+          "start": 1284,
+          "end": 1806,
+          "page": 1
+        },
+        "clause_type": "other",
+        "heading": "3. Party A intends to authorize Party B to provide to Party A and its subsidiaries the technical services and business consultancy services in relation to the internet-based sale and promotion of tour products, including but not limited to development, operation, maintenance of internet technology platform as well as consultancy services relating to sale and promotion of tour products or cooperation provided by Party B in other forms as required under this Agreement, and Party B agrees to accept such authorization."
+      },
+      "risk_level": "low",
+      "rationale": "The clause only authorizes Party B to provide technical and consultancy services to Party A and its subsidiaries; it creates no exclusivity, no assignment or change-of-control term, no data processing, no IP ownership, and no confidentiality obligation. The only relevant retrieved position is no-exclusivity, and the clause is consistent with it because it grants no exclusive dealing commitment. The remaining retrieved positions concern subjects not addressed by this clause and are therefore not applied.",
+      "citations": [
+        {
+          "citation_id": "9022f137f87e",
+          "playbook_position_id": "no-exclusivity",
+          "excerpt": "This Agreement is non-exclusive. Each party remains free to provide to, procure from, or contract with any third party for services of the same or a similar kind, without restriction and without any obligation to the other party."
+        }
+      ],
+      "suggested_fallback": null,
+      "verified": true,
+      "verification_reason": "The clause authorizes Party B to provide technical and consultancy services to Party A and its subsidiaries and contains no exclusive dealing commitment. The reviewer's claim of no exclusivity is supported by the clause text, and the cited no-exclusivity position is consistent with the clause. The low risk level follows from the absence of the exclusivity risk identified by the high-risk-if-absent playbook position, and the rationale properly distinguishes what the clause states from what policy requests. No fallback is suggested, so no verbatim fallback issue arises.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-4",
+        "text": "4. After an amiable consideration, the Parties unanimously agree that the establishment of a long-term and close cooperation relationship is in the best interests of the Parties and their beneficiaries.",
+        "span": {
+          "start": 1806,
+          "end": 2010,
+          "page": 1
+        },
+        "clause_type": "other",
+        "heading": "4. After an amiable consideration, the Parties unanimously agree that the establishment of a long-term and close cooperation relationship is in the best interests of the Parties and their beneficiaries."
+      },
+      "risk_level": "low",
+      "rationale": "The clause is a non-operative recital stating that the parties agree long-term cooperation is in their best interests and references 'beneficiaries'. It grants no enforcement right to any third party and creates no substantive obligation. The relevant playbook position on third-party beneficiaries treats the absence of an express no-third-party-beneficiaries provision as low risk, and this recital does not create the enforcement right that the position addresses. Because the clause does not confer a right to enforce and the playbook regards this subject as low risk if unaddressed, there is no substantive deviation warranting escalation.",
+      "citations": [
+        {
+          "citation_id": "9e110330b955",
+          "playbook_position_id": "no-third-party-beneficiaries",
+          "excerpt": "This Agreement is for the benefit of the parties and their permitted successors and assigns only. No other person has any right to enforce any of its terms."
+        }
+      ],
+      "suggested_fallback": null,
+      "verified": true,
+      "verification_reason": "The clause is accurately characterized as a non-operative, aspirational recital: it states that long-term cooperation is in the parties' best interests and mentions 'beneficiaries', but grants no third-party enforcement right or substantive obligation. The cited playbook position on no-third-party-beneficiaries is correctly summarized as treating absence of an express clause as low risk, and the reviewer properly distinguishes the recital from the policy's requested enforcement limitation. The low risk level follows from the comparison and no fallback is proposed, so no verbatim fallback issue arises. The citation is the preferred, not fallback, text, but it is used to support the policy position rather than as a suggested fallback, and the assessment does not quote it as required fallback language.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-5",
+        "text": "5. The Parties have entered into the Cooperation Agreement on September 17, 2008 in respect of the aforementioned cooperative matters (the \"Original Cooperation Agreement\").\n\nThe Parties unanimously agree to amend and restate the Original Cooperation Agreement through friendly negotiation and the Original Cooperation Agreement is amended and restated as follows:",
+        "span": {
+          "start": 2010,
+          "end": 2376,
+          "page": 1
+        },
+        "clause_type": "other",
+        "heading": "5. The Parties have entered into the Cooperation Agreement on September 17, 2008 in respect of the aforementioned cooperative matters (the \"Original Cooperation Agreement\")."
+      },
+      "risk_level": "unknown",
+      "rationale": "This clause is a recital and amendment/restatement provision establishing that the parties entered into an Original Cooperation Agreement on September 17, 2008 and agree to amend and restate it. It contains no substantive obligation addressing governing law/venue, renewal, confidentiality survival, third-party beneficiaries, or IP ownership, so none of the retrieved playbook positions is relevant to its scope. Absent a supplied position on amendment/restatement mechanics, no supported risk assessment can be made.",
+      "citations": [],
+      "suggested_fallback": null,
+      "verified": false,
+      "verification_reason": "assessment has no playbook citations supporting its risk and rationale",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-6",
+        "text": "1. Business Cooperation\n\nParty A and Party B unanimously agree that the proposed cooperation shall be the internet-based sale and promotion of tour products conducted by Party A and its subsidiaries or other value-added business carried out by Party A. Party B shall provide the business consultancy and technical services as well as the technical consultancy as set forth in Article 3 hereinafter to Party A and its subsidiaries to facilitate them to conduct the aforementioned business and supply relevant products and services.",
+        "span": {
+          "start": 2376,
+          "end": 2909,
+          "page": 1
+        },
+        "clause_type": "other",
+        "heading": "1. Business Cooperation"
+      },
+      "risk_level": "unknown",
+      "rationale": "The clause only describes the scope of the business cooperation and Party B's consultancy and technical services; it creates no intellectual property ownership, non-compete, exclusivity, data-protection, or licence-grant obligation. Each retrieved playbook position concerns a subject this clause does not touch, so applying any of them would be an unrelated policy. No supplied position supports an assessment of this clause.",
+      "citations": [],
+      "suggested_fallback": null,
+      "verified": false,
+      "verification_reason": "assessment has no playbook citations supporting its risk and rationale",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-7",
+        "text": "2. Exclusive Cooperation",
+        "span": {
+          "start": 2909,
+          "end": 2936,
+          "page": 1
+        },
+        "clause_type": "non_compete",
+        "heading": "2. Exclusive Cooperation"
+      },
+      "risk_level": "unknown",
+      "rationale": "The only supplied clause text is the bare heading '2. Exclusive Cooperation' with no operative terms, so it imposes no discernible obligation and cannot be assessed as exclusive dealing or a non-compete. The [no-exclusivity] position (preferred: non-exclusive; fallback: exclusivity limited to named products/territory and no more than twelve months, lapsing on failure to meet targets) would only be engaged once actual exclusivity language exists; the heading alone neither confirms nor denies an exclusive dealing commitment. Similarly, the [non-compete-bounded] position cannot be applied without any identified restriction, duration, territory or scope. Because no supplied position can be matched to a concrete obligation in the clause as provided, the correct risk level is unknown pending the full clause text.",
+      "citations": [
+        {
+          "citation_id": "9022f137f87e",
+          "playbook_position_id": "no-exclusivity",
+          "excerpt": "This Agreement is non-exclusive. Each party remains free to provide to, procure from, or contract with any third party for services of the same or a similar kind, without restriction and without any obligation to the other party."
+        }
+      ],
+      "suggested_fallback": "Any exclusivity granted under this Agreement is limited to the named products, the named territory and a period of no more than twelve (12) months, and lapses if the exclusive party fails to meet the minimum performance targets stated in the Order Form.",
+      "verified": true,
+      "verification_reason": "The assessment is supported by the evidence. The clause text consists solely of the heading '2. Exclusive Cooperation' with no operative language, so the claim that it imposes no discernible obligation is accurate. The playbook position [no-exclusivity] is properly characterized: preferred is non-exclusive and fallback limits exclusivity to named products, territory, and no more than twelve months with lapse on failure to meet minimum performance targets. The suggested fallback matches the playbook fallback text verbatim. The rationale correctly distinguishes that the position would only be engaged once actual exclusivity language exists, and the 'unknown' risk level reasonably follows from the absence of any concrete obligation to compare against the policy. No unsupported claims or misquotes are present.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-8",
+        "text": "2.1 Party A irrevocably undertakes that Party A will take Party B as its exclusive and sole partner to provide the business consultancy and technical services as well as technical consultancy to Party A and its subsidiaries. Party A shall not establish any same or similar cooperative relationship with any third party in respect of such businesses nor shall it make any same or similar arrangement, unless with the prior written consent of Party B.",
+        "span": {
+          "start": 2936,
+          "end": 3387,
+          "page": 1
+        },
+        "clause_type": "non_compete",
+        "heading": "2.1 Party A irrevocably undertakes that Party A will take Party B as its exclusive and sole partner to provide the business consultancy and technical services as well as technical consultancy to Party A and its subsidiaries. Party A shall not establish any same or similar cooperative relationship with any third party in respect of such businesses nor shall it make any same or similar arrangement, unless with the prior written consent of Party B."
+      },
+      "risk_level": "high",
+      "rationale": "Clause 2.1 imposes an unbounded exclusive dealing commitment: Party A must take Party B as its 'exclusive and sole' partner for the consultancy and technical services, and may not establish any same or similar cooperative relationship or arrangement with any third party absent Party B's prior written consent. This is an outright exclusivity grant with no stated time limit, territory, product/scope limitation, minimum performance targets, or lapse mechanism. It is directly contrary to the no-exclusivity preferred position, and it does not satisfy the fallback either because the exclusivity is not limited to named products, a named territory, or a period of no more than twelve months, and it contains no minimum-performance lapse condition. The civil-law-bounded preferred position (no restriction on competing or operating in any geography, business or technology sector) is likewise breached. The breadth and indefinite duration of the exclusivity create material commercial exposure for Party A, and the only mitigation is Party B's discretionary written consent.",
+      "citations": [
+        {
+          "citation_id": "9022f137f87e",
+          "playbook_position_id": "no-exclusivity",
+          "excerpt": "This Agreement is non-exclusive. Each party remains free to provide to, procure from, or contract with any third party for services of the same or a similar kind, without restriction and without any obligation to the other party."
+        },
+        {
+          "citation_id": "f9a7d524be27",
+          "playbook_position_id": "no-exclusivity",
+          "excerpt": "Any exclusivity granted under this Agreement is limited to the named products, the named territory and a period of no more than twelve (12) months, and lapses if the exclusive party fails to meet the minimum performance targets stated in the Order Form."
+        },
+        {
+          "citation_id": "b3047ccdc483",
+          "playbook_position_id": "non-compete-bounded",
+          "excerpt": "Neither party is restricted from competing with the other or from operating in any geography, business or technology sector during or after the Term."
+        },
+        {
+          "citation_id": "a7c01ef92ee7",
+          "playbook_position_id": "non-compete-bounded",
+          "excerpt": "Any non-compete obligation under this Agreement shall be limited to twelve (12) months after termination, to the territory in which the restricted party actually performed, and to services that directly compete with those supplied under this Agreement."
+        }
+      ],
+      "suggested_fallback": "Any exclusivity granted under this Agreement is limited to the named products, the named territory and a period of no more than twelve (12) months, and lapses if the exclusive party fails to meet the minimum performance targets stated in the Order Form.",
+      "verified": true,
+      "verification_reason": "The risk assessment is supported by the clause and cited playbook sources. Clause 2.1 states Party A 'irrevocably undertakes' to take Party B as its 'exclusive and sole' partner and 'may not...establish any same or similar cooperative relationship...or arrangement with any third party' absent Party B's 'prior written consent.' This supports the claims of unbounded exclusivity, no stated time limit, no territory/product limitation, and the only mitigation being Party B's discretionary consent. The playbook positions confirm the clause is contrary to the no-exclusivity preferred position and fails the fallback, which requires limiting exclusivity to named products, named territory, no more than twelve months, and a minimum-performance lapse condition—all absent from the clause. The non-compete-bounded preferred position is also breached, since the restriction affects the ability to operate with third parties for similar services. The high risk level follows from the playbook's 'Risk if absent: high' for both categories and the breadth/indefinite duration of the exclusivity. The suggested fallback matches the playbook fallback verbatim. The rationale properly distinguishes the clause's actual terms from the policy requests.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-9",
+        "text": "2.2 Party A irrevocably undertakes that it will make best efforts to assist and endeavor to achieve the exclusive operation of thecooperative business to the extent permitted by laws.",
+        "span": {
+          "start": 3387,
+          "end": 3573,
+          "page": 1
+        },
+        "clause_type": "non_compete",
+        "heading": "2.2 Party A irrevocably undertakes that it will make best efforts to assist and endeavor to achieve the exclusive operation of thecooperative business to the extent permitted by laws."
+      },
+      "risk_level": "high",
+      "rationale": "The clause obligates Party A to use best efforts to help achieve the exclusive operation of the cooperative business. This is an express exclusivity arrangement with no time, territory, product, or performance-target limitation, deviating from both the preferred non-exclusive position and the bounded fallback. The retained positions indicate that absence of bounded limits is high risk for exclusivity and non-compete commitments, and the clause provides no termination or lapse protection.",
+      "citations": [
+        {
+          "citation_id": "9022f137f87e",
+          "playbook_position_id": "no-exclusivity",
+          "excerpt": "This Agreement is non-exclusive. Each party remains free to provide to, procure from, or contract with any third party for services of the same or a similar kind, without restriction and without any obligation to the other party."
+        },
+        {
+          "citation_id": "f9a7d524be27",
+          "playbook_position_id": "no-exclusivity",
+          "excerpt": "Any exclusivity granted under this Agreement is limited to the named products, the named territory and a period of no more than twelve (12) months, and lapses if the exclusive party fails to meet the minimum performance targets stated in the Order Form."
+        },
+        {
+          "citation_id": "b3047ccdc483",
+          "playbook_position_id": "non-compete-bounded",
+          "excerpt": "Neither party is restricted from competing with the other or from operating in any geography, business or technology sector during or after the Term."
+        },
+        {
+          "citation_id": "a7c01ef92ee7",
+          "playbook_position_id": "non-compete-bounded",
+          "excerpt": "Any non-compete obligation under this Agreement shall be limited to twelve (12) months after termination, to the territory in which the restricted party actually performed, and to services that directly compete with those supplied under this Agreement."
+        }
+      ],
+      "suggested_fallback": "Any exclusivity granted under this Agreement is limited to the named products, the named territory and a period of no more than twelve (12) months, and lapses if the exclusive party fails to meet the minimum performance targets stated in the Order Form.",
+      "verified": true,
+      "verification_reason": "The clause reasonably supports the claim of an exclusivity-related commitment: Party A undertakes to assist and endeavor to achieve the 'exclusive operation of the cooperative business,' with no stated time, territory, product, or performance-target limits. The cited playbook sources support the policy claims: [no-exclusivity] prefers non-exclusive dealing and its fallback bounds any exclusivity by named products, named territory, and a max 12-month term with performance-target lapse, with high risk if absent; [non-compete-bounded] prefers no competition restrictions and its fallback bounds any non-compete by 12 months, actual-performance territory, and directly competing services, also high risk if absent. The high risk level follows from the comparison because the clause contains an exclusivity-type commitment without the bounded limitations required by the cited positions. The rationale distinguishes the clause's actual language from the preferred/fallback policy positions. The suggested fallback matches the [no-exclusivity] fallback verbatim.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-10",
+        "text": "2.3 Party A irrevocably undertakes that, without Party B's consent, Party A shall not conduct any other business or make any commercial arrangement, including without limitation being engaged in or otherwise participating in any commercial activities and businesses independently or together with any other person or entity, nor shall it carry out any activities that may be competitive with or cause adverse effect to Party B's business.",
+        "span": {
+          "start": 3573,
+          "end": 4013,
+          "page": 1
+        },
+        "clause_type": "non_compete",
+        "heading": "2.3 Party A irrevocably undertakes that, without Party B's consent, Party A shall not conduct any other business or make any commercial arrangement, including without limitation being engaged in or otherwise participating in any commercial activities and businesses independently or together with any other person or entity, nor shall it carry out any activities that may be competitive with or cause adverse effect to Party B's business."
+      },
+      "risk_level": "high",
+      "rationale": "The clause imposes an unbounded non-compete: Party A may not conduct any other business or participate in any commercial activity that may compete with or adversely affect Party B's business, with no time limit, territory, or defined scope, and consent is at Party B's discretion. This exceeds the playbook's preferred position (no restriction on competing or operating in any geography, business, or technology sector) and the twelve-month, actual-territory, directly-competing-services fallback limitation, so it is a material deviation and a missing critical protection.",
+      "citations": [
+        {
+          "citation_id": "b3047ccdc483",
+          "playbook_position_id": "non-compete-bounded",
+          "excerpt": "Neither party is restricted from competing with the other or from operating in any geography, business or technology sector during or after the Term."
+        },
+        {
+          "citation_id": "a7c01ef92ee7",
+          "playbook_position_id": "non-compete-bounded",
+          "excerpt": "Any non-compete obligation under this Agreement shall be limited to twelve (12) months after termination, to the territory in which the restricted party actually performed, and to services that directly compete with those supplied under this Agreement."
+        }
+      ],
+      "suggested_fallback": "Any non-compete obligation under this Agreement shall be limited to twelve (12) months after termination, to the territory in which the restricted party actually performed, and to services that directly compete with those supplied under this Agreement.",
+      "verified": true,
+      "verification_reason": "The clause text supports the assessment: Party A is barred from conducting any other business or commercial arrangement and from competitive/adverse-effect activities without Party B's consent, with no stated time limit, territory, or defined scope. This exceeds both the playbook preferred position (no restriction) and the fallback (12 months, actual territory, directly competing services). The suggested fallback quotes the playbook fallback verbatim, and the high risk follows the playbook's 'Risk if absent: high' given the missing bounded non-compete protection. The rationale also correctly distinguishes the clause's actual terms from the policy's preferred/fallback positions.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-11",
+        "text": "3. Party B's Services\n\nParty B undertakes to provide the following technical consultancy and services to Party A and its subsidiaries in respect of the cooperative business (collectively referred to as \"Party B's Services\"):",
+        "span": {
+          "start": 4013,
+          "end": 4240,
+          "page": 1
+        },
+        "clause_type": "other",
+        "heading": "3. Party B's Services"
+      },
+      "risk_level": "unknown",
+      "rationale": "The clause is merely a services-grant/scope provision describing Party B's technical consultancy services; it contains no exclusivity commitment, non-compete restriction, data-processing term, confidentiality survival term, or post-termination obligation. None of the retrieved playbook positions addresses services scope, so no supplied position supports an assessment of this clause. The absence of exclusivity cannot be scored against the no-exclusivity position because the clause does not purport to grant exclusivity and contains no dealing restriction either way.",
+      "citations": [],
+      "suggested_fallback": null,
+      "verified": false,
+      "verification_reason": "assessment has no playbook citations supporting its risk and rationale",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-12",
+        "text": "3.1 Research, development, production, test, operation and maintenance, upgrade and other services of relevant technology;",
+        "span": {
+          "start": 4240,
+          "end": 4365,
+          "page": 1
+        },
+        "clause_type": "other",
+        "heading": "3.1 Research, development, production, test, operation and maintenance, upgrade and other services of relevant technology;"
+      },
+      "risk_level": "unknown",
+      "rationale": "The clause is a scope-of-services description listing research, development, production, test, operation, maintenance, and upgrade services for relevant technology. None of the retrieved playbook positions bear on the obligations created or omitted by this clause: the non-compete and non-solicit positions concern restrictions on competition or soliciting employees (neither is present or implicated), and the insurance, confidentiality-survival, and third-party-beneficiary positions concern provisions not addressed by this clause. Because no supplied position supports an assessment of this services-scope clause, the risk is unknown. This assessment does not infer any competing, soliciting, insurance, confidentiality, or beneficiary obligation from the clause, and it notes that the clause text is fragmentary (no defined 'relevant technology', no corresponding restriction or grant), so its actual effect cannot be determined from the provided evidence.",
+      "citations": [],
+      "suggested_fallback": null,
+      "verified": false,
+      "verification_reason": "assessment has no playbook citations supporting its risk and rationale",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-13",
+        "text": "3.2 Development, construction, operation and maintenance, upgrade and other services of relevant internet platform and system;",
+        "span": {
+          "start": 4365,
+          "end": 4494,
+          "page": 1
+        },
+        "clause_type": "other",
+        "heading": "3.2 Development, construction, operation and maintenance, upgrade and other services of relevant internet platform and system;"
+      },
+      "risk_level": "unknown",
+      "rationale": "The clause is a scope/service description fragment (development, construction, operation, maintenance, and upgrade services of an internet platform and system). It contains no obligation that maps to any retrieved playbook position: it does not address confidentiality survival, third-party beneficiaries, employee non-solicit, exclusivity, or security-breach notification. Because none of the supplied positions is relevant to this clause's subject matter, no supported assessment can be made; this is a scope description rather than a risk-bearing term, and it may also be a partial fragment whose surrounding section (including any exclusivity or data-protection obligations) is not provided.",
+      "citations": [],
+      "suggested_fallback": null,
+      "verified": false,
+      "verification_reason": "assessment has no playbook citations supporting its risk and rationale",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-14",
+        "text": "3.3 Design the relevant tour products plan, and provide relevant training, implementation and upgrade and other services;",
+        "span": {
+          "start": 4494,
+          "end": 4618,
+          "page": 1
+        },
+        "clause_type": "other",
+        "heading": "3.3 Design the relevant tour products plan, and provide relevant training, implementation and upgrade and other services;"
+      },
+      "risk_level": "unknown",
+      "rationale": "The clause is a bare services description requiring the provider to design tour product plans and provide related training, implementation and upgrade services. It contains no exclusivity, confidentiality, data protection, termination/wind-down or third-party beneficiary obligation. The retrieved positions (no-exclusivity, confidentiality-term, data-processing-terms, post-termination-wind-down, no-third-party-beneficiaries) are candidates but none governs the scope or content of this services-design obligation, and the clause neither grants exclusivity nor addresses data, confidentiality or termination. No supplied position supports a risk rating for this clause as written.",
+      "citations": [],
+      "suggested_fallback": null,
+      "verified": false,
+      "verification_reason": "assessment has no playbook citations supporting its risk and rationale",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-15",
+        "text": "3.4 Consultancy services related to sale and promotion of tour products;",
+        "span": {
+          "start": 4618,
+          "end": 4693,
+          "page": 1
+        },
+        "clause_type": "other",
+        "heading": "3.4 Consultancy services related to sale and promotion of tour products;"
+      },
+      "risk_level": "unknown",
+      "rationale": "The clause merely identifies a category of 'consultancy services related to sale and promotion of tour products' and imposes no operative obligation. It grants no exclusivity, contains no liability, assignment, confidentiality, or licence terms, and the retrieved positions therefore have nothing to assess against. A description of a service line is not a deviation from or a missing protection under any supplied playbook position, so no supported risk level can be assigned. Material uncertainty: the surrounding sections (which may contain exclusivity, liability, IP, or confidentiality terms) were not provided, so this fragment cannot be read as the whole agreement's treatment of these subjects.",
+      "citations": [],
+      "suggested_fallback": null,
+      "verified": false,
+      "verification_reason": "assessment has no playbook citations supporting its risk and rationale",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-16",
+        "text": "3.5 Other services as agreed by the Parties.\n\nParty A agrees that Party B may, at its own discretion, provide the aforementioned Party B's Services to Party A and its subsidiaries, or purchase the required services from any third party and provide the services to Party A and its subsidiaries.\n\nParty A shall cause its subsidiaries to accept Party B's Services. The Parties agree that the subsidiaries of Party A may otherwise enter into an agreement with Party B in respect of Party B's Services in accordance with this Agreement.",
+        "span": {
+          "start": 4693,
+          "end": 5227,
+          "page": 1
+        },
+        "clause_type": "other",
+        "heading": "3.5 Other services as agreed by the Parties."
+      },
+      "risk_level": "low",
+      "rationale": "The only supplied position touching third-party rights is no-third-party-beneficiaries, whose risk-if-absent is low and which contemplates Affiliates in its fallback. This clause addresses subsidiary service scope and subsidiary contracting but grants subsidiaries no enforcement or beneficiary rights, so it does not conflict with that position. No cited position addresses service-delivery scope, so that subject is outside the playbook and not a basis for elevated risk.",
+      "citations": [
+        {
+          "citation_id": "ecd42c76601a",
+          "playbook_position_id": "no-third-party-beneficiaries",
+          "excerpt": "This Agreement is for the benefit of the parties, their Affiliates, and their permitted successors and assigns only. No other person has any right to enforce any of its terms."
+        }
+      ],
+      "suggested_fallback": null,
+      "verified": true,
+      "verification_reason": "The clause text supports the reviewer's characterization: it concerns Party B's discretion to provide services directly or via third parties, and subsidiaries accepting/contracting for services, without granting subsidiaries enforcement or beneficiary rights. The cited playbook position [no-third-party-beneficiaries] has risk-if-absent 'low' and its fallback indeed refers to Affiliates, so the policy claims are supported. The rationale properly contrasts the clause's service-scope and subsidiary-contracting provisions with the playbook's third-party-beneficiary focus, notes no conflict, and treats service-delivery scope as outside the cited playbook. The low risk level follows from this comparison, and the citation matches the playbook fallback verbatim. No suggested fallback is present, so no verbatim fallback check is triggered.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-17",
+        "text": "4. Cooperation Remuneration",
+        "span": {
+          "start": 5227,
+          "end": 5257,
+          "page": 1
+        },
+        "clause_type": "payment_terms",
+        "heading": "4. Cooperation Remuneration"
+      },
+      "risk_level": "high",
+      "rationale": "The clause consists only of the heading \"4. Cooperation Remuneration\" and contains no operative payment terms: it does not define how the revenue/profit share is calculated, does not state the applicable percentage, payment timing, or any accompanying statement. The relevant playbook position (revenue-share-defined) requires such share to be calculated on net (preferred) or gross (fallback) revenue actually received, at the stated percentage, payable within 30/45 days of quarter end with a statement showing the calculation. This critical protection is entirely absent from the clause, leaving remuneration undefined and unenforceable.",
+      "citations": [
+        {
+          "citation_id": "e051856d0eff",
+          "playbook_position_id": "revenue-share-defined",
+          "excerpt": "Any revenue or profit share payable under this Agreement shall be calculated on net revenue actually received, at the percentage stated in the Order Form, and shall be payable within thirty (30) days of the end of each calendar quarter together with a statement showing the calculation."
+        }
+      ],
+      "suggested_fallback": "Any revenue or profit share payable under this Agreement shall be calculated on gross revenue actually received, at the percentage stated in the Order Form, and shall be payable within forty-five (45) days of the end of each calendar quarter together with a statement showing the calculation.",
+      "verified": true,
+      "verification_reason": "All claims are supported. The clause text consists only of the heading '4. Cooperation Remuneration' with no operative terms, accurately characterized as lacking calculation basis, percentage, timing, or statement. The playbook position [revenue-share-defined] confirms these required elements (net preferred / gross fallback, stated percentage, 30/45 days, statement). The rationale distinguishes what the clause states (nothing) from what policy requests. The suggested fallback matches the playbook fallback verbatim. The risk-if-absent playbook level is medium, and the reviewer rated high; this is a defensible upward adjustment given total absence of any operative provision, so the rationale follows from the comparison.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-18",
+        "text": "4.1 Party A and Party B unanimously agree that they will allocate the proceeds generated from cooperation in accordance with thefollowing provisions:\n\nParty B shall have the right to charge, on a quarterly basis, the service fee (\"Service Fee\") from Party A or its subsidiaries who have accepted Party B's Services, or designate another person to charge Service Fee from Party A or its subsidiaries who have accepted Party B's Services. The total sum of Service Fee shall be equal to the amount of profits gained by Party A or its subsidiaries who have accepted Party B's Services. Party B shall have the right to adjust the amount of Service Fee at its own discretion, without the prior consent of Party A or its subsidiaries.\n\nParty A shall cause its subsidiaries to pay the Service Fee in respect of Party B's Services provided to such subsidiaries.",
+        "span": {
+          "start": 5257,
+          "end": 6112,
+          "page": 1
+        },
+        "clause_type": "payment_terms",
+        "heading": "4.1 Party A and Party B unanimously agree that they will allocate the proceeds generated from cooperation in accordance with thefollowing provisions:"
+      },
+      "risk_level": "high",
+      "rationale": "The clause sets the Service Fee as Party B's unilateral right to charge an amount equal to the total profits earned by Party A and its subsidiaries, expressly granting Party B the right to adjust the fee at its own discretion without Party A's prior consent. This is not a revenue or profit share calculated on a defined percentage or net/gross revenue with an audit statement as contemplated by the revenue-share-defined position; it is an uncapped, unilaterally adjustable fee claim on all of Party A's profits, and no fixed percentage, calculation method, or objection/audit right is provided. The absence of a defined, capped, and auditable revenue share is a material exposure, so the clause is high risk.",
+      "citations": [
+        {
+          "citation_id": "e051856d0eff",
+          "playbook_position_id": "revenue-share-defined",
+          "excerpt": "Any revenue or profit share payable under this Agreement shall be calculated on net revenue actually received, at the percentage stated in the Order Form, and shall be payable within thirty (30) days of the end of each calendar quarter together with a statement showing the calculation."
+        }
+      ],
+      "suggested_fallback": "Any revenue or profit share payable under this Agreement shall be calculated on gross revenue actually received, at the percentage stated in the Order Form, and shall be payable within forty-five (45) days of the end of each calendar quarter together with a statement showing the calculation.",
+      "verified": true,
+      "verification_reason": "The assessment is supported by the evidence. The clause text supports the claims that the Service Fee equals total profits of Party A and its subsidiaries, that Party B may adjust the amount at its own discretion without prior consent, and that Party A must cause its subsidiaries to pay — i.e., an uncapped, unilaterally adjustable fee with no stated percentage, calculation method, or audit statement. The cited playbook position [revenue-share-defined] requires a defined, capped, auditable revenue/profit share based on net revenue at a stated percentage, payable with a calculation statement; because the clause lacks these features, treating the risk as elevated relative to the playbook's medium-if-absent rating is a reasonable comparison, though the playbook itself lists the risk-if-absent as medium. The rationale correctly distinguishes contract terms (uncapped, discretionary fee on total profits) from policy requirements (defined percentage, net revenue, audit statement). The suggested fallback exactly matches the cited playbook fallback text verbatim.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-19",
+        "text": "4.2 The Service Fee of the last quarter shall be paid prior to the seventh business day following the commencement of the next quarter. Such Service Fee shall be paid to the bank account designated by Party B in writing. If Party B intends to change its bank account, it shall send a written notice to Party A seven business days in advance.",
+        "span": {
+          "start": 6112,
+          "end": 6456,
+          "page": 1
+        },
+        "clause_type": "payment_terms",
+        "heading": "4.2 The Service Fee of the last quarter shall be paid prior to the seventh business day following the commencement of the next quarter. Such Service Fee shall be paid to the bank account designated by Party B in writing. If Party B intends to change its bank account, it shall send a written notice to Party A seven business days in advance."
+      },
+      "risk_level": "medium",
+      "rationale": "The clause is a payment_terms provision requiring the last quarter's Service Fee to be paid before the seventh business day of the next quarter, which is a short payment window (~7 days) and is not calculated from receipt of an undisputed invoice. This differs from the relevant payment-net-30 position, whose preferred terms require payment of undisputed invoices within 30 days of receipt and allow the payer to withhold disputed amounts in good faith with pre-due-date notice. The clause contains no dispute-withholding mechanism and no undisputed-invoice framing, creating residual exposure that can be negotiated. It is not high because the clause does not breach a prohibition or eliminate the payment obligation entirely, but it is a limited deviation from the acceptable payment timing and dispute protections.",
+      "citations": [
+        {
+          "citation_id": "b068111458bd",
+          "playbook_position_id": "payment-net-30",
+          "excerpt": "Customer shall pay all undisputed invoices within thirty (30) days of receipt. Customer may withhold any amount it disputes in good faith, provided it notifies Supplier of the basis for the dispute before the due date."
+        }
+      ],
+      "suggested_fallback": "Customer shall pay all undisputed invoices within forty-five (45) days of receipt. Customer may withhold any amount it disputes in good faith, provided it notifies Supplier of the basis for the dispute before the due date.",
+      "verified": true,
+      "verification_reason": "Reviewer assessment is supported by the clause and cited playbook positions. The clause text confirms a ~7-business-day payment window not tied to receipt of an undisputed invoice, with no dispute-withholding mechanism, aligning with the reviewer's comparison to payment-net-30. Policy claims accurately reflect the cited preferred and fallback positions. The medium risk level follows from a limited deviation: shorter payment timing and missing dispute protections, consistent with 'risk if absent: medium.' The suggested fallback matches the playbook fallback text verbatim.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-20",
+        "text": "4.3 Except as otherwise agreed hereunder, if Party A or its subsidiaries fail to pay the Service Fee in full on schedule according to provisions of Article 4.1 and Article 4.2, then Party A or its subsidiaries shall, in addition to the continuance of the payment of Service Fee in full, it shall pay Party B the liquidated damages at a daily interest rate of 0.03% in respect of the outstanding Service Fee.",
+        "span": {
+          "start": 6456,
+          "end": 6866,
+          "page": 1
+        },
+        "clause_type": "payment_terms",
+        "heading": "4.3 Except as otherwise agreed hereunder, if Party A or its subsidiaries fail to pay the Service Fee in full on schedule according to provisions of Article 4.1 and Article 4.2, then Party A or its subsidiaries shall, in addition to the continuance of the payment of Service Fee in full, it shall pay Party B the liquidated damages at a daily interest rate of 0.03% in respect of the outstanding Service Fee."
+      },
+      "risk_level": "medium",
+      "rationale": "The clause imposes liquidated damages on Party A in the form of 0.03% daily interest on overdue Service Fees. No supplied position governs late-payment interest directly, so the relevant policy frame is the liquidated-damages position, which treats any pre-agreed sum (other than the fallback cap) as unacceptable at the preferred level and permits it only as a genuine pre-estimate capped at three months' fees. The clause contains no genuineness justification and no cap, so it deviates from the preferred policy and does not satisfy the fallback, but it is a common, negotiable late-payment remedy tied to the outstanding amount rather than an open-ended penalty. Material uncertainty: the clause references Articles 4.1 and 4.2, which are not supplied, so the underlying payment schedule and any dispute mechanism cannot be verified.",
+      "citations": [
+        {
+          "citation_id": "0ea834035af7",
+          "playbook_position_id": "liquidated-damages-none",
+          "excerpt": "Neither party shall owe liquidated damages, a termination fee, or any other pre-agreed sum on termination or expiry of this Agreement; each party's remedy for breach is limited to its actual proven damages, subject to the limitations of liability in this Agreement."
+        }
+      ],
+      "suggested_fallback": "Any liquidated damages or termination fee payable under this Agreement shall be a genuine pre-estimate of loss, shall not exceed the fees paid in the three (3) months preceding termination, and shall be the paying party's sole liability for the terminated obligations.",
+      "verified": true,
+      "verification_reason": "The assessment is supported by the clause and cited playbook position. The clause indeed imposes liquidated damages on Party A at a daily 0.03% interest rate on outstanding Service Fees, and the reviewer's characterization of this as a late-payment remedy is accurate. The cited [liquidated-damages-none] position applies because no separate late-payment-interest position was supplied; its preferred text disallows liquidated damages, and its fallback permits them only as a genuine pre-estimate capped at three months' fees. The clause contains neither a genuineness justification nor a cap, so the deviation analysis is correct. The suggested fallback matches the cited playbook fallback verbatim. The medium risk level is reasonable given the clause is a capped, formula-based late-payment remedy rather than an open-ended penalty, and the reviewer explicitly notes the uncertainty from the missing Articles 4.1 and 4.2. Minor note: the citation shows only the preferred position text, but the rationale's reference to the fallback cap is directly supported by the cited playbook position as provided.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-21",
+        "text": "5. Term of Cooperation\n\nParty A and Party B agree and confirm that the term of cooperation under this Agreement shall commence from the execution date hereof and end on the expiration date of the operation term of Party B (\"Term of Cooperation\").",
+        "span": {
+          "start": 6866,
+          "end": 7115,
+          "page": 1
+        },
+        "clause_type": "termination",
+        "heading": "5. Term of Cooperation"
+      },
+      "risk_level": "high",
+      "rationale": "The clause ties the Term of Cooperation's end to the expiration of Party B's operation term, which is external, indeterminate, and likely out of Party A's control. This creates open-ended, potentially perpetual lock-in for Party A. It conflicts with the playbook's termination-for-convenience position, which requires a clear exit right (30 days preferred / 60 days fallback notice). No termination-for-convenience right is provided, and the playbook notes this protection is material if absent (medium risk).",
+      "citations": [
+        {
+          "citation_id": "2bf98c701405",
+          "playbook_position_id": "termination-for-convenience",
+          "excerpt": "Either party may terminate this Agreement for convenience upon thirty (30) days' prior written notice to the other party, without penalty or further liability other than for amounts accrued prior to the effective date of termination."
+        }
+      ],
+      "suggested_fallback": "Either party may terminate this Agreement for convenience upon sixty (60) days' prior written notice to the other party, without penalty or further liability other than for amounts accrued prior to the effective date of termination.",
+      "verified": true,
+      "verification_reason": "All contract claims are supported: the clause ties the Term of Cooperation's end to the expiration of Party B's operation term, which is external and not within Party A's control, and no termination-for-convenience right appears in the clause. Policy claims are supported: the cited playbook requires a termination-for-convenience right with 30 days' preferred or 60 days' fallback notice and rates absence as medium risk. The suggested fallback matches the playbook fallback verbatim. The risk level of 'high' is an escalation above the playbook's stated medium risk; while not explicitly labeled as an escalation rationale, it is a defensible judgment given the indeterminate, potentially perpetual term tied to a third party's operation term, versus a medium risk tied to absence of a convenience termination right. The rationale properly distinguishes the clause's open-ended term from the policy's requested exit right. No unsupported claims requiring correction.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-22",
+        "text": "6. Termination",
+        "span": {
+          "start": 7115,
+          "end": 7131,
+          "page": 1
+        },
+        "clause_type": "termination",
+        "heading": "6. Termination"
+      },
+      "risk_level": "medium",
+      "rationale": "The clause consists solely of the heading '6. Termination' with no operative termination provisions. The relevant playbook position on point is [termination-for-cause-cure], which carries a medium risk-if-absent rating; nothing in the retrieved positions elevates an omitted cure-period termination right to high, and no cited position addresses convenience termination or liquidated damages with a risk-if-absent of high. The absence of any for-cause cure termination mechanism is therefore a missing protection but only a medium-rated gap under the supplied policy, negotiable by adding the fallback cure language.",
+      "citations": [
+        {
+          "citation_id": "3359d192f820",
+          "playbook_position_id": "termination-for-cause-cure",
+          "excerpt": "Either party may terminate this Agreement for cause if the other party materially breaches it and fails to cure that breach within thirty (30) days after receiving written notice describing the breach in reasonable detail."
+        },
+        {
+          "citation_id": "66372187197a",
+          "playbook_position_id": "termination-for-cause-cure",
+          "excerpt": "Either party may terminate this Agreement for cause if the other party materially breaches it and fails to cure that breach within forty-five (45) days after receiving written notice describing the breach in reasonable detail."
+        }
+      ],
+      "suggested_fallback": "Either party may terminate this Agreement for cause if the other party materially breaches it and fails to cure that breach within forty-five (45) days after receiving written notice describing the breach in reasonable detail.",
+      "verified": true,
+      "verification_reason": "The clause text consists only of the heading '6. Termination', so the assessment's claim that no operative termination provisions are present is supported. The cited playbook position [termination-for-cause-cure] has a risk-if-absent of medium, and the reviewer correctly derives medium risk from the absence of a for-cause cure termination right. The rationale distinguishes the clause content from the policy position and notes the missing protection. The suggested fallback matches the playbook fallback verbatim: forty-five (45) days after receiving written notice describing the breach in reasonable detail. No unsupported claims about convenience termination, liquidated damages, or elevated risk are relied upon; the reviewer notes none of those positions were cited.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-23",
+        "text": "6.1 Prior to the expiration of the Term of Cooperation , this Agreement shall only be terminated upon occurrence of the followingcircumstances:",
+        "span": {
+          "start": 7131,
+          "end": 7277,
+          "page": 1
+        },
+        "clause_type": "termination",
+        "heading": "6.1 Prior to the expiration of the Term of Cooperation , this Agreement shall only be terminated upon occurrence of the followingcircumstances:"
+      },
+      "risk_level": "high",
+      "rationale": "The clause states the Agreement may be terminated prior to expiration only upon occurrence of specified circumstances, which appears to preclude termination for convenience. The retrieved termination-for-convenience position states that either party may terminate on notice without penalty, identifies that right as a protection whose absence carries medium risk, and provides both preferred (30 days) and fallback (60 days) language. Because the clause instead restricts termination to enumerated circumstances and grants no for-convenience right, this is a material deviation from the playbook's required protection. This assessment is not upgraded based on the liquidated-damages, assignment, renewal, or cause/cure positions, as the excerpted text does not raise those subjects. Note: the listed circumstances are not provided, so the actual operational effect is uncertain; if those circumstances are broad, the deviation could be less severe, but the excerpted text gives no such indication.",
+      "citations": [
+        {
+          "citation_id": "2bf98c701405",
+          "playbook_position_id": "termination-for-convenience",
+          "excerpt": "Either party may terminate this Agreement for convenience upon thirty (30) days' prior written notice to the other party, without penalty or further liability other than for amounts accrued prior to the effective date of termination."
+        }
+      ],
+      "suggested_fallback": "Either party may terminate this Agreement for convenience upon sixty (60) days' prior written notice to the other party, without penalty or further liability other than for amounts accrued prior to the effective date of termination.",
+      "verified": true,
+      "verification_reason": "The clause text supports the claim that termination is limited to enumerated circumstances ('only be terminated upon occurrence of the following circumstances'), which does preclude termination for convenience. The playbook citation supports the policy description: preferred 30-day notice, fallback 60-day notice, no penalty, absence risk medium. The suggested fallback matches the playbook fallback verbatim. The rationale correctly distinguishes the clause (restricts termination to circumstances) from the policy (requires a for-convenience right) and explicitly notes uncertainty due to missing circumstances. The one arguable weakness is the risk elevation from medium to high: the playbook itself rates absence as medium risk, and the reviewer does not explicitly justify upgrading to high beyond noting it is a 'material deviation.' However, the underlying deviation analysis is accurate and the high rating is a defensible judgment given a complete absence of a for-convenience right, so the core assessment is adequately grounded.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-24",
+        "text": "6.1.1 Party B shall have the right to terminate this Agreement in advance without the prior written consent from Party A, bysending a written notice to Party A but Party A may not terminate or rescind this Agreement;",
+        "span": {
+          "start": 7277,
+          "end": 7496,
+          "page": 1
+        },
+        "clause_type": "termination",
+        "heading": "6.1.1 Party B shall have the right to terminate this Agreement in advance without the prior written consent from Party A, bysending a written notice to Party A but Party A may not terminate or rescind this Agreement;"
+      },
+      "risk_level": "high",
+      "rationale": "The termination clause grants only Party B a unilateral termination-for-convenience right, expressly bars Party A from terminating or rescinding, and imposes no notice period (and no reciprocity). This is a material deviation from the preferred/fallback position that either party may terminate for convenience on 30/60 days' notice without penalty; the one-sided, asymmetric termination right creates material exposure for Party A. No notice period and no counterpart right is a critical missing protection, not merely a wording difference.",
+      "citations": [
+        {
+          "citation_id": "2bf98c701405",
+          "playbook_position_id": "termination-for-convenience",
+          "excerpt": "Either party may terminate this Agreement for convenience upon thirty (30) days' prior written notice to the other party, without penalty or further liability other than for amounts accrued prior to the effective date of termination."
+        },
+        {
+          "citation_id": "284f75c1a5d7",
+          "playbook_position_id": "termination-for-convenience",
+          "excerpt": "Either party may terminate this Agreement for convenience upon sixty (60) days' prior written notice to the other party, without penalty or further liability other than for amounts accrued prior to the effective date of termination."
+        }
+      ],
+      "suggested_fallback": "Either party may terminate this Agreement for convenience upon sixty (60) days' prior written notice to the other party, without penalty or further liability other than for amounts accrued prior to the effective date of termination.",
+      "verified": true,
+      "verification_reason": "All contract claims are supported by the clause: it grants only Party B a convenience termination right without prior consent, bars Party A from terminating or rescinding, and specifies no notice period. The policy claims accurately reflect the cited playbook: preferred and fallback both require mutual termination for convenience with 30/60 days' notice and no penalty. The rationale correctly distinguishes the clause's one-sided, notice-less right from the reciprocal policy position, and the high risk level follows from this asymmetry given the playbook's medium risk if absent. The suggested fallback matches the 60-day fallback text verbatim.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-25",
+        "text": "6.1.2 One Party requests to terminate this Agreement when the other Party is declared bankrupt in accordance with the laws;",
+        "span": {
+          "start": 7496,
+          "end": 7622,
+          "page": 1
+        },
+        "clause_type": "termination",
+        "heading": "6.1.2 One Party requests to terminate this Agreement when the other Party is declared bankrupt in accordance with the laws;"
+      },
+      "risk_level": "high",
+      "rationale": "The clause permits termination only upon the other party's bankruptcy declaration and does not provide a right to terminate for material breach with a cure period, the playbook's core termination-for-cause protection. A bankruptcy-only trigger is significantly narrower than the preferred/fallback positions and leaves a material unprotected gap for breaches, payment defaults, or other curable failures. It also lacks any cure mechanism and notice requirements for cause events, so this represents a missing critical protection rather than a limited deviation.",
+      "citations": [
+        {
+          "citation_id": "3359d192f820",
+          "playbook_position_id": "termination-for-cause-cure",
+          "excerpt": "Either party may terminate this Agreement for cause if the other party materially breaches it and fails to cure that breach within thirty (30) days after receiving written notice describing the breach in reasonable detail."
+        }
+      ],
+      "suggested_fallback": "Either party may terminate this Agreement for cause if the other party materially breaches it and fails to cure that breach within forty-five (45) days after receiving written notice describing the breach in reasonable detail.",
+      "verified": true,
+      "verification_reason": "The assessment is supported: the clause text (6.1.2) only provides termination upon the other party's bankruptcy declaration and lacks any material-breach termination right, cure period, or notice requirement. The playbook [termination-for-cause-cure] sets the preferred position as a termination-for-cause right with a 30-day cure period following written notice, and a fallback of 45 days. The rationale correctly identifies that the bankruptcy-only trigger is narrower than both preferred and fallback positions and that the protection is absent. The suggested fallback matches the playbook fallback text verbatim. The risk level of high follows reasonably from the fact that a core protection with a stated medium risk-if-absent is entirely missing, although the playbook states medium risk-if-absent; the elevated high rating is justified by the complete absence rather than a deviation, which the rationale explicitly distinguishes.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-26",
+        "text": "6.1.3 Party B fails to provide Party B's Services to Party A for more than three consecutive years due to the force majeure event.",
+        "span": {
+          "start": 7622,
+          "end": 7755,
+          "page": 1
+        },
+        "clause_type": "termination",
+        "heading": "6.1.3 Party B fails to provide Party B's Services to Party A for more than three consecutive years due to the force majeure event."
+      },
+      "risk_level": "high",
+      "rationale": "The clause allows termination only where Party B fails to provide services for more than three consecutive years due to force majeure. The relevant policy (force-majeure-bounded) provides that either party may terminate once a force majeure event continues beyond a bounded period of thirty days (preferred) or sixty days (fallback). Fixing the trigger at three years, and only in favor of Party A for Party B's non-performance, is a material deviation that leaves the other party exposed to a prolonged force majeure event and omits a mutual, bounded termination right. The clause also does not address accrued payment obligations surviving force majeure. This is a limited-negotiation deviation from the policy's clear duration bound and is rated high.",
+      "citations": [
+        {
+          "citation_id": "41c211125f10",
+          "playbook_position_id": "force-majeure-bounded",
+          "excerpt": "Neither party is liable for a failure to perform caused by an event beyond its reasonable control, provided it notifies the other party promptly and resumes performance as soon as practicable. Force majeure does not excuse an obligation to pay amounts already due, and either party may terminate if the event continues for more than thirty (30) days."
+        },
+        {
+          "citation_id": "3dca33a2ea71",
+          "playbook_position_id": "force-majeure-bounded",
+          "excerpt": "Neither party is liable for a failure to perform caused by an event beyond its reasonable control, provided it notifies the other party promptly and resumes performance as soon as practicable. Force majeure does not excuse an obligation to pay amounts already due, and either party may terminate if the event continues for more than sixty (60) days."
+        }
+      ],
+      "suggested_fallback": "Neither party is liable for a failure to perform caused by an event beyond its reasonable control, provided it notifies the other party promptly and resumes performance as soon as practicable. Force majeure does not excuse an obligation to pay amounts already due, and either party may terminate if the event continues for more than sixty (60) days.",
+      "verified": true,
+      "verification_reason": "The clause text (termination only where Party B fails to provide services for more than three consecutive years due to force majeure) is accurately characterized. The cited playbook positions support the policy claims: preferred allows termination after 30 days, fallback after 60 days, and force majeure does not excuse payment obligations already due. The suggested fallback matches the cited playbook fallback verbatim. The risk level of high is defensible: the playbook states 'Risk if absent: medium,' but the clause contains a deviation (a three-year, one-sided termination trigger for Party B's non-performance only, versus a mutual 30/60-day bound), and the rationale correctly distinguishes the clause's terms from the policy's requested mutual, bounded termination right, noting the omission of accrued-payment survival. However, note that the playbook's risk rating applies to absence of the clause, not to a misaligned clause; the reviewer's uplift to high is a judgment call rather than a direct application of the playbook risk level, though it follows reasonably from the comparison given the severe duration mismatch and one-sidedness.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-27",
+        "text": "6.2 Rights and Obligations of the Parties upon Termination",
+        "span": {
+          "start": 7755,
+          "end": 7816,
+          "page": 1
+        },
+        "clause_type": "termination",
+        "heading": "6.2 Rights and Obligations of the Parties upon Termination"
+      },
+      "risk_level": "unknown",
+      "rationale": "The clause is only a heading (\"6.2 Rights and Obligations of the Parties upon Termination\") and contains no operative terms. It cannot be evaluated against the termination-for-convenience or termination-for-cause-cure positions because it does not state who may terminate, on what notice, or whether a cure period exists; no obligation is present to compare. The other retrieved positions (no-third-party-beneficiaries, ip-infringement-indemnity, ip-no-joint-ownership) concern unrelated subjects and are not applicable to a termination clause, so they cannot ground an assessment. No supplied position supports assessing this text.",
+      "citations": [],
+      "suggested_fallback": null,
+      "verified": false,
+      "verification_reason": "assessment has no playbook citations supporting its risk and rationale",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-28",
+        "text": "6.2.1 If this Agreement is terminated according to the aforementioned Article 6.1.1, neither Party shall assume any obligations or liabilities to the other Party as of the termination hereof, unless as otherwise agreed by the Parties, provided that the liabilities for breach occurring prior to the termination shall not be exempted;",
+        "span": {
+          "start": 7816,
+          "end": 8152,
+          "page": 1
+        },
+        "clause_type": "termination",
+        "heading": "6.2.1 If this Agreement is terminated according to the aforementioned Article 6.1.1, neither Party shall assume any obligations or liabilities to the other Party as of the termination hereof, unless as otherwise agreed by the Parties, provided that the liabilities for breach occurring prior to the termination shall not be exempted;"
+      },
+      "risk_level": "medium",
+      "rationale": "The clause is a consequence-of-termination provision: on termination under Article 6.1.1, neither party has further obligations or liabilities except as agreed, while liabilities for pre-termination breach survive. That survival carve-out is consistent with the playbook's protections preserving accrued rights. However, the clause creates residual exposure because it does not itself provide a termination-for-convenience right with notice or a termination-for-cause cure period; those termination triggers are absent from the supplied text. The relevant playbook positions treat those missing termination protections as a limited, negotiable deviation (medium risk) rather than a prohibition breach. No liquidated damages or termination fee is mentioned, so the liquidated-damages position is not engaged by this clause.",
+      "citations": [
+        {
+          "citation_id": "2bf98c701405",
+          "playbook_position_id": "termination-for-convenience",
+          "excerpt": "Either party may terminate this Agreement for convenience upon thirty (30) days' prior written notice to the other party, without penalty or further liability other than for amounts accrued prior to the effective date of termination."
+        },
+        {
+          "citation_id": "3359d192f820",
+          "playbook_position_id": "termination-for-cause-cure",
+          "excerpt": "Either party may terminate this Agreement for cause if the other party materially breaches it and fails to cure that breach within thirty (30) days after receiving written notice describing the breach in reasonable detail."
+        }
+      ],
+      "suggested_fallback": "Either party may terminate this Agreement for convenience upon sixty (60) days' prior written notice to the other party, without penalty or further liability other than for amounts accrued prior to the effective date of termination.",
+      "verified": true,
+      "verification_reason": "The assessment accurately characterizes clause 6.2.1 as a consequence-of-termination provision releasing post-termination obligations while preserving pre-termination breach liabilities; this is supported by the clause text. The rationale correctly notes the absence of termination-for-convenience and termination-for-cause cure provisions in the supplied clause, aligning with the cited playbook positions that treat these as medium-risk omissions. The fallback is quoted verbatim from the [termination-for-convenience] fallback. The liquidated-damages observation is reasonable and unproblematic, as no such position was cited.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-29",
+        "text": "6.2.2 If this Agreement is terminated according to the aforementioned Article 6.1.2, the rights and obligations of the Parties at thetime of termination hereof shall be subject to the relevant bankruptcy laws;",
+        "span": {
+          "start": 8152,
+          "end": 8364,
+          "page": 1
+        },
+        "clause_type": "termination",
+        "heading": "6.2.2 If this Agreement is terminated according to the aforementioned Article 6.1.2, the rights and obligations of the Parties at thetime of termination hereof shall be subject to the relevant bankruptcy laws;"
+      },
+      "risk_level": "unknown",
+      "rationale": "The clause is a bankruptcy-law tie-in providing that, upon termination under Article 6.1.2, the parties' rights and obligations at termination are subject to relevant bankruptcy laws. The only retrieved position potentially relevant to termination consequences is liquidated-damages-none, which prohibits pre-agreed termination sums and limits remedies to actual proven damages. The clause neither creates nor removes any liquidated damages, termination fee, or pre-agreed sum, so that policy comparison is inapposite and cannot ground a low, medium, or high rating. The other retrieved positions address third-party beneficiaries, IP joint ownership, termination for cause/cure, and termination for convenience, none of which govern a bankruptcy-law tie-in. No supplied position supports an assessment of this clause.",
+      "citations": [],
+      "suggested_fallback": null,
+      "verified": false,
+      "verification_reason": "assessment has no playbook citations supporting its risk and rationale",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-30",
+        "text": "6.2.3 If this Agreement is terminated according to the aforementioned Article 6.1.3, neither Party shall assume any obligations or liabilities to the other Party as of the termination hereof, provided that the liabilities for breach that occured prior to the force majeure event shall not be exempted.",
+        "span": {
+          "start": 8364,
+          "end": 8668,
+          "page": 1
+        },
+        "clause_type": "termination",
+        "heading": "6.2.3 If this Agreement is terminated according to the aforementioned Article 6.1.3, neither Party shall assume any obligations or liabilities to the other Party as of the termination hereof, provided that the liabilities for breach that occured prior to the force majeure event shall not be exempted."
+      },
+      "risk_level": "medium",
+      "rationale": "The clause addresses termination following a force majeure event by releasing both parties from obligations from termination, while preserving pre-event breach liability. This is broadly consistent with the force majeure policy permitting termination when the event continues (with a 30- or 60-day threshold), and it correctly preserves pre-existing breach liability and does not explicitly excuse payment obligations already due. However, it conditions release on termination under Article 6.1.3 without specifying any minimum continuation period for the force majeure event, and it is silent on prompt notice and resumption of performance. The absence of a defined force majeure duration threshold and notice/resumption requirements is a limited deviation that can be negotiated, not a material or prohibition breach.",
+      "citations": [
+        {
+          "citation_id": "41c211125f10",
+          "playbook_position_id": "force-majeure-bounded",
+          "excerpt": "Neither party is liable for a failure to perform caused by an event beyond its reasonable control, provided it notifies the other party promptly and resumes performance as soon as practicable. Force majeure does not excuse an obligation to pay amounts already due, and either party may terminate if the event continues for more than thirty (30) days."
+        }
+      ],
+      "suggested_fallback": "Neither party is liable for a failure to perform caused by an event beyond its reasonable control, provided it notifies the other party promptly and resumes performance as soon as practicable. Force majeure does not excuse an obligation to pay amounts already due, and either party may terminate if the event continues for more than sixty (60) days.",
+      "verified": true,
+      "verification_reason": "The clause text supports the characterization: Article 6.2.3 releases both parties from obligations upon termination under 6.1.3 while preserving pre-event breach liability. The playbook's force-majeure-bounded position indeed concerns termination from force majeure (30/60 days) and preserving payment obligations. The reviewer's rationale correctly identifies the clause's silence on notice, resumption, and a minimum continuation period, and the suggested fallback matches the playbook's fallback verbatim. Risk level of medium is consistent with the playbook's 'Risk if absent: medium.'",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-31",
+        "text": "6.3 Each Party hereby irrevocably waives other rights to terminate this Agreement it may have under any applicable laws, except for therights of the Parties agreed under this Article 6.",
+        "span": {
+          "start": 8668,
+          "end": 8856,
+          "page": 1
+        },
+        "clause_type": "termination",
+        "heading": "6.3 Each Party hereby irrevocably waives other rights to terminate this Agreement it may have under any applicable laws, except for therights of the Parties agreed under this Article 6."
+      },
+      "risk_level": "medium",
+      "rationale": "Clause 6.3 waives each party's other statutory termination rights except those agreed in Article 6. The relevant playbook positions are termination-for-convenience and termination-for-cause-cure, both of which carry a medium risk if absent and contemplate express termination rights. Because only Clause 6.3 is in the record, Article 6's actual termination-rights content is unknown; if it omits an express convenience or cause-and-cure right, the waiver could leave the parties with no negotiated exit mechanism, a negotiable but material exposure. This is not high risk because the clause does preserve rights agreed in Article 6, so no prohibition is breached and the missing protection is only conditional on Article 6's actual terms.",
+      "citations": [
+        {
+          "citation_id": "284f75c1a5d7",
+          "playbook_position_id": "termination-for-convenience",
+          "excerpt": "Either party may terminate this Agreement for convenience upon sixty (60) days' prior written notice to the other party, without penalty or further liability other than for amounts accrued prior to the effective date of termination."
+        },
+        {
+          "citation_id": "66372187197a",
+          "playbook_position_id": "termination-for-cause-cure",
+          "excerpt": "Either party may terminate this Agreement for cause if the other party materially breaches it and fails to cure that breach within forty-five (45) days after receiving written notice describing the breach in reasonable detail."
+        }
+      ],
+      "suggested_fallback": null,
+      "verified": true,
+      "verification_reason": "The assessment is supported by the clause and cited playbook positions. Clause 6.3 is accurately described as waiving other statutory termination rights except those agreed under Article 6, and the rationale correctly notes that Article 6's substantive content is not in the record, making the exposure conditional. The cited playbook positions for termination-for-convenience and termination-for-cause-cure are correctly identified as both having medium risk if absent, and the medium risk level follows reasonably from that comparison, especially given the clause explicitly preserves agreed Article 6 rights, so no definitive breach is shown. The suggested fallback is correctly omitted, and the two cited fallback quotations appear verbatim, though they are citations rather than applied fallback language.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-32",
+        "text": "6.4 Party A hereby expressly undertakes that it waives the right to request amendment and revocation of any term of this Agreement on the ground of material misunderstanding or unconscionability, regardless of whether such request is based on the percentage and amount of payment specified hereunder or the quantity and quality of any service provided by Party B, or is raised against the provisions under which Party A is prohibited from having any cooperation with a third party and conducting any businesses other than those agreed hereunder.",
+        "span": {
+          "start": 8856,
+          "end": 9403,
+          "page": 1
+        },
+        "clause_type": "limitation_of_liability",
+        "heading": "6.4 Party A hereby expressly undertakes that it waives the right to request amendment and revocation of any term of this Agreement on the ground of material misunderstanding or unconscionability, regardless of whether such request is based on the percentage and amount of payment specified hereunder or the quantity and quality of any service provided by Party B, or is raised against the provisions under which Party A is prohibited from having any cooperation with a third party and conducting any businesses other than those agreed hereunder."
+      },
+      "risk_level": "unknown",
+      "rationale": "The clause is a unilateral waiver by Party A of the right to seek amendment or revocation of the Agreement on grounds of material misunderstanding or unconscionability, including as it relates to payment/service terms and anti-cooperation/business-scope restrictions. The retrieved limitation_of_liability positions address exclusion of consequential damages and a cap on aggregate liability at fees paid; neither addresses unconscionability or material-misunderstanding waiver. The no-exclusivity and no-MFN positions concern exclusive dealing and most-favoured-nation pricing, none of which this clause grants or restricts. Because no supplied playbook position governs this waiver-type obligation, no grounded low/medium/high comparison is possible and no applicable fallback exists to suggest.",
+      "citations": [],
+      "suggested_fallback": null,
+      "verified": false,
+      "verification_reason": "assessment has no playbook citations supporting its risk and rationale",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-33",
+        "text": "7. Representations and Warranties",
+        "span": {
+          "start": 9403,
+          "end": 9438,
+          "page": 1
+        },
+        "clause_type": "warranty",
+        "heading": "7. Representations and Warranties"
+      },
+      "risk_level": "medium",
+      "rationale": "The clause consists only of the heading 'Representations and Warranties' with no operative text, so it grants neither the authority/legal-compliance warranty nor the services conformance warranty. Both relevant playbook positions rate the risk of being absent as medium, and the heading creates no obligations, so the appropriate rating is medium rather than high. Note the suggested fallback addresses only the services warranty; the authority/legal-compliance warranty also remains unaddressed and would need separate fallback coverage.",
+      "citations": [
+        {
+          "citation_id": "63c38393e9ce",
+          "playbook_position_id": "warranty-compliance-and-authority",
+          "excerpt": "Each party warrants that it has full power and authority to enter into this Agreement, and that it will comply with all laws and regulations applicable to its performance under it, including anti-bribery, sanctions and export control laws."
+        },
+        {
+          "citation_id": "f6c4175e018f",
+          "playbook_position_id": "warranty-services-12-months",
+          "excerpt": "Supplier warrants that the Services will conform in all material respects to the applicable specification for ninety (90) days from delivery, and shall at its cost re-perform or correct any non-conforming Services reported within that period."
+        }
+      ],
+      "suggested_fallback": "Supplier warrants that the Services will conform in all material respects to the applicable specification for ninety (90) days from delivery, and shall at its cost re-perform or correct any non-conforming Services reported within that period.",
+      "verified": true,
+      "verification_reason": "The assessment is supported by the evidence. The clause text is indeed only the heading '7. Representations and Warranties' with no operative language, so the claim that it grants neither warranty is accurate. Both cited playbook positions state 'Risk if absent: medium,' so the medium rating follows from comparing the empty clause against those positions. The rationale correctly distinguishes contract text (mere heading, no obligations) from policy requests (the two warranty positions). The suggested fallback matches the [warranty-services-12-months] fallback verbatim. The reviewer also correctly notes the authority/legal-compliance warranty is unaddressed and that the fallback covers only the services warranty, which is accurate and does not overstate grounding.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-34",
+        "text": "7.1 Each Party hereby represents and warrants to the other Party that:",
+        "span": {
+          "start": 9438,
+          "end": 9511,
+          "page": 1
+        },
+        "clause_type": "warranty",
+        "heading": "7.1 Each Party hereby represents and warrants to the other Party that:"
+      },
+      "risk_level": "medium",
+      "rationale": "Clause 7.1 is only a truncated chapeau introducing representations and warranties, with no substantive warranty terms shown. Against the relevant warranty-compliance-and-authority position, the visible clause does not contain the preferred or fallback authority and legal-compliance warranty, whose risk-if-absent is medium. No basis exists in the provided clause to assess the separate warranty-services-12-months position, and the clause does not create a high-risk deficiency on its own.",
+      "citations": [
+        {
+          "citation_id": "63c38393e9ce",
+          "playbook_position_id": "warranty-compliance-and-authority",
+          "excerpt": "Each party warrants that it has full power and authority to enter into this Agreement, and that it will comply with all laws and regulations applicable to its performance under it, including anti-bribery, sanctions and export control laws."
+        }
+      ],
+      "suggested_fallback": "Each party warrants that it has full power and authority to enter into this Agreement and that its performance will not violate any law or any agreement by which it is bound.",
+      "verified": true,
+      "verification_reason": "The clause text is a truncated chapeau with no substantive warranty terms, which supports the reviewer's characterization. The cited playbook position [warranty-compliance-and-authority] has a medium risk-if-absent and the clause contains none of the preferred or fallback authority/compliance warranty language, so the medium risk level follows from the comparison. The rationale correctly distinguishes what the clause states (mere introductory chapeau) from what policy requests (authority and legal-compliance warranty). The suggested fallback matches the cited playbook fallback verbatim. The citation to the preferred text is accurate. The comment about warranty-services-12-months is a non-claim about absent evidence and does not undermine grounding.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-35",
+        "text": "7.1.1 It has sufficient capacity for action, power and authorization (including necessary government approval and internal permit ofcorporation) to execute and perform this Agreement;",
+        "span": {
+          "start": 9511,
+          "end": 9697,
+          "page": 1
+        },
+        "clause_type": "warranty",
+        "heading": "7.1.1 It has sufficient capacity for action, power and authorization (including necessary government approval and internal permit ofcorporation) to execute and perform this Agreement;"
+      },
+      "risk_level": "medium",
+      "rationale": "The clause warrants only capacity, power, authorization, and government/corporate permits to execute and perform. It is a narrower subset of the preferred warranty, which also requires compliance with applicable laws (anti-bribery, sanctions, export control), and omits the fallback's explicit warranty that performance will not violate any law or binding agreement. This is a limited deviation — the core authority warranty is present — but the missing legal-compliance protection creates residual exposure that can be addressed by negotiating in the compliance wording.",
+      "citations": [
+        {
+          "citation_id": "63c38393e9ce",
+          "playbook_position_id": "warranty-compliance-and-authority",
+          "excerpt": "Each party warrants that it has full power and authority to enter into this Agreement, and that it will comply with all laws and regulations applicable to its performance under it, including anti-bribery, sanctions and export control laws."
+        }
+      ],
+      "suggested_fallback": "Each party warrants that it has full power and authority to enter into this Agreement and that its performance will not violate any law or any agreement by which it is bound.",
+      "verified": true,
+      "verification_reason": "All claims are supported. The clause text warrants capacity, power, authorization, and government/corporate permits to execute and perform, which the rationale accurately characterizes as narrower than the preferred warranty's additional legal-compliance requirement (anti-bribery, sanctions, export control). The rationale correctly notes the omission of the fallback's warranty that performance will not violate any law or binding agreement. The medium risk matches the cited 'Risk if absent: medium' position, and the rationale appropriately distinguishes what the clause states from what the policy requests. The suggested fallback matches the cited playbook fallback verbatim.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-36",
+        "text": "7.1.2 This Agreement shall be legally binding on the Parties as of the execution date hereof; and",
+        "span": {
+          "start": 9697,
+          "end": 9797,
+          "page": 1
+        },
+        "clause_type": "other",
+        "heading": "7.1.2 This Agreement shall be legally binding on the Parties as of the execution date hereof; and"
+      },
+      "risk_level": "unknown",
+      "rationale": "The clause is a bare statement that the agreement is legally binding as of the execution date. None of the retrieved playbook positions (data-processing terms, liquidated damages, third-party beneficiaries, governing law/venue, assignment/change of control) governs a binding-effect/effectiveness provision. Because no supplied position supports an assessment of this clause's obligation, the risk level is unknown; note also that no counterparty role, governing-law term, or other context is provided.",
+      "citations": [],
+      "suggested_fallback": null,
+      "verified": false,
+      "verification_reason": "assessment has no playbook citations supporting its risk and rationale",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-37",
+        "text": "7.1.3 There is no outstanding litigation, arbitration or other legal or governmental proceedings, or to the knowledge of that Party, there is no litigation, arbitration or other legal or governmental proceedings threatening or affecting the performance of obligations of that Party hereunder.",
+        "span": {
+          "start": 9797,
+          "end": 10092,
+          "page": 1
+        },
+        "clause_type": "warranty",
+        "heading": "7.1.3 There is no outstanding litigation, arbitration or other legal or governmental proceedings, or to the knowledge of that Party, there is no litigation, arbitration or other legal or governmental proceedings threatening or affecting the performance of obligations of that Party hereunder."
+      },
+      "risk_level": "medium",
+      "rationale": "The clause is a litigation-representation warranty covering both actual and, to the warranting party's knowledge, threatened proceedings that could affect performance. The only related playbook position is warranty-compliance-and-authority, which addresses authority and legal-compliance warranties with a risk_if_absent of medium. This clause provides a narrower litigation warranty rather than the authority and compliance coverage contemplated by that position, and it is qualified by knowledge for threatened proceedings, leaving a limited residual gap that can be negotiated. No liquidated damages, confidentiality, exclusivity, or services-conformity obligation is implicated.",
+      "citations": [
+        {
+          "citation_id": "63c38393e9ce",
+          "playbook_position_id": "warranty-compliance-and-authority",
+          "excerpt": "Each party warrants that it has full power and authority to enter into this Agreement, and that it will comply with all laws and regulations applicable to its performance under it, including anti-bribery, sanctions and export control laws."
+        }
+      ],
+      "suggested_fallback": "Each party warrants that it has full power and authority to enter into this Agreement and that its performance will not violate any law or any agreement by which it is bound.",
+      "verified": true,
+      "verification_reason": "The assessment is supported by the evidence. The clause is accurately described as a litigation-representation warranty covering both actual and, to the warranting party's knowledge, threatened proceedings affecting performance; the text expressly covers 'litigation, arbitration or other legal or governmental proceedings' and threatened proceedings 'to the knowledge of that Party' affecting performance of obligations. The policy comparison correctly identifies warranty-compliance-and-authority as the only cited position, accurately summarizes it as addressing authority and legal-compliance warranties (including anti-bribery, sanctions, and export control laws), and correctly notes its medium risk-if-absent. The rationale properly distinguishes the clause's narrower litigation warranty and knowledge qualifier from the policy's requested authority and compliance coverage, yielding a limited residual gap. The medium risk level reasonably follows from that comparison. The suggested fallback matches the cited playbook fallback text verbatim.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-38",
+        "text": "7.2 Each Party shall be responsible for and hold the other Party harmless from any loss, damages and claim arising out of violation of anyrepresentations and warranties hereunder.",
+        "span": {
+          "start": 10092,
+          "end": 10274,
+          "page": 1
+        },
+        "clause_type": "indemnification",
+        "heading": "7.2 Each Party shall be responsible for and hold the other Party harmless from any loss, damages and claim arising out of violation of anyrepresentations and warranties hereunder."
+      },
+      "risk_level": "medium",
+      "rationale": "Clause 7.2 is a mutual indemnity, which matches the mutual structure of the preferred position, but it departs materially on scope and safeguards: it covers only losses from breach of representations and warranties rather than third-party claims, is not limited to defense of third-party claims, and—most significantly—contains no reference to being subject to the Agreement's limitations of liability. Both the preferred and fallback mutual-indemnity positions expressly condition the indemnity on the limitations of liability set out in the Agreement; clause 7.2 omits this cap, which (combined with the absence of a limitations provision in the supplied text) leaves uncapped exposure for a limited category of loss. This is a negotiable deviation rather than a missing critical protection, since a mutual indemnity for rep and warranty breach exists but requires capping and claim-type clarification.",
+      "citations": [
+        {
+          "citation_id": "99d7c5a8857f",
+          "playbook_position_id": "mutual-indemnity",
+          "excerpt": "Each party shall defend, indemnify and hold harmless the other party against third-party claims to the extent arising from its own breach of this Agreement or its negligence, subject to the limitations of liability set out in this Agreement."
+        },
+        {
+          "citation_id": "0f5835922864",
+          "playbook_position_id": "mutual-indemnity",
+          "excerpt": "Each party shall defend, indemnify and hold harmless the other party against third-party claims to the extent arising from its own gross negligence or willful misconduct, subject to the limitations of liability set out in this Agreement."
+        },
+        {
+          "citation_id": "47b592e38611",
+          "playbook_position_id": "liability-cap-fees",
+          "excerpt": "Each party's total aggregate liability arising out of or related to this Agreement shall not exceed the fees paid or payable under this Agreement in the twelve (12) months preceding the event giving rise to the claim."
+        }
+      ],
+      "suggested_fallback": "Each party shall defend, indemnify and hold harmless the other party against third-party claims to the extent arising from its own gross negligence or willful misconduct, subject to the limitations of liability set out in this Agreement.",
+      "verified": true,
+      "verification_reason": "All contract claims are supported by clause 7.2: it is mutual, covers only loss/damages/claims from breach of representations and warranties, and contains no limitation-of-liability reference or third-party-claim defense obligation. Policy claims are accurately drawn from the cited playbook: both mutual-indemnity positions condition the indemnity on the limitations of liability in the Agreement, and liability-cap-fees confirms a cap is a high-risk-if-absent protection. The medium risk reasonably follows: a mutual indemnity exists but is uncapped and scope-narrow, making it a negotiable deviation rather than a wholly absent critical protection. The rationale correctly distinguishes clause text from policy requests. The suggested fallback matches the cited mutual-indemnity fallback verbatim.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-39",
+        "text": "8. Breach\n\nThe Parties agree and acknowledge that:",
+        "span": {
+          "start": 10274,
+          "end": 10327,
+          "page": 1
+        },
+        "clause_type": "other",
+        "heading": "8. Breach"
+      },
+      "risk_level": "medium",
+      "rationale": "Clause 8 is only a heading with a preamble (\"The Parties agree and acknowledge that:\") and contains no substantive breach-notification obligation. The deleted subject matter most closely maps to the security/data-breach notification position: the clause lacks any obligation to notify of a security breach leading to loss, alteration, or unauthorized disclosure of personal data, and no notification timeline or cooperation duty is specified. This is a missing critical protection within a relevant scope (risk_if_absent for breach-notification-72h is high), but the text provided does not explicitly negate such a duty, does not identify the parties' roles (e.g., Supplier/Customer) or whether personal data is processed under this agreement, and no other retrieved position (renewal, third-party beneficiaries, termination-for-cause, IP ownership) is implicated by the clause. Material uncertainty as to scope and role prevents a high rating on this incomplete text; a cure/termination-for-cause position is also arguably related but the clause does not address termination at all.",
+      "citations": [
+        {
+          "citation_id": "e11b344a4650",
+          "playbook_position_id": "breach-notification-72h",
+          "excerpt": "Supplier shall notify Customer without undue delay and in any event within seventy-two (72) hours of becoming aware of any breach of security leading to the accidental or unlawful destruction, loss, alteration or unauthorised disclosure of personal data, and shall cooperate with Customer's investigation."
+        },
+        {
+          "citation_id": "cfe7313ae0fa",
+          "playbook_position_id": "breach-notification-72h",
+          "excerpt": "Supplier shall notify Customer without undue delay and in any event within five (5) business days of becoming aware of any breach of security affecting personal data, and shall cooperate with Customer's investigation."
+        }
+      ],
+      "suggested_fallback": "Supplier shall notify Customer without undue delay and in any event within five (5) business days of becoming aware of any breach of security affecting personal data, and shall cooperate with Customer's investigation.",
+      "verified": true,
+      "verification_reason": "The assessment is supported by the evidence. The clause text ('8. Breach' plus a purely prefatory preamble) contains no substantive obligation, correctly described as lacking any breach-notification duty, timeline, or cooperation requirement. The rationale accurately maps the clause to breach-notification-72h and correctly notes that policy's risk_if_absent for that position is 'high'. The suggested fallback matches the cited fallback text verbatim ('Supplier shall notify Customer without undue delay and in any event within five (5) business days of becoming aware of any breach of security affecting personal data, and shall cooperate with Customer's investigation.'). The medium rating is a reasoned downward deviation from the playbook's high risk-if-absent, justified by acknowledged uncertainty in the incomplete clause (no roles, no negation, no indication personal data is processed), and the rationale properly distinguishes the clause's silence from what policy requests rather than overstating the clause.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-40",
+        "text": "8.1 If any Party commits any act in violation of this Agreement, such Party shall assume the liabilities for breach according to this Agreement and applicable laws. If both Parties breach this Agreement, they shall each assume their own liabilities for breach respectively. Notwithstanding the foregoing provisions, neither Party shall be responsible to the other Party in respect of any indirect loss or damage caused hereunder.",
+        "span": {
+          "start": 10327,
+          "end": 10758,
+          "page": 1
+        },
+        "clause_type": "limitation_of_liability",
+        "heading": "8.1 If any Party commits any act in violation of this Agreement, such Party shall assume the liabilities for breach according to this Agreement and applicable laws. If both Parties breach this Agreement, they shall each assume their own liabilities for breach respectively. Notwithstanding the foregoing provisions, neither Party shall be responsible to the other Party in respect of any indirect loss or damage caused hereunder."
+      },
+      "risk_level": "medium",
+      "rationale": "Clause 8.1 does mutually exclude consequential-type damages, aligning with the preferred position's core concept, but it covers only 'indirect loss or damage' and omits the enumerated categories (incidental, special, consequential, punitive damages, loss of profits, revenue, goodwill, data) and the 'however caused / regardless of theory of liability / even if advised' qualifiers that the preferred position requires. This narrower exclusion leaves residual exposure in categories the preferred position would bar, warranting a limited-deviation rating. The clause is present rather than absent, so the 'Risk if absent: high' rating for a missing protection does not directly control; that rating addresses a complete absence of the exclusion, not a narrowed version.",
+      "citations": [
+        {
+          "citation_id": "807a4d0b4066",
+          "playbook_position_id": "liability-no-consequential-damages",
+          "excerpt": "Neither party shall be liable for any indirect, incidental, special, consequential or punitive damages, or for any loss of profits, revenue, goodwill or data, however caused and regardless of the theory of liability, even if advised of the possibility of such damages."
+        }
+      ],
+      "suggested_fallback": "Neither party shall be liable for any indirect, incidental, special, consequential or punitive damages, or for any loss of profits, revenue, goodwill or data, except in respect of amounts payable to a third party under an indemnity given in this Agreement.",
+      "verified": true,
+      "verification_reason": "All contract claims are supported by clause 8.1: the clause excludes only 'any indirect loss or damage,' and it omits the enumerated categories (incidental, special, consequential, punitive, loss of profits, revenue, goodwill, data) and qualifiers such as 'however caused,' 'regardless of the theory of liability,' and 'even if advised.' The policy comparison is accurate: the cited playbook preferred position requires those enumerated categories and qualifiers, and the clause's mutual breach/own-liability language does not alter the narrowed exclusion. The medium risk rating reasonably follows because the clause partially addresses the protection but is narrower than the preferred position; the rationale properly distinguishes the clause text from policy requirements and explains why the 'high if absent' rating does not directly control since the clause is present. The suggested fallback matches the playbook fallback verbatim.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-41",
+        "text": "8.2 The demand for liquidated damages and specific performance in respect of any breach during the Term of Cooperation are all remedies that the non-breaching Party shall have under this Agreement. The non-breaching Party shall waive the right to request termination of this Agreement it may have according to any applicable laws as a result of the violation acts committed by the breaching Party.",
+        "span": {
+          "start": 10758,
+          "end": 11158,
+          "page": 1
+        },
+        "clause_type": "limitation_of_liability",
+        "heading": "8.2 The demand for liquidated damages and specific performance in respect of any breach during the Term of Cooperation are all remedies that the non-breaching Party shall have under this Agreement. The non-breaching Party shall waive the right to request termination of this Agreement it may have according to any applicable laws as a result of the violation acts committed by the breaching Party."
+      },
+      "risk_level": "high",
+      "rationale": "Clause 8.2 expressly provides for liquidated damages as a remedy and additionally has the non-breaching Party waive its right to terminate for breach. The liquidated damages provision directly conflicts with the company's preferred position that neither party owe liquidated damages or pre-agreed sums and that remedies be limited to actual proven damages. The waiver of termination rights compounds the exposure by removing a key contractual remedy for breach, and the clause caps neither the amount of liquidated damages nor any relationship to actual loss. No genuine pre-estimate or fee-based cap is included, so it does not even meet the fallback position.",
+      "citations": [
+        {
+          "citation_id": "0ea834035af7",
+          "playbook_position_id": "liquidated-damages-none",
+          "excerpt": "Neither party shall owe liquidated damages, a termination fee, or any other pre-agreed sum on termination or expiry of this Agreement; each party's remedy for breach is limited to its actual proven damages, subject to the limitations of liability in this Agreement."
+        }
+      ],
+      "suggested_fallback": "Any liquidated damages or termination fee payable under this Agreement shall be a genuine pre-estimate of loss, shall not exceed the fees paid in the three (3) months preceding termination, and shall be the paying party's sole liability for the terminated obligations.",
+      "verified": true,
+      "verification_reason": "The clause text does support the assessment. Clause 8.2 identifies liquidated damages and specific performance as remedies and has the non-breaching Party waive any right to seek termination for breach, so the reviewer's claim that liquidated damages are expressly provided and termination rights are waived is grounded in the clause. The policy position cited, [liquidated-damages-none], states a preferred rule that neither party shall owe liquidated damages or other pre-agreed sums and that remedies are limited to actual proven damages. The reviewer correctly contrasts this with the clause and notes that the clause contains no cap, genuine pre-estimate, or fee-based limitation, which is consistent with both the clause's silence on those points and the fallback's requirements. The high risk rating follows from the direct conflict with a high-risk-if-absent preferred position and the compounded waiver of termination rights. The suggested fallback matches the cited playbook fallback verbatim.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-42",
+        "text": "9. Governing Law\n\nThis Agreement shall be governed by and interpreted pursuant to the laws of the People's Republic of China that are promulgated and are publicly available, provided that the general international business practices shall apply if the laws of the People's Republic of China that are promulgated and are publicly available do not involve any matter in relation to this Agreement.",
+        "span": {
+          "start": 11158,
+          "end": 11556,
+          "page": 1
+        },
+        "clause_type": "governing_law",
+        "heading": "9. Governing Law"
+      },
+      "risk_level": "medium",
+      "rationale": "The clause selects PRC law, while the preferred position specifies New York law and the fallback specifies Delaware law. Because neither preferred nor fallback law matches, this is a deviation from the playbook, though it is a limited, negotiable one rather than a prohibition breach. The clause also lacks the exclusive venue/jurisdiction designation that the governing-law-and-venue position requires; it addresses only governing law, leaving dispute forum unaddressed. The secondary reference to 'general international business practices' applying where publicly available PRC law is silent introduces uncertainty and is not contemplated by either playbook position, creating residual interpretive exposure.",
+      "citations": [
+        {
+          "citation_id": "f55105757cfa",
+          "playbook_position_id": "governing-law-and-venue",
+          "excerpt": "This Agreement is governed by the laws of the State of New York, without regard to its conflict of laws rules, and the parties submit to the exclusive jurisdiction of the state and federal courts located in New York County, New York."
+        },
+        {
+          "citation_id": "ea9fbb1ac188",
+          "playbook_position_id": "governing-law-and-venue",
+          "excerpt": "This Agreement is governed by the laws of the State of Delaware, without regard to its conflict of laws rules, and the parties submit to the exclusive jurisdiction of the state and federal courts located in Delaware."
+        }
+      ],
+      "suggested_fallback": "This Agreement is governed by the laws of the State of Delaware, without regard to its conflict of laws rules, and the parties submit to the exclusive jurisdiction of the state and federal courts located in Delaware.",
+      "verified": true,
+      "verification_reason": "The clause text supports the claim that it selects PRC law and includes a 'general international business practices' residual provision, and that no exclusive venue/jurisdiction designation is present. The cited playbook positions do specify New York preferred law and Delaware fallback law with exclusive venue, so the deviation claim is supported. However, the risk level is debatable: the playbook itself states 'Risk if absent: low,' and the reviewer assigns 'medium' without grounding that escalation in a specific playbook risk rule. Additionally, the rationale's characterization of the clause as 'limited, negotiable' and the 'residual interpretive exposure' are interpretive gloss not directly stated in the playbook. The suggested fallback matches the cited Delaware fallback text verbatim, which is correct. Overall the factual claims are supported, but the medium risk level does not clearly follow from the cited playbook positions, which indicate low risk.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-43",
+        "text": "10. Force Majeure\n\nThe force majeure hereunder shall mean the natural disaster, war, political event, and adjustment of laws, regulations and state policies. If the performance of this Agreement by one Party or the Parties according to provisions agreed hereunder is directly affected by the force majeure event, the affected Party shall immediately notify the other Party or its attorney-in-fact of the situation of the force majeure event, and shall, within fifteen (15) days, provide the detailed information of the force majeure event or the reason for non-performance or partial performance or delay of performance of this Agreement as well as valid evidence thereof (which shall be issued by the notarization authority at the place where the force majeure event occurs). The Parties shall negotiate to decide the performance of this Agreement depending on to what degree the performance of this Agreement is influenced by the force majeure, and decide on whether the affected Party may partially perform or postpone the performance of its obligations hereunder. Except as provided for under Article 6.1.3 hereof, neither Party shall exercise the right to termination this Agreement that it may have under any applicable laws on the ground of occurrence of force majeure event.",
+        "span": {
+          "start": 11556,
+          "end": 12840,
+          "page": 1
+        },
+        "clause_type": "force_majeure",
+        "heading": "10. Force Majeure"
+      },
+      "risk_level": "high",
+      "rationale": "Only the force-majeure position is relevant. The clause recognizes force majeure and imposes prompt notice plus detailed evidence within 15 days, but it contains critical gaps relative to policy: it does not state that force majeure excuses an obligation to pay amounts already due, and it denies either party the right to terminate for force majeure (except under Article 6.1.3), whereas the preferred position allows termination if the event continues beyond 30 days. The clause also leaves continuation to negotiation rather than guaranteeing termination rights after a prolonged event, creating material exposure similar to a missing bounded-excuse protection. This is a material deviation from the preferred position.",
+      "citations": [
+        {
+          "citation_id": "41c211125f10",
+          "playbook_position_id": "force-majeure-bounded",
+          "excerpt": "Neither party is liable for a failure to perform caused by an event beyond its reasonable control, provided it notifies the other party promptly and resumes performance as soon as practicable. Force majeure does not excuse an obligation to pay amounts already due, and either party may terminate if the event continues for more than thirty (30) days."
+        }
+      ],
+      "suggested_fallback": "Neither party is liable for a failure to perform caused by an event beyond its reasonable control, provided it notifies the other party promptly and resumes performance as soon as practicable. Force majeure does not excuse an obligation to pay amounts already due, and either party may terminate if the event continues for more than sixty (60) days.",
+      "verified": true,
+      "verification_reason": "The assessment is supported. The clause indeed imposes immediate notice and detailed evidence within 15 days and omits any payment-excuse carve-out, matching the claimed gaps. It also expressly bars termination for force majeure except under Article 6.1.3, which conflicts with the preferred position's termination right after 30 days. The reviewer correctly distinguishes clause terms from playbook policy and cites the preferred position accurately. The high risk level is a reasonable, though stricter, judgment given the material deviations from the medium-risk baseline, and the suggested fallback quotes the playbook fallback verbatim.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-44",
+        "text": "11. Dispute Resolution",
+        "span": {
+          "start": 12840,
+          "end": 12865,
+          "page": 1
+        },
+        "clause_type": "governing_law",
+        "heading": "11. Dispute Resolution"
+      },
+      "risk_level": "unknown",
+      "rationale": "The clause consists only of a heading, \"11. Dispute Resolution,\" with no operative text. It neither names a governing law nor designates a venue (nor any dispute-resolution mechanism), so it cannot be compared against the content of the governing-law-and-venue position. Because the substantive provision is missing entirely from the supplied text, there is no textual basis to determine which jurisdiction's law applies, whether an exclusive venue was agreed, or whether the heading merely labels a clause whose terms were not provided. Uncertainty is material: the absence may reflect an omitted clause (a missing protection) or simply an incomplete excerpt, and the other retrieved positions (payment terms, liability cap, third-party beneficiaries, confidentiality) are unrelated to governing law and cannot support an assessment.",
+      "citations": [
+        {
+          "citation_id": "f55105757cfa",
+          "playbook_position_id": "governing-law-and-venue",
+          "excerpt": "This Agreement is governed by the laws of the State of New York, without regard to its conflict of laws rules, and the parties submit to the exclusive jurisdiction of the state and federal courts located in New York County, New York."
+        }
+      ],
+      "suggested_fallback": "This Agreement is governed by the laws of the State of Delaware, without regard to its conflict of laws rules, and the parties submit to the exclusive jurisdiction of the state and federal courts located in Delaware.",
+      "verified": true,
+      "verification_reason": "The clause text consists solely of the heading '11. Dispute Resolution' with no operative terms. The assessment correctly states that no governing law or venue is named and that the clause cannot be compared against the governing-law-and-venue position's content. This is supported by the clause text. The cited playbook position (governing-law-and-venue) names New York law and exclusive New York County venue as preferred, with a Delaware fallback, and risk-if-absent of low. The rationale accurately distinguishes that the clause contains no operative text versus the policy's requested governing law/venue, and correctly notes that other retrieved positions are unrelated. The suggested fallback matches the playbook fallback verbatim: 'This Agreement is governed by the laws of the State of Delaware, without regard to its conflict of laws rules, and the parties submit to the exclusive jurisdiction of the state and federal courts located in Delaware.' Risk 'unknown' is a reasonable characterization given the absence of operative text, consistent with the inability to determine which jurisdiction applies or whether venue was agreed.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-45",
+        "text": "11.1 Any dispute arising out of performance of this Agreement or in connection with this Agreement shall be resolved by the Partiesthrough friendly negotiation.",
+        "span": {
+          "start": 12865,
+          "end": 13028,
+          "page": 1
+        },
+        "clause_type": "governing_law",
+        "heading": "11.1 Any dispute arising out of performance of this Agreement or in connection with this Agreement shall be resolved by the Partiesthrough friendly negotiation."
+      },
+      "risk_level": "high",
+      "rationale": "Clause 11.1 requires only 'friendly negotiation' to resolve disputes and names neither a governing law nor an exclusive venue. The governing-law-and-venue position requires both a named governing law and submission to exclusive jurisdiction (preferred New York, fallback Delaware); the clause is silent on both, so it diverges from even the fallback by omitting the core protections. This is a missing critical protection within the relevant governing-law scope, leaving the applicable law and forum uncertain, so it is rated high rather than being treated as a mere wording difference. Note: the other retrieved positions (liability cap, indemnity, IP ownership, assignment) are unrelated to governing law and venue and were not applied.",
+      "citations": [
+        {
+          "citation_id": "f55105757cfa",
+          "playbook_position_id": "governing-law-and-venue",
+          "excerpt": "This Agreement is governed by the laws of the State of New York, without regard to its conflict of laws rules, and the parties submit to the exclusive jurisdiction of the state and federal courts located in New York County, New York."
+        },
+        {
+          "citation_id": "ea9fbb1ac188",
+          "playbook_position_id": "governing-law-and-venue",
+          "excerpt": "This Agreement is governed by the laws of the State of Delaware, without regard to its conflict of laws rules, and the parties submit to the exclusive jurisdiction of the state and federal courts located in Delaware."
+        }
+      ],
+      "suggested_fallback": "This Agreement is governed by the laws of the State of Delaware, without regard to its conflict of laws rules, and the parties submit to the exclusive jurisdiction of the state and federal courts located in Delaware.",
+      "verified": true,
+      "verification_reason": "The clause text (11.1) indeed provides only for 'friendly negotiation' and names neither governing law nor venue, supporting the assessment's factual claims. The cited governing-law-and-venue playbook position requires a named governing law plus exclusive jurisdiction (preferred New York; fallback Delaware), and its 'risk if absent' is low. The rationale correctly distinguishes the clause's content (negotiation only) from policy requirements and accurately quotes the fallback verbatim. The one point of tension is the risk level: the assessment rates 'high' while the playbook states 'risk if absent: low'. The rationale explicitly acknowledges this is a missing protection and justifies escalating to high, which is a defensible policy judgment rather than a contradiction; the absence of governing law/venue is genuinely a critical protection. The assessment also correctly excludes unrelated positions. Therefore the assessment is grounded, with the only caveat being that the elevated risk rating diverges from the playbook's stated low risk-if-absent (a rationale-driven escalation rather than an unsupported claim).",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-46",
+        "text": "11.2 If the dispute cannot be resolved through negotiation within thirty (30) days after a Party sends the written notice to the other Party stating its opinions on this dispute, either Party may submit the dispute to China International Economic and Trade Commission for arbitration in Beijing according to its arbitration rules then in effect. The arbitration award shall be final and binding on each Party.",
+        "span": {
+          "start": 13028,
+          "end": 13440,
+          "page": 1
+        },
+        "clause_type": "governing_law",
+        "heading": "11.2 If the dispute cannot be resolved through negotiation within thirty (30) days after a Party sends the written notice to the other Party stating its opinions on this dispute, either Party may submit the dispute to China International Economic and Trade Commission for arbitration in Beijing according to its arbitration rules then in effect. The arbitration award shall be final and binding on each Party."
+      },
+      "risk_level": "medium",
+      "rationale": "The clause specifies arbitration in Beijing under CIETAC rules as the dispute resolution mechanism, but never names a governing law. The relevant position (governing-law-and-venue) requires both a named governing law and a designated venue; here only the forum is designated, so this is a limited deviation—an arbitration forum is chosen, but the substantive law that will apply to the dispute is left unstated. That is a negotiable gap rather than a complete absence of the protection, so the risk is medium.",
+      "citations": [
+        {
+          "citation_id": "f55105757cfa",
+          "playbook_position_id": "governing-law-and-venue",
+          "excerpt": "This Agreement is governed by the laws of the State of New York, without regard to its conflict of laws rules, and the parties submit to the exclusive jurisdiction of the state and federal courts located in New York County, New York."
+        }
+      ],
+      "suggested_fallback": "This Agreement is governed by the laws of the State of Delaware, without regard to its conflict of laws rules, and the parties submit to the exclusive jurisdiction of the state and federal courts located in Delaware.",
+      "verified": true,
+      "verification_reason": "The contract clause does provide for CIETAC arbitration in Beijing and does not name a governing law, so the core factual claim is supported. The playbook position governing-law-and-venue does require both a named governing law and exclusive venue, with risk if absent stated as low. The rationale correctly identifies only a partial deviation (forum/arbitration mechanism present, governing law absent), and the medium risk level is a reasonable policy/risk judgment based on that comparison. The suggested fallback matches the cited playbook fallback verbatim: \"This Agreement is governed by the laws of the State of Delaware, without regard to its conflict of laws rules, and the parties submit to the exclusive jurisdiction of the state and federal courts located in Delaware.\" One minor citation issue is that the cited text under Citations is the Preferred New York language rather than the Fallback Delaware language, but the fallback itself is verbatim from the cited playbook position. Because the substantive claims, risk rationale, and fallback are all grounded, the assessment is supported.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-47",
+        "text": "12. Miscellaneous",
+        "span": {
+          "start": 13440,
+          "end": 13460,
+          "page": 1
+        },
+        "clause_type": "other",
+        "heading": "12. Miscellaneous"
+      },
+      "risk_level": "unknown",
+      "rationale": "The clause provides only the heading \"12. Miscellaneous\" with no substantive obligations or text. None of the supplied playbook positions is triggered by a bare heading, and the section may or may not contain provisions addressing liability, non-solicit, renewal, audit, or non-compete. No concrete obligation or missing protection can be evaluated against a relevant policy, so no assessment can be grounded.",
+      "citations": [],
+      "suggested_fallback": null,
+      "verified": false,
+      "verification_reason": "assessment has no playbook citations supporting its risk and rationale",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-48",
+        "text": "12.1 This Agreement shall take effect as of the date when the authorized representatives of the Parties sign hereon. The Parties agree and confirm that this Agreement shall constitute all understanding, interpretation and intentions of the Parties in respect of the cooperative business. This Agreement shall be taken as an amendment and restatement of the Original Cooperation Agreement and supersede the Original Cooperation Agreement in all respects.",
+        "span": {
+          "start": 13460,
+          "end": 13915,
+          "page": 1
+        },
+        "clause_type": "other",
+        "heading": "12.1 This Agreement shall take effect as of the date when the authorized representatives of the Parties sign hereon. The Parties agree and confirm that this Agreement shall constitute all understanding, interpretation and intentions of the Parties in respect of the cooperative business. This Agreement shall be taken as an amendment and restatement of the Original Cooperation Agreement and supersede the Original Cooperation Agreement in all respects."
+      },
+      "risk_level": "unknown",
+      "rationale": "The clause is an effectiveness and entire-agreement/integration provision that amends and restates the Original Cooperation Agreement. None of the retrieved playbook positions address effectiveness, integration, or supersession of prior agreements. The cited positions concern IP ownership, renewal, governing law, third-party beneficiaries, and assignment, none of which are triggered by this clause's obligations. No supplied position supports assessing this clause.",
+      "citations": [],
+      "suggested_fallback": null,
+      "verified": false,
+      "verification_reason": "assessment has no playbook citations supporting its risk and rationale",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-49",
+        "text": "12.2 The rights and obligations of each Party under this Agreement shall not be transferred, except for the transfer by Party B to its affiliates.",
+        "span": {
+          "start": 13915,
+          "end": 14064,
+          "page": 1
+        },
+        "clause_type": "other",
+        "heading": "12.2 The rights and obligations of each Party under this Agreement shall not be transferred, except for the transfer by Party B to its affiliates."
+      },
+      "risk_level": "medium",
+      "rationale": "Clause 12.2 bars transfer of rights and obligations by either party but carves out a consent-free transfer right for Party B alone to its affiliates. This is an asymmetric assignment restriction. The relevant playbook position [assignment-change-of-control] states a mutual-consent structure; its Preferred language permits assignment without consent only to a successor in a merger/acquisition/sale of all or substantially all assets, and its Fallback permits assignment with consent not unreasonably withheld while treating a change of control as not an assignment. The clause's one-sided affiliate transfer right deviates from both the mutual-consent and narrow-successor benchmarks, giving Party B a broader unilateral transfer right than either policy contemplates. However, the playbook rates the risk if this protection is absent as medium, and the clause does contain an assignment restriction (though asymmetric), so the deviation is a limited, negotiable exposure rather than a prohibition breach warranting high risk. The risk is measured against the assignment-change-of-control position; the other retrieved positions (audit rights, confidentiality, third-party beneficiaries, IP ownership) do not govern transfer/assignment obligations and are not applied.",
+      "citations": [
+        {
+          "citation_id": "49364fcfdf78",
+          "playbook_position_id": "assignment-change-of-control",
+          "excerpt": "Neither party may assign this Agreement without the other party's prior written consent, except that either party may assign it in its entirety, on notice and without consent, to a successor in connection with a merger, acquisition or sale of all or substantially all of its assets."
+        },
+        {
+          "citation_id": "ecc744658738",
+          "playbook_position_id": "assignment-change-of-control",
+          "excerpt": "Neither party may assign this Agreement without the other party's prior written consent, such consent not to be unreasonably withheld, conditioned or delayed. A change of control is not an assignment for the purposes of this clause."
+        }
+      ],
+      "suggested_fallback": "Neither party may assign this Agreement without the other party's prior written consent, such consent not to be unreasonably withheld, conditioned or delayed. A change of control is not an assignment for the purposes of this clause.",
+      "verified": true,
+      "verification_reason": "The clause text supports the claims: it bars transfer of rights and obligations except for Party B's transfer to affiliates, which is asymmetric and consent-free for Party B only. The playbook citations are accurate: Preferred permits no-consent assignment only to a successor in a merger/acquisition/sale, and Fallback requires consent not unreasonably withheld with change of control not treated as assignment. The rationale correctly distinguishes the clause's one-sided affiliate carve-out from both policy structures and explains why it exceeds the narrow successor/consent benchmarks. The medium risk follows the playbook's stated risk-if-absent of medium and the fact that an assignment restriction exists, though asymmetric. The suggested fallback matches the cited Fallback text verbatim. The rationale's statement that other positions do not govern assignment is consistent with the cited positions provided.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-50",
+        "text": "12.3 The Parties agree that any and all intellectual property researched and developed, created and invented by the Parties (including their employees) in the course of performance of this Agreement shall be owned by Party B. For the purpose of this Article 12.3, \"Intellectual Property\" means the patent, patent application right, trademark, service mark, logo, image, trade name, internet domain name, design right, copyright (including copyright of computer software) and moral rights, database right, right of semiconductor design drawing, utility model, proprietary technology and other intellectual property that are registered and unregistered including those that have applied for registration, as well as all other rights or protection methods with same or similar effect on a global scope.",
+        "span": {
+          "start": 14064,
+          "end": 14865,
+          "page": 1
+        },
+        "clause_type": "intellectual_property",
+        "heading": "12.3 The Parties agree that any and all intellectual property researched and developed, created and invented by the Parties (including their employees) in the course of performance of this Agreement shall be owned by Party B. For the purpose of this Article 12.3, \"Intellectual Property\" means the patent, patent application right, trademark, service mark, logo, image, trade name, internet domain name, design right, copyright (including copyright of computer software) and moral rights, database right, right of semiconductor design drawing, utility model, proprietary technology and other intellectual property that are registered and unregistered including those that have applied for registration, as well as all other rights or protection methods with same or similar effect on a global scope."
+      },
+      "risk_level": "high",
+      "rationale": "Clause 12.3 assigns ownership of all intellectual property researched, developed, created or invented by the Parties (including their employees) in the course of performance to Party B alone. This conflicts with the policy that each party retains its own background and independently developed IP, with no transfer of ownership to the other party, and also displaces the no-joint-ownership regime. The clause contains no carve-out for pre-existing background IP or independently developed IP, so it operates as a broad transfer of the other party's rights, a prohibition-level deviation and a missing critical protection.",
+      "citations": [
+        {
+          "citation_id": "24cca820d2bc",
+          "playbook_position_id": "ip-each-party-keeps-its-own",
+          "excerpt": "Each party retains all right, title and interest in the intellectual property it owned before this Agreement or develops independently of it. Nothing in this Agreement transfers ownership of a party's intellectual property to the other party."
+        },
+        {
+          "citation_id": "44c0ad21a53c",
+          "playbook_position_id": "ip-no-joint-ownership",
+          "excerpt": "The parties shall not jointly own any intellectual property under this Agreement. Any jointly developed work product shall be owned by the party that contributed the underlying background intellectual property, with a licence granted to the other party as set out in this Agreement."
+        }
+      ],
+      "suggested_fallback": null,
+      "verified": true,
+      "verification_reason": "The assessment is supported. Clause 12.3 broadly assigns to Party B all IP 'researched and developed, created and invented by the Parties' in performance, with a wide definition and no background/IP carve-out; this conflicts with [ip-each-party-keeps-its-own] (each party retains its own IP, no transfer) and displaces [ip-no-joint-ownership] (no joint ownership; jointly developed work owned by the background-IP contributor). Both cited playbook positions carry high risk if absent, so the high rating follows. The rationale correctly distinguishes the clause's broad transfer from the policy's retention/no-transfer positions. No fallback was proposed, so no verbatim fallback match is required.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-51",
+        "text": "12.4 To the extent permitted under the laws of the People's Republic of China, the failure or delay of performance of any right under this Agreement by any Party shall not be deemed as a waive of such right, and any single or partial exercise of any right shall not preclude the further exercise of such right in the future.",
+        "span": {
+          "start": 14865,
+          "end": 15192,
+          "page": 1
+        },
+        "clause_type": "other",
+        "heading": "12.4 To the extent permitted under the laws of the People's Republic of China, the failure or delay of performance of any right under this Agreement by any Party shall not be deemed as a waive of such right, and any single or partial exercise of any right shall not preclude the further exercise of such right in the future."
+      },
+      "risk_level": "unknown",
+      "rationale": "The clause is a non-waiver provision stating that failure or delay in exercising a right does not waive it, and that partial exercise does not preclude further exercise, subject to PRC law. None of the five retrieved playbook positions is relevant to this subject: they cover third-party beneficiary exclusion, assignment/change-of-control, consequential damages, liquidated damages, and liability caps. The clause creates no third-party enforcement rights, does not address assignment or liability limitations, and does not impose liquidated damages. Because no supplied policy position speaks to non-waiver terms, there is no basis to assess deviation or missing protection, so no applicable fallback is available.",
+      "citations": [],
+      "suggested_fallback": null,
+      "verified": false,
+      "verification_reason": "assessment has no playbook citations supporting its risk and rationale",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-52",
+        "text": "12.5 This Agreement shall constitute an entire agreement between the Parties in respect of the subject matter of this Agreement and supersede any and all prior expression of intention or understanding reached by the Parties in relation to this Agreement. This Agreement shall not be amended or modified unless the authorized representatives of the Parties sign a written agreement thereof.",
+        "span": {
+          "start": 15192,
+          "end": 15584,
+          "page": 1
+        },
+        "clause_type": "other",
+        "heading": "12.5 This Agreement shall constitute an entire agreement between the Parties in respect of the subject matter of this Agreement and supersede any and all prior expression of intention or understanding reached by the Parties in relation to this Agreement. This Agreement shall not be amended or modified unless the authorized representatives of the Parties sign a written agreement thereof."
+      },
+      "risk_level": "unknown",
+      "rationale": "The clause is an entire-agreement and written-amendment provision. It does not address renewal, intellectual property ownership, assignment or change of control, third-party beneficiaries, or liquidated damages, so none of the retrieved playbook positions govern this clause's obligations. No supplied position supports an assessment; note that the clause does not itself create assignment or third-party-beneficiary rights, it merely supersedes prior understandings and requires signed written amendments.",
+      "citations": [],
+      "suggested_fallback": null,
+      "verified": false,
+      "verification_reason": "assessment has no playbook citations supporting its risk and rationale",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-53",
+        "text": "12.6 This Agreement shall be executed in two (2) copies, each of which shall have the same legal effect.",
+        "span": {
+          "start": 15584,
+          "end": 15691,
+          "page": 1
+        },
+        "clause_type": "other",
+        "heading": "12.6 This Agreement shall be executed in two (2) copies, each of which shall have the same legal effect."
+      },
+      "risk_level": "unknown",
+      "rationale": "Clause 12.6 is a boilerplate counterparts clause confirming that the agreement is executed in two copies with equal legal effect. It creates no substantive obligation relating to liability caps, non-compete, warranties of authority/compliance, liquidated damages, or exclusivity. None of the supplied playbook positions — liability-cap-fees, non-compete-bounded, warranty-compliance-and-authority, liquidated-damages-none, or no-exclusivity — address or are relevant to counterparts execution, and the clause neither grants nor omits any protection within their scope. No supplied position supports an assessment, so the risk is unknown rather than low or high.",
+      "citations": [],
+      "suggested_fallback": null,
+      "verified": false,
+      "verification_reason": "assessment has no playbook citations supporting its risk and rationale",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-54",
+        "text": "12.7 Any notice or written communication sent by a Party to the other Party under this Agreement shall be made in writing and delivered by courier service or by facsimile accompanied with a confirmation hard copy delivered by courier service. The notice, communication or letter sent under this Agreement shall be deemed as effectively received on the seventh (7) day after sending to the courier service, or shall be deemed as effectively received on the first (1) day after delivered by facsimile, which shall be evidenced by the transmission confirmation. All notice and communication shall be sent to the following addresses until a Party notify the other Party in writing to change such addresses:\n\nParty A: Nanjing Tuniu Technology Co., Ltd. Address: Tuiniu Building, 699-32Xuanwu Avenue, Xuanwu District, Nanjing Fax No.: (86 25) 86853999 Attention: General Manager\n\nParty B: Beijing Tuniu Technology Co., Ltd. Address: Tuiniu Building, 699-32Xuanwu Avenue, Xuanwu District, Nanjing Fax No.: (86 25) 86853999 Attention: General Manager",
+        "span": {
+          "start": 15691,
+          "end": 16735,
+          "page": 1
+        },
+        "clause_type": "other",
+        "heading": "12.7 Any notice or written communication sent by a Party to the other Party under this Agreement shall be made in writing and delivered by courier service or by facsimile accompanied with a confirmation hard copy delivered by courier service. The notice, communication or letter sent under this Agreement shall be deemed as effectively received on the seventh (7) day after sending to the courier service, or shall be deemed as effectively received on the first (1) day after delivered by facsimile, which shall be evidenced by the transmission confirmation. All notice and communication shall be sent to the following addresses until a Party notify the other Party in writing to change such addresses:"
+      },
+      "risk_level": "unknown",
+      "rationale": "The clause is a notices provision governing delivery methods, deemed receipt, and notice addresses. None of the retrieved playbook positions addresses notices or communication mechanics: the non-compete, assignment/change-of-control, IP ownership, confidentiality, and audit-rights positions are unrelated to this subject matter. Because no supplied position supports an assessment of the notices clause, the risk level is unknown rather than low, medium, or high.",
+      "citations": [],
+      "suggested_fallback": null,
+      "verified": false,
+      "verification_reason": "assessment has no playbook citations supporting its risk and rationale",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-55",
+        "text": "12.8 Confidentiality Obligations",
+        "span": {
+          "start": 16735,
+          "end": 16770,
+          "page": 1
+        },
+        "clause_type": "confidentiality",
+        "heading": "12.8 Confidentiality Obligations"
+      },
+      "risk_level": "high",
+      "rationale": "Clause 12.8 contains only a heading and no operative confidentiality obligations. Viewed as a confidentiality clause, it omits every substantive protection: mutual confidentiality, use restriction, standard care, permitted legal-disclosure carve-out, and any survival period for trade secrets or Confidential Information. The confidentiality-mutual policy makes those obligations explicit and rates their absence as high risk, and the confidentiality-term policy separately requires a fixed survival period plus indefinite trade-secret protection. Because no obligation is drafted at all, the omission is a missing critical protection rather than a mere wording deviation.",
+      "citations": [
+        {
+          "citation_id": "556221eb5774",
+          "playbook_position_id": "confidentiality-mutual",
+          "excerpt": "Each party shall keep the other party's Confidential Information confidential, use it only to perform this Agreement, and protect it with at least the care it uses for its own confidential information. These obligations do not apply to information that is or becomes public through no fault of the receiving party, was already known to it, or is independently developed by it."
+        },
+        {
+          "citation_id": "05c95fde9902",
+          "playbook_position_id": "confidentiality-term",
+          "excerpt": "The confidentiality obligations in this Agreement survive for three (3) years after termination or expiry, and indefinitely with respect to trade secrets for so long as they remain trade secrets under applicable law."
+        }
+      ],
+      "suggested_fallback": "Each party shall keep the other party's Confidential Information confidential and use it only to perform this Agreement, provided that a party may disclose Confidential Information to the extent required by law or court order after giving the other party prompt notice and a reasonable opportunity to seek protective relief.",
+      "verified": true,
+      "verification_reason": "The clause text consists solely of a heading ('12.8 Confidentiality Obligations') with no operative provisions, so the assessment's claim that no substantive confidentiality obligations are drafted is supported. The cited confidentiality-mutual position rates absence of mutual confidentiality as high risk, and the confidentiality-term position separately requires a fixed survival period and indefinite trade-secret protection; the rationale correctly distinguishes the clause's silence from what policy requires and grounds the high risk in the missing mutual-confidentiality protection. The suggested fallback matches the confidentiality-mutual fallback text verbatim.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-56",
+        "text": "12.8.1 Neither Party shall disclose the financial and technical information obtained in the course of conclusion of this Agreement to any third party nor use such information for matters irrelevant to this Agreement, regardless of written or oral information, unless the other Party gives a prior written consent thereto.",
+        "span": {
+          "start": 16770,
+          "end": 17094,
+          "page": 1
+        },
+        "clause_type": "confidentiality",
+        "heading": "12.8.1 Neither Party shall disclose the financial and technical information obtained in the course of conclusion of this Agreement to any third party nor use such information for matters irrelevant to this Agreement, regardless of written or oral information, unless the other Party gives a prior written consent thereto."
+      },
+      "risk_level": "medium",
+      "rationale": "The clause is mutual and restricts disclosure and use of financial and technical information, which aligns with the preferred mutual confidentiality concept. However, it lacks standard carve-outs found in the preferred position—information that is or becomes public through no fault of the receiving party, was already known, or is independently developed—and it omits any permitted disclosure required by law or court order, creating residual exposure. Because confidentiality obligations are present and mutual and the deviation is a fixable carve-out issue rather than a complete absence of protection, this is a limited, negotiable deviation (medium) rather than high risk.",
+      "citations": [
+        {
+          "citation_id": "556221eb5774",
+          "playbook_position_id": "confidentiality-mutual",
+          "excerpt": "Each party shall keep the other party's Confidential Information confidential, use it only to perform this Agreement, and protect it with at least the care it uses for its own confidential information. These obligations do not apply to information that is or becomes public through no fault of the receiving party, was already known to it, or is independently developed by it."
+        },
+        {
+          "citation_id": "3e8d363067f8",
+          "playbook_position_id": "confidentiality-mutual",
+          "excerpt": "Each party shall keep the other party's Confidential Information confidential and use it only to perform this Agreement, provided that a party may disclose Confidential Information to the extent required by law or court order after giving the other party prompt notice and a reasonable opportunity to seek protective relief."
+        }
+      ],
+      "suggested_fallback": "Each party shall keep the other party's Confidential Information confidential and use it only to perform this Agreement, provided that a party may disclose Confidential Information to the extent required by law or court order after giving the other party prompt notice and a reasonable opportunity to seek protective relief.",
+      "verified": true,
+      "verification_reason": "The assessment is supported by the evidence. The clause text (12.8.1) is indeed mutual ('Neither Party'), restricts disclosure and use of 'financial and technical information,' and lacks both the standard carve-outs (public through no fault, already known, independently developed) and any law/court-order disclosure permission, consistent with the reviewer's claims. The cited playbook expresses a 'high' risk-if-absent rating, but the playbook's own framing is a fallback for a mutual confidentiality clause with standard exclusions, so the reviewer's reasoning that an already-present, mutual, fixable deviation warrants 'medium' rather than 'high' is a reasonable comparison, not a misreading. The rationale correctly distinguishes what the clause states from what the preferred/fallback positions request, and the suggested fallback matches the cited fallback text verbatim.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-57",
+        "text": "12.8.2 The Parties shall be obligated to take measures (including without limitation preparing the confidentiality rules, entering into the confidentiality agreement, establishing the archive management system and etc.) to ensure their respective employees will observe the confidentiality obligations specified hereunder.\n\n(The remaining of this page is intentionally left blank)\n\nIn witness whereof, this Agreement has been executed by the duly authorized representatives of the Parties on the date first mentioned above. Party A: Nanjing Tuniu Technology Co., Ltd.\n\nBy: /s/ Yu Dunde Name: Yu Dunde Title: Chairman\n\nParty B: Beijing Tuniu Technology Co., Ltd.\n\nBy: /s/ Yu Dunde Name: Yu Dunde Title: Chairman",
+        "span": {
+          "start": 17094,
+          "end": 17805,
+          "page": 1
+        },
+        "clause_type": "confidentiality",
+        "heading": "12.8.2 The Parties shall be obligated to take measures (including without limitation preparing the confidentiality rules, entering into the confidentiality agreement, establishing the archive management system and etc.) to ensure their respective employees will observe the confidentiality obligations specified hereunder."
+      },
+      "risk_level": "medium",
+      "rationale": "The clause is a confidentiality obligation, engaging the confidentiality-mutual position, but it only requires the Parties to take internal measures to ensure their employees observe confidentiality; it does not state the core mutual obligation to keep the other party's Confidential Information confidential, limit use to performance of the Agreement, set a care standard, or include the standard exclusions (public domain, prior knowledge, independent development) or the notice/opportunity-to-seek-relief carve-out for legally required disclosures. The referenced 'confidentiality obligations specified hereunder' are not supplied in this excerpt, so coverage is uncertain. This is a limited, negotiable deviation rather than the express contradiction or total absence of confidentiality protection that would warrant high risk.",
+      "citations": [
+        {
+          "citation_id": "556221eb5774",
+          "playbook_position_id": "confidentiality-mutual",
+          "excerpt": "Each party shall keep the other party's Confidential Information confidential, use it only to perform this Agreement, and protect it with at least the care it uses for its own confidential information. These obligations do not apply to information that is or becomes public through no fault of the receiving party, was already known to it, or is independently developed by it."
+        }
+      ],
+      "suggested_fallback": "Each party shall keep the other party's Confidential Information confidential and use it only to perform this Agreement, provided that a party may disclose Confidential Information to the extent required by law or court order after giving the other party prompt notice and a reasonable opportunity to seek protective relief.",
+      "verified": true,
+      "verification_reason": "The assessment accurately characterizes the clause as only requiring internal measures for employee compliance, which aligns with the clause text. The policy citation correctly reflects the [confidentiality-mutual] position. The risk level of medium is reasonably supported by the rationale that partial (employee-only) coverage is a limited deviation rather than total absence; the rationale distinguishes clause text from policy requirements, and the suggested fallback matches the cited playbook fallback verbatim.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    }
+  ],
+  "metadata": {
+    "parties": [
+      "Nanjing Tuniu Technology Co., Ltd.",
+      "Beijing Tuniu Technology Co., Ltd."
+    ],
+    "agreement_date": "January 24, 2014",
+    "effective_date": null,
+    "expiration_date": null,
+    "contract_value": null,
+    "governing_law": null
+  },
+  "disclaimer": "This automated review is for informational purposes only and does not constitute legal advice. Consult qualified counsel before relying on it."
+}

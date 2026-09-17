@@ -1,0 +1,24 @@
+Evaluation report
+==================
+segmentation_f1:          100.00%
+classification_accuracy:  68.06%
+risk_accuracy:            44.44%
+citation_validity:        100.00%
+
+Per clause type (classification):
+  intellectual_property        n=7    acc=85.71%
+  payment_terms                n=8    acc=37.50%
+  other                        n=13   acc=61.54%
+  termination                  n=15   acc=100.00%
+  limitation_of_liability      n=6    acc=33.33%
+  non_compete                  n=14   acc=50.00%
+  governing_law                n=7    acc=100.00%
+  warranty                     n=2    acc=50.00%
+
+Where classification disagreed (gold -> predicted, n):
+  intellectual_property        -> other (1)
+  limitation_of_liability      -> indemnification (1), payment_terms (1), termination (2)
+  non_compete                  -> intellectual_property (2), other (3), payment_terms (1), termination (1)
+  other                        -> governing_law (2), intellectual_property (1), payment_terms (1), warranty (1)
+  payment_terms                -> other (4), termination (1)
+  warranty                     -> other (1)

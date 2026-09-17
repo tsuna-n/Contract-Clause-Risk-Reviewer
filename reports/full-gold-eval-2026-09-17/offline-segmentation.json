@@ -1,0 +1,74 @@
+[
+  {
+    "contract_id": "americasshoppingmallinc-site-development-and-hosting-agreement",
+    "gold_clauses": 47,
+    "predicted_clauses": 47,
+    "segmentation_f1": 1.0
+  },
+  {
+    "contract_id": "blackboxstocksinc-distributor-agreement",
+    "gold_clauses": 21,
+    "predicted_clauses": 21,
+    "segmentation_f1": 1.0
+  },
+  {
+    "contract_id": "legacytechnologyholdings-inc-distributor-agreement",
+    "gold_clauses": 22,
+    "predicted_clauses": 22,
+    "segmentation_f1": 1.0
+  },
+  {
+    "contract_id": "ecosciencesolutionsinc-endorsement-agreement",
+    "gold_clauses": 28,
+    "predicted_clauses": 28,
+    "segmentation_f1": 1.0
+  },
+  {
+    "contract_id": "kiromicbiopharma-inc-consulting-agreement",
+    "gold_clauses": 18,
+    "predicted_clauses": 18,
+    "segmentation_f1": 1.0
+  },
+  {
+    "contract_id": "datacalltechnologies-content-license-agreement",
+    "gold_clauses": 53,
+    "predicted_clauses": 53,
+    "segmentation_f1": 1.0
+  },
+  {
+    "contract_id": "gainscoinc-sponsorship-agreement",
+    "gold_clauses": 15,
+    "predicted_clauses": 15,
+    "segmentation_f1": 1.0
+  },
+  {
+    "contract_id": "martinmidstreampartnerslp-transportation-services-agreement",
+    "gold_clauses": 12,
+    "predicted_clauses": 12,
+    "segmentation_f1": 1.0
+  },
+  {
+    "contract_id": "ticketscominc-sponsorship-agreement",
+    "gold_clauses": 8,
+    "predicted_clauses": 8,
+    "segmentation_f1": 1.0
+  },
+  {
+    "contract_id": "tuniucorp-cooperation-agreement",
+    "gold_clauses": 57,
+    "predicted_clauses": 57,
+    "segmentation_f1": 1.0
+  },
+  {
+    "contract_id": "flotekindustriesinccn-supply-agreement",
+    "gold_clauses": 32,
+    "predicted_clauses": 32,
+    "segmentation_f1": 1.0
+  },
+  {
+    "contract_id": "sporthaleyinc-endorsement-agreement",
+    "gold_clauses": 14,
+    "predicted_clauses": 14,
+    "segmentation_f1": 1.0
+  }
+]

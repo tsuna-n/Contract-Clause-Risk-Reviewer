@@ -33,9 +33,7 @@ def resolve_gold_set_path(raw: str) -> str:
     root = GOLD_SET_ROOT.resolve()
     candidate = Path(raw).resolve()
     if candidate != root and root not in candidate.parents:
-        raise InvalidInputError(
-            f"gold_set_path must be inside {GOLD_SET_ROOT}/ (got {raw!r})"
-        )
+        raise InvalidInputError(f"gold_set_path must be inside {GOLD_SET_ROOT}/ (got {raw!r})")
     return str(candidate)
 
 
@@ -126,7 +124,7 @@ def run_eval(
 ) -> EvalMetrics:
     """Run ``orchestrator`` over the gold set and return aggregate metrics.
 
-    The eval regression gate requires >= 75% accuracy (see tests/eval). Gold
+    The regression gate checks segmentation and citation validity. Gold
     records whose ``data/contracts/<contract_id>.txt`` fixture is missing are
     skipped (logged, not failed) so the harness degrades gracefully.
 
@@ -170,6 +168,7 @@ def run_eval(
         gold_spans.extend(record_gold_spans)
         pred_spans.extend(review.clause.span for review in report.reviews)
 
+        matched_reviews: set[int] = set()
         for gold_clause, gold_span in zip(gold_clauses, record_gold_spans, strict=True):
             # A gold clause may carry a boundary but no label: the fixtures are
             # built from CUAD, whose 41 categories don't span the whole
@@ -179,17 +178,20 @@ def run_eval(
             # not classification/risk samples.
             if "clause_type" not in gold_clause:
                 continue
-            match = max(
-                report.reviews,
-                key=lambda r: span_iou(r.clause.span, gold_span),
+            match_index = max(
+                (i for i in range(len(report.reviews)) if i not in matched_reviews),
+                key=lambda i: span_iou(report.reviews[i].clause.span, gold_span),
                 default=None,
             )
-            if match is None:
-                continue
+            match = report.reviews[match_index] if match_index is not None else None
+            if match is not None and span_iou(match.clause.span, gold_span) < 0.5:
+                match = None
+            if match is not None:
+                matched_reviews.add(match_index)
             gold_types.append(gold_clause["clause_type"])
-            pred_types.append(match.clause.clause_type.value)
+            pred_types.append(match.clause.clause_type.value if match else "<missing>")
             gold_risks.append(gold_clause["risk_level"])
-            pred_risks.append(match.risk_level.value)
+            pred_risks.append(match.risk_level.value if match else "<missing>")
 
         for review in report.reviews:
             for citation in review.citations:

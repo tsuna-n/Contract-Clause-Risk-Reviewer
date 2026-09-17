@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import re
 import threading
 import time
 from pathlib import Path
@@ -508,16 +509,22 @@ class PgVectorStore:
             tags=list(row.tags or []),
         )
 
-    def query(self, vector: list[float], top_k: int = 5) -> list[RetrievalHit]:
+    def query_by_type(
+        self, vector: list[float], clause_type: ClauseType, top_k: int = 2
+    ) -> list[RetrievalHit]:
+        """Search inside a classified subject, preserving the global pool too."""
+        return self.query(vector, top_k=top_k, clause_type=clause_type)
+
+    def query(
+        self, vector: list[float], top_k: int = 5, *, clause_type: ClauseType | None = None
+    ) -> list[RetrievalHit]:
         """Run a cosine-distance nearest-neighbor query."""
         distance = PlaybookEmbedding.embedding.cosine_distance(vector)
         with self._session_factory() as session:
-            rows = (
-                session.query(PlaybookEmbedding, distance.label("distance"))
-                .order_by(distance)
-                .limit(top_k)
-                .all()
-            )
+            query = session.query(PlaybookEmbedding, distance.label("distance"))
+            if clause_type is not None:
+                query = query.filter(PlaybookEmbedding.clause_type == clause_type.value)
+            rows = query.order_by(distance).limit(top_k).all()
         return [
             RetrievalHit(
                 position=self._to_position(row),
@@ -557,7 +564,7 @@ class Retriever:
             return
         self.embedder.prewarm([clause.text for clause in clauses])
 
-    def retrieve(self, clause: Clause, top_k: int = 5) -> list[RetrievalHit]:
+    def retrieve(self, clause: Clause, top_k: int = 8) -> list[RetrievalHit]:
         """Return the top playbook positions for ``clause``.
 
         Runs a dense query via the vector store, then (when hybrid retrieval
@@ -570,12 +577,18 @@ class Retriever:
         if not settings.enable_hybrid_retrieval:
             return self.store.query(vector, top_k=top_k)
 
-        candidates = self.store.query(vector, top_k=max(top_k * 4, top_k))
+        candidates = list(self.store.query(vector, top_k=max(top_k * 4, top_k)))
+        typed_hits = []
+        typed_query = getattr(self.store, "query_by_type", None)
+        if clause.clause_type != ClauseType.OTHER and callable(typed_query):
+            typed_hits = typed_query(vector, clause.clause_type, top_k=max(10, top_k))
+            candidates.extend(typed_hits)
+        candidates = list({hit.position.id: hit for hit in candidates}.values())
         if not candidates:
             return []
 
-        bm25_scores = self._bm25_scores(clause.text, candidates)
-        dense_scores = [hit.score for hit in candidates]
+        bm25_scores = [max(0.0, score) for score in self._bm25_scores(clause.text, candidates)]
+        dense_scores = [max(0.0, hit.score) for hit in candidates]
         max_dense = max(dense_scores) or 1.0
         max_bm25 = max(bm25_scores) or 1.0
 
@@ -591,20 +604,84 @@ class Retriever:
             )
 
         blended.sort(key=lambda hit: hit.score, reverse=True)
-        return blended[:top_k]
+        # Reserve up to half the pool (at most four slots) for the classified
+        # subject. The other half covers secondary subjects in mixed clauses.
+        typed_ids = {hit.position.id for hit in typed_hits}
+        subject_slots = min(4, max(1, top_k // 2))
+        selected = [hit for hit in blended if hit.position.id in typed_ids][:subject_slots]
+        selected_ids = {hit.position.id for hit in selected}
+        selected.extend(hit for hit in blended if hit.position.id not in selected_ids)
+        return sorted(selected[:top_k], key=lambda hit: hit.score, reverse=True)
 
     @staticmethod
     def _bm25_scores(query_text: str, candidates: list[RetrievalHit]) -> list[float]:
         """Score each candidate's playbook text against ``query_text`` via BM25."""
         from rank_bm25 import BM25Okapi
 
+        def tokens(text: str) -> list[str]:
+            stopwords = {
+                "a",
+                "an",
+                "and",
+                "are",
+                "as",
+                "at",
+                "be",
+                "been",
+                "being",
+                "by",
+                "for",
+                "from",
+                "has",
+                "have",
+                "in",
+                "is",
+                "it",
+                "its",
+                "of",
+                "on",
+                "or",
+                "such",
+                "that",
+                "the",
+                "their",
+                "these",
+                "this",
+                "to",
+                "under",
+                "was",
+                "were",
+                "which",
+                "with",
+                "shall",
+                "may",
+                "will",
+                "must",
+                "agreement",
+                "contract",
+                "party",
+                "parties",
+                "hereunder",
+                "thereof",
+            }
+            aliases = {"after": "post", "upon": "post"}
+            return [
+                aliases.get(word, word)
+                for word in re.findall(r"[^\W_]+", text.lower())
+                if word not in stopwords
+            ]
+
         corpus = [
-            f"{hit.position.title} {hit.position.preferred_language} "
-            f"{hit.position.fallback_language}".lower().split()
+            tokens(
+                f"{hit.position.title} {hit.position.preferred_language} "
+                f"{hit.position.fallback_language} {' '.join(hit.position.tags)}"
+            )
             for hit in candidates
         ]
+        if not any(corpus):
+            return [0.0] * len(candidates)
         bm25 = BM25Okapi(corpus)
-        return list(bm25.get_scores(query_text.lower().split()))
+        return list(bm25.get_scores(tokens(query_text)))
 
 
 # --- citations ---------------------------------------------------------------

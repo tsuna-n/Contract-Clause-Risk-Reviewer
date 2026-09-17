@@ -1,0 +1,531 @@
+{
+  "report_id": "52eae062cfa344eb9f7b6eeaf3838620",
+  "contract_id": "gainscoinc-sponsorship-agreement",
+  "session_id": "eval",
+  "filename": "",
+  "created_at": "2026-09-17T17:00:01.730698Z",
+  "overall_risk": "high",
+  "summary": {
+    "high": 1,
+    "medium": 8,
+    "low": 4,
+    "unknown": 2
+  },
+  "reviews": [
+    {
+      "clause": {
+        "id": "clause-1",
+        "text": "1. Term. Subject to the provisions of Section 14 hereof, the term of this Agreement and the sponsorship described herein shall commence on January 1, 2010 and extend through December 31, 2010.",
+        "span": {
+          "start": 1027,
+          "end": 1221,
+          "page": 1
+        },
+        "clause_type": "termination",
+        "heading": "1. Term. Subject to the provisions of Section 14 hereof, the term of this Agreement and the sponsorship described herein shall commence on January 1, 2010 and extend through December 31, 2010."
+      },
+      "risk_level": "medium",
+      "rationale": "The clause permits the Sponsor to terminate at any time prior to the end date by written notice with no specified notice period, deviating from the company's termination‑for‑convenience policy which requires a notice period (30 or 60 days). This creates a material exposure for the non‑terminating party.",
+      "citations": [
+        {
+          "citation_id": "284f75c1a5d7",
+          "playbook_position_id": "termination-for-convenience",
+          "excerpt": "Either party may terminate this Agreement for convenience upon sixty (60) days' prior written notice to the other party, without penalty or further liability other than for amounts accrued prior to the effective date of termination."
+        }
+      ],
+      "contract_sources": [
+        {
+          "label": "Section 14",
+          "span": {
+            "start": 14192,
+            "end": 14766,
+            "page": 1
+          },
+          "text": "14. Termination by the Sponsor. Notwithstanding the provisions of Section 1 hereof, the Sponsor shall have the right at any time prior to December 31, 2010 to terminate this Agreement by giving written notice of such termination to Racing. In the event of such a termination, (i) the Sponsor shall have no further obligation to make payments toward the sponsorship fee contemplated in Section 3 hereof, (ii) Racing shall have no further obligation to provide any Benefits hereunder, and (iii) the remaining provisions of this Agreement shall remain in full force and effect.",
+          "truncated": false
+        }
+      ],
+      "suggested_fallback": "Either party may terminate this Agreement for convenience upon sixty (60) days' prior written notice to the other party, without penalty or further liability other than for amounts accrued prior to the effective date of termination.",
+      "verified": true,
+      "verification_reason": "The reviewer correctly cites the contract clause allowing termination without a notice period, contrasts it with the company's policy requiring 30‑day (preferred) or 60‑day (fallback) notice, and justifies a medium risk. The suggested fallback text exactly matches the playbook fallback wording. All statements are supported by the provided evidence.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-2",
+        "text": "2. Advertising and Other Benefits. Subject to payment by the Sponsor of the sponsorship fee provided for herein, during the term of this Agreement Racing shall cause the Racing Team to provide for the Sponsor's benefit all of the benefits customarily associated with the sponsorship of a Daytona Prototype Series racing team and consistent with the benefits provided to the Sponsor in 2005 - 2009 (individually, a \"Benefit,\" and collectively, the \"Benefits\"), including but not limited to the following: (i) displaying prominent identification of the Sponsor's name and/or logo in signage on the race car and racing suits and, where appropriate, on other team equipment (subject to approval by the Sponsor); (ii) making available for the use of the Sponsor (x) the personalities associated with the Racing Team, including without limitation the name, voice, picture, portrait, likeness, persona and/or signature of each driver for endorsements, commercial advertising and promotions in any and all media throughout the world during the term of this Agreement, (y) the Racing Team's home base facilities in Texas, and (z) those facilities designated or assigned for the use of the Racing Team at each race and race location at which the Racing Team actually participates in the race, all for appropriate public relations and other promotional and marketing purposes. Racing agrees that it will actively participate in the Rolex 24 at Daytona in January, 2010. As it concerns (y) and (z) above, access shall be subject to appropriate security and safety restrictions designated by the applicable racing location and the Racing Team;\n\n(iii) making available for the use of the Sponsor a non-racing look-alike (a \"Show Car\") of the GAINSCO 99 race car (the \"Car\") used by the Racing Team. Subject to the Sponsor's first right to use the Show Car, it will also be made available to Racing when such use does not interfere with the Sponsor's use of the Show Car; (iv) allowing the Sponsor the use of the likeness of the Car, including all paint and graphics, for promotion and advertising of or by the Sponsor, and Racing shall be responsible for all necessary consents and permissions from any other sponsors to be sure the Sponsor can use the likeness of the Car as specified herein; (v) prohibiting the endorsement by Racing and any members of Racing, including the drivers, of any entities, products or services which are in direct competition or otherwise inconsistent with the Sponsor or it products or services, unless such endorsement activity is approved in writing by Racing and the Sponsor; and (vi) allowing the Sponsor to use the conference room and other areas of the racing shop and garage for meetings and similar events, provided that the Sponsor gives prior notice of the need for such use, and such use does not interfere with operations of the racing shop and garage and is otherwise consistent with reasonable requirements imposed by Racing to assure orderly operations and provide for adequate safety measures at all times.",
+        "span": {
+          "start": 1221,
+          "end": 4262,
+          "page": 1
+        },
+        "clause_type": "intellectual_property",
+        "heading": "2. Advertising and Other Benefits. Subject to payment by the Sponsor of the sponsorship fee provided for herein, during the term of this Agreement Racing shall cause the Racing Team to provide for the Sponsor's benefit all of the benefits customarily associated with the sponsorship of a Daytona Prototype Series racing team and consistent with the benefits provided to the Sponsor in 2005 - 2009 (individually, a \"Benefit,\" and collectively, the \"Benefits\"), including but not limited to the following: (i) displaying prominent identification of the Sponsor's name and/or logo in signage on the race car and racing suits and, where appropriate, on other team equipment (subject to approval by the Sponsor); (ii) making available for the use of the Sponsor (x) the personalities associated with the Racing Team, including without limitation the name, voice, picture, portrait, likeness, persona and/or signature of each driver for endorsements, commercial advertising and promotions in any and all media throughout the world during the term of this Agreement, (y) the Racing Team's home base facilities in Texas, and (z) those facilities designated or assigned for the use of the Racing Team at each race and race location at which the Racing Team actually participates in the race, all for appropriate public relations and other promotional and marketing purposes. Racing agrees that it will actively participate in the Rolex 24 at Daytona in January, 2010. As it concerns (y) and (z) above, access shall be subject to appropriate security and safety restrictions designated by the applicable racing location and the Racing Team;"
+      },
+      "risk_level": "low",
+      "rationale": "The clause grants the Sponsor limited usage rights to the Racing Team's IP (logos, likeness, car image) without transferring ownership, which aligns with the company's policy that each party retains its background IP.",
+      "citations": [
+        {
+          "citation_id": "24cca820d2bc",
+          "playbook_position_id": "ip-each-party-keeps-its-own",
+          "excerpt": "Each party retains all right, title and interest in the intellectual property it owned before this Agreement or develops independently of it. Nothing in this Agreement transfers ownership of a party's intellectual property to the other party."
+        }
+      ],
+      "contract_sources": [],
+      "suggested_fallback": null,
+      "verified": true,
+      "verification_reason": "The clause provides the Sponsor with usage rights to the Racing Team's IP (logos, likeness, car image) without transferring ownership, which directly matches the playbook position that each party retains its background IP. The risk assessment of low is appropriate given the clause’s compliance with the policy, and no fallback is required as none was suggested.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-3",
+        "text": "3. Sponsorship Fee. The Sponsor shall pay to Racing a sponsorship fee in the amount of $750,000.00 for the term of this Agreement, payable in an initial installment payable on or before February 1, 2010 in the amount of $350,000.00 and ten installments of $40,000.00 on or before the first day of each month commencing March 1, 2010 and ending with the installment due on December 1, 2010 (unless this Agreement is sooner terminated pursuant to Section 14 hereof, in which case Sponsor shall have no obligation to make any payments after the date of termination).",
+        "span": {
+          "start": 4262,
+          "end": 4827,
+          "page": 1
+        },
+        "clause_type": "payment_terms",
+        "heading": "3. Sponsorship Fee. The Sponsor shall pay to Racing a sponsorship fee in the amount of $750,000.00 for the term of this Agreement, payable in an initial installment payable on or before February 1, 2010 in the amount of $350,000.00 and ten installments of $40,000.00 on or before the first day of each month commencing March 1, 2010 and ending with the installment due on December 1, 2010 (unless this Agreement is sooner terminated pursuant to Section 14 hereof, in which case Sponsor shall have no obligation to make any payments after the date of termination)."
+      },
+      "risk_level": "medium",
+      "rationale": "The clause sets a fixed installment schedule rather than the net‑30 payment terms preferred or fallback in the playbook, and allows the Sponsor to terminate at any time before 31 Dec 2010 with no notice period, deviating from the termination‑for‑convenience policy that requires 30‑ or 60‑day notice. These differences create a residual exposure for Racing but do not constitute a material breach of policy.",
+      "citations": [
+        {
+          "citation_id": "2bf98c701405",
+          "playbook_position_id": "termination-for-convenience",
+          "excerpt": "Either party may terminate this Agreement for convenience upon thirty (30) days' prior written notice to the other party, without penalty or further liability other than for amounts accrued prior to the effective date of termination."
+        }
+      ],
+      "contract_sources": [
+        {
+          "label": "Section 14",
+          "span": {
+            "start": 14192,
+            "end": 14766,
+            "page": 1
+          },
+          "text": "14. Termination by the Sponsor. Notwithstanding the provisions of Section 1 hereof, the Sponsor shall have the right at any time prior to December 31, 2010 to terminate this Agreement by giving written notice of such termination to Racing. In the event of such a termination, (i) the Sponsor shall have no further obligation to make payments toward the sponsorship fee contemplated in Section 3 hereof, (ii) Racing shall have no further obligation to provide any Benefits hereunder, and (iii) the remaining provisions of this Agreement shall remain in full force and effect.",
+          "truncated": false
+        }
+      ],
+      "suggested_fallback": "Either party may terminate this Agreement for convenience upon sixty (60) days' prior written notice to the other party, without penalty or further liability other than for amounts accrued prior to the effective date of termination.",
+      "verified": true,
+      "verification_reason": "All reviewer claims are supported by the clause and playbook: the contract allows termination without notice, contrary to the playbook’s 30‑day preferred or 60‑day fallback notice requirement, justifying the medium risk assessment; the suggested fallback text matches the playbook fallback verbatim.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-4",
+        "text": "4. Compliance with Applicable Rules and Regulations. Provision of the Benefits pursuant to this Agreement is subject to rules and requirements of each organization and venue hosting a racing event in which the Racing Team competes during the term hereof, and the Sponsor agrees to submit to Racing all advertising and other promotional material relating to each such event in sufficient time to enable Racing to assure compliance with such rules and requirements. If as a result of such rules and requirements Racing is unable to provide a Benefit in the form requested by the Sponsor, Racing shall be permitted to provide a substitute promotion or advertisement in compliance with such requirements. 2",
+        "span": {
+          "start": 4827,
+          "end": 5531,
+          "page": 1
+        },
+        "clause_type": "other",
+        "heading": "4. Compliance with Applicable Rules and Regulations. Provision of the Benefits pursuant to this Agreement is subject to rules and requirements of each organization and venue hosting a racing event in which the Racing Team competes during the term hereof, and the Sponsor agrees to submit to Racing all advertising and other promotional material relating to each such event in sufficient time to enable Racing to assure compliance with such rules and requirements. If as a result of such rules and requirements Racing is unable to provide a Benefit in the form requested by the Sponsor, Racing shall be permitted to provide a substitute promotion or advertisement in compliance with such requirements. 2"
+      },
+      "risk_level": "low",
+      "rationale": "The clause requires the Sponsor to provide promotional materials in time for Racing to ensure compliance with venue rules and allows Racing to substitute promotions if required, aligning with the company's warranty that each party will comply with all applicable laws and regulations.",
+      "citations": [
+        {
+          "citation_id": "63c38393e9ce",
+          "playbook_position_id": "warranty-compliance-and-authority",
+          "excerpt": "Each party warrants that it has full power and authority to enter into this Agreement, and that it will comply with all laws and regulations applicable to its performance under it, including anti-bribery, sanctions and export control laws."
+        }
+      ],
+      "contract_sources": [],
+      "suggested_fallback": "Each party warrants that it has full power and authority to enter into this Agreement and that its performance will not violate any law or any agreement by which it is bound.",
+      "verified": true,
+      "verification_reason": "The reviewer’s claims are supported: the clause mandates sponsor material compliance and allows substitution, which aligns with the playbook warranty on compliance. The suggested fallback exactly matches the playbook fallback text. Therefore the assessment is grounded.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-5",
+        "text": "5. Sponsor's Maximum Obligation; Indemnification. Racing represents to the Sponsor that the Sponsor's aggregate obligation hereunder will not exceed the amount of the sponsorship fee set forth in Section 3 hereof (or such lesser amount as is payable by the Sponsor in the event that this Agreement is terminated pursuant to Section 14 hereof), plus, if applicable, collection costs that may be reasonably incurred by Racing in a legal proceeding to collect all or any part thereof (the \"Maximum Obligation\"). Racing agrees to indemnify the Sponsor and its officers, directors, agents and employees and to hold them harmless from any loss, claim, cost, damage or liability in excess of the Maximum Obligation which (i) the Sponsor shall incur as a result of this Agreement, or (ii) arises from any failure by Racing to perform any of its obligations hereunder.",
+        "span": {
+          "start": 5531,
+          "end": 6392,
+          "page": 1
+        },
+        "clause_type": "indemnification",
+        "heading": "5. Sponsor's Maximum Obligation; Indemnification. Racing represents to the Sponsor that the Sponsor's aggregate obligation hereunder will not exceed the amount of the sponsorship fee set forth in Section 3 hereof (or such lesser amount as is payable by the Sponsor in the event that this Agreement is terminated pursuant to Section 14 hereof), plus, if applicable, collection costs that may be reasonably incurred by Racing in a legal proceeding to collect all or any part thereof (the \"Maximum Obligation\"). Racing agrees to indemnify the Sponsor and its officers, directors, agents and employees and to hold them harmless from any loss, claim, cost, damage or liability in excess of the Maximum Obligation which (i) the Sponsor shall incur as a result of this Agreement, or (ii) arises from any failure by Racing to perform any of its obligations hereunder."
+      },
+      "risk_level": "high",
+      "rationale": "The clause obligates Racing to indemnify the Sponsor for any loss beyond the Maximum Obligation, which effectively provides unlimited indemnity and is unilateral. The company's playbook requires mutual, capped indemnity (mutual-indemnity), so the lack of a liability cap and the one-sided nature represent a material deviation.",
+      "citations": [
+        {
+          "citation_id": "99d7c5a8857f",
+          "playbook_position_id": "mutual-indemnity",
+          "excerpt": "Each party shall defend, indemnify and hold harmless the other party against third-party claims to the extent arising from its own breach of this Agreement or its negligence, subject to the limitations of liability set out in this Agreement."
+        }
+      ],
+      "contract_sources": [
+        {
+          "label": "Section 3",
+          "span": {
+            "start": 4262,
+            "end": 4825,
+            "page": 1
+          },
+          "text": "3. Sponsorship Fee. The Sponsor shall pay to Racing a sponsorship fee in the amount of $750,000.00 for the term of this Agreement, payable in an initial installment payable on or before February 1, 2010 in the amount of $350,000.00 and ten installments of $40,000.00 on or before the first day of each month commencing March 1, 2010 and ending with the installment due on December 1, 2010 (unless this Agreement is sooner terminated pursuant to Section 14 hereof, in which case Sponsor shall have no obligation to make any payments after the date of termination).",
+          "truncated": false
+        },
+        {
+          "label": "Section 14",
+          "span": {
+            "start": 14192,
+            "end": 14766,
+            "page": 1
+          },
+          "text": "14. Termination by the Sponsor. Notwithstanding the provisions of Section 1 hereof, the Sponsor shall have the right at any time prior to December 31, 2010 to terminate this Agreement by giving written notice of such termination to Racing. In the event of such a termination, (i) the Sponsor shall have no further obligation to make payments toward the sponsorship fee contemplated in Section 3 hereof, (ii) Racing shall have no further obligation to provide any Benefits hereunder, and (iii) the remaining provisions of this Agreement shall remain in full force and effect.",
+          "truncated": false
+        }
+      ],
+      "suggested_fallback": "Each party shall defend, indemnify and hold harmless the other party against third-party claims to the extent arising from its own gross negligence or willful misconduct, subject to the limitations of liability set out in this Agreement.",
+      "verified": true,
+      "verification_reason": "The reviewer correctly cites the clause that Racing indemnifies the Sponsor for losses exceeding the defined Maximum Obligation, creating an uncapped, unilateral indemnity. This deviates from the playbook position requiring mutual, capped indemnity. The risk assessment of \"high\" follows from this deviation, and the suggested fallback matches the playbook fallback text verbatim. All claims are supported by the provided clause, excerpts, and playbook.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-6",
+        "text": "6. Retention of Rights. The only rights granted to the Sponsor hereunder are the right to receive the Benefits, and Racing hereby retains all other rights with respect to the Racing Team, including but not limited to logos, symbols, names and other marks and intellectual property of the Racing Team, and any proceeds derived by the Racing Team. The Sponsor hereby retains and does not grant any rights to Racing to use any of its logos, symbols, names or other marks or intellectual property, except for use as described in Section 2 hereof. In the event that this Agreement is terminated or if the sponsorship terminates at the end of the term provided for herein, each of the parties shall retain the rights to use its logos, symbols, names or other marks or intellectual property including, in the case of the Sponsor, the right to use the names and marks \"GAINSCO 99\", \"the GAINSCO 99 Car\", or similar phrases or derivations thereof.",
+        "span": {
+          "start": 6392,
+          "end": 7332,
+          "page": 1
+        },
+        "clause_type": "intellectual_property",
+        "heading": "6. Retention of Rights. The only rights granted to the Sponsor hereunder are the right to receive the Benefits, and Racing hereby retains all other rights with respect to the Racing Team, including but not limited to logos, symbols, names and other marks and intellectual property of the Racing Team, and any proceeds derived by the Racing Team. The Sponsor hereby retains and does not grant any rights to Racing to use any of its logos, symbols, names or other marks or intellectual property, except for use as described in Section 2 hereof. In the event that this Agreement is terminated or if the sponsorship terminates at the end of the term provided for herein, each of the parties shall retain the rights to use its logos, symbols, names or other marks or intellectual property including, in the case of the Sponsor, the right to use the names and marks \"GAINSCO 99\", \"the GAINSCO 99 Car\", or similar phrases or derivations thereof."
+      },
+      "risk_level": "low",
+      "rationale": "The clause explicitly states each party retains all its own intellectual property rights and only grants limited usage rights, which aligns with the company's position that each party retains its background IP.",
+      "citations": [
+        {
+          "citation_id": "24cca820d2bc",
+          "playbook_position_id": "ip-each-party-keeps-its-own",
+          "excerpt": "Each party retains all right, title and interest in the intellectual property it owned before this Agreement or develops independently of it. Nothing in this Agreement transfers ownership of a party's intellectual property to the other party."
+        }
+      ],
+      "contract_sources": [
+        {
+          "label": "Section 2",
+          "span": {
+            "start": 1221,
+            "end": 4260,
+            "page": 1
+          },
+          "text": "2. Advertising and Other Benefits. Subject to payment by the Sponsor of the sponsorship fee provided for herein, during the term of this Agreement Racing shall cause the Racing Team to provide for the Sponsor's benefit all of the benefits customarily associated with the sponsorship of a Daytona Prototype Series racing team and consistent with the benefits provided to the Sponsor in 2005 - 2009 (individually, a \"Benefit,\" and collectively, the \"Benefits\"), including but not limited to the following: (i) displaying prominent identification of the Sponsor's name and/or logo in signage on the race car and racing suits and, where appropriate, on other team equipment (subject to approval by the Sponsor); (ii) making available for the use of the Sponsor (x) the personalities associated with the Racing Team, including without limitation the name, voice, picture, portrait, likeness, persona and/or signature of each driver for endorsements, commercial advertising and promotions in any and all media throughout the world during the term of this Agreement, (y) the Racing Team's home base facilities in Texas, and (z) those facilities designated or assigned for the use of the Racing Team at each race and race location at which the Racing Team actually participates in the race, all for appropriate public relations and other promotional and marketing purposes. Racing agrees that it will actively participate in the Rolex 24 at Daytona in January, 2010. As it concerns (y) and (z) above, access shall be subject to appropriate security and safety restrictions designated by the applicable racing location and the Racing Team;\n\n(iii) making available for the use of the Sponsor a non-racing look-alike (a \"Show Car\") of the GAINSCO 99 race car (the \"Car\") used by the Racing Team. Subject to the Sponsor's first right to use the Show Car, it will also be made available to Racing when such use does not interfere with the Sponsor's use of the Show Car; (iv) allowing the Sponsor the use of the likeness of the Car, including all paint and graphics, for promotion and advertising of or by the Sponsor, and Racing shall be responsible for all necessary consents and permissions from any other sponsors to be sure the Sponsor can use the likeness of the Car as specified herein; (v) prohibiting the endorsement by Racing and any members of Racing, including the drivers, of any entities, products or services which are in direct competition or otherwise inconsistent with the Sponsor or it products or services, unless such endorsement activity is approved in writing by Racing and the Sponsor; and (vi) allowing the Sponsor to use the conference room and other areas of the racing shop and garage for meetings and similar events, provided that the Sponsor gives prior notice of the need for such use, and such use does not interfere with operations of the racing shop and garage and is otherwise consistent with reasonable requirements imposed by Racing to assure orderly operations and provide for adequate safety measures at all times.",
+          "truncated": false
+        }
+      ],
+      "suggested_fallback": null,
+      "verified": true,
+      "verification_reason": "The reviewer’s claim that the clause states each party retains its own intellectual property and that this aligns with the playbook position is directly supported by the clause text and the cited playbook position. No unsupported statements are present, and the suggested fallback is appropriately omitted.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-7",
+        "text": "7. Relationship to Other Sponsors. The Sponsor acknowledges that Racing has arranged and may arrange in the future for other sponsors for the Racing Team. Racing agrees that, during the term of this Agreement, (i) Sponsor shall have the right to approve or disapprove any additional sponsor identified by Racing, and (ii) unless another proposed sponsor has agreed to pay a sponsorship fee that exceeds the amount paid by Sponsor, no other sponsor shall receive any benefit of greater value (including either an equivalent or a more prominent use of another sponsor's name, logo or other identifying information) than the Benefits provided to the Sponsor hereunder.",
+        "span": {
+          "start": 7332,
+          "end": 7999,
+          "page": 1
+        },
+        "clause_type": "non_compete",
+        "heading": "7. Relationship to Other Sponsors. The Sponsor acknowledges that Racing has arranged and may arrange in the future for other sponsors for the Racing Team. Racing agrees that, during the term of this Agreement, (i) Sponsor shall have the right to approve or disapprove any additional sponsor identified by Racing, and (ii) unless another proposed sponsor has agreed to pay a sponsorship fee that exceeds the amount paid by Sponsor, no other sponsor shall receive any benefit of greater value (including either an equivalent or a more prominent use of another sponsor's name, logo or other identifying information) than the Benefits provided to the Sponsor hereunder."
+      },
+      "risk_level": "medium",
+      "rationale": "The clause grants the Sponsor approval rights over additional sponsors and limits benefits to be no greater than the Sponsor's, creating a de facto exclusivity restriction contrary to the playbook's non-exclusivity position. This partial restriction introduces a material deviation but is less extensive than a full exclusivity clause, resulting in a medium risk.",
+      "citations": [
+        {
+          "citation_id": "9022f137f87e",
+          "playbook_position_id": "no-exclusivity",
+          "excerpt": "This Agreement is non-exclusive. Each party remains free to provide to, procure from, or contract with any third party for services of the same or a similar kind, without restriction and without any obligation to the other party."
+        }
+      ],
+      "contract_sources": [],
+      "suggested_fallback": "Any exclusivity granted under this Agreement is limited to the named products, the named territory and a period of no more than twelve (12) months, and lapses if the exclusive party fails to meet the minimum performance targets stated in the Order Form.",
+      "verified": true,
+      "verification_reason": "The reviewer’s claim that the clause creates a de‑facto exclusivity restriction is supported by the clause language granting the Sponsor approval rights over additional sponsors and limiting benefits, which conflicts with the playbook’s non‑exclusivity position. The cited fallback text is identical to the playbook fallback. All statements are backed by the provided evidence, so the assessment is grounded.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-8",
+        "text": "8. Insurance. (a) Racing shall obtain and maintain, at Racing's expense, comprehensive automobile liability insurance covering all owned, non-owned and hired vehicles used by Racing in the Business with limits of not less than $5,000,000 per occurrence combined single limit for personal injury and property damage, including all statutory coverage for all states of operation. Racing shall also provide comprehensive (fire and theft) and collision insurance on each vehicle used in the Business. Racing shall provide the Sponsor a certificate of insurance evidencing \"Gainsco Inc. and all related entities\" as additional insureds, stating that such insurance is primary in coverage to any other insurance which may be available the Sponsor, and providing at least thirty (30) days' prior written notice to the Sponsor of cancellation, modification or material change to the policy.\n\n(b) Racing shall obtain and maintain pursuant to the terms of this Agreement, at its sole expense, the following types of insurance coverage, with minimum limits as set forth below:\n\n(i) Commercial General Liability covering liability arising from premises, operations, independent contractors, personal and advertising injury and contractual liability—$5,000,000 each occurrence. 3\n\n(ii) Racing Owners' Sponsors (Spectators) Legal Liability including Participant Legal Liability—$5,000,000 each occurrence.\n\n(iii) Business Automobile Liability covering all owned, hired and non-owned vehicles—$5,000,000 each occurrence, including statutory coverages for all states of operations.\n\n(iv) Workers Compensation—statutory limits for all states of operation.\n\n(v) Employers Liability—$5,000,000 each employee for bodily injury by accident and $500,000 each employee for bodily injury by disease.\n\nAll policies of insurance procured by Racing herein shall be written as primary policies, not contributing with or in excess of coverage that the Sponsor may carry. If Racing's liability policies do not contain the standard separation of insureds provision, or a substantially similar clause, they shall be endorsed to provide cross-liability coverage.\n\n(c) Racing shall provide the Sponsor with a certificate of insurance evidence compliance with the insurance requirements set forth above. Certificates shall provide that \"Gainsco Inc. and all related entities\" shall be named as additional insureds on all liability policies, stating that such insurance is primary in coverage to any other insurance which may be available to the Sponsor, and providing at least thirty (30) days' prior written notice to the Sponsor of termination, cancellation, modification or material change to the policy.\n\n(d) Such certificates shall be in a form acceptable to, and underwritten by insurance company(ies) reasonably satisfactory to the Sponsor. By requiring insurance herein, the Sponsor does not represent that coverage limits will necessarily be adequate to protect Racing. The purchase of appropriate insurance coverage by Racing or the furnishing of certificates of insurance shall not release Racing from its obligations and liabilities under this Agreement.",
+        "span": {
+          "start": 7999,
+          "end": 11132,
+          "page": 1
+        },
+        "clause_type": "other",
+        "heading": "8. Insurance. (a) Racing shall obtain and maintain, at Racing's expense, comprehensive automobile liability insurance covering all owned, non-owned and hired vehicles used by Racing in the Business with limits of not less than $5,000,000 per occurrence combined single limit for personal injury and property damage, including all statutory coverage for all states of operation. Racing shall also provide comprehensive (fire and theft) and collision insurance on each vehicle used in the Business. Racing shall provide the Sponsor a certificate of insurance evidencing \"Gainsco Inc. and all related entities\" as additional insureds, stating that such insurance is primary in coverage to any other insurance which may be available the Sponsor, and providing at least thirty (30) days' prior written notice to the Sponsor of cancellation, modification or material change to the policy."
+      },
+      "risk_level": "low",
+      "rationale": "The clause mandates insurance limits of $5,000,000 per occurrence for various coverages, exceeding the playbook's preferred minimum of $2,000,000. This satisfies and surpasses the company's standard insurance requirement, presenting no material exposure.",
+      "citations": [
+        {
+          "citation_id": "b287cd898aed",
+          "playbook_position_id": "insurance-standard-limits",
+          "excerpt": "Each party shall maintain, at its own cost, commercial general liability insurance of at least USD 2,000,000 per occurrence and professional liability insurance of at least USD 2,000,000 in the aggregate, and shall provide a certificate of insurance on request."
+        }
+      ],
+      "contract_sources": [],
+      "suggested_fallback": null,
+      "verified": true,
+      "verification_reason": "The reviewer correctly cites the clause's $5,000,000 per occurrence limits, which exceed the playbook's preferred $2,000,000 commercial general liability minimum. The playbook's risk if absent is medium, so with the clause present the low risk assessment is supported. The rationale distinguishes clause requirements from playbook standards and no unsupported claims are made.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-9",
+        "text": "9. Conduct. Racing and all Racing members, including but not limited to all drivers, agree to use best efforts to conduct themselves in such a manner so as not to reflect unfavorably upon the Sponsor or its products. The Sponsor shall have the right to terminate this Agreement on written notice to Racing if any driver, the general manager or any other member of Racing (i) fails to conduct himself/herself in accordance with generally accepted standards of morality, (ii) engages in any activity which reflects adversely on the image, reputation or goodwill of the Sponsor or (iii) disparages the products or services of the Sponsor; provided, however, the Sponsor shall not have the right to terminate this Agreement if Racing, within fifteen (15) days after receipt of written notice by the Sponsor terminates the employment of, or otherwise dismisses from the racing team, the driver(s), general manager(s) or other member(s) of Racing engaging in the offensive conduct. Upon termination, the Sponsor shall be entitled to a pro rata refund of monies paid for services not yet performed by Racing based upon the number of races for the applicable racing season. The Sponsor's decision with respect to all matters arising under this Section shall be conclusive. 4",
+        "span": {
+          "start": 11132,
+          "end": 12400,
+          "page": 1
+        },
+        "clause_type": "termination",
+        "heading": "9. Conduct. Racing and all Racing members, including but not limited to all drivers, agree to use best efforts to conduct themselves in such a manner so as not to reflect unfavorably upon the Sponsor or its products. The Sponsor shall have the right to terminate this Agreement on written notice to Racing if any driver, the general manager or any other member of Racing (i) fails to conduct himself/herself in accordance with generally accepted standards of morality, (ii) engages in any activity which reflects adversely on the image, reputation or goodwill of the Sponsor or (iii) disparages the products or services of the Sponsor; provided, however, the Sponsor shall not have the right to terminate this Agreement if Racing, within fifteen (15) days after receipt of written notice by the Sponsor terminates the employment of, or otherwise dismisses from the racing team, the driver(s), general manager(s) or other member(s) of Racing engaging in the offensive conduct. Upon termination, the Sponsor shall be entitled to a pro rata refund of monies paid for services not yet performed by Racing based upon the number of races for the applicable racing season. The Sponsor's decision with respect to all matters arising under this Section shall be conclusive. 4"
+      },
+      "risk_level": "medium",
+      "rationale": "The clause permits the Sponsor to terminate immediately for conduct breaches, without the 30‑day cure period required by the preferred termination‑for‑cause‑cure position (or 45‑day cure in the fallback). This deviation creates a residual exposure, assessed as medium risk.",
+      "citations": [
+        {
+          "citation_id": "3359d192f820",
+          "playbook_position_id": "termination-for-cause-cure",
+          "excerpt": "Either party may terminate this Agreement for cause if the other party materially breaches it and fails to cure that breach within thirty (30) days after receiving written notice describing the breach in reasonable detail."
+        }
+      ],
+      "contract_sources": [],
+      "suggested_fallback": "Either party may terminate this Agreement for cause if the other party materially breaches it and fails to cure that breach within forty-five (45) days after receiving written notice describing the breach in reasonable detail.",
+      "verified": true,
+      "verification_reason": "The reviewer’s claim that the clause permits immediate termination without the 30‑day cure period required by the preferred playbook position is directly supported by the clause language, which allows the Sponsor to terminate on written notice without a cure period. The playbook position cited requires a 30‑day cure (or 45‑day cure in the fallback). The reviewer correctly identifies this deviation and assigns a medium risk, consistent with the “Risk if absent: medium” note. The suggested fallback text is verbatim the fallback clause from the playbook. All statements are supported by the provided evidence, so the assessment is grounded.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-10",
+        "text": "10. Remedies. If either party breaches any provision of this Agreement, the other party shall be entitled to seek monetary damages and, if appropriate, equitable relief to require the performance of the obligations hereunder.",
+        "span": {
+          "start": 12400,
+          "end": 12627,
+          "page": 1
+        },
+        "clause_type": "other",
+        "heading": "10. Remedies. If either party breaches any provision of this Agreement, the other party shall be entitled to seek monetary damages and, if appropriate, equitable relief to require the performance of the obligations hereunder."
+      },
+      "risk_level": "unknown",
+      "rationale": "The clause grants monetary damages and equitable relief for breaches, but none of the retrieved playbook positions address remedies, damages, or equitable relief. Without a relevant policy to compare, the risk cannot be classified as low, medium, or high.",
+      "citations": [],
+      "contract_sources": [],
+      "suggested_fallback": null,
+      "verified": false,
+      "verification_reason": "assessment has no playbook citations supporting its risk and rationale",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-11",
+        "text": "11. Assignment. Neither party shall assign any of its rights or obligations hereunder without the prior written consent of the other party.",
+        "span": {
+          "start": 12627,
+          "end": 12768,
+          "page": 1
+        },
+        "clause_type": "other",
+        "heading": "11. Assignment. Neither party shall assign any of its rights or obligations hereunder without the prior written consent of the other party."
+      },
+      "risk_level": "medium",
+      "rationale": "The clause requires prior written consent for any assignment and does not include the fallback language that consent cannot be unreasonably withheld nor the exception that a change of control is not an assignment. This deviates from the company's fallback position, potentially restricting permissible corporate restructuring and exposing the company to negotiation risk.",
+      "citations": [
+        {
+          "citation_id": "ecc744658738",
+          "playbook_position_id": "assignment-change-of-control",
+          "excerpt": "Neither party may assign this Agreement without the other party's prior written consent, such consent not to be unreasonably withheld, conditioned or delayed. A change of control is not an assignment for the purposes of this clause."
+        }
+      ],
+      "contract_sources": [],
+      "suggested_fallback": "Neither party may assign this Agreement without the other party's prior written consent, such consent not to be unreasonably withheld, conditioned or delayed. A change of control is not an assignment for the purposes of this clause.",
+      "verified": true,
+      "verification_reason": "The reviewer’s risk assessment and rationale are supported by the clause text, which lacks the fallback language, and the cited playbook fallback is quoted verbatim. The suggested fallback also matches the playbook fallback exactly.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-12",
+        "text": "12. Entire Agreement; Amendment and Waiver; Confidentiality. This Agreement constitutes the entire agreement between Racing and the Sponsor with respect to the subject matter hereof and supercedes all prior agreements and understandings. Any amendment of this Agreement must be by a written instrument signed by both parties, and any waiver of any provision hereof must be in writing, signed by the party agreeing to such waiver. Each of the parties hereto agrees to hold in confidence the terms hereof and, unless otherwise required by law, neither party shall release, disclose or publish any of the terms hereof without the prior written consent of the other party.",
+        "span": {
+          "start": 12768,
+          "end": 13438,
+          "page": 1
+        },
+        "clause_type": "confidentiality",
+        "heading": "12. Entire Agreement; Amendment and Waiver; Confidentiality. This Agreement constitutes the entire agreement between Racing and the Sponsor with respect to the subject matter hereof and supercedes all prior agreements and understandings. Any amendment of this Agreement must be by a written instrument signed by both parties, and any waiver of any provision hereof must be in writing, signed by the party agreeing to such waiver. Each of the parties hereto agrees to hold in confidence the terms hereof and, unless otherwise required by law, neither party shall release, disclose or publish any of the terms hereof without the prior written consent of the other party."
+      },
+      "risk_level": "medium",
+      "rationale": "The clause imposes mutual confidentiality but omits the standard exclusions (public domain, prior knowledge, independent development) required by the preferred confidentiality-mutual position. This deviation creates a residual exposure because the parties lack the usual carve-outs, though it does not constitute a prohibited breach.",
+      "citations": [
+        {
+          "citation_id": "556221eb5774",
+          "playbook_position_id": "confidentiality-mutual",
+          "excerpt": "Each party shall keep the other party's Confidential Information confidential, use it only to perform this Agreement, and protect it with at least the care it uses for its own confidential information. These obligations do not apply to information that is or becomes public through no fault of the receiving party, was already known to it, or is independently developed by it."
+        }
+      ],
+      "contract_sources": [],
+      "suggested_fallback": "Each party shall keep the other party's Confidential Information confidential and use it only to perform this Agreement, provided that a party may disclose Confidential Information to the extent required by law or court order after giving the other party prompt notice and a reasonable opportunity to seek protective relief.",
+      "verified": false,
+      "verification_reason": "The reviewer states a medium risk, but the playbook specifies that absence of the standard exclusions carries a high risk. The clause indeed omits those exclusions, so the correct risk level per the playbook is high, not medium. Therefore the claim about risk level is unsupported.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-13",
+        "text": "13. Notices. All notices and communications to be made with respect to this Agreement shall be in writing and shall be effective only when delivered by (i) hand, (ii) prepaid certified United States mail, return receipt requested, or (iii) overnight delivery service providing proof of delivery, addressed as follows:\n\nIf to Racing: Stallings Capital Group Consultants, Ltd., dba Bob Stallings Racing Attention: Robert W. Stallings, President 4 Windsor Ridge Frisco, Texas 75034\n\nif to the Sponsor: GAINSCO, Inc. Attention: Glenn W. Anderson, President 3333 Lee Parkway, Suite 1200 Dallas, Texas 75219\n\nEither party may change the name or address for notice by providing a written notice of such change in accordance with this Section of the Agreement.",
+        "span": {
+          "start": 13438,
+          "end": 14192,
+          "page": 1
+        },
+        "clause_type": "other",
+        "heading": "13. Notices. All notices and communications to be made with respect to this Agreement shall be in writing and shall be effective only when delivered by (i) hand, (ii) prepaid certified United States mail, return receipt requested, or (iii) overnight delivery service providing proof of delivery, addressed as follows:"
+      },
+      "risk_level": "unknown",
+      "rationale": "The clause addresses notice delivery methods and address changes, but none of the retrieved playbook positions pertain to notice requirements. Consequently, there is no basis to assess compliance or deviation.",
+      "citations": [],
+      "contract_sources": [],
+      "suggested_fallback": null,
+      "verified": false,
+      "verification_reason": "assessment has no playbook citations supporting its risk and rationale",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-14",
+        "text": "14. Termination by the Sponsor. Notwithstanding the provisions of Section 1 hereof, the Sponsor shall have the right at any time prior to December 31, 2010 to terminate this Agreement by giving written notice of such termination to Racing. In the event of such a termination, (i) the Sponsor shall have no further obligation to make payments toward the sponsorship fee contemplated in Section 3 hereof, (ii) Racing shall have no further obligation to provide any Benefits hereunder, and (iii) the remaining provisions of this Agreement shall remain in full force and effect.",
+        "span": {
+          "start": 14192,
+          "end": 14768,
+          "page": 1
+        },
+        "clause_type": "termination",
+        "heading": "14. Termination by the Sponsor. Notwithstanding the provisions of Section 1 hereof, the Sponsor shall have the right at any time prior to December 31, 2010 to terminate this Agreement by giving written notice of such termination to Racing. In the event of such a termination, (i) the Sponsor shall have no further obligation to make payments toward the sponsorship fee contemplated in Section 3 hereof, (ii) Racing shall have no further obligation to provide any Benefits hereunder, and (iii) the remaining provisions of this Agreement shall remain in full force and effect."
+      },
+      "risk_level": "medium",
+      "rationale": "The clause permits the Sponsor to terminate at any time without specifying a notice period, whereas the company's termination-for-convenience policy requires a 30‑day (preferred) or 60‑day (fallback) prior written notice. The absence of any notice requirement constitutes a deviation that creates a medium‑risk exposure.",
+      "citations": [
+        {
+          "citation_id": "284f75c1a5d7",
+          "playbook_position_id": "termination-for-convenience",
+          "excerpt": "Either party may terminate this Agreement for convenience upon sixty (60) days' prior written notice to the other party, without penalty or further liability other than for amounts accrued prior to the effective date of termination."
+        }
+      ],
+      "contract_sources": [
+        {
+          "label": "Section 1",
+          "span": {
+            "start": 1027,
+            "end": 1219,
+            "page": 1
+          },
+          "text": "1. Term. Subject to the provisions of Section 14 hereof, the term of this Agreement and the sponsorship described herein shall commence on January 1, 2010 and extend through December 31, 2010.",
+          "truncated": false
+        },
+        {
+          "label": "Section 3",
+          "span": {
+            "start": 4262,
+            "end": 4825,
+            "page": 1
+          },
+          "text": "3. Sponsorship Fee. The Sponsor shall pay to Racing a sponsorship fee in the amount of $750,000.00 for the term of this Agreement, payable in an initial installment payable on or before February 1, 2010 in the amount of $350,000.00 and ten installments of $40,000.00 on or before the first day of each month commencing March 1, 2010 and ending with the installment due on December 1, 2010 (unless this Agreement is sooner terminated pursuant to Section 14 hereof, in which case Sponsor shall have no obligation to make any payments after the date of termination).",
+          "truncated": false
+        }
+      ],
+      "suggested_fallback": "Either party may terminate this Agreement for convenience upon sixty (60) days' prior written notice to the other party, without penalty or further liability other than for amounts accrued prior to the effective date of termination.",
+      "verified": true,
+      "verification_reason": "The reviewer correctly cites the clause lacking any notice period and compares it to the playbook positions that require 30‑day (preferred) or 60‑day (fallback) notice. The rationale distinguishes the clause’s terms from policy requirements, and the suggested fallback verbatim matches the playbook fallback text. The risk assessment of medium aligns with the playbook’s stated risk if the requirement is absent.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-15",
+        "text": "15. Miscellaneous. (a) This Agreement may be executed in two counterparts, each of which shall be deemed to be an original, but both of which shall constitute a single agreement. 5\n\n(b) The headings and sections of this Agreement are for convenience only and shall not affect the interpretation of any provision hereof.\n\n(c) This Agreement shall be governed and construed in accordance with the internal laws of the State of Texas, without giving effect to principles of conflict of laws.\n\nThis Agreement is executed as of the date first above written.\n\n 6\n\nSTALLINGS CAPITAL GROUP CONSULTANTS, LTD., DBA BOB STALLINGS RACING GAINSCO, INC.\n\nBy: /s/ Robert W. Stallings By: /s/ Glenn W. Anderson Robert W. Stallings, President Glenn W. Anderson, President",
+        "span": {
+          "start": 14768,
+          "end": 15522,
+          "page": 1
+        },
+        "clause_type": "governing_law",
+        "heading": "15. Miscellaneous. (a) This Agreement may be executed in two counterparts, each of which shall be deemed to be an original, but both of which shall constitute a single agreement. 5"
+      },
+      "risk_level": "medium",
+      "rationale": "The clause specifies Texas law, which deviates from the company's preferred New York and fallback Delaware governing law provisions. While a governing law is present, the jurisdiction differs, introducing a moderate exposure compared to the preferred policy.",
+      "citations": [
+        {
+          "citation_id": "f55105757cfa",
+          "playbook_position_id": "governing-law-and-venue",
+          "excerpt": "This Agreement is governed by the laws of the State of New York, without regard to its conflict of laws rules, and the parties submit to the exclusive jurisdiction of the state and federal courts located in New York County, New York."
+        },
+        {
+          "citation_id": "ea9fbb1ac188",
+          "playbook_position_id": "governing-law-and-venue",
+          "excerpt": "This Agreement is governed by the laws of the State of Delaware, without regard to its conflict of laws rules, and the parties submit to the exclusive jurisdiction of the state and federal courts located in Delaware."
+        }
+      ],
+      "contract_sources": [],
+      "suggested_fallback": "This Agreement is governed by the laws of the State of Delaware, without regard to its conflict of laws rules, and the parties submit to the exclusive jurisdiction of the state and federal courts located in Delaware.",
+      "verified": true,
+      "verification_reason": "The reviewer correctly cites the clause specifying Texas law, notes it deviates from the company's preferred New York and fallback Delaware provisions, and the suggested fallback matches the playbook fallback verbatim. The risk assessment aligns with the policy's guidance on deviations, making the assessment supported.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    }
+  ],
+  "metadata": {
+    "parties": [
+      "Stallings Capital Group Consultants, Ltd., a Texas limited partnership dba Bob Stallings Racing",
+      "GAINSCO, INC., a Texas corporation"
+    ],
+    "agreement_date": "January 1, 2010",
+    "effective_date": "January 1, 2010",
+    "expiration_date": "December 31, 2010",
+    "contract_value": null,
+    "governing_law": "the internal laws of the State of Texas"
+  },
+  "disclaimer": "This automated review is for informational purposes only and does not constitute legal advice. Consult qualified counsel before relying on it."
+}

@@ -1,0 +1,94 @@
+[
+  {
+    "clause_id": "clause-26",
+    "type": "termination",
+    "positions": [
+      {
+        "id": "termination-for-convenience",
+        "type": "termination",
+        "score": 1.0
+      },
+      {
+        "id": "confidentiality-term",
+        "type": "confidentiality",
+        "score": 0.9661611845165616
+      },
+      {
+        "id": "termination-for-cause-cure",
+        "type": "termination",
+        "score": 0.8924806460458634
+      },
+      {
+        "id": "post-termination-wind-down",
+        "type": "termination",
+        "score": 0.7895871070947271
+      },
+      {
+        "id": "data-processing-terms",
+        "type": "data_protection",
+        "score": 0.7389463416157798
+      },
+      {
+        "id": "non-compete-bounded",
+        "type": "non_compete",
+        "score": 0.7017664116432756
+      },
+      {
+        "id": "payment-net-30",
+        "type": "payment_terms",
+        "score": 0.6787954422652667
+      },
+      {
+        "id": "renewal-opt-in",
+        "type": "termination",
+        "score": 0.6729353052348401
+      }
+    ]
+  },
+  {
+    "clause_id": "clause-47",
+    "type": "termination",
+    "positions": [
+      {
+        "id": "confidentiality-term",
+        "type": "confidentiality",
+        "score": 1.0
+      },
+      {
+        "id": "termination-for-cause-cure",
+        "type": "termination",
+        "score": 0.8574929329743401
+      },
+      {
+        "id": "liquidated-damages-none",
+        "type": "limitation_of_liability",
+        "score": 0.8077042412432585
+      },
+      {
+        "id": "data-processing-terms",
+        "type": "data_protection",
+        "score": 0.7643942563328177
+      },
+      {
+        "id": "insurance-standard-limits",
+        "type": "other",
+        "score": 0.753451673199107
+      },
+      {
+        "id": "post-termination-wind-down",
+        "type": "termination",
+        "score": 0.7264861589855086
+      },
+      {
+        "id": "termination-for-convenience",
+        "type": "termination",
+        "score": 0.7044914770001696
+      },
+      {
+        "id": "renewal-opt-in",
+        "type": "termination",
+        "score": 0.6008662250726143
+      }
+    ]
+  }
+]

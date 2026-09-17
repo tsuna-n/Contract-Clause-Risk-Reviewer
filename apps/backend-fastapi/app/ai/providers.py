@@ -521,6 +521,8 @@ class OpenAICompatibleChatBackend:
         base_url: str | None,
         timeout_seconds: int,
         disable_thinking: bool = False,
+        provider: str | None = None,
+        provider_allowlist: list[str] | None = None,
     ) -> None:
         self.model = model
         self._api_key = api_key
@@ -529,6 +531,9 @@ class OpenAICompatibleChatBackend:
         self._client = None  # lazily constructed openai.OpenAI
         self._supports_json_schema = True
         self._disable_thinking = disable_thinking
+        self._provider = provider
+        self._provider_allowlist = tuple(provider_allowlist or ())
+        self._mandatory_reasoning = False
         self._supports_thinking_param = True
         self._client_lock = threading.Lock()
 
@@ -544,6 +549,7 @@ class OpenAICompatibleChatBackend:
                         api_key=self._api_key,
                         base_url=self._base_url,
                         timeout=self._timeout_seconds,
+                        max_retries=0,  # LLMClient owns the retry/time budget.
                     )
         return self._client
 
@@ -575,6 +581,33 @@ class OpenAICompatibleChatBackend:
         kwargs: dict[str, Any] = {}
         if response_format is not None:
             kwargs["response_format"] = response_format
+
+        if self._provider == OPENROUTER:
+            # Route only to endpoints that honor the requested schema instead
+            # of silently dropping it. OpenRouter uses its own reasoning API.
+            extra: dict[str, Any] = {"provider": {"require_parameters": True}}
+            if self._provider_allowlist:
+                extra["provider"]["only"] = list(self._provider_allowlist)
+            if self._disable_thinking:
+                extra["reasoning"] = (
+                    {"effort": "low"} if self._mandatory_reasoning else {"enabled": False}
+                )
+            kwargs["extra_body"] = extra
+            try:
+                return self._create(system=system, prompt=prompt, max_tokens=max_tokens, **kwargs)
+            except Exception as exc:
+                if (
+                    not self._disable_thinking
+                    or extra.get("reasoning") != {"enabled": False}
+                    or getattr(exc, "status_code", None) != 400
+                    or "reasoning is mandatory" not in str(exc).lower()
+                ):
+                    raise
+                # Some reasoning models cannot switch it off. Use the lowest
+                # standard effort and remember this explicit capability error.
+                self._mandatory_reasoning = True
+                extra["reasoning"] = {"effort": "low"}
+                return self._create(system=system, prompt=prompt, max_tokens=max_tokens, **kwargs)
 
         # ``thinking`` is Z.AI's parameter, not part of the OpenAI schema, so a
         # host that has never heard of it answers 400. Same probe-and-remember
@@ -610,6 +643,28 @@ class OpenAICompatibleChatBackend:
         self, *, system: str, prompt: str, response_model: type[T], max_tokens: int
     ) -> tuple[T, Usage]:
         schema = _strict_json_schema(response_model.model_json_schema())
+        if self._provider == OPENROUTER:
+            # State the output contract in the prompt as well as the API.
+            # Malformed answers are retried with the same strict schema; they
+            # must not weaken every later call to unconstrained JSON mode.
+            response = self._chat(
+                system=(
+                    f"{system}\n\nReturn a single JSON object matching this schema. "
+                    "No analysis, prose, or code fences.\n"
+                    f"{json.dumps(schema)}"
+                ),
+                prompt=prompt,
+                max_tokens=max_tokens,
+                response_format={
+                    "type": "json_schema",
+                    "json_schema": {
+                        "name": response_model.__name__,
+                        "schema": schema,
+                        "strict": True,
+                    },
+                },
+            )
+            return self._parse(response, response_model)
         probing = self._supports_json_schema
 
         if probing:
@@ -800,9 +855,7 @@ def build_chat_backend(
     timeout = timeout_seconds or settings.llm_timeout_seconds
 
     if provider == GEMINI:
-        return GeminiChatBackend(
-            model=resolved_model, api_key=api_key, timeout_seconds=timeout
-        )
+        return GeminiChatBackend(model=resolved_model, api_key=api_key, timeout_seconds=timeout)
     if provider == ANTHROPIC:
         return AnthropicChatBackend(
             model=resolved_model, api_key=api_key, base_url=base_url, timeout_seconds=timeout
@@ -816,4 +869,6 @@ def build_chat_backend(
         # level per call, and Anthropic does no extended thinking unless
         # ``effort`` is passed, so neither needs telling to stop.
         disable_thinking=settings.llm_thinking == "disabled",
+        provider=provider,
+        provider_allowlist=settings.llm_openrouter_providers,
     )

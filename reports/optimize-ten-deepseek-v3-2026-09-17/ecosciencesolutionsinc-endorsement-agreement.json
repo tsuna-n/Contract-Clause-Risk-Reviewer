@@ -1,0 +1,795 @@
+{
+  "report_id": "206125baf8784a6d8b929490e59b1729",
+  "contract_id": "ecosciencesolutionsinc-endorsement-agreement",
+  "session_id": "eval",
+  "filename": "",
+  "created_at": "2026-09-17T16:48:25.365277Z",
+  "overall_risk": "high",
+  "summary": {
+    "high": 5,
+    "medium": 9,
+    "low": 2,
+    "unknown": 12
+  },
+  "reviews": [
+    {
+      "clause": {
+        "id": "clause-1",
+        "text": "1. Engagement. ESSI engages Talent and Talent hereby accepts the engagement to act as a Spokesperson for ESSI, and to provide his endorsement of all ESSI products and services, domestically and worldwide.",
+        "span": {
+          "start": 267,
+          "end": 473,
+          "page": 1
+        },
+        "clause_type": "other",
+        "heading": "1. Engagement. ESSI engages Talent and Talent hereby accepts the engagement to act as a Spokesperson for ESSI, and to provide his endorsement of all ESSI products and services, domestically and worldwide."
+      },
+      "risk_level": "unknown",
+      "rationale": "The clause is an engagement/appointment provision establishing Talent as a non-exclusive-by-omission spokesperson endorsing ESSI's products domestically and worldwide. The supplied playbook positions concern data processing terms, exclusivity, insurance limits, confidentiality survival, and minimum commitments. None of these obligations is addressed or deviated from by this engagement appointment. The closest candidate, no-exclusivity, is not implicated: the clause does not grant exclusivity, but it also does not include the policy's express non-exclusive freedom language, and no facts establish that exclusivity was granted or is material here. Because no supplied position supports an assessment of this clause's actual obligation, the risk level is unknown rather than low or high.",
+      "citations": [],
+      "suggested_fallback": null,
+      "verified": false,
+      "verification_reason": "assessment has no playbook citations supporting its risk and rationale",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-2",
+        "text": "2. Term of Agreement. The term of this Agreement shall be for one (1) year commencing on the Effective Date and automatically renewing annually thereafter, unless either party provides a thirty-day notice of written termination one to the other (\"Term\").",
+        "span": {
+          "start": 473,
+          "end": 729,
+          "page": 1
+        },
+        "clause_type": "termination",
+        "heading": "2. Term of Agreement. The term of this Agreement shall be for one (1) year commencing on the Effective Date and automatically renewing annually thereafter, unless either party provides a thirty-day notice of written termination one to the other (\"Term\")."
+      },
+      "risk_level": "high",
+      "rationale": "The clause provides for automatic annual renewal with only a 30-day non-renewal notice window and no cap on renewal-term fee increases. This conflicts with the renewal-opt-in policy, whose fallback permits automatic renewal only for successive 12-month terms with non-renewal notice at least 30 days before term end and a renewal fee increase cap of 5%. The absence of any fee-increase cap creates material exposure, and the automatic renewal structure is the policy's targeted concern (risk_if_absent medium), so the unmitigated automatic renewal plus uncapped renewal fees warrants high risk. The clause does contain a 30-day written termination notice, so it is not entirely missing protection, but it is offset by the automatic renewal and lack of fee cap.",
+      "citations": [
+        {
+          "citation_id": "0b788e80e4a0",
+          "playbook_position_id": "renewal-opt-in",
+          "excerpt": "This Agreement shall renew for successive twelve (12) month terms unless either party gives written notice of non-renewal at least thirty (30) days before the end of the then-current term, and the fees for any renewal term shall not increase by more than five percent (5%)."
+        }
+      ],
+      "suggested_fallback": "This Agreement shall renew for successive twelve (12) month terms unless either party gives written notice of non-renewal at least thirty (30) days before the end of the then-current term, and the fees for any renewal term shall not increase by more than five percent (5%).",
+      "verified": true,
+      "verification_reason": "All contract claims are supported by the clause: it provides one-year term with automatic annual renewal and 30-day written notice, and it contains no fee-increase cap. The policy claim accurately reflects the renewal-opt-in preferred position and fallback, and the fallback quotation matches verbatim. The rationale correctly distinguishes the clause's automatic renewal/notice structure from policy's opt-in preference and fallback conditions. A high risk level is arguably defensible given the clause worsens the policy concern by combining automatic renewal, only 30-day notice, and no fee cap, though the playbook labels risk_if_absent as medium.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-3",
+        "text": "3. Grant. During the Term and subject to the limitations set forth in Paragraphs 9 and 10, ESSI shall have the right to use the name, image, likeness, characterization, visual and audio representation of Talent (\"Talent Attributes\") in connection with the ESSI product suite, in the venue(s) as follows:\n\nA. Promotional Territories (\"Territories\") shall include various online, outdoor, radio and television promotional spots (specific promotional spots and content specifics to be mutually agreed upon) promoting the ESSI product suite (\"Commercial Placements\") aired in various venues as determined to best suit the needed promotion of ESSI products;\n\nB. On ESSI's downloaded apps (UseHerbo, Herbo Wallet, FitRx) and websites (www.useherbo.com; www.eccossi.com) (\"Websites\"), of which new ESSI owns and operates downloadable apps and websites may be added to this list at the will of ESSI; and\n\nC. ESSI Natural Supplementation Products.\n\nD. In ESSI product-related press releases (of which only ESSI may produce and publish).\n\nIn connection with any ESSI's usage of Talent Attributes as outlined above in Paragraphs 3(A)-(D) that are applicable to Dietary Supplements, ESSI will feature the following disclaimer in close proximity to said usage: \"STEPHEN MARLEY IS NOT A MEDICAL AUTHORITY. THESE STATEMENTS HAVE NOT BEEN EVALUATED BY THE FOOD AND DRUG ADMINISTRATION. THIS PRODUCT IS NOT INTENDED TO DIAGNOSE, TREAT, CURE OR PREVENT ANY DISEASE.\"\n\n1\n\nSource: ECO SCIENCE SOLUTIONS, INC., 8-K, 11/17/2017",
+        "span": {
+          "start": 729,
+          "end": 2236,
+          "page": 1
+        },
+        "clause_type": "intellectual_property",
+        "heading": "3. Grant. During the Term and subject to the limitations set forth in Paragraphs 9 and 10, ESSI shall have the right to use the name, image, likeness, characterization, visual and audio representation of Talent (\"Talent Attributes\") in connection with the ESSI product suite, in the venue(s) as follows:"
+      },
+      "risk_level": "high",
+      "rationale": "Clause 3(B) expressly allows new ESSI apps and websites to be added to the licensed surface list 'at the will of ESSI', without Talent approval or fixed, enumerated surfaces, and the promotional Territories in 3(A) are likewise open-ended. The relevant playbook position requires every licence to be co-terminous with the agreement and bounded by the metrics stated in the applicable Order Form, with the fallback requiring limits to volume, territory and field of use and revocability on material breach. This is a direct deviation from that requirement rather than a limited one, so the clause presents high risk absent Talent approval or fixed, enumerated surfaces and territory.",
+      "citations": [
+        {
+          "citation_id": "f47055183908",
+          "playbook_position_id": "licence-not-perpetual",
+          "excerpt": "No licence granted under this Agreement is perpetual, irrevocable, or unlimited in volume, territory or field of use. Each licence is co-terminous with this Agreement and bounded by the metrics stated in the applicable Order Form."
+        },
+        {
+          "citation_id": "7249114f13c0",
+          "playbook_position_id": "licence-not-perpetual",
+          "excerpt": "A licence granted under this Agreement may survive termination only for Deliverables already paid for in full, is limited to the volume, territory and field of use stated in the applicable Order Form, and remains revocable on Customer's material breach."
+        }
+      ],
+      "suggested_fallback": "A licence granted under this Agreement may survive termination only for Deliverables already paid for in full, is limited to the volume, territory and field of use stated in the applicable Order Form, and remains revocable on Customer's material breach.",
+      "verified": true,
+      "verification_reason": "The clause text supports the contract claims: 3(B) allows new ESSI apps/websites to be added 'at the will of ESSI', and 3(A) defines Territories open-endedly ('various venues as determined to best suit'), both without enumerated fixed surfaces or Talent approval. The playbook position is accurately described as requiring each licence to be co-terminous and bounded by Order Form metrics, with the fallback limited by volume/territory/field of use and revocable on material breach. The rationale correctly distinguishes clause language from policy requirements and the high risk follows from the open-ended, ESSI-controlled expansion of licensed surfaces and territory. The suggested fallback matches the playbook fallback verbatim.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-4",
+        "text": "4. Duties of Talent and Rights of ESSI. During the Term and subject to the limitations set forth in Paragraphs 9 and 10, Talent agrees to provide ESSI with the following:\n\nA. Upon request by ESSI, two (2) production sessions to be used for the production of the various medias to be used in Commercial placements (\"Production Sessions\"); the location, date and time of the Production Sessions shall be mutually agreed upon by Talent and ESSI. In the event any Production Session exceeds eight (8) hours in duration ESSI and Talent will negotiate in good faith additional compensation to Talent for time in excess of eight (8) hours.\n\nB. Talent will serve as a Special Advisor to ESSI, whose sole responsibility is to be listed as a brand ambassador on the Websites and/or ESSI related press releases. With respect to Talent's position as Special Advisory, Talent will not be responsible for any additional services such as attending meetings, corporate functions, etc.\n\nC. ESSI may request an additional production session(s), or a media tour or personal appearance(s) of Talent for an additional fee to be mutually agreed upon by the parties.",
+        "span": {
+          "start": 2236,
+          "end": 3381,
+          "page": 1
+        },
+        "clause_type": "payment_terms",
+        "heading": "4. Duties of Talent and Rights of ESSI. During the Term and subject to the limitations set forth in Paragraphs 9 and 10, Talent agrees to provide ESSI with the following:"
+      },
+      "risk_level": "high",
+      "rationale": "The clause is silent on whether the counterparty owes any minimum purchase or volume commitment. The cited playbook position supplies the protective affirmative language (that the customer is under no obligation to purchase any minimum quantity and pays only for what it orders) and rates the risk of that protection being absent as high. Because no minimum-commitment protection appears in the clause, the missing protection must be rated high under the applicable policy rather than medium.",
+      "citations": [
+        {
+          "citation_id": "3a04db7db8c2",
+          "playbook_position_id": "no-minimum-commitment",
+          "excerpt": "Customer is under no obligation to purchase any minimum quantity, value or share of its requirements under this Agreement, and shall pay only for the Services it actually orders."
+        }
+      ],
+      "suggested_fallback": "Any minimum purchase commitment under this Agreement shall be stated in the applicable Order Form, shall not exceed the amount Customer committed to in writing, and Customer's sole liability for a shortfall shall be to pay the difference between the committed and the actual volume.",
+      "verified": true,
+      "verification_reason": "The clause contains no minimum purchase or volume commitment provision, supporting the claim that it is silent on this topic. The cited playbook position [no-minimum-commitment] does provide the affirmative protective language quoted and rates the risk of its absence as high, so the policy characterization and risk level follow. The rationale correctly distinguishes the clause's silence from the playbook's requested protection. The suggested fallback matches the playbook fallback text verbatim.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-5",
+        "text": "5. Consideration. As consideration for Talent's services under this Agreement, ESSI agrees as follows:\n\nA. Equity Payment: ESSI will provide Talent with one-million (1,000,000) shares of restricted common stock issued within ten business days of execution of this Agreement. B. Cash Payments:\n\n(1) ESSI will provide monthly payment of Ten Thousand and NO/100 Dollars ($10,000) made payable to Talent for Talent's social communications with its followers on popular social media venues, including, but not limited to, Facebook, Instagram, Twitter and Snap Chat where Talent may communicate about the ESSI product suite (\"Social Communication\"). The monthly Social Communication schedule will be mutually agreed upon by Talent and ESSI one month in advance of the actual month of communications. Once the monthly Social Communication schedule is set, the volume of Posts, Tweets and Snaps will determine the total amount of monthly compensation available to Talent. ESSI's Social Media Manager will keep track of Talent's activity pursuant to ESSI's Company quarter to determine the amount of Cash Payment due for the quarter.\n\n(a) Payments shall be made to Talent in the following manner, and to the following address:",
+        "span": {
+          "start": 3381,
+          "end": 4600,
+          "page": 1
+        },
+        "clause_type": "payment_terms",
+        "heading": "5. Consideration. As consideration for Talent's services under this Agreement, ESSI agrees as follows:"
+      },
+      "risk_level": "unknown",
+      "rationale": "The clause creates an activity-based payment structure: a fixed $10,000 monthly cash payment plus a 1,000,000-share equity grant, with posts, tweets, and snaps determining the total monthly compensation available and ESSI's Social Media Manager tracking activity by quarter. None of the supplied playbook positions fits this obligation. No-minimum-commitment governs a customer's purchase/volume commitment and payment only for services actually ordered; here the clause states a concrete payment amount and an equity grant, and the volume language concerns how much Talent must post, not a cap or floor on ESSI's obligation. Revenue-share-defined covers revenue or profit shares, but this formula is output/activity-based compensation, not a revenue or profit percentage. The remaining positions (insurance, audit rights, liquidated damages) are unrelated to consideration. Material uncertainty remains because the clause is incomplete: it cuts off before specifying payment mechanics, address, deadline, invoice process, and any statement or audit right, and the two instruments (fixed monthly pay versus activity-determined compensation) are internally inconsistent. No supplied position supports a risk rating for these specifics, so the assessment is unknown.",
+      "citations": [],
+      "suggested_fallback": null,
+      "verified": false,
+      "verification_reason": "assessment has no playbook citations supporting its risk and rationale",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-6",
+        "text": "6. Expenses. If applicable, ESSI agrees to provide and pay for the expenses related to Talent's services provided in Paragraph 4, which shall include but not be limited to the following:\n\nA. First-class airfare, first-class ground transportation, hotel accommodations, and meals for Talent; and\n\n2\n\nSource: ECO SCIENCE SOLUTIONS, INC., 8-K, 11/17/2017\n\nB. First-class airfare, ground transportation and hotel accommodations for one (1) representative.",
+        "span": {
+          "start": 4600,
+          "end": 5053,
+          "page": 1
+        },
+        "clause_type": "payment_terms",
+        "heading": "6. Expenses. If applicable, ESSI agrees to provide and pay for the expenses related to Talent's services provided in Paragraph 4, which shall include but not be limited to the following:"
+      },
+      "risk_level": "unknown",
+      "rationale": "The clause is an expense-reimbursement obligation (first-class airfare, ground transportation, hotel, and meals for Talent and one representative). None of the supplied playbook positions govern expense reimbursement: [revenue-share-defined] addresses revenue/profit share calculation, cap, and auditability, not expense obligations; [no-minimum-commitment] addresses minimum purchase/volume commitments; [force-majeure-bounded] addresses excuse of performance; [insurance-standard-limits] addresses insurance; [non-compete-bounded] addresses competition restrictions. The earlier assessment incorrectly applied the revenue-share policy to an expense clause. No supplied position supports a risk rating for this clause, so the risk level is unknown.",
+      "citations": [],
+      "suggested_fallback": null,
+      "verified": false,
+      "verification_reason": "assessment has no playbook citations supporting its risk and rationale",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-7",
+        "text": "7. Union Dues and Fees. Talent represents that the services hereunder shall not be subject to SAG, AFTRA or any other entertainment guild contract of which Talent is now, has been, or will be in the future, bound to and that this Agreement is not in conflict with any contract Talent is bound.",
+        "span": {
+          "start": 5053,
+          "end": 5348,
+          "page": 1
+        },
+        "clause_type": "warranty",
+        "heading": "7. Union Dues and Fees. Talent represents that the services hereunder shall not be subject to SAG, AFTRA or any other entertainment guild contract of which Talent is now, has been, or will be in the future, bound to and that this Agreement is not in conflict with any contract Talent is bound."
+      },
+      "risk_level": "medium",
+      "rationale": "Clause 7 is a union/guild warranty: Talent represents the services are not subject to SAG, AFTRA or other guild contracts and that the Agreement does not conflict with any contract Talent is bound to. This partly aligns with the retrieved warranty of authority and legal compliance position, since it captures the \"no conflict with any agreement by which it is bound\" element. However, the clause is one-sided: it imposes the representation only on Talent, whereas the preferred position requires each party to warrant full power and authority and compliance with applicable laws (including anti-bribery, sanctions and export control). The limited scope means the company lacks the corresponding warranty from the counterparty and lacks express legal/regulatory compliance coverage, a negotiable deviation rather than a fundamental prohibition breach.",
+      "citations": [
+        {
+          "citation_id": "63c38393e9ce",
+          "playbook_position_id": "warranty-compliance-and-authority",
+          "excerpt": "Each party warrants that it has full power and authority to enter into this Agreement, and that it will comply with all laws and regulations applicable to its performance under it, including anti-bribery, sanctions and export control laws."
+        }
+      ],
+      "suggested_fallback": "Each party warrants that it has full power and authority to enter into this Agreement and that its performance will not violate any law or any agreement by which it is bound.",
+      "verified": true,
+      "verification_reason": "The clause text supports the description: Clause 7 is a union/guild representation imposed on Talent and includes a no-conflict warranty. The rationale correctly compares it to the cited playbook position, noting that it is one-sided relative to the 'each party' preferred language and lacks full authority and express legal/regulatory compliance coverage. The medium risk level follows from the cited playbook's medium risk-if-absent position. The suggested fallback matches the playbook fallback verbatim.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-8",
+        "text": "8. Exclusivity. Talent represents and warrants that during the Term and in the Territories, Talent will not endorse or make any appearances or advertisements on behalf of any other product which is directly competitive to ESSI's products.\n\n9.Review, Approval, and Ownership of Commercial Placements. All ESSI uses of Talent Attributes in connection with the Commercial Placements and/or press releases shall be subject to the prior written approval of Talent. Said written approval must be given within five (5) business days of Talent's receipt or said usage shall be deemed unapproved. Any such usage featuring Talent in the Commercial Placements and/or press releases shall be and remain the property of ESSI; however, ESSI shall have the right to use said Commercial Placements and/or press releases solely as outlined in Paragraph 3 and only during the Term. Talent may use said materials in whole or in part solely for the purpose of presenting Talent's work in Talent's personal portfolio, website or otherwise and/or on Talent's agent's website. Such usage may not be sold or transferred.",
+        "span": {
+          "start": 5348,
+          "end": 6446,
+          "page": 1
+        },
+        "clause_type": "non_compete",
+        "heading": "8. Exclusivity. Talent represents and warrants that during the Term and in the Territories, Talent will not endorse or make any appearances or advertisements on behalf of any other product which is directly competitive to ESSI's products."
+      },
+      "risk_level": "high",
+      "rationale": "Clause 8 imposes an exclusivity/non-compete obligation on Talent: during the Term and in the Territories, Talent may not endorse or make appearances or advertisements for any product directly competitive to ESSI's products. The preferred playbook position (no-exclusivity) states the agreement should be non-exclusive and each party free to contract with third parties without restriction. The clause also contains no stated time limit (it runs for the undefined Term), no minimum performance target or lapse condition, and defines the restricted scope by reference to 'the Territories' and 'products directly competitive to ESSI's products', whose breadth is not established in the provided text. The retrieved non-compete-bounded position confirms a non-compete should be bounded in time, territory and scope, with a fallback of at most twelve (12) months post-termination and limited to the territory of actual performance and directly competing services. As drafted there is no duration cap, no performance-based lapse, and the competitive scope is open-ended, so this is a material deviation from both the no-exclusivity preferred position and the non-compete-bounded framework. Because exclusivity is affirmatively granted rather than merely missing, this is not a risk_if_absent analysis, but the absence of any bound makes the exposure material.",
+      "citations": [
+        {
+          "citation_id": "9022f137f87e",
+          "playbook_position_id": "no-exclusivity",
+          "excerpt": "This Agreement is non-exclusive. Each party remains free to provide to, procure from, or contract with any third party for services of the same or a similar kind, without restriction and without any obligation to the other party."
+        },
+        {
+          "citation_id": "f9a7d524be27",
+          "playbook_position_id": "no-exclusivity",
+          "excerpt": "Any exclusivity granted under this Agreement is limited to the named products, the named territory and a period of no more than twelve (12) months, and lapses if the exclusive party fails to meet the minimum performance targets stated in the Order Form."
+        },
+        {
+          "citation_id": "a7c01ef92ee7",
+          "playbook_position_id": "non-compete-bounded",
+          "excerpt": "Any non-compete obligation under this Agreement shall be limited to twelve (12) months after termination, to the territory in which the restricted party actually performed, and to services that directly compete with those supplied under this Agreement."
+        }
+      ],
+      "suggested_fallback": "Any exclusivity granted under this Agreement is limited to the named products, the named territory and a period of no more than twelve (12) months, and lapses if the exclusive party fails to meet the minimum performance targets stated in the Order Form.",
+      "verified": true,
+      "verification_reason": "All claims are supported. The clause 8 exclusivity/non-compete restriction on Talent (during the Term, in the Territories, against directly competitive products) is accurately described. Policy claims match the cited positions: the no-exclusivity preferred text is quoted correctly, and the non-compete-bounded fallback is accurately paraphrased. The risk level (high) follows from comparing an affirmatively-granted, unbounded exclusivity/non-compete against preferred positions requiring non-exclusivity or strict bounding, and both playbook entries list risk_if_absent as high for analogous exposure. The rationale correctly distinguishes clause text (undefined Term, open-ended 'Territories' and competitive scope) from policy requests (non-exclusive or bounded to 12 months, named products/territory, performance lapse), and correctly notes this is not a mere risk_if_absent case. The suggested fallback matches the no-exclusivity fallback verbatim.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-9",
+        "text": "9.1 Press Releases. Talent may not, at any time, individually, or through his agent, manager, family, friends, or associates publish a press release relative to ESSI without first obtaining the written consent and approval of ESSI's management and counsel. In the event Talent does publish any such press release, this Agreement shall be null and void and any outstanding balance owed to Talent shall be voided and the 1,000,000 Shares of ESSI common stock issued to Talent returned to the Company.",
+        "span": {
+          "start": 6446,
+          "end": 6946,
+          "page": 1
+        },
+        "clause_type": "confidentiality",
+        "heading": "9.1 Press Releases. Talent may not, at any time, individually, or through his agent, manager, family, friends, or associates publish a press release relative to ESSI without first obtaining the written consent and approval of ESSI's management and counsel. In the event Talent does publish any such press release, this Agreement shall be null and void and any outstanding balance owed to Talent shall be voided and the 1,000,000 Shares of ESSI common stock issued to Talent returned to the Company."
+      },
+      "risk_level": "high",
+      "rationale": "The clause is a one-sided press-release prohibition that binds only Talent and imposes a disproportionate forfeiture remedy (agreement voided, outstanding balance voided, and 1,000,000 shares returned) for any unapproved press release by Talent or even by his family, friends, or associates. It lacks any mutuality, carve-out for legally required disclosure, notice-and-cure, or proportionality between breach and remedy. The relevant confidentiality policy requires mutual confidentiality with standard exclusions and a law/court-order disclosure carve-out (confidentiality-mutual); the clause's one-way restriction and broad trigger (conduct of third parties beyond Talent's control) is a material deviation, and the absence of those protections is a missing critical protection within the relevant scope.",
+      "citations": [
+        {
+          "citation_id": "556221eb5774",
+          "playbook_position_id": "confidentiality-mutual",
+          "excerpt": "Each party shall keep the other party's Confidential Information confidential, use it only to perform this Agreement, and protect it with at least the care it uses for its own confidential information. These obligations do not apply to information that is or becomes public through no fault of the receiving party, was already known to it, or is independently developed by it."
+        },
+        {
+          "citation_id": "3e8d363067f8",
+          "playbook_position_id": "confidentiality-mutual",
+          "excerpt": "Each party shall keep the other party's Confidential Information confidential and use it only to perform this Agreement, provided that a party may disclose Confidential Information to the extent required by law or court order after giving the other party prompt notice and a reasonable opportunity to seek protective relief."
+        },
+        {
+          "citation_id": "05c95fde9902",
+          "playbook_position_id": "confidentiality-term",
+          "excerpt": "The confidentiality obligations in this Agreement survive for three (3) years after termination or expiry, and indefinitely with respect to trade secrets for so long as they remain trade secrets under applicable law."
+        }
+      ],
+      "suggested_fallback": "Each party shall keep the other party's Confidential Information confidential and use it only to perform this Agreement, provided that a party may disclose Confidential Information to the extent required by law or court order after giving the other party prompt notice and a reasonable opportunity to seek protective relief.",
+      "verified": true,
+      "verification_reason": "The assessment accurately reflects the clause: it is a one-sided press-release prohibition binding only Talent, with a disproportionate forfeiture remedy (agreement voided, balance voided, 1,000,000 shares returned), and it extends to Talent's agent, manager, family, friends, or associates—third parties beyond Talent's control. The cited playbook confidentiality-mutual policy does require mutuality, standard exclusions, and a law/court-order disclosure carve-out with notice, so the clause's one-way restriction and lack of those protections is a supported deviation. The risk level of high follows from the comparison: the cited playbook positions label confidentiality-mutual as 'Risk if absent: high,' and the clause lacks the required mutual confidentiality protections. The rationale properly distinguishes what the clause states from what policy requests, and the suggested fallback matches the confidentiality-mutual fallback text verbatim. The additional citation of confidentiality-term is unnecessary but not incorrect; it does not undermine the assessment.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-10",
+        "text": "10. Termination for Cause\n\nA. ESSI shall have the right to terminate this Agreement upon ten (10) days prior written notice to Talent in the event Talent fails to perform the duties set forth in Paragraph 4 hereof or breaches any other covenant or agreement set forth herein and fails to cure same (if curable) within seven (7) days of receipt of written notice. Such termination shall relieve ESSI of its obligation to provide any further consideration pursuant to this Agreement. B. Talent shall have the right to terminate this Agreement upon ten (10) days prior written notice to ESSI in the event of the occurrence of any of the following: (1) ESSI adjudicates as insolvent or declares bankruptcy; or (2) ESSI fails to provide consideration due pursuant to this Agreement, within ten (10) days following the date such consideration is due hereunder, provided that ESSI is notified in writing of such non-payment by Talent and such payment by ESSI is not made within three (3) days following such notification; or (3) ESSI breaches any representation, warranty, covenant or agreement set forth herein and fails to cure same (if curable) within seven (7) days of receipt of written notice. Furthermore, ESSI agrees that such termination shall not relieve it of its obligation to provide consideration as contemplated hereunder. Talent shall not have waived any of its rights at law or in equity by exercising any provision of this paragraph.\n\nC. ESSI's rights to the use of Talent and Talent's Attributes as set forth in Paragraphs 3 and 4 shall end immediately should this Agreement be terminated pursuant to Paragraph 10(A) or Paragraph 10(B) above.",
+        "span": {
+          "start": 6946,
+          "end": 8602,
+          "page": 1
+        },
+        "clause_type": "termination",
+        "heading": "10. Termination for Cause"
+      },
+      "risk_level": "medium",
+      "rationale": "The clause's termination-for-cause regime deviates from the cited playbook cure framework. The [termination-for-cause-cure] position sets a preferred 30-day cure period and a more breaching-party-favorable 45-day fallback, both measured from written notice describing the breach in reasonable detail. The clause instead allows ESSI to terminate for Talent's non-performance or breach after a 7-day cure window, and allows Talent to terminate for ESSI's breach after a 7-day cure window, with a separate 10-day (plus 3-day post-notice) cure for non-payment. These cure windows are shorter than the policy's 30/45-day benchmarks, creating a residual exposure that is limited and negotiable; the direction of the deviation is grounded, but the clause does not omit a separately mandatory notice-detail requirement or impose an independently high-risk non-payment term, since the policy does not address non-payment cure separately. The remaining retrieved positions (termination-for-convenience, assignment-change-of-control, renewal-opt-in, liquidated-damages-none) are not relevant to this clause's termination-for-cause obligations and are not applied.",
+      "citations": [
+        {
+          "citation_id": "3359d192f820",
+          "playbook_position_id": "termination-for-cause-cure",
+          "excerpt": "Either party may terminate this Agreement for cause if the other party materially breaches it and fails to cure that breach within thirty (30) days after receiving written notice describing the breach in reasonable detail."
+        },
+        {
+          "citation_id": "66372187197a",
+          "playbook_position_id": "termination-for-cause-cure",
+          "excerpt": "Either party may terminate this Agreement for cause if the other party materially breaches it and fails to cure that breach within forty-five (45) days after receiving written notice describing the breach in reasonable detail."
+        }
+      ],
+      "suggested_fallback": "Either party may terminate this Agreement for cause if the other party materially breaches it and fails to cure that breach within forty-five (45) days after receiving written notice describing the breach in reasonable detail.",
+      "verified": true,
+      "verification_reason": "All claims are supported by the evidence. Contract claims match the clause: ESSI termination for Talent non-performance/breach with a 7-day cure window (10(A)), Talent termination for ESSI breach with a 7-day cure window, and a separate non-payment cure of 10 days plus 3 days post-notification (10(B)(1)-(3)). The playbook policy claims are accurate: preferred 30-day and fallback 45-day cure measured from written notice describing the breach in reasonable detail. The medium risk level follows from the deviation (7/10 days vs. 30/45-day benchmarks, flagged as medium per 'risk if absent: medium'). The rationale properly distinguishes what the clause states from what policy requests, correctly notes the policy does not separately address non-payment cure, and the suggested fallback matches the playbook fallback verbatim.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-11",
+        "text": "10. Notices. All notices provided for herein shall be given in writing by hand delivery, courier service, or by certified mail return receipt requested to the addresses of the parties set forth as follows (unless change of address by notice to the other party is given as provided in this paragraph 10):\n\n3\n\nSource: ECO SCIENCE SOLUTIONS, INC., 8-K, 11/17/2017\n\n If to Talent:\n\nMr. Stephen Marley 16115 SW 117t h Ave Suite 21-A Miami, Florida 33177 If to ESSI: Mr. Jeffery Taylor, President 1135 Makawao Avenue, Suite 103-188 Makawao, Hawaii 96768 with a copy to: Sharon Mitchell, Corporate Counsel for ESSI\n\nSharon D. Mitchell SD Mitchell & Associates, PLC 829 Harcourt Rd. Grosse Pointe Park, Michigan 48230 11. Licensing. Nothing contained herein shall be construed to convey to ESSI any right to use the names, trademarks, service marks, symbols, logos, emblems colors, etc. (\"Marks\"), of the Bob Marley Family Foundation, or any other organization with which the Talent is or has been associated. All rights to the use of such Marks must be acquired from the appropriate rights holder, and if such Marks are used by ESSI then, in such event ESSI (a) shall provide Talent in advance with satisfactory evidence of ESSI's right to use such Marks and (b) agree to indemnify, protect and hold Talent harmless from and against any and all claims, damages and/or losses which may arise from ESSI's use of such Marks.",
+        "span": {
+          "start": 8602,
+          "end": 10018,
+          "page": 1
+        },
+        "clause_type": "intellectual_property",
+        "heading": "10. Notices. All notices provided for herein shall be given in writing by hand delivery, courier service, or by certified mail return receipt requested to the addresses of the parties set forth as follows (unless change of address by notice to the other party is given as provided in this paragraph 10):"
+      },
+      "risk_level": "unknown",
+      "rationale": "Clause 11 concerns restrictions on ESSI's right to use the Foundation's and Talent-associated Marks, evidence of ESSI's right to use them, and ESSI's indemnity in favor of Talent. None of the supplied playbook positions addresses trademark or mark licensing, mark usage rights, evidence/authorization requirements, or a one-way indemnity for mark use. The cited ip-each-party-keeps-its-own position is about ownership of background and independently developed IP and transfers of ownership, which this clause does not address; although it lists a high risk if absent, its scope is background IP retention, not Marks licensing. The mutual-indemnity position is likewise inapplicable because Clause 11's indemnity runs only from ESSI to Talent and is tied specifically to Marks use rather than breach or negligence. Because no supplied position supports an assessment of this clause, the risk level is unknown.",
+      "citations": [],
+      "suggested_fallback": null,
+      "verified": false,
+      "verification_reason": "assessment has no playbook citations supporting its risk and rationale",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-12",
+        "text": "12. Representations and Warranties of ESSI. Talent relies upon ESSI's skill and judgment and also upon the following representations of ESSI which shall be in effect throughout the term of this Agreement:\n\nA. ESSI's products are, and will remain, merchantable and fit for the purpose for which they are intended, and\n\nB. ESSI's products do, and will, conform at all times to all applicable federal, state and local laws, rules, regulations, ordinances, and other enactments and industry standards, including, but not limited to, those relating to product safety.\n\n4\n\nSource: ECO SCIENCE SOLUTIONS, INC., 8-K, 11/17/2017",
+        "span": {
+          "start": 10018,
+          "end": 10639,
+          "page": 1
+        },
+        "clause_type": "warranty",
+        "heading": "12. Representations and Warranties of ESSI. Talent relies upon ESSI's skill and judgment and also upon the following representations of ESSI which shall be in effect throughout the term of this Agreement:"
+      },
+      "risk_level": "medium",
+      "rationale": "Clause 12 provides only ESSI's one-sided product warranties (merchantability, fitness for purpose, and compliance with laws and industry standards) and omits any warranty of corporate power and authority for either party. The relevant playbook position [warranty-compliance-and-authority] supplies both: the preferred form covers each party's authority plus legal compliance (including anti-bribery, sanctions and export control), and the fallback covers authority plus a no-violation-of-law warranty. The clause's product-compliance representation partially overlaps the compliance warranty but is narrower and party-specific, so the deviation is limited rather than a wholesale absence of protection; the authority warranty is the concrete missing protection. This is negotiable exposure, so medium rather than high.",
+      "citations": [
+        {
+          "citation_id": "63c38393e9ce",
+          "playbook_position_id": "warranty-compliance-and-authority",
+          "excerpt": "Each party warrants that it has full power and authority to enter into this Agreement, and that it will comply with all laws and regulations applicable to its performance under it, including anti-bribery, sanctions and export control laws."
+        }
+      ],
+      "suggested_fallback": "Each party warrants that it has full power and authority to enter into this Agreement and that its performance will not violate any law or any agreement by which it is bound.",
+      "verified": true,
+      "verification_reason": "Contract claims are supported: Clause 12 contains only ESSI's representations (merchantability/fitness for purpose and product-law/industry-standards compliance) and no authority or general-law-compliance warranty for either party. Policy claims are supported by the cited position, whose preferred form includes authority plus legal compliance (anti-bribery, sanctions, export control) and whose fallback includes authority plus a no-violation warranty; risk-if-absent is medium. The rationale correctly distinguishes the clause's product-specific, ESSI-only compliance representation from the playbook's mutual authority and general compliance warranty, and the medium risk follows from the partial overlap plus missing authority warranty. The suggested fallback matches the playbook fallback text verbatim.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-13",
+        "text": "13. Indemnity. ESSI shall be solely responsible for all liability arising out of production, distribution and sale of its product(s). ESSI hereby agrees to indemnify, defend and hold harmless Talent, his agents, representatives and employees (referred to collectively as \"Talent Indemnities\") from and against any and all claims, actions, causes of action, damages, injuries, expenses, liabilities (joint and several), penalties fines, attorney fees, court costs, and any other expenses incurred by Talent Indemnities arising out of (1) breach by ESSI of any of the terms, representations or warranties made by ESSI in this Agreement; or (2) ESSI product liability or trademark patent or other proprietary right infringement; or (3) errors, omissions, fraudulent or negligent acts by ESSI, its employees, agents or subcontractors in connection with (i) any advertising featuring Talent; (ii) with the performance of ESSI's duties and obligations under this Agreement; (iii) with the production, distribution, promotion, marketing and sales of products including related product packaging; and/or (iv) with the operation and management of its production and distribution facilities, however caused.",
+        "span": {
+          "start": 10639,
+          "end": 11838,
+          "page": 1
+        },
+        "clause_type": "indemnification",
+        "heading": "13. Indemnity. ESSI shall be solely responsible for all liability arising out of production, distribution and sale of its product(s). ESSI hereby agrees to indemnify, defend and hold harmless Talent, his agents, representatives and employees (referred to collectively as \"Talent Indemnities\") from and against any and all claims, actions, causes of action, damages, injuries, expenses, liabilities (joint and several), penalties fines, attorney fees, court costs, and any other expenses incurred by Talent Indemnities arising out of (1) breach by ESSI of any of the terms, representations or warranties made by ESSI in this Agreement; or (2) ESSI product liability or trademark patent or other proprietary right infringement; or (3) errors, omissions, fraudulent or negligent acts by ESSI, its employees, agents or subcontractors in connection with (i) any advertising featuring Talent; (ii) with the performance of ESSI's duties and obligations under this Agreement; (iii) with the production, distribution, promotion, marketing and sales of products including related product packaging; and/or (iv) with the operation and management of its production and distribution facilities, however caused."
+      },
+      "risk_level": "medium",
+      "rationale": "The clause imposes a broad, one-way indemnity on ESSI, covering all liability, joint and several damages, penalties, fines, and fees. It materially deviates from the mutual, capped preferred position and does not state that ESSI's indemnification obligations are subject to any limitation of liability. Because the clause only references ESSI's obligations and provides no overall cap or mutual indemnity, exposure is one-sided and potentially uncapped; this is a negotiable deviation rather than a clear prohibition breach. The IP infringement indemnity is present on the ESSI side, so the IP infringement policy is at least partly addressed.",
+      "citations": [
+        {
+          "citation_id": "99d7c5a8857f",
+          "playbook_position_id": "mutual-indemnity",
+          "excerpt": "Each party shall defend, indemnify and hold harmless the other party against third-party claims to the extent arising from its own breach of this Agreement or its negligence, subject to the limitations of liability set out in this Agreement."
+        },
+        {
+          "citation_id": "d4dd8fc5821e",
+          "playbook_position_id": "liability-uncapped-carve-outs",
+          "excerpt": "The limitations of liability in this Agreement shall not apply to a party's indemnification obligations, breach of confidentiality, or liability arising from its fraud, gross negligence or willful misconduct. No other exclusion from the cap applies."
+        },
+        {
+          "citation_id": "7df19cd4ae10",
+          "playbook_position_id": "ip-infringement-indemnity",
+          "excerpt": "Supplier shall defend and indemnify Customer against any third-party claim alleging that the Services or Deliverables infringe that third party's intellectual property rights, and shall pay any damages finally awarded or agreed in settlement."
+        }
+      ],
+      "suggested_fallback": "Each party shall defend, indemnify and hold harmless the other party against third-party claims to the extent arising from its own gross negligence or willful misconduct, subject to the limitations of liability set out in this Agreement.",
+      "verified": true,
+      "verification_reason": "The assessment is supported. The clause does contain a broad one-way indemnity running only from ESSI to Talent, covering 'any and all claims...damages...liabilities (joint and several), penalties fines, attorney fees, court costs,' with no mutual obligation and no reference to any liability cap—accurately described. The deviation from the [mutual-indemnity] preferred position (mutual, capped, subject to limitations of liability) is correctly identified, and the clause indeed does not make ESSI's obligations subject to any limitation. The rationale distinguishes what the clause states (one-way, uncapped) from what policy requests (mutual/capped), as required. The IP infringement point is accurate: the clause does include an IP/trademark/patent infringement indemnity on the ESSI side, so the reviewer correctly notes [ip-infringement-indemnity] is 'at least partly addressed' rather than fully absent. The suggested fallback matches the [mutual-indemnity] fallback text verbatim. Risk level of medium is defensible: the primary cited gap (mutual-indemnity) carries medium risk if absent, and the clause is not a clear prohibition breach. One minor note: the clause's uncapped nature could also implicate [liability-uncapped-carve-outs] (high if absent), but that policy concerns carve-outs from a cap, and no cap is established here, so the medium rating remains reasonable rather than an error.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-14",
+        "text": "13.1 ESSI shall not be obligated to indemnify Talent with respect to damages which are the result of the active negligence or willful misconduct of Talent. 14. Relationship of Parties. Nothing contained in this Agreement shall be deemed or construed to place the parties in the relationship of partners, joint venture participants, principal-agents, or employer-employee, it being understood that the parties hereto are and will remain independent contractors in all respects and neither party shall have any right to obligate or bind the other in any manner whatsoever.",
+        "span": {
+          "start": 11838,
+          "end": 12410,
+          "page": 1
+        },
+        "clause_type": "indemnification",
+        "heading": "13.1 ESSI shall not be obligated to indemnify Talent with respect to damages which are the result of the active negligence or willful misconduct of Talent. 14. Relationship of Parties. Nothing contained in this Agreement shall be deemed or construed to place the parties in the relationship of partners, joint venture participants, principal-agents, or employer-employee, it being understood that the parties hereto are and will remain independent contractors in all respects and neither party shall have any right to obligate or bind the other in any manner whatsoever."
+      },
+      "risk_level": "medium",
+      "rationale": "The clause only carves back ESSI's indemnity obligation for Talent's active negligence or willful misconduct. The relevant policy is the mutual, capped indemnity position (mutual-indemnity), which requires each party to indemnify the other for third-party claims arising from its own breach or negligence (preferred), or at minimum gross negligence or willful misconduct (fallback). The clause addresses only one side of that mutuality and limits the carve-back to active negligence/willful misconduct, leaving no affirmative Talent indemnity to ESSI. The separate relationship-of-parties disclaimer is unrelated to any supplied position and should not drive a risk finding. This is a limited deviation from the mutual-indemnity policy that is negotiable, warranting medium rather than high risk because the corporate relationship disclaimer is a standard, low-impact term and no critical protection is wholly absent within this scope.",
+      "citations": [
+        {
+          "citation_id": "99d7c5a8857f",
+          "playbook_position_id": "mutual-indemnity",
+          "excerpt": "Each party shall defend, indemnify and hold harmless the other party against third-party claims to the extent arising from its own breach of this Agreement or its negligence, subject to the limitations of liability set out in this Agreement."
+        }
+      ],
+      "suggested_fallback": "Each party shall defend, indemnify and hold harmless the other party against third-party claims to the extent arising from its own gross negligence or willful misconduct, subject to the limitations of liability set out in this Agreement.",
+      "verified": true,
+      "verification_reason": "The clause text supports the assessment: Section 13.1 only provides an imdemnity carve-back for ESSI regarding Talent's active negligence or willful misconduct, with no affirmative Talent indemnity to ESSI, matching the rationale's description. The cited playbook position [mutual-indemnity] is accurately quoted (preferred language about breach/negligence; fallback language about gross negligence/willful misconduct), and the suggested fallback matches the playbook fallback verbatim. The medium risk rating and the rationale's note that the relationship-of-parties disclaimer is unrelated and should not drive the finding are consistent with the cited policy and clause. Although the policy's preferred language references 'negligence' rather than 'active negligence,' the rationale correctly distinguishes the clause's carve-back from the mutuality policy, and the fallback aligns at the gross negligence/willful misconduct standard.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-15",
+        "text": "15. Assignment. Neither this Agreement nor any of the rights or obligations contained herein may be assigned or transferred by either party without the prior written consent of the other party.",
+        "span": {
+          "start": 12410,
+          "end": 12605,
+          "page": 1
+        },
+        "clause_type": "other",
+        "heading": "15. Assignment. Neither this Agreement nor any of the rights or obligations contained herein may be assigned or transferred by either party without the prior written consent of the other party."
+      },
+      "risk_level": "medium",
+      "rationale": "The clause requires prior written consent for assignment by either party, which aligns with the playbook's baseline consent requirement. However, it omits the preferred exception permitting assignment to a successor on notice without consent in a merger, acquisition, or sale of substantially all assets, and it does not include the fallback protections (consent not unreasonably withheld; change of control not treated as an assignment). This is a limited, negotiable deviation rather than a prohibition breach, since the retrieved position's own risk-if-absent rating is medium.",
+      "citations": [
+        {
+          "citation_id": "49364fcfdf78",
+          "playbook_position_id": "assignment-change-of-control",
+          "excerpt": "Neither party may assign this Agreement without the other party's prior written consent, except that either party may assign it in its entirety, on notice and without consent, to a successor in connection with a merger, acquisition or sale of all or substantially all of its assets."
+        },
+        {
+          "citation_id": "ecc744658738",
+          "playbook_position_id": "assignment-change-of-control",
+          "excerpt": "Neither party may assign this Agreement without the other party's prior written consent, such consent not to be unreasonably withheld, conditioned or delayed. A change of control is not an assignment for the purposes of this clause."
+        }
+      ],
+      "suggested_fallback": "Neither party may assign this Agreement without the other party's prior written consent, such consent not to be unreasonably withheld, conditioned or delayed. A change of control is not an assignment for the purposes of this clause.",
+      "verified": true,
+      "verification_reason": "All claims are supported. The clause indeed requires prior written consent for assignment by either party, matching the policy baseline. The reviewer correctly notes the absence of the preferred successor/change-of-control exception and the fallback protections. The medium risk follows from the playbook's 'risk if absent' rating of medium, and the deviation is fairly characterized as limited and negotiable since the baseline consent requirement is present. The suggested fallback matches the cited playbook fallback text verbatim.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-16",
+        "text": "16. Authority to Contract. Each of the parties hereto represents and warrants that it has full right and power to enter into this Agreement, to perform all obligations to be performed by it hereunder, and to grant all rights hereunder granted without violating the legal or equitable rights of any other person or entity, and that the execution and performance of this Agreement will not conflict with or result in a breach of or default under any of the terms or conditions of any agreement to which either party has agreed, or is a party, or may be bound.",
+        "span": {
+          "start": 12605,
+          "end": 13164,
+          "page": 1
+        },
+        "clause_type": "warranty",
+        "heading": "16. Authority to Contract. Each of the parties hereto represents and warrants that it has full right and power to enter into this Agreement, to perform all obligations to be performed by it hereunder, and to grant all rights hereunder granted without violating the legal or equitable rights of any other person or entity, and that the execution and performance of this Agreement will not conflict with or result in a breach of or default under any of the terms or conditions of any agreement to which either party has agreed, or is a party, or may be bound."
+      },
+      "risk_level": "medium",
+      "rationale": "The clause is an authority-to-contract warranty: each party warrants full right and power to enter and perform, and that execution and performance will not conflict with, breach, or default under any agreement to which it is bound. This materially aligns with the fallback position on authority and non-breach of agreements, but it omits any warranty of legal compliance or non-violation of law, which the fallback expressly requires and the preferred position reinforces with compliance with applicable laws and regulations. That missing law-compliance protection is a limited, negotiable residual exposure rather than a full satisfaction of policy, so the risk is medium.",
+      "citations": [
+        {
+          "citation_id": "d5095abb2441",
+          "playbook_position_id": "warranty-compliance-and-authority",
+          "excerpt": "Each party warrants that it has full power and authority to enter into this Agreement and that its performance will not violate any law or any agreement by which it is bound."
+        }
+      ],
+      "suggested_fallback": "Each party warrants that it has full power and authority to enter into this Agreement and that its performance will not violate any law or any agreement by which it is bound.",
+      "verified": true,
+      "verification_reason": "All claims are supported. The clause indeed contains an authority-to-contract warranty covering full right and power to enter and perform, and non-conflict/non-breach/non-default under any agreement to which either party is bound. The reviewer correctly contrasts this with the cited playbook: the fallback requires authority plus that performance 'will not violate any law or any agreement by which it is bound,' and the preferred position adds legal compliance (anti-bribery, sanctions, export control). The clause omits any law-compliance/non-violation-of-law warranty, so the rationale correctly identifies the gap and the reviewer's suggested fallback matches the playbook fallback verbatim. The medium risk level follows: the clause substantially aligns with the fallback on authority and agreement non-breach but misses the law-compliance element, which the playbook treats as the policy ask; 'medium' is consistent with the playbook's 'risk if absent: medium' posture for the compliance/authority warranty.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-17",
+        "text": "17. Construction of Agreement. Each party acknowledges that it has participated in the negotiation of this Agreement and that no provision of this Agreement shall be construed against or he interpreted to the disadvantage of any party hereto by any court or other governmental or judicial authority by reason of such party having or deemed to have structured, dictated or drafted such provision.",
+        "span": {
+          "start": 13164,
+          "end": 13561,
+          "page": 1
+        },
+        "clause_type": "other",
+        "heading": "17. Construction of Agreement. Each party acknowledges that it has participated in the negotiation of this Agreement and that no provision of this Agreement shall be construed against or he interpreted to the disadvantage of any party hereto by any court or other governmental or judicial authority by reason of such party having or deemed to have structured, dictated or drafted such provision."
+      },
+      "risk_level": "unknown",
+      "rationale": "The clause is a rule of construction (contra proferentem waiver) allocating interpretive risk between the parties. None of the retrieved playbook positions addresses interpretive rules, contra proferentem, or drafting responsibility: warranty-compliance-and-authority concerns authority/legal compliance, confidentiality-mutual concerns information handling, assignment-change-of-control concerns transfer, liability-no-consequential-damages concerns damage exclusions, and mutual-indemnity concerns third-party claim indemnities. Because no supplied position covers this clause's subject matter, no supported risk assessment can be made.",
+      "citations": [],
+      "suggested_fallback": null,
+      "verified": false,
+      "verification_reason": "assessment has no playbook citations supporting its risk and rationale",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-18",
+        "text": "18. Modification. This Agreement constitutes the entire agreement with respect to the subject matter contained herein and supersedes all previous communications and agreements between the parties pertaining to the subject matter hereof, whether written or oral. The terms of this Agreement may not be modified, waived, amended, discharged, terminated, or supplemented, or otherwise changed, except by a written document executed by an authorized representative of each party.",
+        "span": {
+          "start": 13561,
+          "end": 14038,
+          "page": 1
+        },
+        "clause_type": "other",
+        "heading": "18. Modification. This Agreement constitutes the entire agreement with respect to the subject matter contained herein and supersedes all previous communications and agreements between the parties pertaining to the subject matter hereof, whether written or oral. The terms of this Agreement may not be modified, waived, amended, discharged, terminated, or supplemented, or otherwise changed, except by a written document executed by an authorized representative of each party."
+      },
+      "risk_level": "unknown",
+      "rationale": "The clause is a standard entire-agreement and no-modification-except-in-writing provision. It does not concern assignment or change of control, liquidated damages or termination fees, indemnification, audit rights, or confidentiality, so none of the retrieved playbook positions is applicable and no position can ground a risk assessment. No supplied policy governs boilerplate amendment clauses; accordingly the risk is unknown rather than a deviation.",
+      "citations": [],
+      "suggested_fallback": null,
+      "verified": false,
+      "verification_reason": "assessment has no playbook citations supporting its risk and rationale",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-19",
+        "text": "19. No Waiver. A waiver by either party of any of the terms or conditions of this Agreement in any instance shall not be deemed or construed to be a waiver of such term or condition for the future, or of any subsequent breach thereof, or any other term or condition of this Agreement. All remedies, rights, undertakings, obligations, and agreements contained in this Agreement shall be cumulative and none of them shall be in limitation of any other remedy, right, undertaking, obligation or agreement of either party.",
+        "span": {
+          "start": 14038,
+          "end": 14558,
+          "page": 1
+        },
+        "clause_type": "other",
+        "heading": "19. No Waiver. A waiver by either party of any of the terms or conditions of this Agreement in any instance shall not be deemed or construed to be a waiver of such term or condition for the future, or of any subsequent breach thereof, or any other term or condition of this Agreement. All remedies, rights, undertakings, obligations, and agreements contained in this Agreement shall be cumulative and none of them shall be in limitation of any other remedy, right, undertaking, obligation or agreement of either party."
+      },
+      "risk_level": "unknown",
+      "rationale": "The clause is a boilerplate no-waiver and cumulative-remedies provision; it does not impose liquidated damages, a termination fee, a liability cap or exclusion, assignment restrictions, renewal terms, or purchase commitments. None of the retrieved playbook positions (liquidated damages, consequential damages, assignment/change of control, renewal opt-in, minimum commitment) addresses the subject matter of this clause, so no position supports a risk assessment. The absence of a liability limitation elsewhere in the agreement cannot be evaluated from this clause alone, and inferring that would go beyond the supplied evidence.",
+      "citations": [],
+      "suggested_fallback": null,
+      "verified": false,
+      "verification_reason": "assessment has no playbook citations supporting its risk and rationale",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-20",
+        "text": "20. Severability. If any provision of this Agreement, as applied to either party or to any circumstance, shall be adjudged by a court of competent jurisdiction to be void or unenforceable, whether at law or in equity, then such determination shall in no way affect any other provision of this Agreement, or the validity or enforceability of this Agreement.",
+        "span": {
+          "start": 14558,
+          "end": 14916,
+          "page": 1
+        },
+        "clause_type": "other",
+        "heading": "20. Severability. If any provision of this Agreement, as applied to either party or to any circumstance, shall be adjudged by a court of competent jurisdiction to be void or unenforceable, whether at law or in equity, then such determination shall in no way affect any other provision of this Agreement, or the validity or enforceability of this Agreement."
+      },
+      "risk_level": "unknown",
+      "rationale": "The clause is a severability provision addressing the effect of an unenforceable provision. None of the retrieved playbook positions concern severability; they cover limitation of liability (consequential damages, liquidated damages), assignment/change of control, confidentiality, and minimum purchase commitments. No supplied position supports an assessment of this clause, so the risk is unknown.",
+      "citations": [],
+      "suggested_fallback": null,
+      "verified": false,
+      "verification_reason": "assessment has no playbook citations supporting its risk and rationale",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-21",
+        "text": "21. Choice of Law. Regardless of the place of execution hereof, this Agreement, all amendments hereto, and any and all issues or controversies arising here from or related hereto, shall be governed by and construed exclusively in accordance with the laws and decisions of the State of Michigan.\n\n5\n\nSource: ECO SCIENCE SOLUTIONS, INC., 8-K, 11/17/2017",
+        "span": {
+          "start": 14916,
+          "end": 15269,
+          "page": 1
+        },
+        "clause_type": "governing_law",
+        "heading": "21. Choice of Law. Regardless of the place of execution hereof, this Agreement, all amendments hereto, and any and all issues or controversies arising here from or related hereto, shall be governed by and construed exclusively in accordance with the laws and decisions of the State of Michigan."
+      },
+      "risk_level": "medium",
+      "rationale": "The clause selects Michigan law and omits any exclusive venue provision, while the governing-law playbook position requires the laws of New York (preferred) or Delaware (fallback), together with exclusive jurisdiction in the corresponding courts. This is a deviation from both the preferred and acceptable fallback wording and leaves venue unspecified, but it is a negotiable deviation rather than a prohibition breach, so it rates medium rather than high.",
+      "citations": [
+        {
+          "citation_id": "f55105757cfa",
+          "playbook_position_id": "governing-law-and-venue",
+          "excerpt": "This Agreement is governed by the laws of the State of New York, without regard to its conflict of laws rules, and the parties submit to the exclusive jurisdiction of the state and federal courts located in New York County, New York."
+        }
+      ],
+      "suggested_fallback": "This Agreement is governed by the laws of the State of Delaware, without regard to its conflict of laws rules, and the parties submit to the exclusive jurisdiction of the state and federal courts located in Delaware.",
+      "verified": true,
+      "verification_reason": "The clause states Michigan law governs and indeed omits any venue provision — supported by the clause text. The playbook position requires New York law/venue (preferred) or Delaware (fallback), so the clause deviates from both; the rationale correctly distinguishes the clause (Michigan law, no venue) from policy (NY or DE with exclusive jurisdiction). Risk of medium is reasonable: playbook says 'risk if absent: low,' and this is a deviation (not an absence) that is negotiable rather than a prohibition breach, so escalating above low to medium is defensible. The suggested fallback matches the cited fallback text verbatim. Note: the citation list only quotes the preferred New York text, but the fallback text used in the assessment matches the cited playbook fallback position exactly.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-22",
+        "text": "22. Attorneys' Fees. If any action is necessary to enforce the provisions of this Agreement, including any claims or demands, or to interpret this Agreement, the prevailing party shall be entitled to reasonable attorneys' fees, costs and necessary disbursements in addition to any other relief to which it may otherwise he entitled.",
+        "span": {
+          "start": 15269,
+          "end": 15603,
+          "page": 1
+        },
+        "clause_type": "other",
+        "heading": "22. Attorneys' Fees. If any action is necessary to enforce the provisions of this Agreement, including any claims or demands, or to interpret this Agreement, the prevailing party shall be entitled to reasonable attorneys' fees, costs and necessary disbursements in addition to any other relief to which it may otherwise he entitled."
+      },
+      "risk_level": "low",
+      "rationale": "The clause is a prevailing-party attorneys' fees provision, a subject none of the five retrieved playbook positions address: they cover liability caps, mutual indemnity, liquidated damages/termination fees, confidentiality, and termination-for-cause cure periods. Because no supplied position speaks to fee-shifting obligations, the clause does not deviate from any relevant preferred or fallback wording. It allocates fees to the prevailing party in enforcement or interpretation actions and preserves other relief, and it is expressly reciprocal rather than one-sided. The closest position, liability-cap-fees, concerns aggregate liability caps rather than fee awards and is not a prohibition on fee-shifting, so it does not establish exposure here. Rating is low on the basis that the clause is consistent with the only potentially adjacent policy scope and no relevant position is contravened; the concrete limitation is that the playbook contains no position directly governing attorneys' fees.",
+      "citations": [
+        {
+          "citation_id": "47b592e38611",
+          "playbook_position_id": "liability-cap-fees",
+          "excerpt": "Each party's total aggregate liability arising out of or related to this Agreement shall not exceed the fees paid or payable under this Agreement in the twelve (12) months preceding the event giving rise to the claim."
+        },
+        {
+          "citation_id": "99d7c5a8857f",
+          "playbook_position_id": "mutual-indemnity",
+          "excerpt": "Each party shall defend, indemnify and hold harmless the other party against third-party claims to the extent arising from its own breach of this Agreement or its negligence, subject to the limitations of liability set out in this Agreement."
+        }
+      ],
+      "suggested_fallback": null,
+      "verified": false,
+      "verification_reason": "The risk level and rationale are not supported by the cited playbook positions. The clause is a prevailing-party attorneys' fees provision, and the only relevant cited position is [liability-cap-fees], which states 'Risk if absent: high' and requires aggregate liability to be capped at fees paid/payable. The reviewer correctly notes the position concerns liability caps but then discounts it as 'not a prohibition on fee-shifting' — that is an unsupported inference that effectively reads the high-risk position out of scope without any playbook text saying so. More fundamentally, the reviewer asserts the playbook has 'five retrieved playbook positions' covering liability caps, mutual indemnity, liquidated damages/termination fees, confidentiality, and termination-for-cause cure periods, but only two positions are cited; claims about uncited positions are unverifiable. The 'low' rating does not follow from the cited evidence: where no position directly governs fee-shifting, the assessment cannot support a low risk on the basis that no position is contravened; at minimum it should be flagged as out-of-scope/unaddressed rather than low, and the presence of the high-risk liability-cap-fees provision weighs against a low rating. The rationale also fails to properly distinguish clause text from policy: it treats the clause's reciprocity as satisfying policy, but no cited policy requires reciprocity in fee-shifting. Suggested fallback 'None' is acceptable only if no fallback applies, but the reviewer did not address whether the high-risk liability-cap position's fallback (2x fees) should inform fee exposure.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-23",
+        "text": "23. Captions: Structure. Section headings used in this Agreement are for convenience of reference only and shall not in any way affect the interpretation of any section of this Agreement or of the Agreement itself.",
+        "span": {
+          "start": 15603,
+          "end": 15819,
+          "page": 1
+        },
+        "clause_type": "other",
+        "heading": "23. Captions: Structure. Section headings used in this Agreement are for convenience of reference only and shall not in any way affect the interpretation of any section of this Agreement or of the Agreement itself."
+      },
+      "risk_level": "unknown",
+      "rationale": "The clause is a standard headings/captions interpretive provision stating that section headings do not affect interpretation. None of the retrieved playbook positions address headings, interpretation, or contract construction; they cover termination for convenience, third-party beneficiaries, liquidated damages, governing law/venue, and renewal. Because no supplied position is relevant to this clause's subject matter, no supported assessment can be made.",
+      "citations": [],
+      "suggested_fallback": null,
+      "verified": false,
+      "verification_reason": "assessment has no playbook citations supporting its risk and rationale",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-24",
+        "text": "24. Time is of the Essence. Time is of the essence with respect to the performance of the duties and obligations hereunder.",
+        "span": {
+          "start": 15819,
+          "end": 15944,
+          "page": 1
+        },
+        "clause_type": "other",
+        "heading": "24. Time is of the Essence. Time is of the essence with respect to the performance of the duties and obligations hereunder."
+      },
+      "risk_level": "unknown",
+      "rationale": "The clause is a generic \"time is of the essence\" provision that does not address any of the retrieved playbook subjects (confidentiality term/mutual confidentiality, governing law and venue, limitation of liability, or third-party beneficiaries). None of the supplied positions is relevant to the obligations in this clause, so no supported risk assessment can be made.",
+      "citations": [],
+      "suggested_fallback": null,
+      "verified": false,
+      "verification_reason": "assessment has no playbook citations supporting its risk and rationale",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-25",
+        "text": "25. Counterparts. This Agreement may be executed in one or more counterparts, each of which shall be deemed an original and all of which when taken together shall be construed as a single instrument. This Agreement may be executed by facsimile or other electronic transmissions, and signatures on any facsimile or electronic transmission copy hereof shall be deemed authorized original signatures.",
+        "span": {
+          "start": 15944,
+          "end": 16343,
+          "page": 1
+        },
+        "clause_type": "other",
+        "heading": "25. Counterparts. This Agreement may be executed in one or more counterparts, each of which shall be deemed an original and all of which when taken together shall be construed as a single instrument. This Agreement may be executed by facsimile or other electronic transmissions, and signatures on any facsimile or electronic transmission copy hereof shall be deemed authorized original signatures."
+      },
+      "risk_level": "unknown",
+      "rationale": "This clause addresses execution in counterparts and electronic signatures only. None of the supplied playbook positions (assignment/change of control, liquidated damages, consequential damages, warranty authority/compliance, confidentiality) bear on counterparts or electronic execution, so there is no relevant policy benchmark to assess against. A missing protection cannot be identified within scope because the cited policies govern unrelated subjects. No assessment is possible from the supplied positions.",
+      "citations": [],
+      "suggested_fallback": null,
+      "verified": false,
+      "verification_reason": "assessment has no playbook citations supporting its risk and rationale",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-26",
+        "text": "26. No Third-Party Beneficiaries. This Agreement is not for the benefit of any third party and shall be deemed not to give any right or remedy to such third party, whether referred to herein or not.",
+        "span": {
+          "start": 16343,
+          "end": 16543,
+          "page": 1
+        },
+        "clause_type": "other",
+        "heading": "26. No Third-Party Beneficiaries. This Agreement is not for the benefit of any third party and shall be deemed not to give any right or remedy to such third party, whether referred to herein or not."
+      },
+      "risk_level": "low",
+      "rationale": "The clause excludes any third-party beneficiary rights, aligning with the playbook's preferred position that the agreement is for the parties and their permitted successors and assigns only and that no other person may enforce its terms. The absence of an express reference to permitted successors and assigns is a wording difference, not a material deviation or missing protection, so the clause meets the relevant policy.",
+      "citations": [
+        {
+          "citation_id": "9e110330b955",
+          "playbook_position_id": "no-third-party-beneficiaries",
+          "excerpt": "This Agreement is for the benefit of the parties and their permitted successors and assigns only. No other person has any right to enforce any of its terms."
+        }
+      ],
+      "suggested_fallback": null,
+      "verified": true,
+      "verification_reason": "The clause's exclusion of third-party rights supports the low-risk characterization, consistent with the playbook's low-risk-if-absent designation. The rationale accurately notes the clause lacks an express reference to permitted successors and assigns while correctly treating this as a wording difference rather than a material deviation. The policy position cited (preferred language about the agreement being for the parties and permitted successors/assigns only, with no other person able to enforce) is fairly compared to the clause. No fallback was suggested, which is appropriate given the clause already satisfies the policy intent.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-27",
+        "text": "27. Recitals. The recitals contained in this Agreement are true and correct and are incorporated herein by reference.",
+        "span": {
+          "start": 16543,
+          "end": 16662,
+          "page": 1
+        },
+        "clause_type": "other",
+        "heading": "27. Recitals. The recitals contained in this Agreement are true and correct and are incorporated herein by reference."
+      },
+      "risk_level": "unknown",
+      "rationale": "The clause is a generic recitals-incorporation provision, stating that the recitals are true and correct and are incorporated by reference. None of the retrieved playbook positions address recitals or their incorporation/verification: governing law/venue, employee non-solicit, renewal, confidentiality, and warranty of authority/compliance are all unrelated subjects. Because no supplied position bears on this clause's obligation, no supported assessment can be made. Material uncertainty: the clause treats recitals as warranted true without any indicated remedy or qualifier, but the playbook provides no standard against which to rate that.",
+      "citations": [],
+      "suggested_fallback": null,
+      "verified": false,
+      "verification_reason": "assessment has no playbook citations supporting its risk and rationale",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-28",
+        "text": "28. Confidentiality and Non-Disclosure\n\nA. Talent's endorsement and position of spokesperson of ESSI is for the sole purpose of the endorsement of the Company's products, and to offer information, based upon Talent's use and knowledge of ESSI's products. At no time whatsoever, in any manner whatsoever, is Talent authorized to discuss ESSI's financial condition, either in speculation or actual knowledge of such.\n\nB. Talent's position as a special advisor may provide Talent access to information that has not been made public and Talent agrees, to, at all times, keep in strict confidence any information he may come across that is not yet public, including, but not limited to, information about ESSI's stock, new products, acquisitions, and/or any other corporate action the Company may take, or has taken. Confidential treatment of this information extends to non-disclosure to Talent's friends, family, business associates, and any other person seeking information regarding the Company's financial information, stock, or corporate actions.\n\n6\n\nSource: ECO SCIENCE SOLUTIONS, INC., 8-K, 11/17/2017\n\nThe parties hereto have caused this Agreement to be executed and delivered as of the date first above written.\n\nSTEPHEN MARLEY\n\nBy: /s/Stephen Marley Stephen Marley Talent\n\nECO SCIENCES SOLUTIONS, INC.\n\nBy: /s/Jeffery Taylor Jeffery Taylor CEO\n\n7\n\nSource: ECO SCIENCE SOLUTIONS, INC., 8-K, 11/17/2017",
+        "span": {
+          "start": 16662,
+          "end": 18068,
+          "page": 1
+        },
+        "clause_type": "confidentiality",
+        "heading": "28. Confidentiality and Non-Disclosure"
+      },
+      "risk_level": "medium",
+      "rationale": "The clause imposes a one-way, indefinite confidentiality obligation on Talent, covering ESSI's non-public information and barring any disclosure, with no standard exclusions (public information, prior knowledge, independent development, legally compelled disclosure), no permitted-use limitation, and no fixed survival period. The relevant retained position [confidentiality-mutual] reflects a mutual obligation with standard exclusions, and [confidentiality-term] expects a fixed survival period with indefinite protection only for trade secrets. The clause's indefinite, exclusion-free, one-sided obligation deviates from these expectations, a limited but negotiable residual exposure rather than a complete absence of confidentiality protection.",
+      "citations": [
+        {
+          "citation_id": "556221eb5774",
+          "playbook_position_id": "confidentiality-mutual",
+          "excerpt": "Each party shall keep the other party's Confidential Information confidential, use it only to perform this Agreement, and protect it with at least the care it uses for its own confidential information. These obligations do not apply to information that is or becomes public through no fault of the receiving party, was already known to it, or is independently developed by it."
+        },
+        {
+          "citation_id": "05c95fde9902",
+          "playbook_position_id": "confidentiality-term",
+          "excerpt": "The confidentiality obligations in this Agreement survive for three (3) years after termination or expiry, and indefinitely with respect to trade secrets for so long as they remain trade secrets under applicable law."
+        }
+      ],
+      "suggested_fallback": "The confidentiality obligations in this Agreement survive for five (5) years after termination or expiry, and indefinitely with respect to trade secrets for so long as they remain trade secrets under applicable law.",
+      "verified": true,
+      "verification_reason": "The assessment accurately reflects the clause and the playbook. The clause text supports the claim of a one-way obligation on Talent (Section 28 obligates 'Talent' to keep information confidential, with no reciprocal duty on ESSI), indefinite duration (no time limit stated), no standard exclusions, no permitted-use limitation, and no fixed survival period. The cited playbook positions support the policy expectations: [confidentiality-mutual] contains mutual confidentiality with exclusions and no permitted-use/duration limit, and [confidentiality-term] expects a fixed survival period (3 years preferred, 5 years fallback) with indefinite protection only for trade secrets. The rationale correctly distinguishes the clause's actual one-sided, indefinite, exclusion-free terms from what policy requests. The suggested fallback matches the [confidentiality-term] fallback text verbatim. The medium risk level is reasonable given these deviations.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    }
+  ],
+  "metadata": {
+    "parties": [
+      "Eco Science Solutions, Inc. (\"ESSI\"), a Nevada corporation",
+      "Stephen Marley (\"Talent\"), an individual"
+    ],
+    "agreement_date": "14th day of November 2017",
+    "effective_date": "14th day of November 2017",
+    "expiration_date": null,
+    "contract_value": null,
+    "governing_law": null
+  },
+  "disclaimer": "This automated review is for informational purposes only and does not constitute legal advice. Consult qualified counsel before relying on it."
+}

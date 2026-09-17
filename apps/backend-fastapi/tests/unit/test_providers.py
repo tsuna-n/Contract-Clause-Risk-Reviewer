@@ -140,9 +140,7 @@ def test_embedding_provider_follows_chat_unless_that_vendor_cannot_embed() -> No
     assert resolve_embedding_provider(_settings(llm_provider="openrouter")) == OPENROUTER
     # An explicit setting wins over both.
     assert (
-        resolve_embedding_provider(
-            _settings(llm_provider="anthropic", embedding_provider="zai")
-        )
+        resolve_embedding_provider(_settings(llm_provider="anthropic", embedding_provider="zai"))
         == ZAI
     )
 
@@ -183,9 +181,7 @@ def test_embedding_model_defaults_per_provider_and_rejects_the_ones_that_cannot(
     ],
 )
 def test_build_chat_backend_picks_the_right_adapter(provider, model, expected) -> None:
-    backend = build_chat_backend(
-        _settings(llm_provider=provider, llm_model=model, llm_api_key="k")
-    )
+    backend = build_chat_backend(_settings(llm_provider=provider, llm_model=model, llm_api_key="k"))
     assert isinstance(backend, expected)
 
 
@@ -252,9 +248,7 @@ class _FakeAnthropicMessages:
 def _anthropic_backend(
     response, *, model: str = "claude-opus-5", reject_effort: bool = False
 ) -> tuple[AnthropicChatBackend, _FakeAnthropicMessages]:
-    backend = AnthropicChatBackend(
-        model=model, api_key="k", base_url=None, timeout_seconds=30
-    )
+    backend = AnthropicChatBackend(model=model, api_key="k", base_url=None, timeout_seconds=30)
     messages = _FakeAnthropicMessages(response, reject_effort=reject_effort)
     backend._client = type("_Client", (), {"messages": messages})()
     return backend, messages
@@ -341,9 +335,7 @@ class _FakeOpenAIUsage:
 class _FakeChoice:
     def __init__(self, content: str, *, finish_reason: str = "stop", reasoning: str = "") -> None:
         self.finish_reason = finish_reason
-        self.message = type(
-            "_Message", (), {"content": content, "reasoning_content": reasoning}
-        )()
+        self.message = type("_Message", (), {"content": content, "reasoning_content": reasoning})()
 
 
 class _FakeOpenAIResponse:
@@ -538,6 +530,98 @@ def test_thinking_is_switched_off_when_configured() -> None:
     assert completions.calls[0]["extra_body"] == {"thinking": {"type": "disabled"}}
 
 
+def test_openrouter_requires_schema_support_and_uses_its_reasoning_parameter() -> None:
+    completions = _FakeCompletions('{"risk_level": "high", "rationale": "no cap"}')
+    backend = _openai_backend(completions, disable_thinking=True)
+    backend._provider = "openrouter"
+    parsed, _ = backend.complete_structured(
+        system="sys", prompt="clause", response_model=_Verdict, max_tokens=512
+    )
+    assert parsed.risk_level == "high"
+    assert completions.calls[0]["extra_body"] == {
+        "provider": {"require_parameters": True},
+        "reasoning": {"enabled": False},
+    }
+    assert "rationale" in completions.calls[0]["messages"][0]["content"]
+
+
+def test_openrouter_routes_to_the_configured_provider_allowlist() -> None:
+    completions = _FakeCompletions('{"risk_level": "low", "rationale": "capped"}')
+    backend = _openai_backend(completions)
+    backend._provider = "openrouter"
+    backend._provider_allowlist = ("Groq", "Cerebras")
+    backend.complete_structured(
+        system="sys", prompt="clause", response_model=_Verdict, max_tokens=512
+    )
+    assert completions.calls[0]["extra_body"]["provider"] == {
+        "only": ["Groq", "Cerebras"],
+        "require_parameters": True,
+    }
+
+
+def test_openrouter_malformed_answers_never_disable_strict_schema() -> None:
+    completions = _FakeCompletions('{"analysis": "not an assessment"}')
+    backend = _openai_backend(completions)
+    backend._provider = "openrouter"
+    for _ in range(2):
+        with pytest.raises(ValidationError):
+            backend.complete_structured(
+                system="sys", prompt="clause", response_model=_Verdict, max_tokens=512
+            )
+    assert len(completions.calls) == 2
+    assert all(call["response_format"]["type"] == "json_schema" for call in completions.calls)
+
+
+def test_openrouter_mandatory_reasoning_uses_low_effort_and_remembers() -> None:
+    completions = _FakeCompletions(
+        '{"risk_level": "low", "rationale": "capped"}',
+        fail_first_with=_BadRequest(
+            "Reasoning is mandatory for this endpoint and cannot be disabled."
+        ),
+    )
+    backend = _openai_backend(completions, disable_thinking=True)
+    backend._provider = "openrouter"
+    for _ in range(2):
+        parsed, _ = backend.complete_structured(
+            system="sys", prompt="clause", response_model=_Verdict, max_tokens=512
+        )
+        assert parsed.risk_level == "low"
+    assert len(completions.calls) == 3
+    assert completions.calls[-1]["extra_body"]["reasoning"] == {"effort": "low"}
+    assert all(call["response_format"]["type"] == "json_schema" for call in completions.calls)
+
+
+def test_concurrent_mandatory_reasoning_rejections_all_retry_with_low_effort() -> None:
+    import threading
+    from concurrent.futures import ThreadPoolExecutor
+
+    barrier = threading.Barrier(4)
+
+    class ConcurrentCompletions(_FakeCompletions):
+        def create(self, **kwargs):
+            if kwargs["extra_body"].get("reasoning") == {"enabled": False}:
+                barrier.wait(timeout=5)
+                raise _BadRequest(
+                    "Reasoning is mandatory for this endpoint and cannot be disabled."
+                )
+            return super().create(**kwargs)
+
+    completions = ConcurrentCompletions('{"risk_level": "low", "rationale": "capped"}')
+    backend = _openai_backend(completions, disable_thinking=True)
+    backend._provider = "openrouter"
+    with ThreadPoolExecutor(max_workers=4) as pool:
+        results = list(
+            pool.map(
+                lambda _: backend.complete_structured(
+                    system="sys", prompt="clause", response_model=_Verdict, max_tokens=512
+                ),
+                range(4),
+            )
+        )
+    assert len(results) == 4
+    assert all(parsed.risk_level == "low" for parsed, _ in results)
+
+
 def test_a_host_that_rejects_thinking_is_asked_again_without_it_once() -> None:
     """``thinking`` is Z.AI's, not OpenAI's, so other hosts answer 400."""
     completions = _FakeCompletions(
@@ -624,12 +708,8 @@ def test_llm_client_accumulates_usage_across_calls() -> None:
     backend, _ = _anthropic_backend(_FakeAnthropicResponse(verdict))
     client = LLMClient(backend=backend)
 
-    client.complete_structured(
-        system="s", prompt="p", response_model=_Verdict, max_tokens=64
-    )
-    client.complete_structured(
-        system="s", prompt="p", response_model=_Verdict, max_tokens=64
-    )
+    client.complete_structured(system="s", prompt="p", response_model=_Verdict, max_tokens=64)
+    client.complete_structured(system="s", prompt="p", response_model=_Verdict, max_tokens=64)
 
     assert client.usage == Usage(input_tokens=22, output_tokens=14, cache_read_input_tokens=6)
     assert client.model == "claude-opus-5"

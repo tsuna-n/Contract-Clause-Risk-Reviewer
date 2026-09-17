@@ -157,3 +157,17 @@ def test_missing_contract_fixture_is_skipped_not_fatal(tmp_path: Path) -> None:
     metrics = run_eval(gold, orchestrator=StubOrchestrator([], []), known_position_ids=set())
 
     assert metrics.classification_accuracy == 0.0
+
+
+@pytest.mark.parametrize("wrong_span", [None, Span(start=500, end=600)])
+def test_missing_or_nonoverlapping_labelled_clause_counts_as_wrong(gold_set, wrong_span) -> None:
+    gold, _ = gold_set
+    orchestrator = StubOrchestrator(
+        [(ClauseType.TERMINATION, RiskLevel.MEDIUM)] if wrong_span else [],
+        [wrong_span] if wrong_span else [],
+    )
+    metrics = run_eval(gold, orchestrator=orchestrator, known_position_ids=set())
+    assert metrics.classification_accuracy == 0.0
+    assert metrics.risk_accuracy == 0.0
+    assert metrics.classification_confusion == {"termination": {"<missing>": 1}}
+    assert metrics.per_type[0].support == 1

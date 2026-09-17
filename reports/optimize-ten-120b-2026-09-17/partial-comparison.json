@@ -1,0 +1,230 @@
+{
+  "complete_comparison": false,
+  "matching_contracts": [
+    "americasshoppingmallinc-site-development-and-hosting-agreement",
+    "blackboxstocksinc-distributor-agreement",
+    "ticketscominc-sponsorship-agreement"
+  ],
+  "missing_baseline": [
+    "datacalltechnologies-content-license-agreement",
+    "ecosciencesolutionsinc-endorsement-agreement",
+    "gainscoinc-sponsorship-agreement",
+    "kiromicbiopharma-inc-consulting-agreement",
+    "legacytechnologyholdings-inc-distributor-agreement",
+    "martinmidstreampartnerslp-transportation-services-agreement",
+    "tuniucorp-cooperation-agreement"
+  ],
+  "missing_candidate": [
+    "datacalltechnologies-content-license-agreement",
+    "ecosciencesolutionsinc-endorsement-agreement",
+    "gainscoinc-sponsorship-agreement",
+    "kiromicbiopharma-inc-consulting-agreement",
+    "legacytechnologyholdings-inc-distributor-agreement",
+    "martinmidstreampartnerslp-transportation-services-agreement",
+    "tuniucorp-cooperation-agreement"
+  ],
+  "baseline_config": {
+    "provider": "openrouter",
+    "model": "openai/gpt-oss-20b",
+    "embedding_provider": "gemini",
+    "embedding_model": "gemini-embedding-001",
+    "embedding_dim": 768,
+    "enable_judge": true,
+    "thinking": "disabled",
+    "concurrency": 4,
+    "timeout_seconds": 120,
+    "max_attempts": 3
+  },
+  "candidate_config": {
+    "provider": "openrouter",
+    "model": "openai/gpt-oss-120b",
+    "embedding_provider": "openrouter",
+    "embedding_model": "google/gemini-embedding-001",
+    "embedding_dim": 768,
+    "enable_judge": true,
+    "thinking": "disabled",
+    "concurrency": 4,
+    "timeout_seconds": 120,
+    "max_attempts": 3,
+    "judge_prompt_version": "v2",
+    "openrouter_providers": [
+      "Groq",
+      "Cerebras"
+    ]
+  },
+  "baseline": {
+    "metrics": {
+      "segmentation_f1": 1.0,
+      "classification_accuracy": 0.6111111111111112,
+      "risk_accuracy": 0.5,
+      "citation_validity": 1.0,
+      "per_type": [
+        {
+          "clause_type": "intellectual_property",
+          "support": 1,
+          "accuracy": 0.0
+        },
+        {
+          "clause_type": "payment_terms",
+          "support": 3,
+          "accuracy": 0.3333333333333333
+        },
+        {
+          "clause_type": "other",
+          "support": 2,
+          "accuracy": 0.0
+        },
+        {
+          "clause_type": "termination",
+          "support": 3,
+          "accuracy": 1.0
+        },
+        {
+          "clause_type": "limitation_of_liability",
+          "support": 2,
+          "accuracy": 0.5
+        },
+        {
+          "clause_type": "non_compete",
+          "support": 4,
+          "accuracy": 0.75
+        },
+        {
+          "clause_type": "governing_law",
+          "support": 2,
+          "accuracy": 1.0
+        },
+        {
+          "clause_type": "warranty",
+          "support": 1,
+          "accuracy": 1.0
+        }
+      ],
+      "classification_confusion": {
+        "intellectual_property": {
+          "other": 1
+        },
+        "payment_terms": {
+          "termination": 1,
+          "payment_terms": 1,
+          "other": 1
+        },
+        "other": {
+          "payment_terms": 1,
+          "governing_law": 1
+        },
+        "termination": {
+          "termination": 3
+        },
+        "limitation_of_liability": {
+          "termination": 1,
+          "limitation_of_liability": 1
+        },
+        "non_compete": {
+          "non_compete": 3,
+          "other": 1
+        },
+        "governing_law": {
+          "governing_law": 2
+        },
+        "warranty": {
+          "warranty": 1
+        }
+      }
+    },
+    "elapsed_seconds": 1341.054825626,
+    "clauses": 76,
+    "failed_clauses": 3,
+    "unknown_risk_clauses": 3,
+    "verified_clauses": 27
+  },
+  "candidate": {
+    "metrics": {
+      "segmentation_f1": 1.0,
+      "classification_accuracy": 0.6666666666666666,
+      "risk_accuracy": 0.6111111111111112,
+      "citation_validity": 1.0,
+      "per_type": [
+        {
+          "clause_type": "intellectual_property",
+          "support": 1,
+          "accuracy": 0.0
+        },
+        {
+          "clause_type": "payment_terms",
+          "support": 3,
+          "accuracy": 0.3333333333333333
+        },
+        {
+          "clause_type": "other",
+          "support": 2,
+          "accuracy": 0.5
+        },
+        {
+          "clause_type": "termination",
+          "support": 3,
+          "accuracy": 1.0
+        },
+        {
+          "clause_type": "limitation_of_liability",
+          "support": 2,
+          "accuracy": 0.5
+        },
+        {
+          "clause_type": "non_compete",
+          "support": 4,
+          "accuracy": 0.75
+        },
+        {
+          "clause_type": "governing_law",
+          "support": 2,
+          "accuracy": 1.0
+        },
+        {
+          "clause_type": "warranty",
+          "support": 1,
+          "accuracy": 1.0
+        }
+      ],
+      "classification_confusion": {
+        "intellectual_property": {
+          "other": 1
+        },
+        "payment_terms": {
+          "termination": 1,
+          "payment_terms": 1,
+          "other": 1
+        },
+        "other": {
+          "other": 1,
+          "governing_law": 1
+        },
+        "termination": {
+          "termination": 3
+        },
+        "limitation_of_liability": {
+          "termination": 1,
+          "limitation_of_liability": 1
+        },
+        "non_compete": {
+          "non_compete": 3,
+          "intellectual_property": 1
+        },
+        "governing_law": {
+          "governing_law": 2
+        },
+        "warranty": {
+          "warranty": 1
+        }
+      }
+    },
+    "elapsed_seconds": 70.2763081739995,
+    "clauses": 76,
+    "failed_clauses": 0,
+    "unknown_risk_clauses": 0,
+    "verified_clauses": 41
+  },
+  "speedup": 19.08260209551186,
+  "classification_accuracy_delta": 0.05555555555555547,
+  "risk_accuracy_delta": 0.11111111111111116
+}

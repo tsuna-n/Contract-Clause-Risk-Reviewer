@@ -1,0 +1,622 @@
+{
+  "report_id": "7b9c3a0087f547d9b94bf43894f6207a",
+  "contract_id": "blackboxstocksinc-distributor-agreement",
+  "session_id": "eval",
+  "filename": "",
+  "created_at": "2026-09-17T15:02:52.443555Z",
+  "overall_risk": "high",
+  "summary": {
+    "high": 8,
+    "medium": 2,
+    "low": 11,
+    "unknown": 0
+  },
+  "reviews": [
+    {
+      "clause": {
+        "id": "clause-1",
+        "text": "1.01. Distribution Right. The Company hereby appoints and grants Distributor the exclusive right to sell the products of the Company, including the Snotarator™ Nasal Aspirator, (\"Products\") listed in the current \"Price List\" (Exhibit \"A\" attached hereto). The distribution right shall be limited to all countries and all of their territories and possessions within the continent known as South America (\"Territory\") (Exhibit \"B\" attached hereto). Distributor agrees that the Products, including the name Snotarator ™ Nasal Aspirator (the \"Brand\") are the sole property of the Company and Distributor has no interest whatsoever in such Brand and Products, and Distributor shall use the Brand and Products only for so long as the rights granted hereby remains in full force and effect. Distributor shall not take any actions, or aid or assist any other party to take any actions that would infringe upon, harm or contest the proprietary rights of Company in and to the Brand and Products. Distributor shall not assign the rights granted in this Section 1.01 without the prior written consent of the Company.",
+        "span": {
+          "start": 589,
+          "end": 1696,
+          "page": 1
+        },
+        "clause_type": "other",
+        "heading": "1.01. Distribution Right. The Company hereby appoints and grants Distributor the exclusive right to sell the products of the Company, including the Snotarator™ Nasal Aspirator, (\"Products\") listed in the current \"Price List\" (Exhibit \"A\" attached hereto). The distribution right shall be limited to all countries and all of their territories and possessions within the continent known as South America (\"Territory\") (Exhibit \"B\" attached hereto). Distributor agrees that the Products, including the name Snotarator ™ Nasal Aspirator (the \"Brand\") are the sole property of the Company and Distributor has no interest whatsoever in such Brand and Products, and Distributor shall use the Brand and Products only for so long as the rights granted hereby remains in full force and effect. Distributor shall not take any actions, or aid or assist any other party to take any actions that would infringe upon, harm or contest the proprietary rights of Company in and to the Brand and Products. Distributor shall not assign the rights granted in this Section 1.01 without the prior written consent of the Company."
+      },
+      "risk_level": "high",
+      "rationale": "This clause grants the Distributor exclusive sales rights for all products listed in the Company’s price list throughout the entire continent of South America, which is in direct conflict with the playbook’s stance on non‑exclusive dealing (“This Agreement is non‑exclusive. Each party remains free to provide to, procure from, or contract with any third party for services of the same or a similar kind, without restriction and without any obligation to the other party.”). The clause also includes a restrictive assignment provision that requires prior written consent from the Company, whereas the playbook’s preferred assignment language allows assignment in its entirety to a successor in connection with a merger, acquisition or sale of all or substantially all of its assets (“Neither party may assign this Agreement without the other party's prior written consent, except that either party may assign it in its entirety, on notice and without consent, to a successor in connection with a merger, acquisition or sale of all or substantially all of its assets.”). Lastly, the clause confirms that the Company retains sole ownership of the Brand and Products, which aligns with the playbook's IP position that parties shall not jointly own any intellectual property but, in this context, reinforces a strong protective stance for the Company (“The parties shall not jointly own any intellectual property under this Agreement. Any jointly developed work product shall be owned by the party that contributed the underlying background intellectual property, with a licence granted to the other party as set out in this Agreement.”). These conflicts and the highly restrictive nature of the clause pose a high risk to the Company in terms of limiting its flexibility and potentially violating its own playbook directives.",
+      "citations": [
+        {
+          "citation_id": "fede7f136a58",
+          "playbook_position_id": "no-exclusivity",
+          "excerpt": "This Agreement is non‑exclusive. Each party remains free to provide to, procure from, or contract with any third party for services of the same or a similar kind, without restriction and without any obligation to the other party."
+        },
+        {
+          "citation_id": "49364fcfdf78",
+          "playbook_position_id": "assignment-change-of-control",
+          "excerpt": "Neither party may assign this Agreement without the other party's prior written consent, except that either party may assign it in its entirety, on notice and without consent, to a successor in connection with a merger, acquisition or sale of all or substantially all of its assets."
+        },
+        {
+          "citation_id": "44c0ad21a53c",
+          "playbook_position_id": "ip-no-joint-ownership",
+          "excerpt": "The parties shall not jointly own any intellectual property under this Agreement. Any jointly developed work product shall be owned by the party that contributed the underlying background intellectual property, with a licence granted to the other party as set out in this Agreement."
+        }
+      ],
+      "suggested_fallback": null,
+      "verified": false,
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-2",
+        "text": "1.02 Prices. All prices stated are in United States dollars and FOB the Company's offices in Frisco, Texas. Prices do not include transportation costs which shall be borne by Distributor.",
+        "span": {
+          "start": 1696,
+          "end": 1885,
+          "page": 1
+        },
+        "clause_type": "payment_terms",
+        "heading": "1.02 Prices. All prices stated are in United States dollars and FOB the Company's offices in Frisco, Texas. Prices do not include transportation costs which shall be borne by Distributor."
+      },
+      "risk_level": "low",
+      "rationale": "The clause simply states that prices are in USD and FOB at the Company’s offices, with transportation costs payable by the Distributor. This is a standard commercial practice and does not impose any new commitments or obligations beyond the explicit terms. Moreover, it does not conflict with any of the playbook positions retrieved. The clause therefore does not elevate risk. It is consistent with the \"no minimum commitment\" position which requires the customer to pay only for the services actually ordered and bears no additional minimum purchase duty. The clause also does not trigger any more‑favoured‑nation or price‑increase restrictions. As there is no conflict or omission, liability remains low.",
+      "citations": [
+        {
+          "citation_id": "3a04db7db8c2",
+          "playbook_position_id": "no-minimum-commitment",
+          "excerpt": "Customer is under no obligation to purchase any minimum quantity, value or share of its requirements under this Agreement, and shall pay only for the Services it actually orders."
+        }
+      ],
+      "suggested_fallback": null,
+      "verified": true,
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-3",
+        "text": "1.03. Terms. Terms are net cash upon delivery.",
+        "span": {
+          "start": 1885,
+          "end": 1933,
+          "page": 1
+        },
+        "clause_type": "payment_terms",
+        "heading": "1.03. Terms. Terms are net cash upon delivery."
+      },
+      "risk_level": "medium",
+      "rationale": "The clause demands net cash upon delivery, which diverges from the standard net‑30 (or net‑45) payment terms used in the playbook (see the 'payment-net-30' position). Such a tight payment schedule is not covered by the playbook’s preferred or fallback language and increases cash‑flow risk, therefore a medium rating.",
+      "citations": [
+        {
+          "citation_id": "b068111458bd",
+          "playbook_position_id": "payment-net-30",
+          "excerpt": "Customer shall pay all undisputed invoices within thirty (30) days of receipt. Customer may withhold any amount it disputes in good faith, provided it notifies Supplier of the basis for the dispute before the due date."
+        }
+      ],
+      "suggested_fallback": "Customer shall pay all undisputed invoices within forty-five (45) days of receipt. Customer may withhold any amount it disputes in good faith, provided it notifies Supplier of the basis for the dispute before the due date.",
+      "verified": true,
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-4",
+        "text": "1.04. Competitive Products. Distributor agrees not to represent or sell other products which are deemed to be competitive with the Company's Products unless agreed to by the Company by written notice.\n\nARTICLE II MARKETING AND SUPPORT",
+        "span": {
+          "start": 1933,
+          "end": 2169,
+          "page": 1
+        },
+        "clause_type": "non_compete",
+        "heading": "1.04. Competitive Products. Distributor agrees not to represent or sell other products which are deemed to be competitive with the Company's Products unless agreed to by the Company by written notice."
+      },
+      "risk_level": "high",
+      "rationale": "The clause imposes a non‑compete that prohibits the distributor from selling competitive products without consent, but it does not set a time limit, geographic scope or define the scope of competition. The playbook position 'non-compete-bounded' specifies that a non‑compete must be limited to twelve (12) months after termination, the territory in which the restricted party actually performed, and services that directly compete with those supplied under the Agreement. Because the clause lacks these limitations, it exposes the company to unnecessary commercial restriction and potential litigation. Referencing the playbook shows a mismatch between the clause and the recommended boundaries.",
+      "citations": [
+        {
+          "citation_id": "a7c01ef92ee7",
+          "playbook_position_id": "non-compete-bounded",
+          "excerpt": "Any non-compete obligation under this Agreement shall be limited to twelve (12) months after termination, to the territory in which the restricted party actually performed, and to services that directly compete with those supplied under this Agreement."
+        }
+      ],
+      "suggested_fallback": "Any non-compete obligation under this Agreement shall be limited to twelve (12) months after termination, to the territory in which the restricted party actually performed, and to services that directly compete with those supplied under this Agreement.",
+      "verified": false,
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-5",
+        "text": "2.01. Sales. Distributor shall use commercially reasonable efforts to market, distribute and promote the Brand and Products in the Territory at its own cost.\n\nARTICLE III DELIVERY",
+        "span": {
+          "start": 2169,
+          "end": 2350,
+          "page": 1
+        },
+        "clause_type": "other",
+        "heading": "2.01. Sales. Distributor shall use commercially reasonable efforts to market, distribute and promote the Brand and Products in the Territory at its own cost."
+      },
+      "risk_level": "low",
+      "rationale": "The clause imposes no unusual or prohibited obligations on the Distributor beyond standard sales efforts, and the playbook contains no position addressing marketing or promotion at the Distributor’s cost. Consequently, the risk posed by this clause is low.",
+      "citations": [
+        {
+          "citation_id": "b287cd898aed",
+          "playbook_position_id": "insurance-standard-limits",
+          "excerpt": "Each party shall maintain, at its own cost, commercial general liability insurance of at least USD 2,000,000 per occurrence and professional liability insurance of at least USD 2,000,000 in the aggregate, and shall provide a certificate of insurance on request."
+        }
+      ],
+      "suggested_fallback": null,
+      "verified": false,
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-6",
+        "text": "3.01. Purchase Orders. Distributor shall order Products by written notice to Company. Each order shall specify the number of units to be shipped, the type of units to be shipped (as identified by Company model number designations indicated in the Price List) including all optional features, the desired method of shipment. Company shall indicate its acceptance of such purchase order by returning a signed copy to Distributor. Company agrees to ship units to Distributor as close as possible to the delivery schedule set forth in each order as accepted by Company, unless Company otherwise indicates in writing",
+        "span": {
+          "start": 2350,
+          "end": 2963,
+          "page": 1
+        },
+        "clause_type": "payment_terms",
+        "heading": "3.01. Purchase Orders. Distributor shall order Products by written notice to Company. Each order shall specify the number of units to be shipped, the type of units to be shipped (as identified by Company model number designations indicated in the Price List) including all optional features, the desired method of shipment. Company shall indicate its acceptance of such purchase order by returning a signed copy to Distributor. Company agrees to ship units to Distributor as close as possible to the delivery schedule set forth in each order as accepted by Company, unless Company otherwise indicates in writing"
+      },
+      "risk_level": "low",
+      "rationale": "The clause requires Distributor to order specific quantities and Company to accept and ship orders but contains no minimum purchase or volume commitment. This matches the playbook position [no-minimum-commitment] which states that the Customer is under no obligation to purchase any minimum quantity, value or share of its requirements and shall pay only for the Services it actually orders. Therefore the clause poses low risk.",
+      "citations": [
+        {
+          "citation_id": "3a04db7db8c2",
+          "playbook_position_id": "no-minimum-commitment",
+          "excerpt": "Customer is under no obligation to purchase any minimum quantity, value or share of its requirements under this Agreement, and shall pay only for the Services it actually orders."
+        }
+      ],
+      "suggested_fallback": null,
+      "verified": true,
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-7",
+        "text": "3.02. Shipment. All shipments of Products shall be made FOB Company's office and liability for loss or damage in transit, or thereafter, shall pass to Distributor upon Company's delivery of Products to a common carrier for shipment. Shipping dates are approximate and are based, to a great extent, on prompt receipt by Company of all necessary ordering information from Distributor. Distributor shall bear all costs of transportation and insurance and will promptly reimburse Company if Company prepays or otherwise pays for such expenses. Company shall not be in default by reason of any failure in its performance under this Agreement if such failure results from, whether directly or indirectly, fire, explosion, strike, freight embargo, Act of God or of the public enemy, war, civil disturbance, act of any government, de jure or de facto, or agency or official thereof, material or labor shortage, transportation contingencies, unusually severe weather, default of any other manufacturer or a supplier or subcontractor, quarantine, restriction, epidemic, or catastrophe, lack of timely instructions or essential information from Distributor, or otherwise arisen out of causes beyond the control of the Company. Nor shall the Company at any time be liable for any incidental, special or consequential damages.",
+        "span": {
+          "start": 2963,
+          "end": 4278,
+          "page": 1
+        },
+        "clause_type": "limitation_of_liability",
+        "heading": "3.02. Shipment. All shipments of Products shall be made FOB Company's office and liability for loss or damage in transit, or thereafter, shall pass to Distributor upon Company's delivery of Products to a common carrier for shipment. Shipping dates are approximate and are based, to a great extent, on prompt receipt by Company of all necessary ordering information from Distributor. Distributor shall bear all costs of transportation and insurance and will promptly reimburse Company if Company prepays or otherwise pays for such expenses. Company shall not be in default by reason of any failure in its performance under this Agreement if such failure results from, whether directly or indirectly, fire, explosion, strike, freight embargo, Act of God or of the public enemy, war, civil disturbance, act of any government, de jure or de facto, or agency or official thereof, material or labor shortage, transportation contingencies, unusually severe weather, default of any other manufacturer or a supplier or subcontractor, quarantine, restriction, epidemic, or catastrophe, lack of timely instructions or essential information from Distributor, or otherwise arisen out of causes beyond the control of the Company. Nor shall the Company at any time be liable for any incidental, special or consequential damages."
+      },
+      "risk_level": "low",
+      "rationale": "The clause’s provision that the Company is not liable for incidental, special or consequential damages aligns with the company’s playbook position 'liability-no-consequential-damages', which explicitly excludes these types of damages. This alignment reduces the risk of liability beyond what the playbook permits.",
+      "citations": [
+        {
+          "citation_id": "807a4d0b4066",
+          "playbook_position_id": "liability-no-consequential-damages",
+          "excerpt": "Neither party shall be liable for any indirect, incidental, special, consequential or punitive damages, or for any loss of profits, revenue, goodwill or data, however caused and regardless of the theory of liability, even if advised of the possibility of such damages."
+        }
+      ],
+      "suggested_fallback": "Neither party shall be liable for any indirect, incidental, special, consequential or punitive damages, or for any loss of profits, revenue, goodwill or data, except in respect of amounts payable to a third party under an indemnity given in this Agreement.",
+      "verified": false,
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-8",
+        "text": "3.03. Cancellation. Distributor may, at any time prior to the scheduled date of shipment, cancel any or all Products on order upon giving timely written notice.\n\nARTICLE IV PATENT AND TRADEMARK INFRINGEMENT",
+        "span": {
+          "start": 4278,
+          "end": 4486,
+          "page": 1
+        },
+        "clause_type": "termination",
+        "heading": "3.03. Cancellation. Distributor may, at any time prior to the scheduled date of shipment, cancel any or all Products on order upon giving timely written notice."
+      },
+      "risk_level": "high",
+      "rationale": "The clause grants the distributor the ability to cancel any or all Products on order at any time prior to the scheduled date of shipment, but it does not specify a required notice period nor does it explicitly state that no penalty or further liability will apply. The playbook position \"termination-for-convenience\" requires either party to provide thirty (30) days' prior written notice and confirms that termination is without penalty or further liability other than amounts accrued prior to the effective date of termination. The absence of a notice requirement in the clause therefore introduces a risk of uncertainty and potential dispute about when and how the notice period is satisfied, and gives the possibility of wrongful termination without adhering to the agreed notice schedule.",
+      "citations": [
+        {
+          "citation_id": "2bf98c701405",
+          "playbook_position_id": "termination-for-convenience",
+          "excerpt": "Either party may terminate this Agreement for convenience upon thirty (30) days' prior written notice to the other party, without penalty or further liability other than for amounts accrued prior to the effective date of termination."
+        }
+      ],
+      "suggested_fallback": "Either party may terminate this Agreement for convenience upon sixty (60) days' prior written notice to the other party, without penalty or further liability other than for amounts accrued prior to the effective date of termination.",
+      "verified": false,
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-9",
+        "text": "4.01 Patent Infringement. Company agrees, at its own expense, to indemnify, defend and hold harmless each Distributor and its customers from and against every expense, damage, cost and loss (including attorneys' fees incurred) and to satisfy all judgments and decrees resulting from a claim, suit or proceeding insofar as it is based upon an allegation that any Product or any part thereof furnished by Company or any process which is practiced in the customary use of the Product is or has been infringing upon any patent, copyright or proprietary right, if Company is notified promptly of such claim in writing and given authority, and full and proper information and assistance (at Company's expense) for the defense of same. In case any Product, or any part thereof, if such suit is held to constitute an infringement and the use of said Product or part is enjoined, Company shall, in its sole discretion and at its own expense, either procure for the indemnitee the right to continue using said Product or provide or procure for the Distributor a similar product.",
+        "span": {
+          "start": 4486,
+          "end": 5556,
+          "page": 1
+        },
+        "clause_type": "indemnification",
+        "heading": "4.01 Patent Infringement. Company agrees, at its own expense, to indemnify, defend and hold harmless each Distributor and its customers from and against every expense, damage, cost and loss (including attorneys' fees incurred) and to satisfy all judgments and decrees resulting from a claim, suit or proceeding insofar as it is based upon an allegation that any Product or any part thereof furnished by Company or any process which is practiced in the customary use of the Product is or has been infringing upon any patent, copyright or proprietary right, if Company is notified promptly of such claim in writing and given authority, and full and proper information and assistance (at Company's expense) for the defense of same. In case any Product, or any part thereof, if such suit is held to constitute an infringement and the use of said Product or part is enjoined, Company shall, in its sole discretion and at its own expense, either procure for the indemnitee the right to continue using said Product or provide or procure for the Distributor a similar product."
+      },
+      "risk_level": "low",
+      "rationale": "The clause provides indemnification, defense, and satisfaction of judgments for IP infringement claims, matching the Preferred language of the ip-infringement-indemnity playbook position. It also includes procurement of the right to continue using the product or a similar product, aligning with the fallback language of the same position. Therefore, the clause is consistent with the playbook and poses low risk.",
+      "citations": [
+        {
+          "citation_id": "7df19cd4ae10",
+          "playbook_position_id": "ip-infringement-indemnity",
+          "excerpt": "Supplier shall defend and indemnify Customer against any third-party claim alleging that the Services or Deliverables infringe that third party's intellectual property rights, and shall pay any damages finally awarded or agreed in settlement."
+        },
+        {
+          "citation_id": "c69ce64e39de",
+          "playbook_position_id": "ip-infringement-indemnity",
+          "excerpt": "Supplier shall defend Customer against any third-party claim alleging that the Services or Deliverables infringe that third party's intellectual property rights, and shall at its option procure the right to continue using the affected item, modify it so it is non-infringing, or refund the fees paid for it."
+        }
+      ],
+      "suggested_fallback": null,
+      "verified": false,
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-10",
+        "text": "4.02 Trademark Infringement. The Company has registered the mark Snotarator ™ in the United States. Distributor agrees it will not at any time, either during the term of this Agreement or thereafter, use the Brand, Products or Snotarator™ mark in any manner that might infringe upon the Company's ownership rights to same directly or indirectly. Distributor shall indemnify and hold the Company and its affiliates harmless from and against any and all claims, judgments, costs, awards, expenses (including reasonable attorney fees) and liabilities of every kind arising from Distributor's fault or negligence in its use of the Snotarator ™ mark and in the marketing and distribution of the Products within the Territory.\n\nARTICLE V WARRANTY",
+        "span": {
+          "start": 5556,
+          "end": 6298,
+          "page": 1
+        },
+        "clause_type": "indemnification",
+        "heading": "4.02 Trademark Infringement. The Company has registered the mark Snotarator ™ in the United States. Distributor agrees it will not at any time, either during the term of this Agreement or thereafter, use the Brand, Products or Snotarator™ mark in any manner that might infringe upon the Company's ownership rights to same directly or indirectly. Distributor shall indemnify and hold the Company and its affiliates harmless from and against any and all claims, judgments, costs, awards, expenses (including reasonable attorney fees) and liabilities of every kind arising from Distributor's fault or negligence in its use of the Snotarator ™ mark and in the marketing and distribution of the Products within the Territory."
+      },
+      "risk_level": "medium",
+      "rationale": "The clause imposes a unilateral indemnification obligation on Distributor for any claims arising from Distributor’s fault or negligence in use of the Snotarator™ mark. This aligns with the playbook’s preferred mutual indemnity language, which specifies defense, indemnity and hold harmless to the other party for claims resulting from each party’s own breach or negligence, and subject to the limitations of liability set out in the Agreement. The clause, however, lacks mutuality, explicit limitations on liability, and any cap on exposure. The absence of a cap means that while Company is protected from Distributor’s fault, the potential liability is not limited, which raises the exposure compared to a capped, mutual arrangement. Therefore, the risk is considered medium.\n",
+      "citations": [
+        {
+          "citation_id": "99d7c5a8857f",
+          "playbook_position_id": "mutual-indemnity",
+          "excerpt": "Each party shall defend, indemnify and hold harmless the other party against third-party claims to the extent arising from its own breach of this Agreement or its negligence, subject to the limitations of liability set out in this Agreement."
+        }
+      ],
+      "suggested_fallback": null,
+      "verified": true,
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-11",
+        "text": "5.01. Products Warranty. Company warrants that Distributor shall acquire Products purchased hereunder free and clear of all liens and encumbrances except for Company's purchase money security interest defined in Section 1.03, above. Company further warrants all Products to be free from defects in material or workmanship under normal use and service for a period of ninety (90) days from the date of delivery. Any defects must be replaced by the Company within sixty (60) days within this scope of the warranty and all charges for labor and material, will be borne by Company. If it is determined that either no fault exists in Company, or the damage was caused by negligence of Distributor, its agents, employees or customers, Distributor agrees to pay all charges associated with each such replacement. THIS CONSTITUTES THE SOLE WARRANTY MADE BY COMPANY EITHER EXPRESSED OR IMPLIED. THERE ARE NO OTHER WARRANTIES EXPRESSED OR IMPLIED WHICH EXTEND BEYOND THE FACE HEREOF, HEREIN, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. IN NO EVENT SHALL COMPANY BE LIABLE FOR ANY INCIDENTAL OR CONSEQUENTIAL DAMAGES AND DISTRIBUTOR'S REMEDIES SHALL BE LIMITED TO REPAIR OR REPLACEMENT OF NONCONFORMING UNITS OR PARTS. 2\n\nARTICLE VI DURATION OF AGREEMENT",
+        "span": {
+          "start": 6298,
+          "end": 7589,
+          "page": 1
+        },
+        "clause_type": "warranty",
+        "heading": "5.01. Products Warranty. Company warrants that Distributor shall acquire Products purchased hereunder free and clear of all liens and encumbrances except for Company's purchase money security interest defined in Section 1.03, above. Company further warrants all Products to be free from defects in material or workmanship under normal use and service for a period of ninety (90) days from the date of delivery. Any defects must be replaced by the Company within sixty (60) days within this scope of the warranty and all charges for labor and material, will be borne by Company. If it is determined that either no fault exists in Company, or the damage was caused by negligence of Distributor, its agents, employees or customers, Distributor agrees to pay all charges associated with each such replacement. THIS CONSTITUTES THE SOLE WARRANTY MADE BY COMPANY EITHER EXPRESSED OR IMPLIED. THERE ARE NO OTHER WARRANTIES EXPRESSED OR IMPLIED WHICH EXTEND BEYOND THE FACE HEREOF, HEREIN, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. IN NO EVENT SHALL COMPANY BE LIABLE FOR ANY INCIDENTAL OR CONSEQUENTIAL DAMAGES AND DISTRIBUTOR'S REMEDIES SHALL BE LIMITED TO REPAIR OR REPLACEMENT OF NONCONFORMING UNITS OR PARTS. 2"
+      },
+      "risk_level": "low",
+      "rationale": "The clause provides a ninety‑day warranty and limits liability for incidental or consequential damages, which aligns with the playbook fallback provisions for a 90‑day warranty and exclusion of consequential damages. The warranty language matches the fallback excerpt for a 90‑day period, and the liability language matches the fallback excerpt that excludes indirect, incidental, special, consequential or punitive damages. Therefore the clause is consistent with the playbook and poses low risk.",
+      "citations": [
+        {
+          "citation_id": "f6c4175e018f",
+          "playbook_position_id": "warranty-services-12-months",
+          "excerpt": "Supplier warrants that the Services will conform in all material respects to the applicable specification for ninety (90) days from delivery, and shall at its cost re-perform or correct any non-conforming Services reported within that period."
+        },
+        {
+          "citation_id": "9c98938313bd",
+          "playbook_position_id": "liability-no-consequential-damages",
+          "excerpt": "Neither party shall be liable for any indirect, incidental, special, consequential or punitive damages, or for any loss of profits, revenue, goodwill or data, except in respect of amounts payable to a third party under an indemnity given in this Agreement."
+        }
+      ],
+      "suggested_fallback": "Supplier warrants that the Services will conform in all material respects to the applicable specification for ninety (90) days from delivery, and shall at its cost re-perform or correct any non-conforming Services reported within that period.",
+      "verified": false,
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-12",
+        "text": "6.01. Term. The term of this Agreement shall terminate on May 31, 2015, unless sooner terminated. Termination shall not relieve either party of obligations incurred prior thereto. The term of this Agreement may be extended for an additional two year period with the written consent of both parties.",
+        "span": {
+          "start": 7589,
+          "end": 7889,
+          "page": 1
+        },
+        "clause_type": "termination",
+        "heading": "6.01. Term. The term of this Agreement shall terminate on May 31, 2015, unless sooner terminated. Termination shall not relieve either party of obligations incurred prior thereto. The term of this Agreement may be extended for an additional two year period with the written consent of both parties."
+      },
+      "risk_level": "high",
+      "rationale": "The clause permits extending the term for an additional two‑year period with written consent of both parties, which conflicts with the playbook’s renewal‑opt‑in statement that specifies any renewal term shall not exceed twelve (12) months. The clause also does not specify a required notice period for termination, whereas the playbook’s termination‑for‑convenience position mandates a thirty‑day prior written notice to the other party. Both deviations represent significant contractual risks.",
+      "citations": [
+        {
+          "citation_id": "e6fc0dfe189d",
+          "playbook_position_id": "renewal-opt-in",
+          "excerpt": "Any renewal term shall not exceed twelve (12) months."
+        },
+        {
+          "citation_id": "2bf98c701405",
+          "playbook_position_id": "termination-for-convenience",
+          "excerpt": "Either party may terminate this Agreement for convenience upon thirty (30) days' prior written notice to the other party, without penalty or further liability other than for amounts accrued prior to the effective date of termination."
+        }
+      ],
+      "suggested_fallback": "This Agreement shall renew for successive twelve (12) month terms unless either party gives written notice of non-renewal at least thirty (30) days before the end of the then-current term, and the fees for any renewal term shall not increase by more than five percent (5%).",
+      "verified": false,
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-13",
+        "text": "6.02. Termination. This Agreement may be terminated only:\n\n(a) By either party for substantial breach of any material provision of this Agreement by the other, provided due notice has been given to the other of the alleged breach and such other party has not cured the breach within (30) days] thereof; or\n\n(b) By the Company if: there is an unacceptable change in the control or management of the Distributor; if the Distributor makes an assignment for the benefit of creditors; if a petition in bankruptcy is filed by or against the Distributor, resulting in an adjudication of bankruptcy; or, if the Distributor fails to pay its debts as they become due and provided due notice has been given by the Company to the Distributor and the Distributor has not cured such breach within thirty (30) days thereof; or (c) By the written consent of both parties;\n\n (d) Upon termination of this Agreement all further rights and obligations of the parties shall cease, except that Distributor shall not be relieved of (i) its obligation to pay any monies due, or to become due, as of or after the date of termination, and (ii) any other obligation set forth in this Agreement which is to take effect after the date of termination.\n\nARTICLE VII NOTICES",
+        "span": {
+          "start": 7889,
+          "end": 9133,
+          "page": 1
+        },
+        "clause_type": "termination",
+        "heading": "6.02. Termination. This Agreement may be terminated only:"
+      },
+      "risk_level": "high",
+      "rationale": "The clause allows the Company to terminate the Agreement if the Distributor makes an assignment for the benefit of creditors, a scenario that is not covered by the playbook's assignment position. The playbook restricts assignments to successors in connection with a merger, acquisition or sale of all or substantially all of the party’s assets, and does not permit assignment for benefit of creditors. Consequently, this termination right introduces a high risk of unintended termination. The clause also allows termination for substantial breach within thirty (30) days of notice, which aligns with the playbook’s termination-for-cause-cure position and follows the same 30‑day cure period. However, the absence of playbook guidance on creditor assignment elevates the overall risk.",
+      "citations": [
+        {
+          "citation_id": "49364fcfdf78",
+          "playbook_position_id": "assignment-change-of-control",
+          "excerpt": "Neither party may assign this Agreement without the other party's prior written consent, except that either party may assign it in its entirety, on notice and without consent, to a successor in connection with a merger, acquisition or sale of all or substantially all of its assets."
+        },
+        {
+          "citation_id": "3359d192f820",
+          "playbook_position_id": "termination-for-cause-cure",
+          "excerpt": "Either party may terminate this Agreement for cause if the other party materially breaches it and fails to cure that breach within thirty (30) days after receiving written notice describing the breach in reasonable detail."
+        }
+      ],
+      "suggested_fallback": null,
+      "verified": true,
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-14",
+        "text": "7.01. Notice or Communication. Any notice or communication required or permitted hereunder shall be in writing and shall be sent by international courier or registered mail, return receipt requested, postage prepaid and addressed to the addresses set forth below or to such changed address as any party entitled to notice shall have communicated in writing to the other party. Purchase orders and other administrative notices may be sent by facsimile transmission or regular mail. Notices and communications to Company shall be sent to:\n\nSnotarator LLC 2591 Dallas Parkway Suite 102 Frisco, Texas 75034\n\nNotices and communications to Distributor shall be sent to address shown on first page of this Agreement. Any notices or communications to either party hereunder shall be deemed to have been given when deposited in the mail, addressed to the then current address of such party.\n\n7.02 . Date of Effectiveness. Any such notice or communication so mailed shall be deemed delivered and effective seventy-two (72) hours after mailing thereof in the United States.\n\nARTICLE VIII CONFIDENTIALITY 3\n\n8.01 . Confidentiality. Each party agrees to maintain in confidence and not to use except for the purpose of this Agreement any information of a confidential nature such as technical information and data, commercial information and know-how, price structures, administrative and operational costs, or other information relating to each other's business operations or in the case of Distributor to the Brand and Products whether disclosed prior to the Effective Date or thereafter. Each party's obligation of confidentiality and limitation upon use shall not apply to any information to the extent that the receiving party can show that such information:\n\na) is or became generally available to the public otherwise than by reason of breach by the receiving party of the provisions of this Agreement;\n\nb) was known to the receiving party prior to the date of the Agreement provided that documentary evidence of such knowledge is provided to the disclosing party on request;\n\nc) was subsequently disclosed to the receiving party without obligation of confidentiality by a third party owing no such obligations to the disclosing party in respect of such information;\n\nd) is required by laws to be disclosed but then only when, to the extent reasonably practicable, prompt notice of this requirement has been given to the original disclosing party so that it may seek appropriate relief to prevent or limit such disclosure.\n\nExcept as required by applicable laws or court order or as otherwise permitted under this Agreement, all publicity, press releases and public announcements, in each case relating to the Brand and Products in the Territory and/or the transactions contemplated hereby shall be reviewed in advance by, and shall be subject to the written approval (such approval not to be unreasonably withhold) of both the Company and Distributor. The parties hereto may disclose the existence of this Agreement and the terms and conditions hereof, without the prior written consent of the other parties, as may be required by applicable laws, in which case the party seeking to disclose the information shall give the other parties reasonable advanced notice and review of any such disclosure and shall seek confidential treatment of such information to the extent possible under applicable law.\n\nARTICLE IX GENERAL PROVISIONS",
+        "span": {
+          "start": 9133,
+          "end": 12560,
+          "page": 1
+        },
+        "clause_type": "confidentiality",
+        "heading": "7.01. Notice or Communication. Any notice or communication required or permitted hereunder shall be in writing and shall be sent by international courier or registered mail, return receipt requested, postage prepaid and addressed to the addresses set forth below or to such changed address as any party entitled to notice shall have communicated in writing to the other party. Purchase orders and other administrative notices may be sent by facsimile transmission or regular mail. Notices and communications to Company shall be sent to:"
+      },
+      "risk_level": "low",
+      "rationale": "The clause mirrors the playbook’s Mutual confidentiality position (confidentiality-mutual) with identical core obligations and exclusions. The requirement to maintain confidentiality, use information only for the Agreement, and the specified exceptions for public, prior knowledge, and independent development match the Preferred language. The clause’s additional notice and publication controls are standard and do not introduce new risk relative to the playbook, fulfilling the playbook’s risk management criteria.",
+      "citations": [
+        {
+          "citation_id": "556221eb5774",
+          "playbook_position_id": "confidentiality-mutual",
+          "excerpt": "Each party shall keep the other party's Confidential Information confidential, use it only to perform this Agreement, and protect it with at least the care it uses for its own confidential information. These obligations do not apply to information that is or becomes public through no fault of the receiving party, was already known to it, or is independently developed by it."
+        }
+      ],
+      "suggested_fallback": "Each party shall keep the other party's Confidential Information confidential and use it only to perform this Agreement, provided that a party may disclose Confidential Information to the extent required by law or court order after giving the other party prompt notice and a reasonable opportunity to seek protective relief.",
+      "verified": false,
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-15",
+        "text": "9.01. Relationship of Parties. The relationship between the parties established by this Agreement shall be solely that of vendor and vendee and all rights and powers not expressly granted to the Distributor are expressly reserved to the Company. The Distributor shall have no right, power or authority in any way to bind the Company to the fulfillment of any condition not herein contained, or to any contract or obligation, expressed or implied.",
+        "span": {
+          "start": 12560,
+          "end": 13008,
+          "page": 1
+        },
+        "clause_type": "other",
+        "heading": "9.01. Relationship of Parties. The relationship between the parties established by this Agreement shall be solely that of vendor and vendee and all rights and powers not expressly granted to the Distributor are expressly reserved to the Company. The Distributor shall have no right, power or authority in any way to bind the Company to the fulfillment of any condition not herein contained, or to any contract or obligation, expressed or implied."
+      },
+      "risk_level": "low",
+      "rationale": "The clause establishes the parties as a vendor and vendee and expressly reserves rights not granted to the Distributor, effectively stating that the agreement is non‑exclusive and the Distributor cannot bind the Company beyond the terms.  This aligns directly with the playbook position [no-exclusivity] (non_compete) where the Preferred excerpt states “This Agreement is non‑exclusive. Each party remains free to provide to, procure from, or contract with any third party for services of the same or a similar kind, without restriction and without any obligation to the other party.”  Because the clause merely confirms non‑exclusive status and limits the Distributor’s authority, it poses a low risk to the Company.",
+      "citations": [
+        {
+          "citation_id": "fede7f136a58",
+          "playbook_position_id": "no-exclusivity",
+          "excerpt": "This Agreement is non‑exclusive. Each party remains free to provide to, procure from, or contract with any third party for services of the same or a similar kind, without restriction and without any obligation to the other party."
+        }
+      ],
+      "suggested_fallback": null,
+      "verified": false,
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-16",
+        "text": "9.02. Independence of Parties. Nothing contained in this Agreement shall be construed to make the Distributor the agent for the Company for any purpose, and neither party hereto shall have any right whatsoever to incur any liabilities or obligations on behalf or binding upon the other party. The Distributor specifically agrees that it shall have no power or authority to represent the Company in any manner; that it will solicit orders for Products as an independent contractor in accordance with the terms of this Agreement; and that it will not at any time represent the Company in any manner; that it will solicit orders for Products as an independent contractor in accordance with the terms of this Agreement; and that it will not at any time represent orally or in writing to any person or corporation or other business entity that it has any right, power or authority not expressly granted by this Agreement.",
+        "span": {
+          "start": 13008,
+          "end": 13926,
+          "page": 1
+        },
+        "clause_type": "other",
+        "heading": "9.02. Independence of Parties. Nothing contained in this Agreement shall be construed to make the Distributor the agent for the Company for any purpose, and neither party hereto shall have any right whatsoever to incur any liabilities or obligations on behalf or binding upon the other party. The Distributor specifically agrees that it shall have no power or authority to represent the Company in any manner; that it will solicit orders for Products as an independent contractor in accordance with the terms of this Agreement; and that it will not at any time represent the Company in any manner; that it will solicit orders for Products as an independent contractor in accordance with the terms of this Agreement; and that it will not at any time represent orally or in writing to any person or corporation or other business entity that it has any right, power or authority not expressly granted by this Agreement."
+      },
+      "risk_level": "low",
+      "rationale": "The clause explicitly states that the Distributor has no power or authority to represent the Company, which aligns with the playbook position warranty-compliance-and-authority that each party warrants full power and authority to enter into the Agreement. This confirms the parties’ independent status and does not introduce any conflict.",
+      "citations": [
+        {
+          "citation_id": "63c38393e9ce",
+          "playbook_position_id": "warranty-compliance-and-authority",
+          "excerpt": "Each party warrants that it has full power and authority to enter into this Agreement, and that it will comply with all laws and regulations applicable to its performance under it, including anti-bribery, sanctions and export control laws."
+        }
+      ],
+      "suggested_fallback": null,
+      "verified": true,
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-17",
+        "text": "9.03. Indemnity. The Distributor agrees to hold the Company free and harmless from any and all claims, damages, and expenses of every kind or nature whatsoever (a) arising from acts of the Distributor; (b) as a direct or indirect consequence of termination of this Agreement in accordance with its terms; or (c) arising from acts of third parties in relation to Products sold to the Distributor under this Agreement, including, but not limited to execution of liens and security interests by third parties with respect to any such Products. 4",
+        "span": {
+          "start": 13926,
+          "end": 14470,
+          "page": 1
+        },
+        "clause_type": "indemnification",
+        "heading": "9.03. Indemnity. The Distributor agrees to hold the Company free and harmless from any and all claims, damages, and expenses of every kind or nature whatsoever (a) arising from acts of the Distributor; (b) as a direct or indirect consequence of termination of this Agreement in accordance with its terms; or (c) arising from acts of third parties in relation to Products sold to the Distributor under this Agreement, including, but not limited to execution of liens and security interests by third parties with respect to any such Products. 4"
+      },
+      "risk_level": "high",
+      "rationale": "The clause imposes a unilateral, uncapped indemnification obligation on the Distributor for all claims, damages, and expenses of every kind or nature whatsoever, including those arising from termination and third‑party acts. This contrasts with the playbook’s preferred mutual indemnification language, which limits indemnity to a party’s own breach or negligence and is subject to the limitations of liability. The clause also lacks any limitation on consequential damages, whereas the playbook explicitly excludes such damages. These deviations increase the risk to the Company by exposing it to potentially unlimited liability and broader indemnity scope.",
+      "citations": [
+        {
+          "citation_id": "99d7c5a8857f",
+          "playbook_position_id": "mutual-indemnity",
+          "excerpt": "Each party shall defend, indemnify and hold harmless the other party against third-party claims to the extent arising from its own breach of this Agreement or its negligence, subject to the limitations of liability set out in this Agreement."
+        },
+        {
+          "citation_id": "d4dd8fc5821e",
+          "playbook_position_id": "liability-uncapped-carve-outs",
+          "excerpt": "The limitations of liability in this Agreement shall not apply to a party's indemnification obligations, breach of confidentiality, or liability arising from its fraud, gross negligence or willful misconduct. No other exclusion from the cap applies."
+        },
+        {
+          "citation_id": "807a4d0b4066",
+          "playbook_position_id": "liability-no-consequential-damages",
+          "excerpt": "Neither party shall be liable for any indirect, incidental, special, consequential or punitive damages, or for any loss of profits, revenue, goodwill or data, however caused and regardless of the theory of liability, even if advised of the possibility of such damages."
+        }
+      ],
+      "suggested_fallback": "Each party shall defend, indemnify and hold harmless the other party against third-party claims to the extent arising from its own gross negligence or willful misconduct, subject to the limitations of liability set out in this Agreement.",
+      "verified": true,
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-18",
+        "text": "9.04. Entire Agreement. The entire Agreement between the Company and the Distributor covering the Products is set forth herein and any amendment or modification shall be in writing and shall be executed by duly authorized representatives in the same manner as this Agreement. The provisions of this Agreement are severable, and if any one or more such provisions are determined to be illegal or otherwise unenforceable, in whole or in part, under the laws of any jurisdiction, the remaining provisions or portions hereof shall, nevertheless, be binding on and enforceable by and between the parties hereto. Any provisions, terms or conditions of Distributor's purchaseoOrders which are, in any way contradicting of this Agreement, except those additional provisions specifying quantity and shipping instructions, shall not be binding upon Company and shall have no applicability to the sale of goods by Company to Distributor.",
+        "span": {
+          "start": 14470,
+          "end": 15398,
+          "page": 1
+        },
+        "clause_type": "other",
+        "heading": "9.04. Entire Agreement. The entire Agreement between the Company and the Distributor covering the Products is set forth herein and any amendment or modification shall be in writing and shall be executed by duly authorized representatives in the same manner as this Agreement. The provisions of this Agreement are severable, and if any one or more such provisions are determined to be illegal or otherwise unenforceable, in whole or in part, under the laws of any jurisdiction, the remaining provisions or portions hereof shall, nevertheless, be binding on and enforceable by and between the parties hereto. Any provisions, terms or conditions of Distributor's purchaseoOrders which are, in any way contradicting of this Agreement, except those additional provisions specifying quantity and shipping instructions, shall not be binding upon Company and shall have no applicability to the sale of goods by Company to Distributor."
+      },
+      "risk_level": "low",
+      "rationale": "The clause outlines standard terms – an entire agreement statement, a severability clause, and a provision that conflicts are superseded unless expressly agreed. None of the retrieved playbook positions directly address these elements, so the clause does not conflict with any playbook guidance and therefore presents minimal risk.",
+      "citations": [],
+      "suggested_fallback": null,
+      "verified": false,
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-19",
+        "text": "9.05. Applicable Law. This Agreement shall be governed by the laws of the State of Texas. All payments hereunder shall be made at Company's offices at Frisco, Texas. Company's rights granted hereby are cumulative and in addition to any rights it may have at law or equity.",
+        "span": {
+          "start": 15398,
+          "end": 15672,
+          "page": 1
+        },
+        "clause_type": "governing_law",
+        "heading": "9.05. Applicable Law. This Agreement shall be governed by the laws of the State of Texas. All payments hereunder shall be made at Company's offices at Frisco, Texas. Company's rights granted hereby are cumulative and in addition to any rights it may have at law or equity."
+      },
+      "risk_level": "high",
+      "rationale": "The clause provisions Texas as the governing law, which deviates from the company's preferred governing law of the State of New York as stated in the governing_law playbook position. This difference constitutes a significant non‑compliance with the playbook and increases the risk of legal uncertainty and potential disputes. The playbook does not provide a Texas option and instead offers a Delaware fallback, so the clause also omits the preferred exclusive jurisdiction and conflict of law provisions outlined by the playbook.",
+      "citations": [],
+      "suggested_fallback": "This Agreement is governed by the laws of the State of Delaware, without regard to its conflict of laws rules, and the parties submit to the exclusive jurisdiction of the state and federal courts located in Delaware.",
+      "verified": true,
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-20",
+        "text": "9.06. Separate Provisions. If any provision of this Agreement shall be held to be invalid, illegal or unenforceable, the validity, legality and enforceability of the remaining provisions shall in no way be affected or impaired thereby.",
+        "span": {
+          "start": 15672,
+          "end": 15909,
+          "page": 1
+        },
+        "clause_type": "other",
+        "heading": "9.06. Separate Provisions. If any provision of this Agreement shall be held to be invalid, illegal or unenforceable, the validity, legality and enforceability of the remaining provisions shall in no way be affected or impaired thereby."
+      },
+      "risk_level": "low",
+      "rationale": "The clause contains a severability provision stating that invalid, illegal or unenforceable provisions do not affect the remaining provisions. None of the retrieved playbook positions address severability provisions, so there is no conflict or need for additional wording per the playbook. Consequently, the clause aligns with standard contractual practice and carries low risk.",
+      "citations": [],
+      "suggested_fallback": null,
+      "verified": false,
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-21",
+        "text": "9.07. Successors and Assigns. This Agreement shall be binding upon and inure to the benefit of the parties and their successors and assigns. Distributor shall not assign this Agreement or any rights or obligations hereunder without the prior written consent of the Company.\n\nIN WITNESS WHEREOF, the parties have caused this Agreement to be executed by their duly authorized officers as of the date and year indicated above.\n\nSNOTARATOR LLC\n\nBy:/s/ Orsolya Peresztegi Orsolya Peresztegi Title: President and Manager\n\nDISTRIBUTOR SMSA Ballinger Acquisition Corp.\n\nBy:/s/ Timothy P. Halter Timothy P. Halter Title: President and Sole Director 5\n\n EXHIBIT A\n\nSNOTARATOR PRICE LIST AS OF AUGUST 1, 2013\n\nDescription of Product\n\nSnotarator® Nasal Aspirator\n\nPrice per Unit 1,000 to 5,000 Units* - $4.50 per unit 5,000 to 10,000 Units - $4.15 per unit Over 10,000 Units - $3.95 per unit\n\n____________________________________ *Minimum order of 1,000 Units\n\n EXHIBIT B DESCRIPTION OF THE TERRITORY\n\nThe Territory which is subject to Section 1.01 of this Agreement includes all countries and all of their territories and possessions within the continent known as South America.",
+        "span": {
+          "start": 15909,
+          "end": 17076,
+          "page": 1
+        },
+        "clause_type": "other",
+        "heading": "9.07. Successors and Assigns. This Agreement shall be binding upon and inure to the benefit of the parties and their successors and assigns. Distributor shall not assign this Agreement or any rights or obligations hereunder without the prior written consent of the Company."
+      },
+      "risk_level": "high",
+      "rationale": "The clause affirms that the Agreement benefits only the parties and their permitted successors and assigns, which aligns with the playbook position \"no-third-party-beneficiaries\" and its Preferred excerpt. However, it prohibits any assignment without the prior written consent of the Company and omits the company’s preferred exception allowing assignment to a successor in connection with a merger, acquisition, or sale of all or substantially all assets, as specified in the Preferred excerpt of the playbook position \"assignment-change-of-control\". This lack of a change‑of‑control exception creates a significant risk of non‑alignment with the company’s playbook.",
+      "citations": [
+        {
+          "citation_id": "9e110330b955",
+          "playbook_position_id": "no-third-party-beneficiaries",
+          "excerpt": "This Agreement is for the benefit of the parties and their permitted successors and assigns only. No other person has any right to enforce any of its terms."
+        },
+        {
+          "citation_id": "49364fcfdf78",
+          "playbook_position_id": "assignment-change-of-control",
+          "excerpt": "Neither party may assign this Agreement without the other party's prior written consent, except that either party may assign it in its entirety, on notice and without consent, to a successor in connection with a merger, acquisition or sale of all or substantially all of its assets."
+        }
+      ],
+      "suggested_fallback": null,
+      "verified": false,
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    }
+  ],
+  "metadata": {
+    "parties": [
+      "Snotarator LLC",
+      "SMSA Ballinger Acquisition Corp."
+    ],
+    "agreement_date": "1st day of August, 2013",
+    "effective_date": "1st day of August, 2013",
+    "expiration_date": null,
+    "contract_value": null,
+    "governing_law": "the laws of the State of Texas"
+  },
+  "disclaimer": "This automated review is for informational purposes only and does not constitute legal advice. Consult qualified counsel before relying on it."
+}

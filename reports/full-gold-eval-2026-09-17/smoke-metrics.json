@@ -1,0 +1,42 @@
+{
+  "segmentation_f1": 1.0,
+  "classification_accuracy": 0.5,
+  "risk_accuracy": 0.25,
+  "citation_validity": 1.0,
+  "per_type": [
+    {
+      "clause_type": "payment_terms",
+      "support": 1,
+      "accuracy": 0.0
+    },
+    {
+      "clause_type": "termination",
+      "support": 1,
+      "accuracy": 1.0
+    },
+    {
+      "clause_type": "limitation_of_liability",
+      "support": 1,
+      "accuracy": 1.0
+    },
+    {
+      "clause_type": "other",
+      "support": 1,
+      "accuracy": 0.0
+    }
+  ],
+  "classification_confusion": {
+    "payment_terms": {
+      "other": 1
+    },
+    "termination": {
+      "termination": 1
+    },
+    "limitation_of_liability": {
+      "limitation_of_liability": 1
+    },
+    "other": {
+      "governing_law": 1
+    }
+  }
+}

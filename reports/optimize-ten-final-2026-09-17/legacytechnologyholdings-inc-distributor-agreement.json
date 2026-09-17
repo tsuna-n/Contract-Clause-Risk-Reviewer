@@ -1,0 +1,692 @@
+{
+  "report_id": "2cebc1364de54454ab578a00146282f5",
+  "contract_id": "legacytechnologyholdings-inc-distributor-agreement",
+  "session_id": "eval",
+  "filename": "",
+  "created_at": "2026-09-17T17:02:14.891727Z",
+  "overall_risk": "high",
+  "summary": {
+    "high": 2,
+    "medium": 5,
+    "low": 8,
+    "unknown": 7
+  },
+  "reviews": [
+    {
+      "clause": {
+        "id": "clause-1",
+        "text": "1. Incorporation of Recitals. The Recitals set forth in Paragraphs A through C, above, are incorporated herein as though set forth in full.",
+        "span": {
+          "start": 1136,
+          "end": 1277,
+          "page": 1
+        },
+        "clause_type": "other",
+        "heading": "1. Incorporation of Recitals. The Recitals set forth in Paragraphs A through C, above, are incorporated herein as though set forth in full."
+      },
+      "risk_level": "unknown",
+      "rationale": "The clause merely incorporates recitals and does not address any of the policy areas covered by the retrieved playbook positions (indemnity, IP ownership, warranties, insurance, confidentiality, or third‑party beneficiaries). Consequently, no relevant protection or deviation can be assessed against the company’s positions, leading to an unknown risk assessment.",
+      "citations": [],
+      "contract_sources": [],
+      "suggested_fallback": null,
+      "verified": false,
+      "verification_reason": "assessment has no playbook citations supporting its risk and rationale",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-2",
+        "text": "2. Appointment. SIERRA hereby appoints ENVISION as its exclusive distributor for the Product in any blend with Krill Oil within the Territory subject to ENVISION fulfilling the terms and conditions of the best efforts marketing requirements set forth herein in Sections 4, 5, and 9. SIERRA shall cease making sales to any customer or distributor who, during the term of this Agreement, violates ENVISION's exclusivity.",
+        "span": {
+          "start": 1277,
+          "end": 1697,
+          "page": 1
+        },
+        "clause_type": "other",
+        "heading": "2. Appointment. SIERRA hereby appoints ENVISION as its exclusive distributor for the Product in any blend with Krill Oil within the Territory subject to ENVISION fulfilling the terms and conditions of the best efforts marketing requirements set forth herein in Sections 4, 5, and 9. SIERRA shall cease making sales to any customer or distributor who, during the term of this Agreement, violates ENVISION's exclusivity."
+      },
+      "risk_level": "high",
+      "rationale": "The clause grants ENVISION exclusive distribution rights, whereas the company's preferred policy is non-exclusive dealing. This deviation creates a material exposure contrary to the preferred position, and the fallback still limits exclusivity, indicating the clause exceeds acceptable limits.",
+      "citations": [
+        {
+          "citation_id": "9022f137f87e",
+          "playbook_position_id": "no-exclusivity",
+          "excerpt": "This Agreement is non-exclusive. Each party remains free to provide to, procure from, or contract with any third party for services of the same or a similar kind, without restriction and without any obligation to the other party."
+        }
+      ],
+      "contract_sources": [
+        {
+          "label": "Section 4",
+          "span": {
+            "start": 1753,
+            "end": 2470,
+            "page": 1
+          },
+          "text": "4. Prices and Terms. The price for the Product as set forth in Section 9 herein, sold by SIERRA to ENVISION, shall be subject to change due to changes in manufacturing costs and so as to maximize profits; any changes in price for the Product shall not be applicable to previously accepted orders and shall be made with at least ninety (90) days advance notice in writing and in good faith by conference of the parties. ENVISION shall not resell the Product alone. Terms of payment will be 1/3 upon placement of order and 2/3 balance net thirty (30) days or as mutually agreed upon in writing between the parties. Delivery will be F.O.B. ENVISION shall be responsible for all costs of shipping from SIERRA to ENVISION.",
+          "truncated": false
+        },
+        {
+          "label": "Section 5",
+          "span": {
+            "start": 2472,
+            "end": 2865,
+            "page": 1
+          },
+          "text": "5. Product Support. ENVISION will use its best efforts to market and sell the Finished Product throughout the Territory. The parties also agree that:\n\n o If SIERRA customers are interested in purchasing the Product in any blend with Krill Oil, SIERRA will refer them to ENVISION.\n\n o ENVISION will be responsible for all costs associated with developing and manufacturing the Finished Product.",
+          "truncated": false
+        }
+      ],
+      "suggested_fallback": "Any exclusivity granted under this Agreement is limited to the named products, the named territory and a period of no more than twelve (12) months, and lapses if the exclusive party fails to meet the minimum performance targets stated in the Order Form.",
+      "verified": true,
+      "verification_reason": "The reviewer correctly identifies that the clause grants exclusive distribution rights, which conflicts with the playbook’s preferred non‑exclusivity position. The cited clause and playbook fallback are quoted accurately, and the suggested fallback matches the playbook text verbatim. Hence the risk assessment and rationale are fully supported by the provided evidence.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-3",
+        "text": "3. Territory. The Territory shall be the entire world.",
+        "span": {
+          "start": 1697,
+          "end": 1753,
+          "page": 1
+        },
+        "clause_type": "other",
+        "heading": "3. Territory. The Territory shall be the entire world."
+      },
+      "risk_level": "low",
+      "rationale": "The clause grants worldwide territory, matching the preferred non‑compete position that imposes no geographic restriction.",
+      "citations": [
+        {
+          "citation_id": "b3047ccdc483",
+          "playbook_position_id": "non-compete-bounded",
+          "excerpt": "Neither party is restricted from competing with the other or from operating in any geography, business or technology sector during or after the Term."
+        }
+      ],
+      "contract_sources": [],
+      "suggested_fallback": null,
+      "verified": true,
+      "verification_reason": "The clause states the Territory is the entire world, which aligns with the playbook’s preferred position that there is no geographic restriction on competition. The reviewer’s risk assessment (low) and rationale are supported by the clause and the cited playbook position. No fallback is required as none was suggested.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-4",
+        "text": "4. Prices and Terms. The price for the Product as set forth in Section 9 herein, sold by SIERRA to ENVISION, shall be subject to change due to changes in manufacturing costs and so as to maximize profits; any changes in price for the Product shall not be applicable to previously accepted orders and shall be made with at least ninety (90) days advance notice in writing and in good faith by conference of the parties. ENVISION shall not resell the Product alone. Terms of payment will be 1/3 upon placement of order and 2/3 balance net thirty (30) days or as mutually agreed upon in writing between the parties. Delivery will be F.O.B. ENVISION shall be responsible for all costs of shipping from SIERRA to ENVISION.",
+        "span": {
+          "start": 1753,
+          "end": 2472,
+          "page": 1
+        },
+        "clause_type": "payment_terms",
+        "heading": "4. Prices and Terms. The price for the Product as set forth in Section 9 herein, sold by SIERRA to ENVISION, shall be subject to change due to changes in manufacturing costs and so as to maximize profits; any changes in price for the Product shall not be applicable to previously accepted orders and shall be made with at least ninety (90) days advance notice in writing and in good faith by conference of the parties. ENVISION shall not resell the Product alone. Terms of payment will be 1/3 upon placement of order and 2/3 balance net thirty (30) days or as mutually agreed upon in writing between the parties. Delivery will be F.O.B. ENVISION shall be responsible for all costs of shipping from SIERRA to ENVISION."
+      },
+      "risk_level": "low",
+      "rationale": "The clause requires the balance to be paid net thirty (30) days, aligning with the preferred payment‑net‑30 policy that mandates payment of undisputed invoices within thirty days. The additional upfront payment does not increase risk and the notice and price‑change provisions are outside the scope of this payment‑terms assessment.",
+      "citations": [
+        {
+          "citation_id": "b068111458bd",
+          "playbook_position_id": "payment-net-30",
+          "excerpt": "Customer shall pay all undisputed invoices within thirty (30) days of receipt. Customer may withhold any amount it disputes in good faith, provided it notifies Supplier of the basis for the dispute before the due date."
+        }
+      ],
+      "contract_sources": [
+        {
+          "label": "Section 9",
+          "span": {
+            "start": 4485,
+            "end": 4783,
+            "page": 1
+          },
+          "text": "9. Purchase Requirements. During the term of this Agreement, ENVISION will exclusively purchase the Product from SIERRA. The parties mutually agree to the Purchase Price of:\n\n Product Purchase Price ----------------------------------------------- A. SierraSil Per Sierra Sil's wholesale price list.",
+          "truncated": false
+        }
+      ],
+      "suggested_fallback": null,
+      "verified": true,
+      "verification_reason": "The contract clause specifies that the balance is payable net thirty (30) days, which matches the playbook’s preferred payment‑net‑30 position that requires payment of undisputed invoices within thirty days. The clause also adds an upfront 1/3 payment, which does not increase risk and is permissible under the policy. No fallback is required because the clause already meets the preferred term. Therefore the reviewer’s risk level (low) and rationale are supported by the clause and playbook citation.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-5",
+        "text": "5. Product Support. ENVISION will use its best efforts to market and sell the Finished Product throughout the Territory. The parties also agree that:\n\n o If SIERRA customers are interested in purchasing the Product in any blend with Krill Oil, SIERRA will refer them to ENVISION.\n\n o ENVISION will be responsible for all costs associated with developing and manufacturing the Finished Product.",
+        "span": {
+          "start": 2472,
+          "end": 2867,
+          "page": 1
+        },
+        "clause_type": "other",
+        "heading": "5. Product Support. ENVISION will use its best efforts to market and sell the Finished Product throughout the Territory. The parties also agree that:"
+      },
+      "risk_level": "low",
+      "rationale": "The clause permits SIERRA to refer customers to ENVISION and imposes no restriction on serving customers, aligning with the company's policy of no customer non-solicit restrictions.",
+      "citations": [
+        {
+          "citation_id": "62cbe8ee92d6",
+          "playbook_position_id": "no-customer-non-solicit",
+          "excerpt": "Neither party is restricted from contracting with, soliciting or serving any customer, partner or supplier of the other party, whether during the Term or afterwards."
+        }
+      ],
+      "contract_sources": [],
+      "suggested_fallback": null,
+      "verified": true,
+      "verification_reason": "The reviewer correctly cites the clause stating SIERRA may refer customers to ENVISION and imposes no restriction, which aligns with the playbook position that there is no restriction on serving customers. The risk assessment (low) follows from the presence of the permissive clause versus the playbook’s medium risk if such a clause were absent. No unsupported claims are made, and the fallback is correctly noted as not needed.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-6",
+        "text": "6. Sales Disclosures. ENVISION will provide SIERRA with demand projections for the Product and SIERRA will produce enough Product to meet such demand projections. ENVISION will inform SIERRA of committed sales and SIERRA will increase or scale up its production of the Product accordingly. SIERRA will not unreasonably withhold the Product, but shall not be liable for unfulfilled or partially fulfilled orders given just cause for such action.",
+        "span": {
+          "start": 2867,
+          "end": 3313,
+          "page": 1
+        },
+        "clause_type": "other",
+        "heading": "6. Sales Disclosures. ENVISION will provide SIERRA with demand projections for the Product and SIERRA will produce enough Product to meet such demand projections. ENVISION will inform SIERRA of committed sales and SIERRA will increase or scale up its production of the Product accordingly. SIERRA will not unreasonably withhold the Product, but shall not be liable for unfulfilled or partially fulfilled orders given just cause for such action."
+      },
+      "risk_level": "low",
+      "rationale": "The clause requires ENVIRONMENT to provide demand projections and obligates SIERRA to produce enough product to meet those projections, without imposing any minimum purchase quantity on the customer. This aligns with the ‘no‑minimum‑commitment’ policy, which states the customer has no obligation to purchase a minimum amount. No deviation or missing protection is identified.",
+      "citations": [
+        {
+          "citation_id": "3a04db7db8c2",
+          "playbook_position_id": "no-minimum-commitment",
+          "excerpt": "Customer is under no obligation to purchase any minimum quantity, value or share of its requirements under this Agreement, and shall pay only for the Services it actually orders."
+        }
+      ],
+      "contract_sources": [],
+      "suggested_fallback": null,
+      "verified": true,
+      "verification_reason": "The clause does not stipulate any minimum purchase quantity that the customer must buy; it only requires ENVISION to give demand projections and obliges SIERRA to produce accordingly. This aligns with the playbook’s ‘no‑minimum‑commitment’ position, which states the customer has no obligation to purchase a minimum amount. Therefore the reviewer’s claim that the clause complies with the no‑minimum‑commitment policy is supported by the provided evidence.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-7",
+        "text": "7. Term. The term of this Agreement shall be two (2) years from the Effective Date with automatic annual renewals thereafter provided either party does not provide sixty (60) days notice of termination prior to the renewal date or the Agreement is not otherwise terminated as set forth in Section 8.",
+        "span": {
+          "start": 3313,
+          "end": 3614,
+          "page": 1
+        },
+        "clause_type": "termination",
+        "heading": "7. Term. The term of this Agreement shall be two (2) years from the Effective Date with automatic annual renewals thereafter provided either party does not provide sixty (60) days notice of termination prior to the renewal date or the Agreement is not otherwise terminated as set forth in Section 8."
+      },
+      "risk_level": "medium",
+      "rationale": "The clause provides automatic annual renewals with a 60‑day notice to avoid renewal, which deviates from the preferred opt‑in renewal policy and is less protective than the fallback that requires only a 30‑day notice. This creates a material exposure regarding renewal control.",
+      "citations": [
+        {
+          "citation_id": "0b788e80e4a0",
+          "playbook_position_id": "renewal-opt-in",
+          "excerpt": "This Agreement shall renew for successive twelve (12) month terms unless either party gives written notice of non-renewal at least thirty (30) days before the end of the then-current term, and the fees for any renewal term shall not increase by more than five percent (5%)."
+        }
+      ],
+      "contract_sources": [
+        {
+          "label": "Section 8",
+          "span": {
+            "start": 3614,
+            "end": 4483,
+            "page": 1
+          },
+          "text": "8. Termination. (a) Upon the occurrence of a material breach or default as to any obligation, term or provision contained herein by either party and the failure of the breaching party to promptly pursue (within thirty (30) days after receiving written notice thereof from the non-breaching party) a reasonable remedy designed to cure (in the reasonable judgment of the non-breaching party) such material breach or default, this Agreement may be terminated by the non-breaching party by giving written notice of termination to the breaching party, such termination\n\n being immediately effective upon the giving of such notice of termination.\n\n (b) Upon the occurrence of bankruptcy of the other party, breach of confidentiality, government legislative interference, or force majeure extending beyond sixty (60) days, either party may immediately terminate the Agreement.",
+          "truncated": false
+        }
+      ],
+      "suggested_fallback": "This Agreement shall renew for successive twelve (12) month terms unless either party gives written notice of non-renewal at least thirty (30) days before the end of the then-current term, and the fees for any renewal term shall not increase by more than five percent (5%).",
+      "verified": true,
+      "verification_reason": "The reviewer correctly identifies that the contract clause provides automatic annual renewals with a 60‑day notice period, which conflicts with the playbook's preferred opt‑in renewal policy. The cited fallback text matches the playbook fallback verbatim, and the risk level (medium) aligns with the playbook's stated risk if the preferred renewal provision is absent. All assertions are supported by the provided clause, contract excerpt, and playbook positions.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-8",
+        "text": "8. Termination. (a) Upon the occurrence of a material breach or default as to any obligation, term or provision contained herein by either party and the failure of the breaching party to promptly pursue (within thirty (30) days after receiving written notice thereof from the non-breaching party) a reasonable remedy designed to cure (in the reasonable judgment of the non-breaching party) such material breach or default, this Agreement may be terminated by the non-breaching party by giving written notice of termination to the breaching party, such termination\n\n being immediately effective upon the giving of such notice of termination.\n\n (b) Upon the occurrence of bankruptcy of the other party, breach of confidentiality, government legislative interference, or force majeure extending beyond sixty (60) days, either party may immediately terminate the Agreement.",
+        "span": {
+          "start": 3614,
+          "end": 4485,
+          "page": 1
+        },
+        "clause_type": "termination",
+        "heading": "8. Termination. (a) Upon the occurrence of a material breach or default as to any obligation, term or provision contained herein by either party and the failure of the breaching party to promptly pursue (within thirty (30) days after receiving written notice thereof from the non-breaching party) a reasonable remedy designed to cure (in the reasonable judgment of the non-breaching party) such material breach or default, this Agreement may be terminated by the non-breaching party by giving written notice of termination to the breaching party, such termination"
+      },
+      "risk_level": "low",
+      "rationale": "The clause permits termination for cause after a 30‑day cure period, matching the preferred termination‑for‑cause‑cure position, and allows termination for force majeure only after 60 days, aligning with the fallback force‑majeure‑bounded position. These alignments indicate compliance with the relevant policies.",
+      "citations": [
+        {
+          "citation_id": "3359d192f820",
+          "playbook_position_id": "termination-for-cause-cure",
+          "excerpt": "Either party may terminate this Agreement for cause if the other party materially breaches it and fails to cure that breach within thirty (30) days after receiving written notice describing the breach in reasonable detail."
+        },
+        {
+          "citation_id": "3dca33a2ea71",
+          "playbook_position_id": "force-majeure-bounded",
+          "excerpt": "Neither party is liable for a failure to perform caused by an event beyond its reasonable control, provided it notifies the other party promptly and resumes performance as soon as practicable. Force majeure does not excuse an obligation to pay amounts already due, and either party may terminate if the event continues for more than sixty (60) days."
+        }
+      ],
+      "contract_sources": [],
+      "suggested_fallback": null,
+      "verified": true,
+      "verification_reason": "All claims in the reviewer assessment are supported by the clause text and the cited playbook positions. The clause’s 30‑day cure period matches the preferred termination‑for‑cause‑cure position, and the 60‑day force‑majeure termination aligns with the fallback force‑majeure‑bounded position. The risk rating of low follows logically from these alignments, and no fallback text was required. No unsupported statements were found.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-9",
+        "text": "9. Purchase Requirements. During the term of this Agreement, ENVISION will exclusively purchase the Product from SIERRA. The parties mutually agree to the Purchase Price of:\n\n Product Purchase Price ----------------------------------------------- A. SierraSil Per Sierra Sil's wholesale price list.",
+        "span": {
+          "start": 4485,
+          "end": 4785,
+          "page": 1
+        },
+        "clause_type": "payment_terms",
+        "heading": "9. Purchase Requirements. During the term of this Agreement, ENVISION will exclusively purchase the Product from SIERRA. The parties mutually agree to the Purchase Price of:"
+      },
+      "risk_level": "low",
+      "rationale": "The clause does not impose any minimum purchase quantity or volume, matching the preferred policy of no minimum purchase commitment.",
+      "citations": [
+        {
+          "citation_id": "3a04db7db8c2",
+          "playbook_position_id": "no-minimum-commitment",
+          "excerpt": "Customer is under no obligation to purchase any minimum quantity, value or share of its requirements under this Agreement, and shall pay only for the Services it actually orders."
+        }
+      ],
+      "contract_sources": [],
+      "suggested_fallback": null,
+      "verified": true,
+      "verification_reason": "The clause specifies exclusive purchase and price but contains no minimum quantity or volume requirement, which aligns with the playbook position stating there is no minimum purchase commitment. The reviewer’s risk assessment (low) and rationale correctly reflect this alignment, and no fallback is needed as none was provided.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-10",
+        "text": "10. Intellectual Property. SIERRA is responsible for all Patent costs for the Product. SIERRA warrants it owns pending patents for the Product in the U.S. and internationally. SIERRA hereby grants ENVISION an exclusive, royalty-free sub-license of the Product's future patents, and patent applications to distribute, sell and market the Finished Product. SIERRA hereby agrees to indemnify, defend and hold ENVISION harmless from any claims that the Product infringes upon any other patent.",
+        "span": {
+          "start": 4785,
+          "end": 5276,
+          "page": 1
+        },
+        "clause_type": "intellectual_property",
+        "heading": "10. Intellectual Property. SIERRA is responsible for all Patent costs for the Product. SIERRA warrants it owns pending patents for the Product in the U.S. and internationally. SIERRA hereby grants ENVISION an exclusive, royalty-free sub-license of the Product's future patents, and patent applications to distribute, sell and market the Finished Product. SIERRA hereby agrees to indemnify, defend and hold ENVISION harmless from any claims that the Product infringes upon any other patent."
+      },
+      "risk_level": "high",
+      "rationale": "The clause grants ENVISION an exclusive sub‑license and includes IP infringement indemnity, but it does not contain any provision preventing joint ownership of IP. The playbook’s preferred position ip-no-joint-ownership requires that parties shall not jointly own IP; its absence carries a high risk. The IP infringement indemnity aligns with the playbook, but the missing joint‑ownership protection dominates the risk assessment.",
+      "citations": [
+        {
+          "citation_id": "44c0ad21a53c",
+          "playbook_position_id": "ip-no-joint-ownership",
+          "excerpt": "The parties shall not jointly own any intellectual property under this Agreement. Any jointly developed work product shall be owned by the party that contributed the underlying background intellectual property, with a licence granted to the other party as set out in this Agreement."
+        },
+        {
+          "citation_id": "7df19cd4ae10",
+          "playbook_position_id": "ip-infringement-indemnity",
+          "excerpt": "Supplier shall defend and indemnify Customer against any third-party claim alleging that the Services or Deliverables infringe that third party's intellectual property rights, and shall pay any damages finally awarded or agreed in settlement."
+        }
+      ],
+      "contract_sources": [],
+      "suggested_fallback": "Where the parties jointly develop intellectual property, each party owns an undivided interest in it and may exploit and licence it without accounting to or obtaining the consent of the other party.",
+      "verified": true,
+      "verification_reason": "All reviewer claims are supported by the provided clause and playbook excerpts: the clause includes an IP infringement indemnity matching the playbook position, it lacks any joint‑ownership restriction as noted, and the suggested fallback verbatim matches the playbook fallback text. No unsupported statements were identified.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-11",
+        "text": "11. Trademarks SIERRA is the owner of the trademark&sbsp; \"SierraSil\". This Agreement grants ENVISION a non-exclusive and non-royalty bearing license to use the mark \"SierraSil\". SIERRA shall at all times be the owner of the trademark and ENVISION shall acquire no rights thereto. Upon termination, ENVISION shall have eighteen (18) months to exhaust any inventories, packaging and advertising materials bearing the \"SierraSil\" trademark and SIERRA shall have first option to buy back any inventory at ENVISION's net purchase price.",
+        "span": {
+          "start": 5276,
+          "end": 5810,
+          "page": 1
+        },
+        "clause_type": "intellectual_property",
+        "heading": "11. Trademarks SIERRA is the owner of the trademark&sbsp; \"SierraSil\". This Agreement grants ENVISION a non-exclusive and non-royalty bearing license to use the mark \"SierraSil\". SIERRA shall at all times be the owner of the trademark and ENVISION shall acquire no rights thereto. Upon termination, ENVISION shall have eighteen (18) months to exhaust any inventories, packaging and advertising materials bearing the \"SierraSil\" trademark and SIERRA shall have first option to buy back any inventory at ENVISION's net purchase price."
+      },
+      "risk_level": "medium",
+      "rationale": "Clause grants a non‑exclusive trademark licence but does not expressly limit its term, revocability, or scope, deviating from the playbook's preferred limited, revocable licence. The lack of explicit revocation or term limits creates a residual exposure.",
+      "citations": [
+        {
+          "citation_id": "6188e4f08ba9",
+          "playbook_position_id": "licence-scope-limited",
+          "excerpt": "Supplier grants Customer a non-exclusive, non-transferable, non-sublicensable licence to use the Services during the Term solely for Customer's internal business purposes. The licence terminates automatically on expiry or termination of this Agreement."
+        },
+        {
+          "citation_id": "f47055183908",
+          "playbook_position_id": "licence-not-perpetual",
+          "excerpt": "No licence granted under this Agreement is perpetual, irrevocable, or unlimited in volume, territory or field of use. Each licence is co-terminous with this Agreement and bounded by the metrics stated in the applicable Order Form."
+        }
+      ],
+      "contract_sources": [],
+      "suggested_fallback": "A licence granted under this Agreement may survive termination only for Deliverables already paid for in full, is limited to the volume, territory and field of use stated in the applicable Order Form, and remains revocable on Customer's material breach.",
+      "verified": true,
+      "verification_reason": "The reviewer correctly bases the risk assessment on the clause, noting the absence of explicit term limits, revocability, and scope limitations required by the playbook positions. The suggested fallback verbatim matches the fallback text from the licence-not-perpetual playbook. All claims are supported by the provided clause and playbook excerpts.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-12",
+        "text": "12. Independent Contractor Status. The parties acknowledge that ENVISION is an independent contractor and shall not be deemed to be an employee, agent, or joint venturer of SIERRA for any purpose, including federal tax purposes.",
+        "span": {
+          "start": 5810,
+          "end": 6040,
+          "page": 1
+        },
+        "clause_type": "other",
+        "heading": "12. Independent Contractor Status. The parties acknowledge that ENVISION is an independent contractor and shall not be deemed to be an employee, agent, or joint venturer of SIERRA for any purpose, including federal tax purposes."
+      },
+      "risk_level": "unknown",
+      "rationale": "The clause solely defines ENVISION as an independent contractor and does not address employee solicitation, joint IP ownership, warranties, data processing, governing law, renewal, assignment, or licence scope. None of the retrieved playbook positions cover independent contractor status, so there is no applicable policy to compare against.",
+      "citations": [],
+      "contract_sources": [],
+      "suggested_fallback": null,
+      "verified": false,
+      "verification_reason": "assessment has no playbook citations supporting its risk and rationale",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-13",
+        "text": "13. Warranty. SIERRA warrants that the Product shall be free from defects in material and workmanship for the reasonable shelf life of the Product. In the event of any breach of this warranty or in the event any user of Product makes a claim that the Product was the cause of personal injury or property damage (product liability claim), SIERRA shall indemnify, defend and hold ENVISION harmless from any liability occasioned by a breach of warranty or a product liability claim. SIERRA warrants that it carries general liability insurance of not less than $2 million per occurrence and product liability insurance of not less than $5 million per occurrence and that, upon the execution of this Agreement, it will name ENVISION as an additional insured on such policies. SIERRA further warrants that the Product will not be adulterated or misbranded within the meaning of any federal, state, or local law or regulation or other applicable law. SIERRA agrees to promptly notify ENVISION of any problem, anomaly, defect or condition which would reasonably cause ENVISION's concern relative to stability, reliability, form, fit, function or quality of the Product.\n\n ENVISION warrants that the Finished Product will not be adulterated or misbranded within the meaning of any federal, state, or local law or regulation or other applicable law. In the event of any breach of this warranty or in the event any user of the Finished Product makes a claim that the Finished Product was the cause of personal injury or property damage (product liability claim), ENVISION shall indemnify, defend, and hold SIERRA harmless from any liability occasioned by a breach of warranty or a product liability claim. ENVISION warrants that it carries general liability insurance of $1 million per occurrence and product liability insurance of not less than $2 million per occurrence and that, upon execution of this Agreement, it will name SIERRA as an additional insured on such policies.",
+        "span": {
+          "start": 6040,
+          "end": 8009,
+          "page": 1
+        },
+        "clause_type": "warranty",
+        "heading": "13. Warranty. SIERRA warrants that the Product shall be free from defects in material and workmanship for the reasonable shelf life of the Product. In the event of any breach of this warranty or in the event any user of Product makes a claim that the Product was the cause of personal injury or property damage (product liability claim), SIERRA shall indemnify, defend and hold ENVISION harmless from any liability occasioned by a breach of warranty or a product liability claim. SIERRA warrants that it carries general liability insurance of not less than $2 million per occurrence and product liability insurance of not less than $5 million per occurrence and that, upon the execution of this Agreement, it will name ENVISION as an additional insured on such policies. SIERRA further warrants that the Product will not be adulterated or misbranded within the meaning of any federal, state, or local law or regulation or other applicable law. SIERRA agrees to promptly notify ENVISION of any problem, anomaly, defect or condition which would reasonably cause ENVISION's concern relative to stability, reliability, form, fit, function or quality of the Product."
+      },
+      "risk_level": "medium",
+      "rationale": "The clause provides a warranty based on the \"reasonable shelf life\" of the product, which deviates from the playbook's 12‑month warranty period (preferred) or 90‑day warranty (fallback). This limited deviation creates a residual exposure that can be negotiated. Additionally, the insurance obligations differ: the clause requires $2 M general liability (matching the preferred GL amount) but specifies product liability of $5 M, whereas the playbook cites commercial general liability of $2 M and professional liability of $2 M (preferred) or $1 M GL (fallback). The mismatch in liability type and amounts introduces further moderate risk.",
+      "citations": [
+        {
+          "citation_id": "88b4013cea29",
+          "playbook_position_id": "warranty-services-12-months",
+          "excerpt": "Supplier warrants that the Services will conform in all material respects to the applicable specification for twelve (12) months from delivery, and shall at its cost re-perform or correct any non-conforming Services reported within that period."
+        },
+        {
+          "citation_id": "b287cd898aed",
+          "playbook_position_id": "insurance-standard-limits",
+          "excerpt": "Each party shall maintain, at its own cost, commercial general liability insurance of at least USD 2,000,000 per occurrence and professional liability insurance of at least USD 2,000,000 in the aggregate, and shall provide a certificate of insurance on request."
+        }
+      ],
+      "contract_sources": [],
+      "suggested_fallback": "Supplier warrants that the Services will conform in all material respects to the applicable specification for ninety (90) days from delivery, and shall at its cost re-perform or correct any non-conforming Services reported within that period.",
+      "verified": true,
+      "verification_reason": "All statements in the reviewer assessment are supported by the clause text and the cited playbook positions. The clause’s warranty is based on “reasonable shelf life,” differing from the playbook’s 12‑month or 90‑day warranties, and the insurance obligations (general liability $2 M and product liability $5 M) do not match the playbook’s commercial general liability $2 M and professional liability $2 M (or $1 M fallback). The suggested fallback matches the playbook fallback verbatim. Hence the assessment is properly grounded.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-14",
+        "text": "14. Confidential Information. The parties acknowledge that, during the term of this Agreement, each may receive certain Proprietary Information of the other. Proprietary Information includes, without limitation, formula, scientific studies, processes, plans, formulations, technical information, new product information, methods of product delivery, test procedures, product samples, specifications, scientific, clinical, commercial and other information or data, customer lists, customer contacts, and other distributors within the Territory which are considered confidential in nature whether communicated in writing or orally. The parties agree that each will treat such information as confidential. Neither party shall have the right to disclose the Proprietary Information to any third party without the express written consent of the disclosing party. Neither party may use the proprietary information except in furtherance of the goals of this Agreement and is further prohibited from utilizing the Proprietary Information directly nor indirectly to engage in any business activity which is competitive with the other.",
+        "span": {
+          "start": 8009,
+          "end": 9136,
+          "page": 1
+        },
+        "clause_type": "confidentiality",
+        "heading": "14. Confidential Information. The parties acknowledge that, during the term of this Agreement, each may receive certain Proprietary Information of the other. Proprietary Information includes, without limitation, formula, scientific studies, processes, plans, formulations, technical information, new product information, methods of product delivery, test procedures, product samples, specifications, scientific, clinical, commercial and other information or data, customer lists, customer contacts, and other distributors within the Territory which are considered confidential in nature whether communicated in writing or orally. The parties agree that each will treat such information as confidential. Neither party shall have the right to disclose the Proprietary Information to any third party without the express written consent of the disclosing party. Neither party may use the proprietary information except in furtherance of the goals of this Agreement and is further prohibited from utilizing the Proprietary Information directly nor indirectly to engage in any business activity which is competitive with the other."
+      },
+      "risk_level": "medium",
+      "rationale": "The clause imposes mutual confidentiality but omits the standard exclusions (public domain, prior knowledge, independent development) required by the preferred confidentiality-mutual position, creating a limited exposure. It also lacks any survival period for confidentiality obligations, deviating from the confidentiality-term position that mandates a minimum post‑termination term, which introduces additional risk.",
+      "citations": [
+        {
+          "citation_id": "556221eb5774",
+          "playbook_position_id": "confidentiality-mutual",
+          "excerpt": "Each party shall keep the other party's Confidential Information confidential, use it only to perform this Agreement, and protect it with at least the care it uses for its own confidential information. These obligations do not apply to information that is or becomes public through no fault of the receiving party, was already known to it, or is independently developed by it."
+        },
+        {
+          "citation_id": "4ad9483e69a0",
+          "playbook_position_id": "confidentiality-term",
+          "excerpt": "The confidentiality obligations in this Agreement survive for five (5) years after termination or expiry, and indefinitely with respect to trade secrets for so long as they remain trade secrets under applicable law."
+        }
+      ],
+      "contract_sources": [],
+      "suggested_fallback": "The confidentiality obligations in this Agreement survive for five (5) years after termination or expiry, and indefinitely with respect to trade secrets for so long as they remain trade secrets under applicable law.",
+      "verified": true,
+      "verification_reason": "The reviewer correctly cites that the clause lacks the standard exclusions required by the confidentiality-mutual position and omits any survival period required by confidentiality-term, matching the playbook. The risk rating of medium aligns with the playbook’s risk if the term provision is absent. The suggested fallback text is verbatim to the cited fallback. All claims are supported by the provided clause and playbook excerpts.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-15",
+        "text": "15. Force Majeure. In no event shall any party be responsible for its failure to fulfill any of its obligations under this Agreement when such failure is due to fires, floods, riots, strikes, freight embargoes, acts of God or insurrection. In the event of a force majeure, the party affected thereby shall give immediate written notice to the other. If the event of force majeure continues for longer than\n\n sixty (60) days, the party not so affected shall have the right to terminate this Agreement.",
+        "span": {
+          "start": 9136,
+          "end": 9638,
+          "page": 1
+        },
+        "clause_type": "force_majeure",
+        "heading": "15. Force Majeure. In no event shall any party be responsible for its failure to fulfill any of its obligations under this Agreement when such failure is due to fires, floods, riots, strikes, freight embargoes, acts of God or insurrection. In the event of a force majeure, the party affected thereby shall give immediate written notice to the other. If the event of force majeure continues for longer than"
+      },
+      "risk_level": "low",
+      "rationale": "The clause permits termination after sixty (60) days of a continuing force majeure event, which aligns with the fallback language of the force-majeure-bounded position. Although the preferred position allows termination after thirty (30) days, the fallback is acceptable and the clause also does not excuse payment obligations, matching the policy. Therefore the deviation is within an acceptable fallback and presents low risk.",
+      "citations": [
+        {
+          "citation_id": "3dca33a2ea71",
+          "playbook_position_id": "force-majeure-bounded",
+          "excerpt": "Neither party is liable for a failure to perform caused by an event beyond its reasonable control, provided it notifies the other party promptly and resumes performance as soon as practicable. Force majeure does not excuse an obligation to pay amounts already due, and either party may terminate if the event continues for more than sixty (60) days."
+        }
+      ],
+      "contract_sources": [],
+      "suggested_fallback": null,
+      "verified": true,
+      "verification_reason": "The reviewer’s claims are supported: the clause allows termination after 60 days, matching the fallback text, and does not mention payment exemption, aligning with the policy that payment is not excused. The risk assessment and rationale are consistent with the supplied evidence.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-16",
+        "text": "16. Non-Waiver of Default. The failure of either party at any time to require the performance by a party of any provision of this Agreement shall in no way affect the right to require performance at any time after such failure. The waiver of either party of a breach of any provision of this Agreement shall not be taken to be a waiver of any succeeding breach of the provision or as a waiver of the provision itself.",
+        "span": {
+          "start": 9638,
+          "end": 10057,
+          "page": 1
+        },
+        "clause_type": "other",
+        "heading": "16. Non-Waiver of Default. The failure of either party at any time to require the performance by a party of any provision of this Agreement shall in no way affect the right to require performance at any time after such failure. The waiver of either party of a breach of any provision of this Agreement shall not be taken to be a waiver of any succeeding breach of the provision or as a waiver of the provision itself."
+      },
+      "risk_level": "unknown",
+      "rationale": "The clause addresses non-waiver of default and does not correspond to any retrieved playbook position. No relevant policy on waiver or default is provided, so a risk assessment cannot be grounded in the supplied positions.",
+      "citations": [],
+      "contract_sources": [],
+      "suggested_fallback": null,
+      "verified": false,
+      "verification_reason": "assessment has no playbook citations supporting its risk and rationale",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-17",
+        "text": "17. Attorney's Fees. In the event either party is required to institute litigation to enforce any provision of this Agreement, the prevailing party in such litigation shall be entitled to recover all costs including without limitation, reasonable attorney's fees and expenses incurred in connection with such enforcement and collection.",
+        "span": {
+          "start": 10057,
+          "end": 10395,
+          "page": 1
+        },
+        "clause_type": "indemnification",
+        "heading": "17. Attorney's Fees. In the event either party is required to institute litigation to enforce any provision of this Agreement, the prevailing party in such litigation shall be entitled to recover all costs including without limitation, reasonable attorney's fees and expenses incurred in connection with such enforcement and collection."
+      },
+      "risk_level": "unknown",
+      "rationale": "The clause grants prevailing parties recovery of attorney's fees and expenses, but none of the retrieved playbook positions address entitlement to litigation costs or prevailing party fee recovery. Consequently, there is no applicable policy to compare, leading to an unknown risk assessment.",
+      "citations": [],
+      "contract_sources": [],
+      "suggested_fallback": null,
+      "verified": false,
+      "verification_reason": "assessment has no playbook citations supporting its risk and rationale",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-18",
+        "text": "18. Venue. This Agreement is deemed to have been entered into in the State of Colorado, and its interpretation, construction, and the remedies for its enforcement or breach are to be applied pursuant to and in accordance with the laws of the State of Colorado.",
+        "span": {
+          "start": 10395,
+          "end": 10657,
+          "page": 1
+        },
+        "clause_type": "governing_law",
+        "heading": "18. Venue. This Agreement is deemed to have been entered into in the State of Colorado, and its interpretation, construction, and the remedies for its enforcement or breach are to be applied pursuant to and in accordance with the laws of the State of Colorado."
+      },
+      "risk_level": "low",
+      "rationale": "The clause names Colorado law as governing law but does not include the exclusive jurisdiction language found in the playbook's preferred and fallback positions. Since the playbook assigns a \"low\" risk if the governing‑law-and‑venue provision is absent, the omission of exclusive venue does not raise the risk above low.",
+      "citations": [
+        {
+          "citation_id": "f55105757cfa",
+          "playbook_position_id": "governing-law-and-venue",
+          "excerpt": "This Agreement is governed by the laws of the State of New York, without regard to its conflict of laws rules, and the parties submit to the exclusive jurisdiction of the state and federal courts located in New York County, New York."
+        }
+      ],
+      "contract_sources": [],
+      "suggested_fallback": "This Agreement is governed by the laws of the State of Delaware, without regard to its conflict of laws rules, and the parties submit to the exclusive jurisdiction of the state and federal courts located in Delaware.",
+      "verified": true,
+      "verification_reason": "All claims in the assessment are supported by the clause and cited playbook: the clause specifies Colorado law, the playbook defines low risk when governing-law-and-venue language is absent, and the suggested fallback matches the playbook fallback verbatim.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-19",
+        "text": "19. Notices. Any and all notices or other communication required or permitted to be given pursuant to this Agreement shall be in writing and shall be construed as properly given if mailed first class, postage prepaid to the address specified herein. Either party may designate, in writing, a change of address or other place to which notices may be sent.\n\n If to SIERRA: If to LIFEUSA/ENVISION: Mr. Michael Bentley Mr. Michael Schuett Sierra Mountain Minerals Inc. Envision Health, Inc. 1501 West Broadway, Suite 500 2475 Broadway, Suite 202 Vancouver BC V6J4Z6 Boulder, CO 80304 Canada",
+        "span": {
+          "start": 10657,
+          "end": 11245,
+          "page": 1
+        },
+        "clause_type": "other",
+        "heading": "19. Notices. Any and all notices or other communication required or permitted to be given pursuant to this Agreement shall be in writing and shall be construed as properly given if mailed first class, postage prepaid to the address specified herein. Either party may designate, in writing, a change of address or other place to which notices may be sent."
+      },
+      "risk_level": "unknown",
+      "rationale": "The clause addresses notice procedures, but none of the retrieved playbook positions pertain to notice requirements. Without a relevant policy reference, the risk cannot be assessed against the company's playbook.",
+      "citations": [],
+      "contract_sources": [],
+      "suggested_fallback": null,
+      "verified": false,
+      "verification_reason": "assessment has no playbook citations supporting its risk and rationale",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-20",
+        "text": "20. Amendment. This Agreement shall not be modified or amended except by a written agreement executed by both parties.",
+        "span": {
+          "start": 11245,
+          "end": 11365,
+          "page": 1
+        },
+        "clause_type": "other",
+        "heading": "20. Amendment. This Agreement shall not be modified or amended except by a written agreement executed by both parties."
+      },
+      "risk_level": "unknown",
+      "rationale": "The clause governs amendment procedures, but none of the supplied playbook positions address amendment or modification requirements, so there is no basis to assess compliance or deviation.",
+      "citations": [],
+      "contract_sources": [],
+      "suggested_fallback": null,
+      "verified": false,
+      "verification_reason": "assessment has no playbook citations supporting its risk and rationale",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-21",
+        "text": "21. Entire Agreement. This Agreement constitutes the entire agreement between the parties with respect to the subject matter thereof and supersedes all prior agreements, whether written or oral.",
+        "span": {
+          "start": 11365,
+          "end": 11561,
+          "page": 1
+        },
+        "clause_type": "other",
+        "heading": "21. Entire Agreement. This Agreement constitutes the entire agreement between the parties with respect to the subject matter thereof and supersedes all prior agreements, whether written or oral."
+      },
+      "risk_level": "unknown",
+      "rationale": "The clause is an entire‑agreement provision and does not relate to any of the retrieved playbook positions, which cover assignment, audit rights, termination, confidentiality, indemnity, non‑solicitation, purchase commitments, and consequential damages. Consequently, no applicable policy can be cited to assess compliance or risk.",
+      "citations": [],
+      "contract_sources": [],
+      "suggested_fallback": null,
+      "verified": false,
+      "verification_reason": "assessment has no playbook citations supporting its risk and rationale",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-22",
+        "text": "22. Assignment. The parties shall have the right to assign all, or part, of its rights under this Agreement to any wholly owned subsidiary or affiliate without the consent of the other Party. Any other assignment by the parties, requires the prior written consent of the other Party.\n\nACKNOWLEDGEMENTS\n\n Each party acknowledges that he or she has had an adequate opportunity to read and study this Agreement. The understanding of the aforesaid articles causes no difficulty whatsoever and each party has retained a copy of this agreement immediately after the signing of it by all parties.\n\n IN WITNESS WHEREOF, the parties have executed this Agreement effective as of the date and year first written above.\n\nSIERRA MOUNTAIN MINERALS LIFEUSA/ENVISION HEALTH\n\nBy: /s/ Michael Bentley By: /s/ Michael Schuett ----------------------- ------------------------- Michael Bentley Michael Schuett\n\n December 8, 2005 December 7, 2005 ----------------------- ------------------------------ Date Date",
+        "span": {
+          "start": 11561,
+          "end": 12550,
+          "page": 1
+        },
+        "clause_type": "other",
+        "heading": "22. Assignment. The parties shall have the right to assign all, or part, of its rights under this Agreement to any wholly owned subsidiary or affiliate without the consent of the other Party. Any other assignment by the parties, requires the prior written consent of the other Party."
+      },
+      "risk_level": "medium",
+      "rationale": "Clause permits assignment to any wholly owned subsidiary or affiliate without consent, whereas the playbook requires consent for all assignments except a change of control. This broader allowance creates a deviation from the preferred/fallback policy, yielding a medium risk.",
+      "citations": [
+        {
+          "citation_id": "ecc744658738",
+          "playbook_position_id": "assignment-change-of-control",
+          "excerpt": "Neither party may assign this Agreement without the other party's prior written consent, such consent not to be unreasonably withheld, conditioned or delayed. A change of control is not an assignment for the purposes of this clause."
+        }
+      ],
+      "contract_sources": [],
+      "suggested_fallback": "Neither party may assign this Agreement without the other party's prior written consent, such consent not to be unreasonably withheld, conditioned or delayed. A change of control is not an assignment for the purposes of this clause.",
+      "verified": true,
+      "verification_reason": "The reviewer’s claim that the clause permits broader assignment than the playbook’s preferred/fallback positions is directly supported by the clause text, which allows assignment to wholly owned subsidiaries or affiliates without consent. The cited playbook positions and fallback text are quoted verbatim, and the risk level (medium) follows from this deviation. All assertions are backed by the provided evidence.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    }
+  ],
+  "metadata": {
+    "parties": [
+      "LifeUSA/ Envision Health, Inc.",
+      "Sierra Mountain Minerals, Inc."
+    ],
+    "agreement_date": "Dec. 8, 2005",
+    "effective_date": "Dec. 8, 2005",
+    "expiration_date": null,
+    "contract_value": null,
+    "governing_law": "laws of the State of Colorado"
+  },
+  "disclaimer": "This automated review is for informational purposes only and does not constitute legal advice. Consult qualified counsel before relying on it."
+}

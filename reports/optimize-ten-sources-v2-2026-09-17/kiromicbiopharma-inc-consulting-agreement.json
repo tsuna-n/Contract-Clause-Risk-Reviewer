@@ -1,0 +1,483 @@
+{
+  "report_id": "189ec9235907450e9856b524f78ddbf3",
+  "contract_id": "kiromicbiopharma-inc-consulting-agreement",
+  "session_id": "eval",
+  "filename": "",
+  "created_at": "2026-09-17T16:36:19.672639Z",
+  "overall_risk": "high",
+  "summary": {
+    "high": 2,
+    "medium": 2,
+    "low": 4,
+    "unknown": 10
+  },
+  "reviews": [
+    {
+      "clause": {
+        "id": "clause-1",
+        "text": "1. Services and Compensation. Consultant agrees to act as a consultant to Company with respect to such matters and projects as are mutually agreed from time to time by and between Consultant and Company, and perform the services described on Exhibit A hereto (collectively, \"Services\").\n\nCompany agrees to pay Consultant the compensation set forth on Exhibit A hereto for the performance of the Services.",
+        "span": {
+          "start": 458,
+          "end": 864,
+          "page": 1
+        },
+        "clause_type": "payment_terms",
+        "heading": "1. Services and Compensation. Consultant agrees to act as a consultant to Company with respect to such matters and projects as are mutually agreed from time to time by and between Consultant and Company, and perform the services described on Exhibit A hereto (collectively, \"Services\")."
+      },
+      "risk_level": "low",
+      "rationale": "The clause obligates the Company to pay the compensation set out in Exhibit A for the Services, without imposing any minimum purchase or volume commitment. This aligns with the company’s preferred payment_terms position that the Customer has no obligation to purchase a minimum quantity or value and pays only for the Services ordered.",
+      "citations": [
+        {
+          "citation_id": "3a04db7db8c2",
+          "playbook_position_id": "no-minimum-commitment",
+          "excerpt": "Customer is under no obligation to purchase any minimum quantity, value or share of its requirements under this Agreement, and shall pay only for the Services it actually orders."
+        }
+      ],
+      "suggested_fallback": null,
+      "verified": true,
+      "verification_reason": "The clause specifies payment for services as set out in Exhibit A and contains no language about minimum purchase or volume commitments. This matches the playbook position that the customer has no obligation to purchase a minimum quantity or value and pays only for services ordered. Therefore the reviewer’s claim is supported, and the suggested fallback (none) is appropriate since the playbook fallback is not needed.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-2",
+        "text": "2. Confidentiality. \"Confidential Information\" means any proprietary information technical data, trade secrets or know-how, including, but not limited to, research and product plans, products, services, markets, developments, inventions, processes, formulas, technology, marketing, finances or other business information disclosed to Consultant by Company either directly or indirectly in writing, orally or otherwise. Confidential Information also includes all Inventions (as defined below) and any other information or materials generated in connection with the Services.\n\nConsultant shall not, during or subsequent to the term of this Agreement, use any Confidential Information for any purpose whatsoever other than the performance of the Services on behalf of Company, or disclose Confidential Information to any third party. Consultant agrees that Confidential Information shall remain the sole property of Company. Consultant further agrees to take all reasonable precautions to prevent any unauthorized disclosure or use of Confidential Information. Notwithstanding the above, Consultant's obligation under this Section 2(b) relating to Confidential Information shall not apply to information which (i) is known to Consultant at the time of disclosure to Consultant by Company as evidenced by written records of Consultant, (ii) has become publicly known and made generally available through no wrongful act of Consultant, or (iii) has been rightfully received by Consultant from a third party authorized to make such disclosure.\n\nConsultant agrees that Consultant will not, during the term of this Agreement, improperly use or disclose to Company any proprietary information or trade secrets of any former or current employer or other person or entity to which Consultant has a duty to keep in confidence such information and that Consultant will not bring onto the premises of Company any unpublished document or proprietary information belonging to such employer, person or entity unless consented to in writing by the same. Consultant will indemnify Company and hold it harmless from 844.KEY.CURE | www.kiromic.com PAGE 1\n\nand against all claims, liabilities, damages and expenses, including reasonable attorneys' fees and costs of suit, arising out of or in connection with any violation or claimed violation by Company of such third party's rights resulting in whole or in part from Company's use of the work product of Consultant under this Agreement.\n\nConsultant recognizes that Company has received and in the future will receive from third parties their confidential or proprietary information subject to a duty on Company's part to maintain the confidentiality of such information and to use it only for certain limited purposes. Consultant agrees that Consultant owes Company and such third parties, during the term of this Agreement and thereafter, a duty to hold all such confidential or proprietary information in the strictest confidence and not to disclose it to any person, firm or corporation or to use it except as necessary in carrying out the Services for Company consistent with Company's agreement with such third party.\n\nUpon the termination of this Agreement, or upon Company's earlier request, Consultant will deliver to Company all Confidential Information and Company's property relating thereto and all tangible embodiments thereof, in Consultant's possession or control.",
+        "span": {
+          "start": 864,
+          "end": 4275,
+          "page": 1
+        },
+        "clause_type": "confidentiality",
+        "heading": "2. Confidentiality. \"Confidential Information\" means any proprietary information technical data, trade secrets or know-how, including, but not limited to, research and product plans, products, services, markets, developments, inventions, processes, formulas, technology, marketing, finances or other business information disclosed to Consultant by Company either directly or indirectly in writing, orally or otherwise. Confidential Information also includes all Inventions (as defined below) and any other information or materials generated in connection with the Services."
+      },
+      "risk_level": "low",
+      "rationale": "The clause requires the consultant to keep Company’s Confidential Information confidential, use it only for the Services, and impose standard exclusions (public domain, prior knowledge, independent development). It also mandates reasonable precautions and return of information, matching the preferred mutual confidentiality obligations.",
+      "citations": [
+        {
+          "citation_id": "556221eb5774",
+          "playbook_position_id": "confidentiality-mutual",
+          "excerpt": "Each party shall keep the other party's Confidential Information confidential, use it only to perform this Agreement, and protect it with at least the care it uses for its own confidential information. These obligations do not apply to information that is or becomes public through no fault of the receiving party, was already known to it, or is independently developed by it."
+        }
+      ],
+      "suggested_fallback": "Each party shall keep the other party's Confidential Information confidential and use it only to perform this Agreement, provided that a party may disclose Confidential Information to the extent required by law or court order after giving the other party prompt notice and a reasonable opportunity to seek protective relief.",
+      "verified": true,
+      "verification_reason": "The reviewer’s claims are supported: the clause imposes confidentiality, limited use, reasonable precautions, and standard exclusions, aligning with the preferred mutual confidentiality position. The suggested fallback text matches the cited playbook fallback verbatim. Therefore the risk assessment (low) is consistent with the clause and policy.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-3",
+        "text": "3. Ownership. Consultant hereby irrevocably assigns to Company all right, title and interest in and to any information (including, without limitation, business plans and/or business information), technology, know-how, materials, notes, records, designs, ideas, inventions, improvements, devices, developments, discoveries, compositions, trade secrets, processes, methods and/or techniques, whether or not patentable or copyrightable, that are conceived, reduced to practice or made by Consultant alone or jointly with others in the course of performing the Services or through the use of Confidential Information (collectively, 111nventions\").\n\nConsultant agrees to sign, execute and acknowledge or cause to be signed, executed and acknowledged without cost, but at the expense of Company, any and all documents and to perform such acts as my be necessary, useful or convenient for the purposes of perfecting the foregoing assignments and obtaining, enforcing and defending intellectual property rights in any and all countries with respect to Inventions. It is understood and agreed that Company or Company's designee shall have the sole right, but not the obligation, to prepare, file, prosecute and maintain patent applications and patents worldwide with respect to Inventions.\n\nUpon the termination of this Agreement, or upon Company's earlier requests, Consultant will deliver to Company all property relating to, and all tangible embodiments of, Inventions in Consultant's possession or control.\n\nConsultant agrees that if, in the course of performing the Services, Consultant incorporates into any Invention developed hereunder any invention, improvement, development concept, discovery or other proprietary subject matter owned by Consultant or in which Consultant has an interest (\"Item\"), Consultant will inform Company in writing thereof, and Company is hereby granted and shall have a non-exclusive, royalty-free, perpetual, irrevocable, worldwide license to make, have made, modify, reproduce, display, use and sell such Item as part of or in connection with the exploitation of such Invention.\n\nConsultant agrees that if Company is unable because of Consultant's unavailability, mental or physical incapacity, or for any other reason, to secure Consultant's signature to apply for or to pursue any application or registration for any intellectual property rights covering any Invention, then Consultant hereby irrevocably designates and appoints Company and its duly authorized officers and agents as Consultant's agent and attorney-in-fact, to act for and in Consultant's behalf 844.KEY.CURE | www.kiromic.com PAGE 2\n\nto execute and file any such applications and to do all other lawfully permitted acts to further the prosecution and issuance of such intellectual property rights thereon with the same legal force and effect as if executed by Consultant.",
+        "span": {
+          "start": 4275,
+          "end": 7147,
+          "page": 1
+        },
+        "clause_type": "intellectual_property",
+        "heading": "3. Ownership. Consultant hereby irrevocably assigns to Company all right, title and interest in and to any information (including, without limitation, business plans and/or business information), technology, know-how, materials, notes, records, designs, ideas, inventions, improvements, devices, developments, discoveries, compositions, trade secrets, processes, methods and/or techniques, whether or not patentable or copyrightable, that are conceived, reduced to practice or made by Consultant alone or jointly with others in the course of performing the Services or through the use of Confidential Information (collectively, 111nventions\")."
+      },
+      "risk_level": "high",
+      "rationale": "The clause mandates that Consultant irrevocably assigns all rights in any inventions to the Company, giving the Company sole ownership and extensive rights over Consultant’s background IP and any jointly developed items. This directly conflicts with the company’s playbook position that each party retains its own background IP and that ownership of IP created for the other party only transfers under specific conditions. The assignment provision therefore creates a material exposure absent in the preferred policy.",
+      "citations": [
+        {
+          "citation_id": "24cca820d2bc",
+          "playbook_position_id": "ip-each-party-keeps-its-own",
+          "excerpt": "Each party retains all right, title and interest in the intellectual property it owned before this Agreement or develops independently of it. Nothing in this Agreement transfers ownership of a party's intellectual property to the other party."
+        }
+      ],
+      "suggested_fallback": "Each party retains all right, title and interest in the intellectual property it owned before this Agreement or develops independently of it. Ownership of intellectual property created specifically for Customer under a Statement of Work transfers to Customer on payment in full.",
+      "verified": true,
+      "verification_reason": "The reviewer correctly cites the clause’s assignment language and identifies its conflict with the playbook position that each party retains its background IP. The rationale clearly distinguishes the clause’s obligations from the policy’s preferences, and the suggested fallback text exactly matches the playbook fallback wording. Hence the assessment is fully supported.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-4",
+        "text": "4. Reports. Consultant agrees, from time to time during the term of this Agreement, to keep Company advised as to Consultant's progress in performing the Services and, as reasonably requested by Company, prepare written reports with respect thereto. It is understood that the time required in the preparation of such written reports shall be considered time devoted to the performance of the Services by Consultant. All such reports prepared by Consultant shall be the sole property of Company.",
+        "span": {
+          "start": 7147,
+          "end": 7643,
+          "page": 1
+        },
+        "clause_type": "intellectual_property",
+        "heading": "4. Reports. Consultant agrees, from time to time during the term of this Agreement, to keep Company advised as to Consultant's progress in performing the Services and, as reasonably requested by Company, prepare written reports with respect thereto. It is understood that the time required in the preparation of such written reports shall be considered time devoted to the performance of the Services by Consultant. All such reports prepared by Consultant shall be the sole property of Company."
+      },
+      "risk_level": "low",
+      "rationale": "The clause assigns sole ownership of all reports to the Company, matching the playbook’s preferred position that parties shall not jointly own intellectual property and that work product belongs to the party contributing the underlying IP. This provides the required protection without deviation.",
+      "citations": [
+        {
+          "citation_id": "44c0ad21a53c",
+          "playbook_position_id": "ip-no-joint-ownership",
+          "excerpt": "The parties shall not jointly own any intellectual property under this Agreement. Any jointly developed work product shall be owned by the party that contributed the underlying background intellectual property, with a licence granted to the other party as set out in this Agreement."
+        }
+      ],
+      "suggested_fallback": null,
+      "verified": true,
+      "verification_reason": "The reviewer correctly links the clause stating that all reports prepared by the Consultant shall be the sole property of the Company to the playbook’s preferred position that parties shall not jointly own intellectual property. The clause provides the required sole ownership, so the low risk assessment is supported. No fallback is needed, and the citation matches the playbook text.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-5",
+        "text": "5. Term and Termination. This Agreement will commence on the Effective Date and will continue until termination as provided below.\n\nEither Consultant or Company may terminate this Agreement upon prior written notice thereof to the other party.\n\nUpon termination of this Agreement, all rights and duties of the parties hereunder shall cease except:\n\nCompany shall be obliged to pay, within thirty (30) days after receipt of Consultant's final statement, all amounts owing to Consultant for unpaid Services completed by Consultant and related expenses, if any, in accordance with the provisions of Section 1 hereof, and Sections 2, 3, S(c), 6, 7, 8 and 10 shall survive termination of this Agreement.",
+        "span": {
+          "start": 7643,
+          "end": 8343,
+          "page": 1
+        },
+        "clause_type": "termination",
+        "heading": "5. Term and Termination. This Agreement will commence on the Effective Date and will continue until termination as provided below."
+      },
+      "risk_level": "medium",
+      "rationale": "The clause permits termination by either party with prior written notice but does not specify the required notice period, deviating from the company's preferred 30‑day notice (or fallback 60‑day notice) for termination for convenience. This omission creates a medium‑risk exposure because the lack of a defined notice period may lead to disputes over what constitutes sufficient notice.",
+      "citations": [
+        {
+          "citation_id": "2bf98c701405",
+          "playbook_position_id": "termination-for-convenience",
+          "excerpt": "Either party may terminate this Agreement for convenience upon thirty (30) days' prior written notice to the other party, without penalty or further liability other than for amounts accrued prior to the effective date of termination."
+        }
+      ],
+      "suggested_fallback": "Either party may terminate this Agreement for convenience upon sixty (60) days' prior written notice to the other party, without penalty or further liability other than for amounts accrued prior to the effective date of termination.",
+      "verified": true,
+      "verification_reason": "The reviewer correctly notes that the contract clause only requires 'prior written notice' without specifying a notice period, which deviates from the playbook's preferred 30‑day notice and fallback 60‑day notice. The claim is supported by the clause text and the cited playbook position. The suggested fallback matches the playbook fallback verbatim, and the medium risk assessment follows logically from the missing notice period.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-6",
+        "text": "6. Independent Contractor. Nothing in this Agreement shall in any way be construed to constitute Consultant as an agent, employee or representative of Company, but Consultant shall perform the Services as an independent contractor. Consultant acknowledges and agrees that Consultant is obligated to report as income all compensation received by Consultant pursuant to this Agreement.",
+        "span": {
+          "start": 8343,
+          "end": 8728,
+          "page": 1
+        },
+        "clause_type": "other",
+        "heading": "6. Independent Contractor. Nothing in this Agreement shall in any way be construed to constitute Consultant as an agent, employee or representative of Company, but Consultant shall perform the Services as an independent contractor. Consultant acknowledges and agrees that Consultant is obligated to report as income all compensation received by Consultant pursuant to this Agreement."
+      },
+      "risk_level": "unknown",
+      "rationale": "The clause defines the consultant's status as an independent contractor and requires reporting of compensation. None of the retrieved playbook positions (IP ownership, data processing, confidentiality, non-compete, assignment) address contractor classification or compensation reporting, so there is no applicable policy to compare against.",
+      "citations": [],
+      "suggested_fallback": null,
+      "verified": false,
+      "verification_reason": "assessment has no playbook citations supporting its risk and rationale",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-7",
+        "text": "7. No Debarment. Consultant represents and warrants that Consultant has not been debarred under Section (a) or (b) of 21 U.S.C. Section 335a and does not appear on the United States Food and Drug debarment list. Consultant represents and warrants that Consultant has not committed any crime or conduct that could result in such debarment or Consultant's exclusion from any governmental healthcare program. Consultant represents and warrants that, to Consultant's knowledge, no investigations, claims or proceedings with respect to any such crimes or conduct are pending or threatened against Consultant. Consultant agrees and undertakes to promptly notify the Company if Consultant becomes debarred or proceedings have been initiated against Consultant with respect to debarment, whether such debarment or initiation of proceedings occurs during or after the term of this Agreement.",
+        "span": {
+          "start": 8728,
+          "end": 9612,
+          "page": 1
+        },
+        "clause_type": "other",
+        "heading": "7. No Debarment. Consultant represents and warrants that Consultant has not been debarred under Section (a) or (b) of 21 U.S.C. Section 335a and does not appear on the United States Food and Drug debarment list. Consultant represents and warrants that Consultant has not committed any crime or conduct that could result in such debarment or Consultant's exclusion from any governmental healthcare program. Consultant represents and warrants that, to Consultant's knowledge, no investigations, claims or proceedings with respect to any such crimes or conduct are pending or threatened against Consultant. Consultant agrees and undertakes to promptly notify the Company if Consultant becomes debarred or proceedings have been initiated against Consultant with respect to debarment, whether such debarment or initiation of proceedings occurs during or after the term of this Agreement."
+      },
+      "risk_level": "medium",
+      "rationale": "The clause provides a limited debarment warranty, but does not include the broader warranty that each party has full power, authority, and will comply with all applicable laws (including anti‑bribery, sanctions, export controls) required by the company's warranty‑compliance‑and‑authority position.",
+      "citations": [
+        {
+          "citation_id": "63c38393e9ce",
+          "playbook_position_id": "warranty-compliance-and-authority",
+          "excerpt": "Each party warrants that it has full power and authority to enter into this Agreement, and that it will comply with all laws and regulations applicable to its performance under it, including anti-bribery, sanctions and export control laws."
+        }
+      ],
+      "suggested_fallback": null,
+      "verified": true,
+      "verification_reason": "The reviewer correctly notes that the clause only provides a debarment warranty and does not contain the broader warranty of full power, authority, and compliance with all laws required by the cited playbook position. The risk level of medium follows from this gap, and no fallback was cited, which aligns with the reviewer's statement.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-8",
+        "text": "8. Conflicting Obligations. Consultant hereby certifies that Consultant has no outstanding agreement or obligation that is in conflict with any of the provisions of this Agreement, or that would preclude Consultant from complying with the provisions hereof, and further certifies that Consultant will not enter into any such conflicting agreement during the term of this Agreement. Subject to written waivers that may be provided by the Company upon request, which shall not be unreasonably withheld, Consultant agrees that, during the term of this Agreement, Consultant will not directly or indirectly (i) participate in the formation of any business or commercial entity in the Field of Interest or otherwise competitive with the Company. Without limiting the foregoing, Consultant agrees to use his or her best efforts (A) to segregate Consultant's 844.KEY.CURE | www.kiromic.com PAGE 3\n\nServices performed under this Agreement from Consultant's work done for any other companies for whom Consultant is providing services so as to minimize any questions of disclosure of, or rights under, any inventions, (B) to notify the Company if at any time the Consultant believes that such questions may result from his or her performance under this Agreement and (C) to assist the Company in fairly resolving any questions in this regard which may arise. The Services performed hereunder will not be conducted on time that is required to be devoted to any other third party. The Consultant shall not use the funding, resources and facilities of any other third party, without the prior written consent of the Company, to perform Services hereunder and shall not perform the Services hereunder in any manner that would give any third-party rights or access to the product of such Services.",
+        "span": {
+          "start": 9612,
+          "end": 11396,
+          "page": 1
+        },
+        "clause_type": "non_compete",
+        "heading": "8. Conflicting Obligations. Consultant hereby certifies that Consultant has no outstanding agreement or obligation that is in conflict with any of the provisions of this Agreement, or that would preclude Consultant from complying with the provisions hereof, and further certifies that Consultant will not enter into any such conflicting agreement during the term of this Agreement. Subject to written waivers that may be provided by the Company upon request, which shall not be unreasonably withheld, Consultant agrees that, during the term of this Agreement, Consultant will not directly or indirectly (i) participate in the formation of any business or commercial entity in the Field of Interest or otherwise competitive with the Company. Without limiting the foregoing, Consultant agrees to use his or her best efforts (A) to segregate Consultant's 844.KEY.CURE | www.kiromic.com PAGE 3"
+      },
+      "risk_level": "high",
+      "rationale": "The clause imposes a broad, indefinite prohibition on the consultant competing in any business or commercial entity in the Field of Interest, without time, territorial, or scope limitations. This exceeds the company's preferred policy of no non-compete and also exceeds the fallback limitation of a 12‑month period, restricted territory, and only directly competing services, creating material exposure.",
+      "citations": [
+        {
+          "citation_id": "a7c01ef92ee7",
+          "playbook_position_id": "non-compete-bounded",
+          "excerpt": "Any non-compete obligation under this Agreement shall be limited to twelve (12) months after termination, to the territory in which the restricted party actually performed, and to services that directly compete with those supplied under this Agreement."
+        }
+      ],
+      "suggested_fallback": "Any non-compete obligation under this Agreement shall be limited to twelve (12) months after termination, to the territory in which the restricted party actually performed, and to services that directly compete with those supplied under this Agreement.",
+      "verified": true,
+      "verification_reason": "The reviewer correctly notes that the clause imposes an indefinite, broad non‑compete without time, territorial, or scope limits, which conflicts with the playbook’s preferred policy of no non‑compete and exceeds the fallback limitation of a 12‑month term, specific territory, and narrow scope. The cited fallback text is quoted verbatim, supporting the suggested amendment. Hence the assessment is fully supported by the clause and the playbook position.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-9",
+        "text": "9. General. This Agreement (together with the Exhibits hereto) is the sole agreement and understanding between Company and Consultant concerning the subject matter hereof, and it supersedes any and all prior agreements and understandings with respect to such matter, whether written or oral, provided, that, except as set forth in Exhibit B. Any required notice shall be given in writing by customary means with receipt confirmed at the address of each party set forth below, or to such other address as either party may substitute by written notice to the other. Consultant shall not subcontract any portion of Consultant's duties under this Agreement without the prior written consent of Company. Neither this Agreement nor any right hereunder or interest herein may be assigned or transferred by Consultant without the express written consent of Company. Company may assign this Agreement to any entity that succeeds to substantially all of the business or assets of Company. This Agreement shall be governed by the laws of the State of Texas, without reference to its conflicts of law principles. This Agreement may only be amended or modified by a writing signed by both parties. Waiver of any term or provision of this Agreement or forbearance to enforce any term or provision by either party shall not constitute a waiver as to any subsequent breach or failure of the same term or provision or a waiver of any other term or provision of this Agreement. In the event that any provision of this Agreement becomes or is declared by a court of competent jurisdiction to be illegal, unenforceable or void, this Agreement shall continue in full force and effect without said provision, provided that no such severability shall be effective if it materially changes the economic benefit of this Agreement to either Company or Consultant.",
+        "span": {
+          "start": 11396,
+          "end": 13235,
+          "page": 1
+        },
+        "clause_type": "governing_law",
+        "heading": "9. General. This Agreement (together with the Exhibits hereto) is the sole agreement and understanding between Company and Consultant concerning the subject matter hereof, and it supersedes any and all prior agreements and understandings with respect to such matter, whether written or oral, provided, that, except as set forth in Exhibit B. Any required notice shall be given in writing by customary means with receipt confirmed at the address of each party set forth below, or to such other address as either party may substitute by written notice to the other. Consultant shall not subcontract any portion of Consultant's duties under this Agreement without the prior written consent of Company. Neither this Agreement nor any right hereunder or interest herein may be assigned or transferred by Consultant without the express written consent of Company. Company may assign this Agreement to any entity that succeeds to substantially all of the business or assets of Company. This Agreement shall be governed by the laws of the State of Texas, without reference to its conflicts of law principles. This Agreement may only be amended or modified by a writing signed by both parties. Waiver of any term or provision of this Agreement or forbearance to enforce any term or provision by either party shall not constitute a waiver as to any subsequent breach or failure of the same term or provision or a waiver of any other term or provision of this Agreement. In the event that any provision of this Agreement becomes or is declared by a court of competent jurisdiction to be illegal, unenforceable or void, this Agreement shall continue in full force and effect without said provision, provided that no such severability shall be effective if it materially changes the economic benefit of this Agreement to either Company or Consultant."
+      },
+      "risk_level": "unknown",
+      "rationale": "The clause specifies Texas law, which does not match the preferred New York or fallback Delaware governing law positions in the playbook; therefore no supplied position directly supports the assessment.",
+      "citations": [
+        {
+          "citation_id": "f55105757cfa",
+          "playbook_position_id": "governing-law-and-venue",
+          "excerpt": "This Agreement is governed by the laws of the State of New York, without regard to its conflict of laws rules, and the parties submit to the exclusive jurisdiction of the state and federal courts located in New York County, New York."
+        }
+      ],
+      "suggested_fallback": "This Agreement is governed by the laws of the State of Delaware, without regard to its conflict of laws rules, and the parties submit to the exclusive jurisdiction of the state and federal courts located in Delaware.",
+      "verified": false,
+      "verification_reason": "The reviewer’s risk assessment of \"unknown\" is not supported by the clause or playbook. The clause does provide a governing law (Texas), which the playbook treats as a deviation from the preferred/fallback positions but still supplies a risk rating (low). Therefore the risk level should be identified as low, not unknown. The rationale also fails to distinguish the clause’s statement from the policy’s preferred/fallback wording.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-10",
+        "text": "10. Tax Matters. As follows:\n\n(a) Withholding. All forms of compensation referred to in this letter agreement are subject to reduction to reflect applicable withholding and payroll taxes and other deductions required by law.\n\n(b) Tax Advice. You are encouraged to obtain your own tax advice regarding your compensation from the Company. You agree that the Company does not have a duty to design its compensation policies in a manner that minimizes your tax liabilities, and you will not make any claim against the Company or the Board related to tax liabilities arising from your compensation.",
+        "span": {
+          "start": 13235,
+          "end": 13830,
+          "page": 1
+        },
+        "clause_type": "other",
+        "heading": "10. Tax Matters. As follows:"
+      },
+      "risk_level": "unknown",
+      "rationale": "The clause addresses tax withholding and the company's lack of duty to provide tax advice. None of the retrieved playbook positions relate to tax matters, so there is no applicable policy to compare against. Consequently, the risk cannot be determined from the supplied positions.",
+      "citations": [],
+      "suggested_fallback": null,
+      "verified": false,
+      "verification_reason": "assessment has no playbook citations supporting its risk and rationale",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-11",
+        "text": "11. Background Check and Authorization to Work. This offer of employment is contingent on the Company's completion of a satisfactory background check of you. Please note that because of employer regulations adopted in the Immigration Reform and Control Act of 1986, within three (3) business days of starting your new position you will need to present documentation demonstrating that you have authorization to work in the United States. If you have questions about this requirement, which applies to U.S. citizens and non-U.S. citizens alike, please let us know.",
+        "span": {
+          "start": 13830,
+          "end": 14395,
+          "page": 1
+        },
+        "clause_type": "other",
+        "heading": "11. Background Check and Authorization to Work. This offer of employment is contingent on the Company's completion of a satisfactory background check of you. Please note that because of employer regulations adopted in the Immigration Reform and Control Act of 1986, within three (3) business days of starting your new position you will need to present documentation demonstrating that you have authorization to work in the United States. If you have questions about this requirement, which applies to U.S. citizens and non-U.S. citizens alike, please let us know."
+      },
+      "risk_level": "unknown",
+      "rationale": "The clause requires a background check and proof of work authorization, which is not addressed by any of the retrieved playbook positions. Without a relevant policy reference, the risk cannot be determined.",
+      "citations": [],
+      "suggested_fallback": null,
+      "verified": false,
+      "verification_reason": "assessment has no playbook citations supporting its risk and rationale",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-12",
+        "text": "12. Interpretation, Amendment and Enforcement. This letter agreement will be effective as of July 1, 2018. This letter agreement and the Company's standard Proprietary Information and Inventions Agreement supersede and replace any prior agreements, representations or understandings (whether written, oral, implied or otherwise) between you and 844.KEY.CURE | www.kiromic.com PAGE 4\n\nthe Company and constitute the complete agreement between you and the Company regarding the subject matter set forth herein. This letter agreement may not be amended or modified, except by an express written agreement signed by both you and a duly authorized officer of the Company.",
+        "span": {
+          "start": 14395,
+          "end": 15063,
+          "page": 1
+        },
+        "clause_type": "other",
+        "heading": "12. Interpretation, Amendment and Enforcement. This letter agreement will be effective as of July 1, 2018. This letter agreement and the Company's standard Proprietary Information and Inventions Agreement supersede and replace any prior agreements, representations or understandings (whether written, oral, implied or otherwise) between you and 844.KEY.CURE | www.kiromic.com PAGE 4"
+      },
+      "risk_level": "unknown",
+      "rationale": "The clause addresses amendment restrictions, but no retrieved playbook position covers amendment procedures, so there is no basis to assess the risk level.",
+      "citations": [],
+      "suggested_fallback": null,
+      "verified": false,
+      "verification_reason": "assessment has no playbook citations supporting its risk and rationale",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-13",
+        "text": "13. Arbitration Agreement. Any controversy or claim arising out of or relating to this agreement or breach thereof, shall be settled by binding arbitration controlled by the rules of the American Arbitration Association. The number of arbitrator(s) shall be one. The seat of arbitration shall be Houston, Texas. Texas law shall also apply to the extent necessary to fill any gaps created by the rules of the American Arbitration Association. The arbitration award shall be final and binding on the parties. Judgement of the award rendered by the arbitrator(s) may be entered into any court of competent jurisdiction. If any provision of this Arbitration Agreement is held illegal or unenforceable in a arbitration proceeding, such provision shall be severed and shall be inoperative, and the remainder of this Agreement shall remain operative and binding on the Parties. The arbitrator(s) shall have sole kompetenz-kompetenz regarding this Arbitration Agreement.",
+        "span": {
+          "start": 15063,
+          "end": 16027,
+          "page": 1
+        },
+        "clause_type": "other",
+        "heading": "13. Arbitration Agreement. Any controversy or claim arising out of or relating to this agreement or breach thereof, shall be settled by binding arbitration controlled by the rules of the American Arbitration Association. The number of arbitrator(s) shall be one. The seat of arbitration shall be Houston, Texas. Texas law shall also apply to the extent necessary to fill any gaps created by the rules of the American Arbitration Association. The arbitration award shall be final and binding on the parties. Judgement of the award rendered by the arbitrator(s) may be entered into any court of competent jurisdiction. If any provision of this Arbitration Agreement is held illegal or unenforceable in a arbitration proceeding, such provision shall be severed and shall be inoperative, and the remainder of this Agreement shall remain operative and binding on the Parties. The arbitrator(s) shall have sole kompetenz-kompetenz regarding this Arbitration Agreement."
+      },
+      "risk_level": "unknown",
+      "rationale": "The clause pertains to arbitration procedures, but none of the retrieved playbook positions address arbitration or dispute resolution. Consequently, there is no basis to assess compliance or deviation.",
+      "citations": [],
+      "suggested_fallback": null,
+      "verified": false,
+      "verification_reason": "assessment has no playbook citations supporting its risk and rationale",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-14",
+        "text": "14. Severability. If any provision of this Agreement is held illegal or unenforceable in a judicial proceeding, such provision shall be severed and shall be inoperative, and the remainder of this Agreement shall remain operative and binding on the Parties.",
+        "span": {
+          "start": 16027,
+          "end": 16285,
+          "page": 1
+        },
+        "clause_type": "other",
+        "heading": "14. Severability. If any provision of this Agreement is held illegal or unenforceable in a judicial proceeding, such provision shall be severed and shall be inoperative, and the remainder of this Agreement shall remain operative and binding on the Parties."
+      },
+      "risk_level": "unknown",
+      "rationale": "The clause addresses severability of contract provisions, but none of the retrieved playbook positions relate to severability or similar obligations. Therefore, there is no basis to assess compliance or deviation.",
+      "citations": [],
+      "suggested_fallback": null,
+      "verified": false,
+      "verification_reason": "assessment has no playbook citations supporting its risk and rationale",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-15",
+        "text": "15. Counterparts. This Agreement may be executed in any number of counterparts, each of which when so executed and delivered will be deemed an original, and all of which together will constitute one and the same agreement.",
+        "span": {
+          "start": 16285,
+          "end": 16509,
+          "page": 1
+        },
+        "clause_type": "other",
+        "heading": "15. Counterparts. This Agreement may be executed in any number of counterparts, each of which when so executed and delivered will be deemed an original, and all of which together will constitute one and the same agreement."
+      },
+      "risk_level": "unknown",
+      "rationale": "The clause on execution of counterparts does not relate to any of the supplied playbook positions, which cover warranties, assignment, IP ownership, consequential damages, and liquidated damages. No relevant policy is applicable to assess risk for this clause.",
+      "citations": [],
+      "suggested_fallback": null,
+      "verified": false,
+      "verification_reason": "assessment has no playbook citations supporting its risk and rationale",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-16",
+        "text": "16. Entire Agreement. This Agreement and the documents referred to herein constitute the entire agreement and understanding of the parties with respect to the subject matter of this Agreement, and supersede all prior understandings and agreements, whether oral or written, between the parties hereto with respect to such subject matter.\n\n[SIGNATURE PAGE TO FOLLOW] 844.KEY.CURE | www.kiromic.com PAGE 5\n\nIN WITNESS WHEREOF, the parties hereto have executed this Agreement as of the Effective Date. KIROMIC, INC: CONSULTANT:\n\nBy: /s/ Scott Dahlbeck /s/ Gianluca Rotino Signature\n\nName: Scott Dahlbeck Gianluca Rotino\n\nTitle: President 844.KEY.CURE | www.kiromic.com PAGE 6\n\nEXHIBIT A\n\nSERVICES AND COMPENSATION",
+        "span": {
+          "start": 16509,
+          "end": 17220,
+          "page": 1
+        },
+        "clause_type": "other",
+        "heading": "16. Entire Agreement. This Agreement and the documents referred to herein constitute the entire agreement and understanding of the parties with respect to the subject matter of this Agreement, and supersede all prior understandings and agreements, whether oral or written, between the parties hereto with respect to such subject matter."
+      },
+      "risk_level": "unknown",
+      "rationale": "The clause addresses integration and supersession of prior agreements, which is not covered by any of the retrieved playbook positions. No relevant policy on entire agreement wording is provided, so a risk assessment cannot be made.",
+      "citations": [],
+      "suggested_fallback": null,
+      "verified": false,
+      "verification_reason": "assessment has no playbook citations supporting its risk and rationale",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-17",
+        "text": "1. Services. Consultant will render to Company the following Services: • Provide business and statistical analysis of company metrics • Provide leadership role for business development strategies • Manage all in house consulting duties to maximize return for company objectives • Manage key marketing and communication campaigns • Prioritize and support clinical product pipeline business priorities • Work closely with executive team to ensure department initiatives are all aligned • Locate, evaluate and develop new business contacts and opportunities",
+        "span": {
+          "start": 17220,
+          "end": 17776,
+          "page": 1
+        },
+        "clause_type": "other",
+        "heading": "1. Services. Consultant will render to Company the following Services: • Provide business and statistical analysis of company metrics • Provide leadership role for business development strategies • Manage all in house consulting duties to maximize return for company objectives • Manage key marketing and communication campaigns • Prioritize and support clinical product pipeline business priorities • Work closely with executive team to ensure department initiatives are all aligned • Locate, evaluate and develop new business contacts and opportunities"
+      },
+      "risk_level": "low",
+      "rationale": "The clause lists services the Consultant will provide without imposing any non‑compete, exclusivity, warranty, data‑processing, or IP transfer obligations, which aligns with the company’s preferred policies that permit unrestricted competition and non‑exclusive dealings.",
+      "citations": [
+        {
+          "citation_id": "9022f137f87e",
+          "playbook_position_id": "no-exclusivity",
+          "excerpt": "This Agreement is non-exclusive. Each party remains free to provide to, procure from, or contract with any third party for services of the same or a similar kind, without restriction and without any obligation to the other party."
+        },
+        {
+          "citation_id": "b3047ccdc483",
+          "playbook_position_id": "non-compete-bounded",
+          "excerpt": "Neither party is restricted from competing with the other or from operating in any geography, business or technology sector during or after the Term."
+        }
+      ],
+      "suggested_fallback": null,
+      "verified": true,
+      "verification_reason": "The reviewer correctly notes that the clause only enumerates services and contains no exclusivity or non‑compete language. The cited playbook positions state that the agreement should be non‑exclusive and allow unrestricted competition, which the clause complies with. Therefore the claim that the risk is low follows from the comparison and the rationale distinguishes clause content from policy requirements. The suggested fallback is correctly noted as none.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-18",
+        "text": "2. Compensation. The Company will compensate Consultant at the rate of $400 per hour (19 hours cap monthly; anything over these hrs must be preapproved by management), payable in accordance with the Company's standard payroll schedule, and subject to withholding as legally required. This compensation will be subject to adjustment pursuant to the Company's consultant compensation policies in effect from time to time. Consultants shall be given written notice of any adjustments to compensation at least fourteen (14) days prior to adjustments becoming effective. 844.KEY.CURE | www.kiromic.com PAGE 7",
+        "span": {
+          "start": 17776,
+          "end": 18379,
+          "page": 1
+        },
+        "clause_type": "payment_terms",
+        "heading": "2. Compensation. The Company will compensate Consultant at the rate of $400 per hour (19 hours cap monthly; anything over these hrs must be preapproved by management), payable in accordance with the Company's standard payroll schedule, and subject to withholding as legally required. This compensation will be subject to adjustment pursuant to the Company's consultant compensation policies in effect from time to time. Consultants shall be given written notice of any adjustments to compensation at least fourteen (14) days prior to adjustments becoming effective. 844.KEY.CURE | www.kiromic.com PAGE 7"
+      },
+      "risk_level": "unknown",
+      "rationale": "The clause governs hourly compensation, caps, and notice of adjustments, which does not align with any retrieved payment_terms position (revenue-share-defined) that addresses revenue share calculations. No applicable playbook position directly covers hourly rate structures, so the risk cannot be determined from the provided policies.",
+      "citations": [],
+      "suggested_fallback": null,
+      "verified": false,
+      "verification_reason": "assessment has no playbook citations supporting its risk and rationale",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    }
+  ],
+  "metadata": {
+    "parties": [
+      "Kiromic, Inc",
+      "Gianluca Rotino"
+    ],
+    "agreement_date": "July 20, 2018",
+    "effective_date": null,
+    "expiration_date": null,
+    "contract_value": null,
+    "governing_law": null
+  },
+  "disclaimer": "This automated review is for informational purposes only and does not constitute legal advice. Consult qualified counsel before relying on it."
+}

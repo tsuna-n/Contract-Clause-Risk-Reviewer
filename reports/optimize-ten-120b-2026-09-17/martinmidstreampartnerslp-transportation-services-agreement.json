@@ -1,0 +1,356 @@
+{
+  "report_id": "14b315ba47284df28fc8bf98ca000d38",
+  "contract_id": "martinmidstreampartnerslp-transportation-services-agreement",
+  "session_id": "eval",
+  "filename": "",
+  "created_at": "2026-09-17T16:29:40.951064Z",
+  "overall_risk": "high",
+  "summary": {
+    "high": 6,
+    "medium": 3,
+    "low": 2,
+    "unknown": 1
+  },
+  "reviews": [
+    {
+      "clause": {
+        "id": "clause-1",
+        "text": "1. TERM; TERMINATION\n\nThe initial term of this Agreement shall be for 3 years (the \"Initial Term\") commencing on the date first set forth above (the \"Commencement Date\") and ending on the 3rd anniversary of the Commencement Date. This Agreement will automatically renew for successive one year terms (each a \"Renewal Term\", and together with the Initial Term, the \"Term\"), unless either Charterer or Owner elects not to renew this Agreement by providing the other party with written notice of such election 30 days prior to the expiration of the Initial Term or Renewal Term, as applicable, at which point this Agreement will automatically terminate.\n\nWithin 30 days of the end of the Initial Term, and within 30 days of the end of each Renewal Term, both parties hereto shall have the right renegotiate the fee specified below for the use of the vessels. If no such agreement on such fee is reached by such parties by the commencement of a Renewal Term, this Agreement shall automatically terminate.\n\nEither party hereto shall have the right to terminate this Agreement in the event of a breach by the other party of its obligations hereunder, subject to 10 days prior written notice of such breach given by the non-breaching party to the breaching party and the opportunity for such breaching party to cure such breach during such 10 day period. Upon any such termination, this Agreement shall thereafter have no further force or effect except as to already accrued rights and obligations, which shall continue until satisfied. 2. GENERAL TERMS\n\nDuring the Term, Charterer agrees that Owner will be the sole and exclusive provider of marine transportation services for #2 fuel oil and high sulfur diesel owned by Charterer or owned by others and in transit for sale to Charterer so long as Owner has the required equipment available. Owner shall at all times provide sufficient and proper equipment for Charterer's performance of such transportation. Said equipment shall be manned, equipped, supplied and operated by Owner. The master and crew of said vessels shall be fully qualified, experience and, where necessary, certified and licensed. Owner agrees that said equipment shall be maintained in a seaworthy, staunch, tight and suitable condition and, to the best of Owner's knowledge, in compliance with all applicable laws and regulations.\n\nIn connection with its use of any vessel, Charterer will follow Owner's normal scheduling, loading and offloading protocols established from time to time, subject to Owner's obligations set forth in this Agreement.\n\n1",
+        "span": {
+          "start": 567,
+          "end": 3136,
+          "page": 1
+        },
+        "clause_type": "termination",
+        "heading": "1. TERM; TERMINATION"
+      },
+      "risk_level": "high",
+      "rationale": "The clause provides for automatic renewal of successive one‑year terms unless notice is given, which conflicts with the company’s playbook position that renewal must be opt‑in. The playbook specifies that renewal should only occur if both parties agree in writing, or at most by a notice‑based opt‑out with a maximum renewal term of twelve months. This discrepancy creates a higher risk because it permits unintended continuations and potential fee escalations not permitted by the playbook. Additionally, the clause’s cure period for termination for cause is ten (10) days, whereas the playbook requires a thirty (30)‑day cure period, further deviating from the approved policy.",
+      "citations": [
+        {
+          "citation_id": "0b788e80e4a0",
+          "playbook_position_id": "renewal-opt-in",
+          "excerpt": "This Agreement shall renew for successive twelve (12) month terms unless either party gives written notice of non-renewal at least thirty (30) days before the end of the then-current term, and the fees for any renewal term shall not increase by more than five percent (5%)."
+        },
+        {
+          "citation_id": "3359d192f820",
+          "playbook_position_id": "termination-for-cause-cure",
+          "excerpt": "Either party may terminate this Agreement for cause if the other party materially breaches it and fails to cure that breach within thirty (30) days after receiving written notice describing the breach in reasonable detail."
+        }
+      ],
+      "suggested_fallback": "This Agreement shall renew for successive twelve (12) month terms unless either party gives written notice of non-renewal at least thirty (30) days before the end of the then-current term, and the fees for any renewal term shall not increase by more than five percent (5%).",
+      "verified": true,
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-2",
+        "text": "3. RATE\n\nCharterer agrees to pay to Owner a fee of $______ per gallon of product transported. Owner will invoice such fees to Charterer on a monthly basis and Charterer will pay such invoiced amounts within 30 days of invoice date.\n\nThe fee stated above, unless otherwise adjusted by the parties pursuant to Section 1 above, shall be adjusted annually (both upward and downward), by a factor equal to the amount of increase or decrease, as the case may be, in the Consumer Price Index for the immediately proceeding month of November, over the Consumer Price Index for November of the preceding year. For purposes hereof, the term \"Consumer Price Index\" shall mean the \"Consumer Price Index for Urban Wage Earners and Clerical Workers (1967=100)\" specified for \"All Items. United States\" compiled by the Bureau of Labor Statistics of the United States Department of Labor (the \"Index\"). In the event the Consumer Price Index shall be converted to a different standard reference base or otherwise revised, the determination of the percentage change shall be made with the use of such conversion factor, formula or table for converting the Consumer Price Index as may be published by the Bureau of Labor Statistics or, if said Bureau shall not publish the same, then as shall be reasonably determined by the parties. 4. LOAD AND DISCHARGE\n\nThe Load Port shall be FOB Refinery Offtake in the U.S. Gulf of Mexico. The Discharge Port shall be at the Owner's terminals located at Venice, LA; Port Forrochon, LA; Berwick, LA; Intracoastal City, LA; Cameron, LA; Sabine Pass, TX; Beaumont, TX; Galveston, TX; Houston, TX; Freeport, TX; Port O'Connor, TX; and Harbor Island, TX. 5. TITLE TO PRODUCT\n\nTitle to all product handled shall remain at all times in the name of the Charterer. The Charterer agrees not to tender for load any product injurious to the vessels or which product would render the vessels unfit, after cleaning, for the proper storage of similar product. 6. ASSIGNMENT Neither party shall assign this Agreement without the express written consent of the other party. 7. ENTIRE AGREEMENT\n\nThis Agreement shall constitute the entire agreement concerning the subject hereof between the parties superseding all previous agreements, negotiations and representations made prior or contemporaneous to the date hereof. This Agreement shall be modified or amended only by written agreement executed by both parties hereto. 8. GOVERNING LAW This Agreement shall be governed by and construed in accordance with the laws of the State of Texas. 9. ADDITIONAL TERMS The \"Additional Terms\" attached hereto as Exhibit A shall be deemed to be incorporated into this Agreement by this reference.\n\n2\n\nIN WITNESS WHEREOF, the parties have executed this Agreement as of the date first set forth above.\n\n MARTIN OPERATING PARTNERSHIP L.P. By: Martin Operating GP LLC, Its General Partner By: Martin Midstream Partners L.P., Its Sole Member By: Martin Midstream GP LLC, Its General Partner By: /s/ RUBEN S. MARTIN Ruben S. Martin Chief Executive Officer and President MIDSTREAM FUEL SERVICE LLC By: Martin Resource Management Corporation, its Sole Member By: /s/ RUBEN S. MARTIN\n\n Name: Ruben S. Martin Title: Chief Executive Officer and President\n\n3\n\nEXHIBIT A\n\nADDITIONAL TERMS\n\nThese additional terms are deemed to be incorporated by reference into this Agreement.",
+        "span": {
+          "start": 3136,
+          "end": 6493,
+          "page": 1
+        },
+        "clause_type": "payment_terms",
+        "heading": "3. RATE"
+      },
+      "risk_level": "medium",
+      "rationale": "The clause permits an annual price adjustment based on the CPI, which aligns with the fallback wording in the playbook. However, it does not include the required sixty (60) days' prior written notice for fee increases, deviating from the playbook's stipulated notice requirement. This omission raises a moderate compliance concern, resulting in a medium risk rating.",
+      "citations": [
+        {
+          "citation_id": "d16c73f3edc5",
+          "playbook_position_id": "price-increase-capped",
+          "excerpt": "Fees are fixed for the Initial Term. Supplier may increase fees for a renewal term by no more than the increase in the consumer price index over the preceding term, on at least sixty (60) days' prior written notice."
+        }
+      ],
+      "suggested_fallback": null,
+      "verified": true,
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-3",
+        "text": "1. INVOICING & PAYMENT. All monthly Owner invoices to Charterer for rates and cost items will be paid by Charterer within 30 days of invoice date in accordance with Owner's normal payment protocols, which will be specified in the applicable invoice. Each monthly invoice shall be itemized to include charges by applicable vessel by day.",
+        "span": {
+          "start": 6493,
+          "end": 6831,
+          "page": 1
+        },
+        "clause_type": "payment_terms",
+        "heading": "1. INVOICING & PAYMENT. All monthly Owner invoices to Charterer for rates and cost items will be paid by Charterer within 30 days of invoice date in accordance with Owner's normal payment protocols, which will be specified in the applicable invoice. Each monthly invoice shall be itemized to include charges by applicable vessel by day."
+      },
+      "risk_level": "medium",
+      "rationale": "The clause requires payment within 30 days of the invoice date, but the playbook's preferred position mandates payment within thirty (30) days of receipt and includes a right to withhold disputed amounts. Because the clause does not align with the receipt trigger nor provides the dispute‑withholding mechanism, it deviates from the preferred standard, resulting in at least a medium risk assessment.",
+      "citations": [
+        {
+          "citation_id": "b068111458bd",
+          "playbook_position_id": "payment-net-30",
+          "excerpt": "Customer shall pay all undisputed invoices within thirty (30) days of receipt. Customer may withhold any amount it disputes in good faith, provided it notifies Supplier of the basis for the dispute before the due date."
+        }
+      ],
+      "suggested_fallback": "Customer shall pay all undisputed invoices within forty-five (45) days of receipt. Customer may withhold any amount it disputes in good faith, provided it notifies Supplier of the basis for the dispute before the due date.",
+      "verified": true,
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-4",
+        "text": "2. DEMISE OF CHARTER. The Master of an applicable vessel, although appointed by and in the employ of Owner and subject to Owner's direction and control, shall observe the reasonable instructions of Charterer in connection with Charterer's transportation needs under this Agreement; PROVIDED, HOWEVER, THAT NOTHING IN THIS CLAUSE OR ELSEWHERE IN THIS AGREEMENT SHALL BE CONSTRUED AS CREATING A DEMISE OF THE APPLICABLE VESSEL TO CHARTERER OR AS VESTING CHARTERER WITH ANY CONTROL OVER THE PHYSICAL OPERATION OR NAVIGATION OF THE APPLICABLE VESSEL.",
+        "span": {
+          "start": 6831,
+          "end": 7379,
+          "page": 1
+        },
+        "clause_type": "other",
+        "heading": "2. DEMISE OF CHARTER. The Master of an applicable vessel, although appointed by and in the employ of Owner and subject to Owner's direction and control, shall observe the reasonable instructions of Charterer in connection with Charterer's transportation needs under this Agreement; PROVIDED, HOWEVER, THAT NOTHING IN THIS CLAUSE OR ELSEWHERE IN THIS AGREEMENT SHALL BE CONSTRUED AS CREATING A DEMISE OF THE APPLICABLE VESSEL TO CHARTERER OR AS VESTING CHARTERER WITH ANY CONTROL OVER THE PHYSICAL OPERATION OR NAVIGATION OF THE APPLICABLE VESSEL."
+      },
+      "risk_level": "low",
+      "rationale": "The clause explicitly limits Charterer's control over the vessel, aligning with the playbook's position on assignments and change of control which requires consent for transfers of control. This mitigates risk of unintended transfer of operational authority.",
+      "citations": [
+        {
+          "citation_id": "49364fcfdf78",
+          "playbook_position_id": "assignment-change-of-control",
+          "excerpt": "Neither party may assign this Agreement without the other party's prior written consent, except that either party may assign it in its entirety, on notice and without consent, to a successor in connection with a merger, acquisition or sale of all or substantially all of its assets."
+        }
+      ],
+      "suggested_fallback": null,
+      "verified": false,
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-5",
+        "text": "3. POLLUTION PREVENTION. Owner will, in the case of an escape or discharge of products or threat of escape or discharge of same from the applicable vessel into the navigable waters of the United States, promptly undertake such measures as are reasonably necessary or which may be required by applicable laws, rules and regulations to mitigate the resultant pollution damage; provided, however, that Charterer may at its option, and upon notice to Owner and on the conditions hereinafter set forth, undertake such measures. Charterer shall keep Owner advised of any such measures to be undertaken by it under such circumstances. Any of such measures actually undertaken by Charterer shall be at Owner's expense (except to the extent that such escape or discharge was caused or contributed to by Charterer). If Owner believes that any such measures undertaken by Charterer should not be undertaken or should be discontinued, Owner may so notify Charterer and thereafter Charterer, if it elects to continue such measures, shall do so at its own risk and expense.",
+        "span": {
+          "start": 7379,
+          "end": 8440,
+          "page": 1
+        },
+        "clause_type": "other",
+        "heading": "3. POLLUTION PREVENTION. Owner will, in the case of an escape or discharge of products or threat of escape or discharge of same from the applicable vessel into the navigable waters of the United States, promptly undertake such measures as are reasonably necessary or which may be required by applicable laws, rules and regulations to mitigate the resultant pollution damage; provided, however, that Charterer may at its option, and upon notice to Owner and on the conditions hereinafter set forth, undertake such measures. Charterer shall keep Owner advised of any such measures to be undertaken by it under such circumstances. Any of such measures actually undertaken by Charterer shall be at Owner's expense (except to the extent that such escape or discharge was caused or contributed to by Charterer). If Owner believes that any such measures undertaken by Charterer should not be undertaken or should be discontinued, Owner may so notify Charterer and thereafter Charterer, if it elects to continue such measures, shall do so at its own risk and expense."
+      },
+      "risk_level": "high",
+      "rationale": "The clause obligates the Owner to bear the cost of pollution mitigation measures unless the discharge is caused by the Charterer, while allowing the Charterer to act at its own risk and expense. This allocation of potentially large environmental cleanup costs to the Owner creates significant exposure and is not limited by the playbook's limitation of consequential damages. The playbook position [liability-no-consequential-damages] seeks to exclude or limit liability for indirect or consequential damages, indicating that such exposure should be mitigated. Since the clause does not incorporate those exclusions, the risk to the Owner is high.",
+      "citations": [
+        {
+          "citation_id": "807a4d0b4066",
+          "playbook_position_id": "liability-no-consequential-damages",
+          "excerpt": "Neither party shall be liable for any indirect, incidental, special, consequential or punitive damages, or for any loss of profits, revenue, goodwill or data, however caused and regardless of the theory of liability, even if advised of the possibility of such damages."
+        }
+      ],
+      "suggested_fallback": null,
+      "verified": true,
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-6",
+        "text": "4. INDEMNITY. Owner covenants and agrees to fully defend, protect, indemnify and hold harmless Charterer and its affiliates from and against each and every claim, demand, cause of action, liability, damage, cost or expense (including, but not limited to, reasonable attorney's fees and expenses incurred in the defense of Charterer), resulting from any damage to property or injury or death to persons caused, directly or indirectly, by Owner's acts or omissions in connection with Owner's provision of marine transportation services hereunder, except to the extent caused, directly or indirectly, by the acts or omissions of Charterer.\n\nCharterer covenants and agrees to fully defend, protect, indemnify and hold harmless Owner and its affiliates from and against each and every claim, demand, cause of action, liability, damage, cost or expense (including, but not limited to, reasonable attorney's fees and expenses incurred in the defense of Owner), resulting from any damage to property or injury or death to persons caused, directly or indirectly, by Charterer's acts or omissions in connection with Charterer's use of marine transportation services hereunder, except to the extent caused, directly or indirectly, by the acts or omissions of Owner.\n\nThe foregoing indemnities shall expressly exclude any liability for consequential, punitive, special or similar damages, including, without limitation, lost profits.",
+        "span": {
+          "start": 8440,
+          "end": 9863,
+          "page": 1
+        },
+        "clause_type": "indemnification",
+        "heading": "4. INDEMNITY. Owner covenants and agrees to fully defend, protect, indemnify and hold harmless Charterer and its affiliates from and against each and every claim, demand, cause of action, liability, damage, cost or expense (including, but not limited to, reasonable attorney's fees and expenses incurred in the defense of Charterer), resulting from any damage to property or injury or death to persons caused, directly or indirectly, by Owner's acts or omissions in connection with Owner's provision of marine transportation services hereunder, except to the extent caused, directly or indirectly, by the acts or omissions of Charterer."
+      },
+      "risk_level": "high",
+      "rationale": "The clause provides broad mutual indemnities without any limitation to breach, negligence, or gross negligence, which exceeds the playbook's preferred language that limits indemnity to a party’s own breach or negligence (mutual-indemnity). The clause also attempts to exclude consequential damages, but the playbook’s limitation_of_liability position (liability-no-consequential-damages) already excludes such damages in a broader way. Because the clause’s indemnity scope is broader than the playbook’s acceptable limits, it poses a high risk and should be replaced with the fallback language from the mutual-indemnity position.",
+      "citations": [
+        {
+          "citation_id": "0f5835922864",
+          "playbook_position_id": "mutual-indemnity",
+          "excerpt": "Each party shall defend, indemnify and hold harmless the other party against third-party claims to the extent arising from its own gross negligence or willful misconduct, subject to the limitations of liability set out in this Agreement."
+        }
+      ],
+      "suggested_fallback": "Each party shall defend, indemnify and hold harmless the other party against third-party claims to the extent arising from its own gross negligence or willful misconduct, subject to the limitations of liability set out in this Agreement.",
+      "verified": true,
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-7",
+        "text": "5. COMPLIANCE WITH LAW; INSURANCE: During the Term of this Agreement, Owner shall comply in all material respects with applicable laws, including, without limitation applicable environmental, health, safety and financial responsibility laws, rules and regulations, applicable to the use of the Vessel for bulk crude oil or finished lubricating products transportation. Owner covenants that it will maintain at all times during the Term of this Agreement insurance coverage for sudden and accidental pollution of $500,000,000.\n\n4",
+        "span": {
+          "start": 9863,
+          "end": 10393,
+          "page": 1
+        },
+        "clause_type": "other",
+        "heading": "5. COMPLIANCE WITH LAW; INSURANCE: During the Term of this Agreement, Owner shall comply in all material respects with applicable laws, including, without limitation applicable environmental, health, safety and financial responsibility laws, rules and regulations, applicable to the use of the Vessel for bulk crude oil or finished lubricating products transportation. Owner covenants that it will maintain at all times during the Term of this Agreement insurance coverage for sudden and accidental pollution of $500,000,000."
+      },
+      "risk_level": "low",
+      "rationale": "The clause includes a compliance warranty that matches the playbook's warranty of authority and legal compliance, which the playbook rates as low risk. The additional insurance requirement is an extra provision that does not alter the compliance warranty assessment, so the overall risk remains low.",
+      "citations": [
+        {
+          "citation_id": "63c38393e9ce",
+          "playbook_position_id": "warranty-compliance-and-authority",
+          "excerpt": "Each party warrants that it has full power and authority to enter into this Agreement, and that it will comply with all laws and regulations applicable to its performance under it, including anti-bribery, sanctions and export control laws."
+        }
+      ],
+      "suggested_fallback": null,
+      "verified": false,
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-8",
+        "text": "6. CHARTERER'S REPRESENTATIVES: Charterer's representatives may board any vessel used under this Agreement at any convenient place to observe cargo-handling operations, to inspect logs and certificates, and to confirm that Owner is fulfilling its obligations under this Agreement.",
+        "span": {
+          "start": 10393,
+          "end": 10675,
+          "page": 1
+        },
+        "clause_type": "other",
+        "heading": "6. CHARTERER'S REPRESENTATIVES: Charterer's representatives may board any vessel used under this Agreement at any convenient place to observe cargo-handling operations, to inspect logs and certificates, and to confirm that Owner is fulfilling its obligations under this Agreement."
+      },
+      "risk_level": "high",
+      "rationale": "The clause permits the Charterer's representatives to board any vessel at any convenient time to inspect operations, which is far broader than the playbook's audit-rights-bounded position that limits a party's audit rights to no more than once (or twice as fallback) in a twelve‑month period with prior notice. Because the clause exceeds the permitted audit frequency and scope, it presents a high risk of unbounded inspection rights.",
+      "citations": [
+        {
+          "citation_id": "2f1e619d9b1c",
+          "playbook_position_id": "audit-rights-bounded",
+          "excerpt": "A party may audit the other party's records relevant to this Agreement no more than once in any twelve (12) month period, on thirty (30) days' prior written notice, during normal business hours, at the auditing party's cost, and subject to the confidentiality obligations in this Agreement."
+        }
+      ],
+      "suggested_fallback": "A party may audit the other party's records relevant to this Agreement no more than twice in any twelve (12) month period, on fifteen (15) days' prior written notice, during normal business hours, and subject to the confidentiality obligations in this Agreement. The audited party bears the cost only if the audit reveals an underpayment of more than five percent (5%).",
+      "verified": true,
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-9",
+        "text": "7. DRUG & ALCOHOL ABUSE POLICY: Owner warrants that it will maintain and enforce at all times during the Term of this Agreement a drug and alcohol abuse policy applicable to the vessels which complies in all material respects with the minimum standards promulgated by the U.S. Coast Guard.",
+        "span": {
+          "start": 10675,
+          "end": 10966,
+          "page": 1
+        },
+        "clause_type": "warranty",
+        "heading": "7. DRUG & ALCOHOL ABUSE POLICY: Owner warrants that it will maintain and enforce at all times during the Term of this Agreement a drug and alcohol abuse policy applicable to the vessels which complies in all material respects with the minimum standards promulgated by the U.S. Coast Guard."
+      },
+      "risk_level": "high",
+      "rationale": "The clause requires the Owner to maintain a drug and alcohol abuse policy that complies with U.S. Coast Guard standards. None of the retrieved playbook positions address drug or alcohol policies; the warranty positions only cover service defect periods and general legal compliance, which do not encompass the specific safety policy required here. Because the clause is not supported by any playbook language, it presents a high risk of non‑compliance with the company's risk management standards.",
+      "citations": [
+        {
+          "citation_id": "88b4013cea29",
+          "playbook_position_id": "warranty-services-12-months",
+          "excerpt": "Supplier warrants that the Services will conform in all material respects to the applicable specification for twelve (12) months from delivery, and shall at its cost re-perform or correct any non-conforming Services reported within that period."
+        },
+        {
+          "citation_id": "63c38393e9ce",
+          "playbook_position_id": "warranty-compliance-and-authority",
+          "excerpt": "Each party warrants that it has full power and authority to enter into this Agreement, and that it will comply with all laws and regulations applicable to its performance under it, including anti-bribery, sanctions and export control laws."
+        }
+      ],
+      "suggested_fallback": null,
+      "verified": true,
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-10",
+        "text": "8. CONDITION OF EQUIPMENT: Owner shall, before and at commencement of each voyage by any vessel under this Agreement, exercise commercially reasonable efforts to ensure that such vessel is seaworthy and in good operating condition, properly manned, equipped and supplied for the voyage, to ensure that the pipes, pumps and coils tight, staunch, are in good operating condition and fit for the voyage, and to ensure that the tanks and other spaces in which product is to be carried are in good operating condition and fit for the carriage and preservation of the same. To the extent required by applicable law, Owner will maintain at all times during the Term of this Agreement a valid and subsisting certificate or other permit issued by the U.S. Coast Guard (or other governmental bureau or department having jurisdiction) approving the applicable vessel for the transportation and carriage of inflammable liquids.",
+        "span": {
+          "start": 10966,
+          "end": 11883,
+          "page": 1
+        },
+        "clause_type": "other",
+        "heading": "8. CONDITION OF EQUIPMENT: Owner shall, before and at commencement of each voyage by any vessel under this Agreement, exercise commercially reasonable efforts to ensure that such vessel is seaworthy and in good operating condition, properly manned, equipped and supplied for the voyage, to ensure that the pipes, pumps and coils tight, staunch, are in good operating condition and fit for the voyage, and to ensure that the tanks and other spaces in which product is to be carried are in good operating condition and fit for the carriage and preservation of the same. To the extent required by applicable law, Owner will maintain at all times during the Term of this Agreement a valid and subsisting certificate or other permit issued by the U.S. Coast Guard (or other governmental bureau or department having jurisdiction) approving the applicable vessel for the transportation and carriage of inflammable liquids."
+      },
+      "risk_level": "unknown",
+      "rationale": "The clause pertains to vessel condition, seaworthiness, and regulatory certifications, which are not addressed by any of the provided playbook positions. Without a relevant playbook reference, the risk cannot be determined against the company's established standards.",
+      "citations": [],
+      "suggested_fallback": null,
+      "verified": false,
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-11",
+        "text": "9. SUBLET: Charterer shall not be permitted to sublet the use of any vessels to any third party.",
+        "span": {
+          "start": 11883,
+          "end": 11981,
+          "page": 1
+        },
+        "clause_type": "other",
+        "heading": "9. SUBLET: Charterer shall not be permitted to sublet the use of any vessels to any third party."
+      },
+      "risk_level": "medium",
+      "rationale": "The clause restricts the Charterer from subletting the vessel to any third party. The playbook position [no-third-party-beneficiaries] limits the agreement’s benefits to the parties and their permitted successors and assigns only, stating that no other person has any right to enforce its terms. While the playbook does not explicitly mention subletting, the restriction on third‑party benefit aligns with the intent to prevent third‑party usage, providing a partial but not complete justification for the clause.",
+      "citations": [
+        {
+          "citation_id": "9e110330b955",
+          "playbook_position_id": "no-third-party-beneficiaries",
+          "excerpt": "This Agreement is for the benefit of the parties and their permitted successors and assigns only. No other person has any right to enforce any of its terms."
+        }
+      ],
+      "suggested_fallback": null,
+      "verified": false,
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-12",
+        "text": "10. FORCE MAJEURE: The vessels, their captains and Owner shall not, unless otherwise in this Agreement expressly provided, be responsible for any loss or damage arising or resulting from: any act, default or barratry of the captain, pilots, mariners, or other servants of Owner in the navigation or management of such vessel; fire, unless caused by the personal design or neglect of Owner; collision, stranding or peril, danger or accident of navigable waters; saving or attempting to save life or property; wastage in weight or bulk, or any other loss or damage arising from inherent defect, quality or vice of the cargo; any act or omission of Charterer, Owner, any other shipper or any consignee of the cargo, their agents or representatives; insufficiency or inadequacy of marks; explosion, bursting of boilers, breakage of shafts, or any latent defect in hull, equipment or machinery; unseaworthiness of any vessel unless caused by want or due diligence on the part of Owner to make such vessel seaworthy or to have it properly manned, equipped and supplied; or from any other cause of whatsoever kind arising without the actual fault of Owner. And neither the vessels, their captains or Owner, nor the Charterer, shall, unless otherwise in this Agreement expressly provided, be responsible for any loss or damage or delay or failure in performing hereunder arising or resulting from; act of God, act of war; act of public enemies, pirates or assailing thieves; acts of terrorism; arrest or restraint of princes, rulers of people, or seizure under legal process provided bond is promptly furnished to release such vessel or cargo; strike or lockout or stoppage or restraint of labor from whatever cause, either partial or general, or riot or civil commotion.\n\n5",
+        "span": {
+          "start": 11981,
+          "end": 13747,
+          "page": 1
+        },
+        "clause_type": "force_majeure",
+        "heading": "10. FORCE MAJEURE: The vessels, their captains and Owner shall not, unless otherwise in this Agreement expressly provided, be responsible for any loss or damage arising or resulting from: any act, default or barratry of the captain, pilots, mariners, or other servants of Owner in the navigation or management of such vessel; fire, unless caused by the personal design or neglect of Owner; collision, stranding or peril, danger or accident of navigable waters; saving or attempting to save life or property; wastage in weight or bulk, or any other loss or damage arising from inherent defect, quality or vice of the cargo; any act or omission of Charterer, Owner, any other shipper or any consignee of the cargo, their agents or representatives; insufficiency or inadequacy of marks; explosion, bursting of boilers, breakage of shafts, or any latent defect in hull, equipment or machinery; unseaworthiness of any vessel unless caused by want or due diligence on the part of Owner to make such vessel seaworthy or to have it properly manned, equipped and supplied; or from any other cause of whatsoever kind arising without the actual fault of Owner. And neither the vessels, their captains or Owner, nor the Charterer, shall, unless otherwise in this Agreement expressly provided, be responsible for any loss or damage or delay or failure in performing hereunder arising or resulting from; act of God, act of war; act of public enemies, pirates or assailing thieves; acts of terrorism; arrest or restraint of princes, rulers of people, or seizure under legal process provided bond is promptly furnished to release such vessel or cargo; strike or lockout or stoppage or restraint of labor from whatever cause, either partial or general, or riot or civil commotion."
+      },
+      "risk_level": "high",
+      "rationale": "The clause provides an extensive list of events that absolve the Owner and vessels from liability, including acts of God, war, terrorism, and labor disruptions. This broad exclusion of responsibility exceeds the company’s standard limitation of liability positions, which only deny indirect or consequential damages (liability-no-consequential-damages) and do not broadly waive liability for fundamental risks such as force majeure events. The playbook does not contain a specific force majeure position, indicating that such sweeping exclusions are not aligned with the company’s risk appetite, resulting in a high risk rating.",
+      "citations": [
+        {
+          "citation_id": "807a4d0b4066",
+          "playbook_position_id": "liability-no-consequential-damages",
+          "excerpt": "Neither party shall be liable for any indirect, incidental, special, consequential or punitive damages, or for any loss of profits, revenue, goodwill or data, however caused and regardless of the theory of liability, even if advised of the possibility of such damages."
+        }
+      ],
+      "suggested_fallback": null,
+      "verified": true,
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    }
+  ],
+  "metadata": {
+    "parties": [
+      "Martin Operating Partnership L.P., a Delaware limited partnership (\"Owner\")",
+      "Midstream Fuel Service LLC, an Alabama limited liability company (\"Charterer\")"
+    ],
+    "agreement_date": "this 23rd day of December, 2003",
+    "effective_date": "the date first set forth above",
+    "expiration_date": "the 3rd anniversary of the Commencement Date",
+    "contract_value": "$______ per gallon of product transported",
+    "governing_law": null
+  },
+  "disclaimer": "This automated review is for informational purposes only and does not constitute legal advice. Consult qualified counsel before relying on it."
+}

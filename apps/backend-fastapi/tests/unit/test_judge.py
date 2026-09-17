@@ -118,3 +118,35 @@ def test_sees_positions_added_after_it_was_built() -> None:
     playbook["pb-new"] = position("pb-new")
 
     assert judge.run(review(cites="pb-new")).grounded
+
+
+def test_missing_evidence_cannot_be_verified_without_the_llm() -> None:
+    judge = Judge(llm=None, known_positions={"pb-1": position("pb-1")})
+    assessment = review(cites="pb-1")
+    assessment.citations = []
+    verdict = judge.run(assessment)
+    assert not verdict.grounded
+    assert verdict.should_retry
+    assessment.risk_level = RiskLevel.UNKNOWN
+    assert not judge.run(assessment).should_retry
+
+
+def test_llm_judge_receives_full_cited_sources_and_fallback(deterministic_only) -> None:
+    deterministic_only.enable_judge = True
+    captured = {}
+
+    class CapturingLLM:
+        def complete_structured(self, **kwargs):
+            captured.update(kwargs)
+            return kwargs["response_model"](grounded=True, reason="supported")
+
+    cited = position("pb-1")
+    judge = Judge(llm=CapturingLLM(), known_positions={"pb-1": cited, "unused": position("unused")})
+    assessment = review(cites="pb-1")
+    assessment.suggested_fallback = cited.fallback_language
+    assert judge.run(assessment).grounded
+    assert cited.preferred_language in captured["prompt"]
+    assert cited.fallback_language in captured["prompt"]
+    assert "[pb-1]" in captured["prompt"]
+    assert "[unused]" not in captured["prompt"]
+    assert "Claims about the contract" in captured["prompt"]

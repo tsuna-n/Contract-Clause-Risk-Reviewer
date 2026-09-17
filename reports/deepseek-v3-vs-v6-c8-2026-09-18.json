@@ -1,0 +1,239 @@
+{
+  "complete_comparison": true,
+  "matching_contracts": [
+    "americasshoppingmallinc-site-development-and-hosting-agreement",
+    "blackboxstocksinc-distributor-agreement",
+    "datacalltechnologies-content-license-agreement",
+    "ecosciencesolutionsinc-endorsement-agreement",
+    "gainscoinc-sponsorship-agreement",
+    "kiromicbiopharma-inc-consulting-agreement",
+    "legacytechnologyholdings-inc-distributor-agreement",
+    "martinmidstreampartnerslp-transportation-services-agreement",
+    "ticketscominc-sponsorship-agreement",
+    "tuniucorp-cooperation-agreement"
+  ],
+  "missing_baseline": [],
+  "missing_candidate": [],
+  "baseline_config": {
+    "provider": "openrouter",
+    "model": "deepseek/deepseek-v4.1-flash",
+    "embedding_provider": "openrouter",
+    "embedding_model": "google/gemini-embedding-001",
+    "embedding_dim": 768,
+    "enable_judge": true,
+    "thinking": "disabled",
+    "concurrency": 4,
+    "timeout_seconds": 120,
+    "max_attempts": 3,
+    "judge_prompt_version": "v2",
+    "scorer_prompt_version": "v3",
+    "classifier_prompt_version": "v2",
+    "openrouter_providers": []
+  },
+  "candidate_config": {
+    "provider": "openrouter",
+    "model": "deepseek/deepseek-v4.1-flash",
+    "embedding_provider": "openrouter",
+    "embedding_model": "google/gemini-embedding-001",
+    "embedding_dim": 768,
+    "enable_judge": true,
+    "enable_hybrid_retrieval": true,
+    "enable_embedding_cache": true,
+    "thinking": "disabled",
+    "concurrency": 8,
+    "timeout_seconds": 120,
+    "max_attempts": 3,
+    "judge_prompt_version": "v5",
+    "scorer_prompt_version": "v6",
+    "classifier_prompt_version": "v2",
+    "openrouter_providers": []
+  },
+  "baseline": {
+    "metrics": {
+      "segmentation_f1": 1.0,
+      "classification_accuracy": 0.7638888888888888,
+      "risk_accuracy": 0.5277777777777778,
+      "citation_validity": 1.0,
+      "per_type": [
+        {
+          "clause_type": "intellectual_property",
+          "support": 7,
+          "accuracy": 1.0
+        },
+        {
+          "clause_type": "payment_terms",
+          "support": 8,
+          "accuracy": 0.75
+        },
+        {
+          "clause_type": "other",
+          "support": 13,
+          "accuracy": 0.46153846153846156
+        },
+        {
+          "clause_type": "termination",
+          "support": 15,
+          "accuracy": 1.0
+        },
+        {
+          "clause_type": "limitation_of_liability",
+          "support": 6,
+          "accuracy": 0.5
+        },
+        {
+          "clause_type": "non_compete",
+          "support": 14,
+          "accuracy": 0.6428571428571429
+        },
+        {
+          "clause_type": "governing_law",
+          "support": 7,
+          "accuracy": 1.0
+        },
+        {
+          "clause_type": "warranty",
+          "support": 2,
+          "accuracy": 1.0
+        }
+      ],
+      "classification_confusion": {
+        "intellectual_property": {
+          "intellectual_property": 7
+        },
+        "payment_terms": {
+          "termination": 1,
+          "payment_terms": 6,
+          "non_compete": 1
+        },
+        "other": {
+          "payment_terms": 2,
+          "intellectual_property": 1,
+          "warranty": 2,
+          "other": 6,
+          "governing_law": 2
+        },
+        "termination": {
+          "termination": 15
+        },
+        "limitation_of_liability": {
+          "termination": 1,
+          "indemnification": 1,
+          "limitation_of_liability": 3,
+          "payment_terms": 1
+        },
+        "non_compete": {
+          "non_compete": 9,
+          "intellectual_property": 3,
+          "payment_terms": 1,
+          "termination": 1
+        },
+        "governing_law": {
+          "governing_law": 7
+        },
+        "warranty": {
+          "warranty": 2
+        }
+      }
+    },
+    "elapsed_seconds": 982.6042908490017,
+    "clauses": 281,
+    "failed_clauses": 0,
+    "unknown_risk_clauses": 106,
+    "verified_clauses": 175
+  },
+  "candidate": {
+    "metrics": {
+      "segmentation_f1": 1.0,
+      "classification_accuracy": 0.7777777777777778,
+      "risk_accuracy": 0.5972222222222222,
+      "citation_validity": 1.0,
+      "per_type": [
+        {
+          "clause_type": "intellectual_property",
+          "support": 7,
+          "accuracy": 1.0
+        },
+        {
+          "clause_type": "payment_terms",
+          "support": 8,
+          "accuracy": 0.75
+        },
+        {
+          "clause_type": "other",
+          "support": 13,
+          "accuracy": 0.46153846153846156
+        },
+        {
+          "clause_type": "termination",
+          "support": 15,
+          "accuracy": 1.0
+        },
+        {
+          "clause_type": "limitation_of_liability",
+          "support": 6,
+          "accuracy": 0.5
+        },
+        {
+          "clause_type": "non_compete",
+          "support": 14,
+          "accuracy": 0.7142857142857143
+        },
+        {
+          "clause_type": "governing_law",
+          "support": 7,
+          "accuracy": 1.0
+        },
+        {
+          "clause_type": "warranty",
+          "support": 2,
+          "accuracy": 1.0
+        }
+      ],
+      "classification_confusion": {
+        "intellectual_property": {
+          "intellectual_property": 7
+        },
+        "payment_terms": {
+          "termination": 1,
+          "payment_terms": 6,
+          "non_compete": 1
+        },
+        "other": {
+          "payment_terms": 2,
+          "intellectual_property": 1,
+          "warranty": 2,
+          "other": 6,
+          "governing_law": 2
+        },
+        "termination": {
+          "termination": 15
+        },
+        "limitation_of_liability": {
+          "termination": 1,
+          "indemnification": 1,
+          "limitation_of_liability": 3,
+          "payment_terms": 1
+        },
+        "non_compete": {
+          "non_compete": 10,
+          "intellectual_property": 3,
+          "termination": 1
+        },
+        "governing_law": {
+          "governing_law": 7
+        },
+        "warranty": {
+          "warranty": 2
+        }
+      }
+    },
+    "elapsed_seconds": 373.66533917600464,
+    "clauses": 281,
+    "failed_clauses": 0,
+    "unknown_risk_clauses": 115,
+    "verified_clauses": 163
+  },
+  "speedup": 2.629637239075507,
+  "classification_accuracy_delta": 0.01388888888888895,
+  "risk_accuracy_delta": 0.06944444444444442
+}

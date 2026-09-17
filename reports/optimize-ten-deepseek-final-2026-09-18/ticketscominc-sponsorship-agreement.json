@@ -1,0 +1,337 @@
+{
+  "report_id": "ebe15b72eb494946aaaa94af47a491c6",
+  "contract_id": "ticketscominc-sponsorship-agreement",
+  "session_id": "eval",
+  "filename": "",
+  "created_at": "2026-09-17T17:09:16.280939Z",
+  "overall_risk": "high",
+  "summary": {
+    "high": 2,
+    "medium": 6,
+    "low": 0,
+    "unknown": 0
+  },
+  "reviews": [
+    {
+      "clause": {
+        "id": "clause-1",
+        "text": "1. Form of Sponsorship. During the term of this Agreement, Tickets shall be MP3.com's exclusive partner/source for sports, entertainment, and travel tickets, and MP3.com shall include a Tickets Portal on the \"Music\" page and the \"Pop,\" \"Rock\" and \"Alternative\" genre pages on the Website. A \"Portal\" is defined as a web graphic with the dimensions not to exceed 125 x 125 pixels and 20Kb in size. The content of the Portal shall be supplied by Tickets and shall conform with reasonable technical and content specifications supplied by MP3.com.",
+        "span": {
+          "start": 789,
+          "end": 1334,
+          "page": 1
+        },
+        "clause_type": "non_compete",
+        "heading": "1. Form of Sponsorship. During the term of this Agreement, Tickets shall be MP3.com's exclusive partner/source for sports, entertainment, and travel tickets, and MP3.com shall include a Tickets Portal on the \"Music\" page and the \"Pop,\" \"Rock\" and \"Alternative\" genre pages on the Website. A \"Portal\" is defined as a web graphic with the dimensions not to exceed 125 x 125 pixels and 20Kb in size. The content of the Portal shall be supplied by Tickets and shall conform with reasonable technical and content specifications supplied by MP3.com."
+      },
+      "risk_level": "high",
+      "rationale": "The clause grants MP3.com an exclusive arrangement under which Tickets is designated MP3.com's exclusive partner/source for sports, entertainment and travel tickets during the Agreement term. The relevant policy is the no-exclusivity position, which prefers an entirely non-exclusive relationship and, at most, permits exclusivity limited to named products, a named territory and no more than twelve (12) months, lapsing on failure to meet minimum performance targets stated in the Order Form. This clause is drafted as open-ended exclusivity: it runs for the whole term without a stated cap, territory, or performance-target lapse, and no Order Form terms are provided to supply those limits. Exclusivity also restricts Tickets from serving other customers or partners, implicating the no-customer-non-solicit policy. Although the header labels this a non-compete clause, the operative obligation is exclusive dealing rather than a post-termination non-compete; no restriction on competing after the Term is stated, so the non-compete-bounded position is not the applicable policy and its risk_if_absent is not applied here. Material uncertainty: the Agreement is not supplied, so the term length, defined territory, any Order Form performance targets, and any renewal or termination provisions are unknown; also, the retrieved positions do not define whether exclusivity of this kind is measured in calendar or fixed-day periods, and no dates are given. If the term is short (e.g., an initial term of three months), whether any cap is satisfied cannot be determined from the text, because calendar months are not fixed-day periods and no dates establish actual duration. Until those dates exist, no conclusion can be drawn that the exclusivity meets or breaches a 90-day or other day/months boundary. On the supplied evidence, the exclusivity is unbounded as to duration, territory and performance conditions, so the deviation from the policy is material and the risk is high.",
+      "citations": [
+        {
+          "citation_id": "9022f137f87e",
+          "playbook_position_id": "no-exclusivity",
+          "excerpt": "This Agreement is non-exclusive. Each party remains free to provide to, procure from, or contract with any third party for services of the same or a similar kind, without restriction and without any obligation to the other party."
+        },
+        {
+          "citation_id": "f9a7d524be27",
+          "playbook_position_id": "no-exclusivity",
+          "excerpt": "Any exclusivity granted under this Agreement is limited to the named products, the named territory and a period of no more than twelve (12) months, and lapses if the exclusive party fails to meet the minimum performance targets stated in the Order Form."
+        },
+        {
+          "citation_id": "62cbe8ee92d6",
+          "playbook_position_id": "no-customer-non-solicit",
+          "excerpt": "Neither party is restricted from contracting with, soliciting or serving any customer, partner or supplier of the other party, whether during the Term or afterwards."
+        }
+      ],
+      "contract_sources": [],
+      "suggested_fallback": "Any exclusivity granted under this Agreement is limited to the named products, the named territory and a period of no more than twelve (12) months, and lapses if the exclusive party fails to meet the minimum performance targets stated in the Order Form.",
+      "verified": true,
+      "verification_reason": "The assessment is supported. The clause expressly states that 'Tickets shall be MP3.com's exclusive partner/source' during the Agreement term, so the exclusivity claim is grounded. The cited no-exclusivity policy prefers a non-exclusive relationship and its fallback permits exclusivity only for named products, named territory, ≤12 months, with performance-target lapse; the clause contains none of these limits, supporting the deviation and high risk. The reviewer correctly treats the no-exclusivity position as applicable and explains why the non-compete-bounded position is not applied. The no-customer-non-solicit policy is reasonably referenced as implicated by exclusivity restricting Tickets from serving other customers/partners. The suggested fallback matches the cited no-exclusivity fallback verbatim. The rationale properly distinguishes the clause's open-ended exclusivity from the policy's requested limits, and does not improperly conclude that a three-month term would comply with a 90-day limit; it notes that calendar months and fixed-day periods differ and that actual dates are absent.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-2",
+        "text": "2. Impressions. MP3.com agrees to deliver a guaranteed minimum of 3,000,000 Impressions per month for the term of this Agreement. An \"Impression\" is defined as the display of the Tickets Portal to a user on one of the above referenced pages.",
+        "span": {
+          "start": 1334,
+          "end": 1577,
+          "page": 1
+        },
+        "clause_type": "payment_terms",
+        "heading": "2. Impressions. MP3.com agrees to deliver a guaranteed minimum of 3,000,000 Impressions per month for the term of this Agreement. An \"Impression\" is defined as the display of the Tickets Portal to a user on one of the above referenced pages."
+      },
+      "risk_level": "medium",
+      "rationale": "The clause creates a guaranteed minimum Impressions commitment of 3,000,000 per month. The relevant policy position [no-minimum-commitment] prefers no minimum volume commitment; its fallback contemplates that any minimum commitment be stated in an Order Form, capped at a written committed amount, with shortfall liability limited to the difference. The clause states a fixed guaranteed minimum but does not tie it to an Order Form, cap, or limited shortfall remedy, so it deviates from both the preferred and fallback positions. The exposure is residual and negotiable rather than a wholesale missing protection, since a defined committed volume is present and quantified. Separately, the clause defines 'Impression' as the display of the Tickets Portal to a user but does not define measurement, reporting, verification, or makegoods for shortfalls, which are within the same scope. Note a boundary uncertainty on duration: the clause states '3,000,000 Impressions per month for the term' but gives no dates or term length, and calendar months are not fixed-day periods; without actual dates it cannot be determined whether any month overlaps or equals a stated 90-day maximum or whether monthly limits are equivalent across months of different length. That uncertainty does not change the classification here because no term-length cap is present in the clause.",
+      "citations": [
+        {
+          "citation_id": "3a04db7db8c2",
+          "playbook_position_id": "no-minimum-commitment",
+          "excerpt": "Customer is under no obligation to purchase any minimum quantity, value or share of its requirements under this Agreement, and shall pay only for the Services it actually orders."
+        },
+        {
+          "citation_id": "e56049a1d72c",
+          "playbook_position_id": "no-minimum-commitment",
+          "excerpt": "Any minimum purchase commitment under this Agreement shall be stated in the applicable Order Form, shall not exceed the amount Customer committed to in writing, and Customer's sole liability for a shortfall shall be to pay the difference between the committed and the actual volume."
+        }
+      ],
+      "contract_sources": [],
+      "suggested_fallback": "Any minimum purchase commitment under this Agreement shall be stated in the applicable Order Form, shall not exceed the amount Customer committed to in writing, and Customer's sole liability for a shortfall shall be to pay the difference between the committed and the actual volume.",
+      "verified": true,
+      "verification_reason": "The assessment accurately reflects the clause: it creates a guaranteed minimum of 3,000,000 Impressions/month, defines 'Impression,' and lacks Order Form tie, cap, or limited shortfall remedy. These contract claims are supported. Policy claims match the cited [no-minimum-commitment] position: preferred no-minimum stance and fallback language requiring Order Form statement, written cap, and shortfall limited to the difference. The suggested fallback is verbatim identical to the cited fallback text. The rationale correctly distinguishes preferred versus fallback and notes deviations. The boundary-uncertainty discussion properly treats months vs fixed-day periods and does not assert that 3 months complies with a 90-day maximum; it explicitly says no such determination can be made and that no term-length cap is present. The medium risk rating is a reasoned downward adjustment from the 'high' risk-if-absent due to the presence of a quantified commitment, though somewhat lenient, it is not unsupported as a comparative judgment.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-3",
+        "text": "3. Sponsor Fees. Tickets agrees to pay MP3.com, during the term of this Agreement, as follows: (i) $[***] payable on the Effective Date; (ii) $[***] payable on or before one month subsequent to the Effective Date; (iii) $[***] payable on or before two months subsequent to the Effective Date; (iv) $[***] payable on or before three months subsequent to the Effective Date; (v) $[***] payable on or before four months subsequent to the Effective Date; (vi) $[***] payable on or before five months subsequent to the Effective Date. Any late payments under this Agreement will be assessed a service fee of one and one-half percent (1.5%) per month, to the extent allowed by law.",
+        "span": {
+          "start": 1577,
+          "end": 2254,
+          "page": 1
+        },
+        "clause_type": "payment_terms",
+        "heading": "3. Sponsor Fees. Tickets agrees to pay MP3.com, during the term of this Agreement, as follows: (i) $[***] payable on the Effective Date; (ii) $[***] payable on or before one month subsequent to the Effective Date; (iii) $[***] payable on or before two months subsequent to the Effective Date; (iv) $[***] payable on or before three months subsequent to the Effective Date; (v) $[***] payable on or before four months subsequent to the Effective Date; (vi) $[***] payable on or before five months subsequent to the Effective Date. Any late payments under this Agreement will be assessed a service fee of one and one-half percent (1.5%) per month, to the extent allowed by law."
+      },
+      "risk_level": "medium",
+      "rationale": "The clause sets a fixed installment schedule tied to the Effective Date in monthly increments plus a 1.5% monthly late fee. The directly relevant retrieved position is payment-net-30, which requires undisputed invoices to be payable within 30/45 days of receipt with a good-faith dispute withholding right; this clause does not establish invoice-based due dates tied to receipt or any dispute-withholding mechanism, leaving limited residual exposure. Regarding boundaries, the clause uses 'one month' through 'five months' rather than fixed-day periods; absent actual dates, whether the first installment equals or exceeds a 90-day period cannot be determined, and the duration uncertainty must be stated rather than assumed equivalent to 30/90 days. No price-increase, minimum-commitment, revenue-share, or liability-cap issue is raised by the clause text, so those positions are not applied.",
+      "citations": [
+        {
+          "citation_id": "b068111458bd",
+          "playbook_position_id": "payment-net-30",
+          "excerpt": "Customer shall pay all undisputed invoices within thirty (30) days of receipt. Customer may withhold any amount it disputes in good faith, provided it notifies Supplier of the basis for the dispute before the due date."
+        },
+        {
+          "citation_id": "6dcae5f11146",
+          "playbook_position_id": "payment-net-30",
+          "excerpt": "Customer shall pay all undisputed invoices within forty-five (45) days of receipt. Customer may withhold any amount it disputes in good faith, provided it notifies Supplier of the basis for the dispute before the due date."
+        }
+      ],
+      "contract_sources": [],
+      "suggested_fallback": "Customer shall pay all undisputed invoices within forty-five (45) days of receipt. Customer may withhold any amount it disputes in good faith, provided it notifies Supplier of the basis for the dispute before the due date.",
+      "verified": true,
+      "verification_reason": "The assessment accurately characterizes the clause as a fixed installment schedule tied to the Effective Date with a 1.5% monthly late fee. Its claims about payment-net-30 are supported by the cited playbook positions, and it correctly notes the absence of invoice-based receipt-tied due dates and dispute-withholding language. The treatment of 'one month' through 'five months' is appropriate: it does not assert equivalence to 90 days and expressly notes that actual dates would be needed to determine compliance. The medium risk level follows from a relevant-but-not-fully-matched position. The suggested fallback matches the playbook fallback verbatim. No unsupported contract or policy claim is present.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-4",
+        "text": "4. Term and Termination. This Agreement shall commence on the Effective Date and shall remain in full force and effect until one (1) year subsequent to the Effective Date, provided however, that Tickets may terminate this Agreement for any reason upon thirty (30) days' notice to MP3. com at any time prior to the expiration of sixty (60) days subsequent to the Effective Date. Furthermore, for a thirty (30) day period, beginning thirty (30) days prior to the first anniversary of this Agreement, Tickets shall have the right to renew the Agreement for another year with Sponsor Fees that do not exceed a [***] percent increase over the existing Sponsor Fees. Any payments which have accrued prior to the date of termination shall remain due and payable. Sections 6, 7, and 8 shall survive termination of this agreement.",
+        "span": {
+          "start": 2254,
+          "end": 3077,
+          "page": 1
+        },
+        "clause_type": "termination",
+        "heading": "4. Term and Termination. This Agreement shall commence on the Effective Date and shall remain in full force and effect until one (1) year subsequent to the Effective Date, provided however, that Tickets may terminate this Agreement for any reason upon thirty (30) days' notice to MP3. com at any time prior to the expiration of sixty (60) days subsequent to the Effective Date. Furthermore, for a thirty (30) day period, beginning thirty (30) days prior to the first anniversary of this Agreement, Tickets shall have the right to renew the Agreement for another year with Sponsor Fees that do not exceed a [***] percent increase over the existing Sponsor Fees. Any payments which have accrued prior to the date of termination shall remain due and payable. Sections 6, 7, and 8 shall survive termination of this agreement."
+      },
+      "risk_level": "medium",
+      "rationale": "The clause grants Tickets a unilateral termination for convenience (30 days' notice, exercisable only until 60 days after the Effective Date), whereas the termination-for-convenience preferred position contemplates a mutual right and the fallback a mutual 60-day notice period. This one-sided deviation is a limited, negotiable exposure (medium), not a prohibition breach. The renewal provision (a 30-day window beginning 30 days before the first anniversary for Tickets to renew at a capped fee increase) aligns directionally with the renewal-opt-in fallback, which allows renewal for successive 12-month terms unless written non-renewal notice is given at least 30 days before term end; the clause's mechanism is a preferential opt-in renewal window rather than a non-renewal notice, so the wording differs from the fallback but does not by itself create high risk. The survival of Sections 6, 7, and 8 and the preservation of accrued payments are bounded post-termination obligations consistent with the post-termination-wind-down position. The clause uses calendar months ('thirty (30) days', 'sixty (60) days', 'one (1) year') without fixed dates or day-count definitions; because calendar-month periods are not fixed-day periods, the exact policy boundary (e.g., whether the notice or renewal timing satisfies a day-based standard) cannot be confirmed from the text alone, and the compliance of the notice periods with any day-specific benchmark is uncertain. That boundary uncertainty, combined with the unilateral convenience right, supports medium risk. No cited position sets a 90-day maximum, so no 90-day benchmark is asserted.",
+      "citations": [
+        {
+          "citation_id": "284f75c1a5d7",
+          "playbook_position_id": "termination-for-convenience",
+          "excerpt": "Either party may terminate this Agreement for convenience upon sixty (60) days' prior written notice to the other party, without penalty or further liability other than for amounts accrued prior to the effective date of termination."
+        },
+        {
+          "citation_id": "0b788e80e4a0",
+          "playbook_position_id": "renewal-opt-in",
+          "excerpt": "This Agreement shall renew for successive twelve (12) month terms unless either party gives written notice of non-renewal at least thirty (30) days before the end of the then-current term, and the fees for any renewal term shall not increase by more than five percent (5%)."
+        },
+        {
+          "citation_id": "7abe1dd06ab0",
+          "playbook_position_id": "post-termination-wind-down",
+          "excerpt": "On termination or expiry, each party's obligations cease except for those that expressly survive. Supplier shall provide reasonable transition assistance for up to sixty (60) days at its then-current rates, and shall return or delete the other party's data on request."
+        }
+      ],
+      "contract_sources": [
+        {
+          "label": "Section 6",
+          "span": {
+            "start": 4370,
+            "end": 5659,
+            "page": 1
+          },
+          "text": "6. Representations and Warranties. Each party is solely responsible for any legal liability arising out of or relating to the content of its site and any material to which users can link through the sites. Each party represents and warrants that its sites will not: (i) infringe upon any third party's copyright, patent, trademark, trade secret or other proprietary rights or rights of publicity or privacy; (ii) violate any law, statue, ordinance or regulation, including without limitation any laws regarding unfair competition, antidiscrimination or false advertising; (iii) be pornographic or obscene; (iv) be defamatory or trade libelous; or (v) contain viruses other harmful programming routines. Each party agrees to defend, indemnify and hold harmless the other and its shareholders, directors, officers, agents and employees for any and all losses, costs, liabilities or expenses (including without limitation\n\nreasonable attorneys' and expert witnesses' fees) incurred or arising from: (a) any breach of the foregoing representations or warranties; (b) any claim arising from the sale or license of either party's goods or services; or (c) any other act, omission or representation by either party. Either party may participate in the defense of itself at its option and expense.",
+          "truncated": false
+        },
+        {
+          "label": "Section 7",
+          "span": {
+            "start": 5661,
+            "end": 5836,
+            "page": 1
+          },
+          "text": "7. No Consequential Damages. Except for claims arising under section 6, in no event will either party be liable for any special, indirect, incidental or consequential damages.",
+          "truncated": false
+        }
+      ],
+      "suggested_fallback": "Either party may terminate this Agreement for convenience upon sixty (60) days' prior written notice to the other party, without penalty or further liability other than for amounts accrued prior to the effective date of termination.",
+      "verified": false,
+      "verification_reason": "The assessment is largely supported but contains unsupported/incorrect claims. (1) The renewal analysis is misapplied: the clause gives only Tickets a unilateral right to renew within a specific 30-day window at a capped increase, whereas the cited renewal-opt-in fallback describes automatic successive 12-month renewal subject to either party's non-renewal notice and a 5% fee cap. The clause neither states that renewal is automatic nor that it requires both parties' written agreement; characterizing the clause as merely a different 'mechanism' and aligned 'directionally' overstates the alignment and understates the deviation. (2) The post-termination claim is unsupported: the clause only preserves accrued payments and survival of Sections 6, 7, and 8. It does not provide transition assistance, data return/deletion, or a bounded 60/90-day wind-down as in the cited position. Stating the survival and accrued-payment terms are 'consistent with' the post-termination-wind-down position is inaccurate; at most they partially address survival, but the position's core transition/data obligations are absent. (3) The suggested fallback is verbatim correct, but the rationale should distinguish clause mechanics from playbook requests more precisely. Also, the rationale's discussion of calendar months/fixed days is not tied to any cited day-based maximum and the final sentence correctly notes no 90-day benchmark exists, so that part is not itself a violation; it is merely unnecessary. Correct the renewal and post-termination comparisons and reassess risk accordingly.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-5",
+        "text": "5. Measurement. Upon request, Tickets shall have access to pertinent statistics related to Impressions covering the period of this contract. Tickets agrees to accept MP3.com's measurement of Impressions (the \"Count\") according to MP3.com's logs and other tracking devices and/or software MP3.com may use, provided however, that Tickets shall have the right to audit MP3.com's records in this regard. If Tickets reasonably disputes the Count pursuant to this Agreement, then Tickets shall have the right to select the independent auditor of its choice to conduct an audit of MP3.com's records (the \"Audit\"). The Audit will be conducted in such a way so as not to interfere to any material extent with MP3.com's operations. If, for any applicable period, the independent auditor determines that MP3.com overstated the Count by more than five percent (5%), than MP3.com shall pay the cost of the Audit and shall refund Tickets the difference between the amount originally paid and the amount which should have been paid, or MP3.com shall credit the appropriate amount of Impressions to Tickets' account.\n\n[***] Confidential treatment has been requested for redacted portion. The confidential redacted portion has been omitted and filed separately with the Securities and Exchange Commission.\n\n2",
+        "span": {
+          "start": 3077,
+          "end": 4370,
+          "page": 1
+        },
+        "clause_type": "payment_terms",
+        "heading": "5. Measurement. Upon request, Tickets shall have access to pertinent statistics related to Impressions covering the period of this contract. Tickets agrees to accept MP3.com's measurement of Impressions (the \"Count\") according to MP3.com's logs and other tracking devices and/or software MP3.com may use, provided however, that Tickets shall have the right to audit MP3.com's records in this regard. If Tickets reasonably disputes the Count pursuant to this Agreement, then Tickets shall have the right to select the independent auditor of its choice to conduct an audit of MP3.com's records (the \"Audit\"). The Audit will be conducted in such a way so as not to interfere to any material extent with MP3.com's operations. If, for any applicable period, the independent auditor determines that MP3.com overstated the Count by more than five percent (5%), than MP3.com shall pay the cost of the Audit and shall refund Tickets the difference between the amount originally paid and the amount which should have been paid, or MP3.com shall credit the appropriate amount of Impressions to Tickets' account."
+      },
+      "risk_level": "medium",
+      "rationale": "The clause grants Tickets audit rights over MP3.com's records limited only by a material-interference standard, with no frequency cap or prior-notice requirement. The closest relevant playbook position, audit-rights-bounded, prefers at most one audit per twelve months on thirty days' notice at the auditing party's cost, and fallback permits at most two audits per twelve months on fifteen days' notice. The clause's cost-shifting trigger (auditor determines overstatement by more than five percent) is consistent with the fallback's five-percent cost-shift concept, but the absence of any frequency or notice bound is a limited, negotiable deviation rather than a critical gap. The confidentiality and payment-net-30 positions are not applicable to these audit mechanics. Material uncertainty: whether the clause sits within a contract requiring audits relevant to this Agreement, and the extent to which the omitted frequency/notice limits can be added by negotiation, are not established by the supplied text.",
+      "citations": [
+        {
+          "citation_id": "3516d3f13c33",
+          "playbook_position_id": "audit-rights-bounded",
+          "excerpt": "A party may audit the other party's records relevant to this Agreement no more than twice in any twelve (12) month period, on fifteen (15) days' prior written notice, during normal business hours, and subject to the confidentiality obligations in this Agreement. The audited party bears the cost only if the audit reveals an underpayment of more than five percent (5%)."
+        }
+      ],
+      "contract_sources": [],
+      "suggested_fallback": "A party may audit the other party's records relevant to this Agreement no more than twice in any twelve (12) month period, on fifteen (15) days' prior written notice, during normal business hours, and subject to the confidentiality obligations in this Agreement. The audited party bears the cost only if the audit reveals an underpayment of more than five percent (5%).",
+      "verified": true,
+      "verification_reason": "The clause supports the audit-rights description: it grants Tickets a right to audit MP3.com's records, limited by a material-interference standard, with no frequency cap or prior-notice requirement. The playbook citations are accurately represented, including the preferred one-per-twelve-months/30-days position and the fallback two-per-twelve-months/15-days position with five-percent cost shifting. The suggested fallback matches the cited playbook fallback verbatim, and the rationale distinguishes clause mechanics from policy preferences. No incorrect month/day compliance claim is made, and no undefined-term claim conflicts with the text. The medium risk level reasonably follows from the unbounded audit right compared with the playbook bounds.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-6",
+        "text": "6. Representations and Warranties. Each party is solely responsible for any legal liability arising out of or relating to the content of its site and any material to which users can link through the sites. Each party represents and warrants that its sites will not: (i) infringe upon any third party's copyright, patent, trademark, trade secret or other proprietary rights or rights of publicity or privacy; (ii) violate any law, statue, ordinance or regulation, including without limitation any laws regarding unfair competition, antidiscrimination or false advertising; (iii) be pornographic or obscene; (iv) be defamatory or trade libelous; or (v) contain viruses other harmful programming routines. Each party agrees to defend, indemnify and hold harmless the other and its shareholders, directors, officers, agents and employees for any and all losses, costs, liabilities or expenses (including without limitation\n\nreasonable attorneys' and expert witnesses' fees) incurred or arising from: (a) any breach of the foregoing representations or warranties; (b) any claim arising from the sale or license of either party's goods or services; or (c) any other act, omission or representation by either party. Either party may participate in the defense of itself at its option and expense.",
+        "span": {
+          "start": 4370,
+          "end": 5661,
+          "page": 1
+        },
+        "clause_type": "indemnification",
+        "heading": "6. Representations and Warranties. Each party is solely responsible for any legal liability arising out of or relating to the content of its site and any material to which users can link through the sites. Each party represents and warrants that its sites will not: (i) infringe upon any third party's copyright, patent, trademark, trade secret or other proprietary rights or rights of publicity or privacy; (ii) violate any law, statue, ordinance or regulation, including without limitation any laws regarding unfair competition, antidiscrimination or false advertising; (iii) be pornographic or obscene; (iv) be defamatory or trade libelous; or (v) contain viruses other harmful programming routines. Each party agrees to defend, indemnify and hold harmless the other and its shareholders, directors, officers, agents and employees for any and all losses, costs, liabilities or expenses (including without limitation"
+      },
+      "risk_level": "high",
+      "rationale": "The clause is an indemnification provision. It is mutual and limited to each party's own site content/conduct, which aligns with the mutual-indemnity preferred position. However, subsection (c) extends indemnity to \"any other act, omission or representation by either party\" — far broader than the playbook's \"to the extent arising from its own breach of this Agreement or its negligence\" — and the clause contains no liability cap or reference to the Agreement's limitations of liability, whereas the playbook's preferred and fallback mutual indemnity are expressly subject to the limitation of liability. The indemnity is therefore potentially uncapped and, combined with the broad (c) trigger, creates material exposure. The clause also lacks the express linkage to the liability cap required by liability-cap-fees and liability-uncapped-carve-outs (which treat indemnification as an uncapped carve-out). Note: the duration/period question is not present here; no month/day equivalence issue arises from this clause.",
+      "citations": [
+        {
+          "citation_id": "99d7c5a8857f",
+          "playbook_position_id": "mutual-indemnity",
+          "excerpt": "Each party shall defend, indemnify and hold harmless the other party against third-party claims to the extent arising from its own breach of this Agreement or its negligence, subject to the limitations of liability set out in this Agreement."
+        },
+        {
+          "citation_id": "47b592e38611",
+          "playbook_position_id": "liability-cap-fees",
+          "excerpt": "Each party's total aggregate liability arising out of or related to this Agreement shall not exceed the fees paid or payable under this Agreement in the twelve (12) months preceding the event giving rise to the claim."
+        },
+        {
+          "citation_id": "d4dd8fc5821e",
+          "playbook_position_id": "liability-uncapped-carve-outs",
+          "excerpt": "The limitations of liability in this Agreement shall not apply to a party's indemnification obligations, breach of confidentiality, or liability arising from its fraud, gross negligence or willful misconduct. No other exclusion from the cap applies."
+        }
+      ],
+      "contract_sources": [],
+      "suggested_fallback": "Each party shall defend, indemnify and hold harmless the other party against third-party claims to the extent arising from its own gross negligence or willful misconduct, subject to the limitations of liability set out in this Agreement.",
+      "verified": true,
+      "verification_reason": "The assessment is supported. The clause is indeed a mutual indemnification provision limited in scope to each party's site content/conduct for subsections (a) and (b), and subsection (c)'s 'any other act, omission or representation by either party' is correctly identified as far broader than the playbook's 'own breach of this Agreement or its negligence' standard. The clause contains no liability cap or reference to limitations of liability, so the observation that it is potentially uncapped is accurate, and the playbook preferred/fallback both condition indemnity on the limitations of liability. The citations of mutual-indemnity, liability-cap-fees, and liability-uncapped-carve-outs are used consistently with their stated positions and 'high' risk-if-absent levels, supporting the 'high' risk conclusion. The rationale properly distinguishes what the clause states from what policy requests, and the suggested fallback matches the mutual-indemnity fallback text verbatim. The note that no month/day equivalence issue arises is also correct, since no period/duration term appears in the clause.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-7",
+        "text": "7. No Consequential Damages. Except for claims arising under section 6, in no event will either party be liable for any special, indirect, incidental or consequential damages.",
+        "span": {
+          "start": 5661,
+          "end": 5838,
+          "page": 1
+        },
+        "clause_type": "limitation_of_liability",
+        "heading": "7. No Consequential Damages. Except for claims arising under section 6, in no event will either party be liable for any special, indirect, incidental or consequential damages."
+      },
+      "risk_level": "medium",
+      "rationale": "Clause 7 mutually excludes special, indirect, incidental, and consequential damages, and its section 6 exception for representations, warranties, and indemnity claims is an explicit term (section 6 exists in the supplied excerpt). Against the liability-no-consequential-damages preferred position, however, the exclusion omits punitive damages and loss of profits, revenue, goodwill, or data. Because the clause does not address those categories, they are not excluded or limited by this clause; whether they are capped or uncapped is not established by the supplied text, so this is a missing protection rather than an affirmative unlimited-liability term. The section 6 carve-out cannot be assessed against liability-uncapped-carve-outs because section 6 is a representations/warranties and indemnity provision, and the provided excerpt is truncated before the full indemnity terms are shown. The deviation from the preferred mutual exclusion is a negotiable gap rather than a full absence of the protection.",
+      "citations": [
+        {
+          "citation_id": "807a4d0b4066",
+          "playbook_position_id": "liability-no-consequential-damages",
+          "excerpt": "Neither party shall be liable for any indirect, incidental, special, consequential or punitive damages, or for any loss of profits, revenue, goodwill or data, however caused and regardless of the theory of liability, even if advised of the possibility of such damages."
+        },
+        {
+          "citation_id": "d4dd8fc5821e",
+          "playbook_position_id": "liability-uncapped-carve-outs",
+          "excerpt": "The limitations of liability in this Agreement shall not apply to a party's indemnification obligations, breach of confidentiality, or liability arising from its fraud, gross negligence or willful misconduct. No other exclusion from the cap applies."
+        }
+      ],
+      "contract_sources": [
+        {
+          "label": "Section 6",
+          "span": {
+            "start": 4370,
+            "end": 5659,
+            "page": 1
+          },
+          "text": "6. Representations and Warranties. Each party is solely responsible for any legal liability arising out of or relating to the content of its site and any material to which users can link through the sites. Each party represents and warrants that its sites will not: (i) infringe upon any third party's copyright, patent, trademark, trade secret or other proprietary rights or rights of publicity or privacy; (ii) violate any law, statue, ordinance or regulation, including without limitation any laws regarding unfair competition, antidiscrimination or false advertising; (iii) be pornographic or obscene; (iv) be defamatory or trade libelous; or (v) contain viruses other harmful programming routines. Each party agrees to defend, indemnify and hold harmless the other and its shareholders, directors, officers, agents and employees for any and all losses, costs, liabilities or expenses (including without limitation\n\nreasonable attorneys' and expert witnesses' fees) incurred or arising from: (a) any breach of the foregoing representations or warranties; (b) any claim arising from the sale or license of either party's goods or services; or (c) any other act, omission or representation by either party. Either party may participate in the defense of itself at its option and expense.",
+          "truncated": false
+        }
+      ],
+      "suggested_fallback": "Neither party shall be liable for any indirect, incidental, special, consequential or punitive damages, or for any loss of profits, revenue, goodwill or data, except in respect of amounts payable to a third party under an indemnity given in this Agreement.",
+      "verified": true,
+      "verification_reason": "The assessment is supported by the evidence. Clause 7 mutually excludes only 'special, indirect, incidental or consequential damages' with an exception for section 6 claims, which is accurately quoted and characterized. The reviewer correctly notes that the preferred position in liability-no-consequential-damages also covers punitive damages and loss of profits, revenue, goodwill, or data, and that the clause's omission of these creates a missing protection rather than an affirmative unlimited-liability term. The rationale properly distinguishes what the clause states (mutual exclusion of specified categories, section 6 carve-out) from what policy requests (broader exclusion), and the medium risk level is consistent with a negotiable gap short of complete absence of the protection. The description of section 6 as a representations/warranties and indemnity provision matches the supplied excerpt, and the reviewer's observation that the excerpt is truncated before full indemnity terms is accurate from the text ending mid-sentence. The suggested fallback matches the playbook fallback verbatim. No unsupported claim was found; references to liability-uncapped-carve-outs are appropriately limited and the clause is not asserted to comply with any 90-day maximum.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-8",
+        "text": "8. Miscellaneous. This Agreement shall be governed by and construed in accordance with the laws of the State of California without reference to conflict of law principles thereof. Any claim arising out of or related to this Agreement must be brought exclusively in the state or federal courts located in San Diego County, California, and each party hereby consent to the jurisdiction thereof. In any action to enforce this Agreement the prevailing party will be entitled to costs and attorneys' fees. This Agreement constitutes the entire agreement between the parties with respect to the subject matter hereof and supersedes all prior discussions, documents, agreements and prior course of dealing, and shall not be effective until signed by both parties. This Agreement may not be assigned by Tickets without MP3.com's written consent, which shall be promptly granted or denied and not unreasonably withheld, except that Tickets may assign this Agreement without MP3.com's consent if another entity acquires substantially all the assets of Tickets. The parties to this Agreement are independent contractors, and no agency, partnership, joint venture or employee-employer relationship is created by this Agreement. MP3.com intends to, and does, bind its successors and assigns to the terms of this Agreement.\n\n/s/ Greg Flores /s/ Adam Epstein - ----------------------------------- ----------------------------------- Representative of MP3.com Representative of Tickets.com, Inc.\n\n/s/ Greg Flores, VP Sales Adam Epstein, SVP Counsel - ----------------------------------- ----------------------------------- Printed Name & Position Printed Name & Position\n\n- ----------------------------------- ----------------------------------- Date Date",
+        "span": {
+          "start": 5838,
+          "end": 7577,
+          "page": 1
+        },
+        "clause_type": "governing_law",
+        "heading": "8. Miscellaneous. This Agreement shall be governed by and construed in accordance with the laws of the State of California without reference to conflict of law principles thereof. Any claim arising out of or related to this Agreement must be brought exclusively in the state or federal courts located in San Diego County, California, and each party hereby consent to the jurisdiction thereof. In any action to enforce this Agreement the prevailing party will be entitled to costs and attorneys' fees. This Agreement constitutes the entire agreement between the parties with respect to the subject matter hereof and supersedes all prior discussions, documents, agreements and prior course of dealing, and shall not be effective until signed by both parties. This Agreement may not be assigned by Tickets without MP3.com's written consent, which shall be promptly granted or denied and not unreasonably withheld, except that Tickets may assign this Agreement without MP3.com's consent if another entity acquires substantially all the assets of Tickets. The parties to this Agreement are independent contractors, and no agency, partnership, joint venture or employee-employer relationship is created by this Agreement. MP3.com intends to, and does, bind its successors and assigns to the terms of this Agreement."
+      },
+      "risk_level": "medium",
+      "rationale": "The clause selects California law and exclusive venue in San Diego County, whereas the company's preferred position is New York law and New York County venue, with Delaware as the fallback. The deviation is a limited, negotiable disagreement about forum rather than a missing critical protection, so it is best rated medium. Much of the remaining text (entire agreement, assignment consent with change-of-control exception, independent contractors, successors and assigns) concerns other clause types and is not assessed here; the assignment text is also not an exact match to the assignment/change-of-control position because it is one-sided and lacks an express non-reasonableness standard on the change-of-control route.",
+      "citations": [
+        {
+          "citation_id": "f55105757cfa",
+          "playbook_position_id": "governing-law-and-venue",
+          "excerpt": "This Agreement is governed by the laws of the State of New York, without regard to its conflict of laws rules, and the parties submit to the exclusive jurisdiction of the state and federal courts located in New York County, New York."
+        }
+      ],
+      "contract_sources": [],
+      "suggested_fallback": "This Agreement is governed by the laws of the State of Delaware, without regard to its conflict of laws rules, and the parties submit to the exclusive jurisdiction of the state and federal courts located in Delaware.",
+      "verified": true,
+      "verification_reason": "The clause indeed selects California law and exclusive venue in San Diego County, which deviates from the playbook's preferred New York position and Delaware fallback. The rationale correctly distinguishes clause content from policy, and the suggested fallback matches the playbook fallback verbatim. The medium risk level is a defensible judgment given the playbook lists risk if absent as low but the clause is present with a non-preferred jurisdiction; the off-topic observations about other clause types are accurate and appropriately not scored.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    }
+  ],
+  "metadata": {
+    "parties": [
+      "Tickets.com, Inc., a Delaware corporation, located at 4061 Glencoe Ave., Marina del Rey, CA 90292 (\"Tickets\")",
+      "MP3.com, Inc., having an address at P.O. Box 910091, San Diego, CA 92191-0091 (\"MP3.com\")"
+    ],
+    "agreement_date": "February 17, 1999",
+    "effective_date": "February 17, 1999",
+    "expiration_date": "until one (1) year subsequent to the Effective Date",
+    "contract_value": null,
+    "governing_law": "the State of California without reference to conflict of law principles thereof"
+  },
+  "disclaimer": "This automated review is for informational purposes only and does not constitute legal advice. Consult qualified counsel before relying on it."
+}

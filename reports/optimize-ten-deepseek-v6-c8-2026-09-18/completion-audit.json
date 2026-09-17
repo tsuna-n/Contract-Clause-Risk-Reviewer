@@ -1,0 +1,45 @@
+{
+  "benchmark_status": "complete",
+  "contracts": 10,
+  "reviewed_clauses": 281,
+  "source_matches": true,
+  "saved_settings_match_benchmark": true,
+  "saved_settings": {
+    "provider": "openrouter",
+    "model": "deepseek/deepseek-v4.1-flash",
+    "thinking": "disabled",
+    "concurrency": 8,
+    "openrouter_providers": [],
+    "embedding_provider": "openrouter",
+    "embedding_model": "google/gemini-embedding-001",
+    "embedding_dim": 768,
+    "enable_judge": true,
+    "enable_hybrid_retrieval": true,
+    "enable_embedding_cache": true
+  },
+  "cited_reviews_checked": 168,
+  "reference_spans_checked": 40,
+  "source_or_fallback_violations": [],
+  "rationale_word_median": 49,
+  "rationale_word_max": 85,
+  "quality": {
+    "reviewed_clauses": 281,
+    "verified_clauses": 163,
+    "failed_clauses": 0,
+    "unknown_risk_clauses": 115,
+    "citations": 281,
+    "valid_citations": 281,
+    "all_contracts_segmentation_f1": {
+      "ticketscominc-sponsorship-agreement": 1.0,
+      "americasshoppingmallinc-site-development-and-hosting-agreement": 1.0,
+      "blackboxstocksinc-distributor-agreement": 1.0,
+      "legacytechnologyholdings-inc-distributor-agreement": 1.0,
+      "ecosciencesolutionsinc-endorsement-agreement": 1.0,
+      "kiromicbiopharma-inc-consulting-agreement": 1.0,
+      "datacalltechnologies-content-license-agreement": 1.0,
+      "gainscoinc-sponsorship-agreement": 1.0,
+      "martinmidstreampartnerslp-transportation-services-agreement": 1.0,
+      "tuniucorp-cooperation-agreement": 1.0
+    }
+  }
+}

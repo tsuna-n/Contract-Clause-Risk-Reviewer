@@ -1,0 +1,119 @@
+[
+  {
+    "model": "openai/gpt-oss-20b",
+    "provider": "DeepInfra",
+    "valid": false,
+    "error_type": "RateLimitError",
+    "error": "Error code: 429 - {'error': {'message': 'Provider returned error', 'code': 429, 'metadata': {'raw': 'openai/gpt-oss-20b is temporarily rate-limited upstream. Please retry shortly, or add your own key to accumulate your rate limits: https://openrouter.ai/settings/integrations', 'provider_name': 'DeepInfra', 'is_byok': False, 'provider_error_code': 'engine_overloaded', 'limit_source': 'upstream_provider_shared_pool', 'remedy_hint': 'Retry shortly, add your own provider key (https://openrouter.ai/s",
+    "elapsed_seconds": 1.5332178660009959
+  },
+  {
+    "model": "openai/gpt-oss-20b",
+    "provider": "CoreWeave",
+    "content": null,
+    "finish_reason": "stop",
+    "reasoning_characters": 308,
+    "usage": {
+      "completion_tokens": 74,
+      "prompt_tokens": 1129,
+      "total_tokens": 1203,
+      "completion_tokens_details": {
+        "accepted_prediction_tokens": null,
+        "audio_tokens": 0,
+        "reasoning_tokens": 77,
+        "rejected_prediction_tokens": null,
+        "image_tokens": 0
+      },
+      "prompt_tokens_details": {
+        "audio_tokens": 0,
+        "cache_write_tokens": 0,
+        "cached_tokens": 64,
+        "video_tokens": 0
+      },
+      "cost": 4.349e-05,
+      "is_byok": false,
+      "cost_details": {
+        "upstream_inference_cost": 4.349e-05,
+        "upstream_inference_prompt_cost": 3.387e-05,
+        "upstream_inference_completions_cost": 9.62e-06
+      }
+    },
+    "routed_provider": "CoreWeave",
+    "valid": false,
+    "error_type": "EmptyCompletionError",
+    "error": "_RiskAssessment: model returned no content (finish_reason='stop', 74 output tokens)",
+    "elapsed_seconds": 1.6705386749999889
+  },
+  {
+    "model": "openai/gpt-oss-120b",
+    "provider": "Groq",
+    "content": "{\n  \"risk_level\": \"high\",\n  \"rationale\": \"The clause grants Tickets an exclusive partnership for sports, entertainment, and travel tickets on MP3.com, which creates a restrictive limitation on MP3.com's ability to work with other ticket providers. The company's playbook does not contain any position addressing exclusivity or partner restrictions, leaving this clause unsupported and potentially exposing MP3.com to competitive and operational risks. Because there is no relevant playbook guidance, the clause is considered high risk.\",\n  \"citations\": [],\n  \"suggested_fallback\": null\n}",
+    "finish_reason": "stop",
+    "reasoning_characters": 474,
+    "usage": {
+      "completion_tokens": 222,
+      "prompt_tokens": 1346,
+      "total_tokens": 1568,
+      "completion_tokens_details": {
+        "accepted_prediction_tokens": null,
+        "audio_tokens": 0,
+        "reasoning_tokens": 94,
+        "rejected_prediction_tokens": null,
+        "image_tokens": 0
+      },
+      "prompt_tokens_details": {
+        "audio_tokens": 0,
+        "cache_write_tokens": 0,
+        "cached_tokens": 0,
+        "video_tokens": 0
+      },
+      "cost": 0.0003351,
+      "is_byok": false,
+      "cost_details": {
+        "upstream_inference_cost": 0.0003351,
+        "upstream_inference_prompt_cost": 0.0002019,
+        "upstream_inference_completions_cost": 0.0001332
+      }
+    },
+    "routed_provider": "Groq",
+    "valid": true,
+    "risk": "high",
+    "elapsed_seconds": 1.5918024999991758
+  },
+  {
+    "model": "openai/gpt-oss-120b",
+    "provider": "Cerebras",
+    "content": "{\"risk_level\":\"high\",\"rationale\":\"The clause grants Tickets an exclusive partnership for sports, entertainment, and travel tickets and requires MP3.com to host a Tickets Portal on specific website pages. The company's playbook does not contain any position that permits exclusive source arrangements or mandates portal dimensions and content control, which creates a conflict with the standard positions that focus on governing law, confidentiality, and revenue sharing. Because the exclusivity provision is not authorized by any playbook position, it presents a high legal and commercial risk. The closest related playbook position is the governing-law clause, which does not address exclusivity but is cited to illustrate the lack of relevant guidance.\",\"citations\":[{\"playbook_position_id\":\"governing-law-and-venue\",\"excerpt\":\"This Agreement is governed by the laws of the State of New York, without regard to its conflict of laws rules, and the parties submit to the exclusive jurisdiction of the state and federal courts located in New York County, New York.\"}],\"suggested_fallback\":null}",
+    "finish_reason": "stop",
+    "reasoning_characters": 561,
+    "usage": {
+      "completion_tokens": 324,
+      "prompt_tokens": 1483,
+      "total_tokens": 1807,
+      "completion_tokens_details": {
+        "accepted_prediction_tokens": null,
+        "audio_tokens": 0,
+        "reasoning_tokens": 107,
+        "rejected_prediction_tokens": null,
+        "image_tokens": 0
+      },
+      "prompt_tokens_details": {
+        "audio_tokens": 0,
+        "cache_write_tokens": 0,
+        "cached_tokens": 0,
+        "video_tokens": 0
+      },
+      "cost": 0.00076205,
+      "is_byok": false,
+      "cost_details": {
+        "upstream_inference_cost": 0.00076205,
+        "upstream_inference_prompt_cost": 0.00051905,
+        "upstream_inference_completions_cost": 0.000243
+      }
+    },
+    "routed_provider": "Cerebras",
+    "valid": true,
+    "risk": "high",
+    "elapsed_seconds": 1.497654988999784
+  }
+]

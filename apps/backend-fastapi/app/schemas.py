@@ -145,6 +145,15 @@ class Citation(BaseModel):
     excerpt: str
 
 
+class ContractSource(BaseModel):
+    """A verbatim excerpt from an explicitly referenced contract section."""
+
+    label: str
+    span: Span
+    text: str
+    truncated: bool = False
+
+
 class ClauseReview(BaseModel):
     """The reviewer's assessment of a single clause."""
 
@@ -152,9 +161,11 @@ class ClauseReview(BaseModel):
     risk_level: RiskLevel = RiskLevel.UNKNOWN
     rationale: str = ""
     citations: list[Citation] = Field(default_factory=list)
+    contract_sources: list[ContractSource] = Field(default_factory=list)
     suggested_fallback: str | None = None
     # The judge's grounding verdict on the machine's own rationale.
     verified: bool = False
+    verification_reason: str = ""
     # A person read this clause and signed off on the assessment as it stands.
     # Distinct from ``verified``: that is the pipeline checking itself, this is
     # a human taking responsibility, and it is what turns a report into a piece

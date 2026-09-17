@@ -14,6 +14,7 @@ from app.ai.agents import (
     RiskScorerInput,
     Segmenter,
 )
+from app.ai.context import ContractContext
 from app.ai.guardrails import disclaimer_text
 from app.config import get_settings
 from app.errors import PayloadTooLargeError
@@ -24,6 +25,7 @@ from app.schemas import (
     ClauseReview,
     ContractMetadata,
     ContractReviewReport,
+    ContractSource,
     RiskLevel,
     RiskSummary,
 )
@@ -136,10 +138,18 @@ class Orchestrator:
             return [], self._extract_metadata(document)
 
         concurrency = max(1, get_settings().review_concurrency)
+        context = ContractContext(document, clauses)
         workers = min(concurrency, len(clauses)) + (1 if self.metadata_extractor else 0)
         with ThreadPoolExecutor(max_workers=workers) as executor:
             metadata_future = executor.submit(self._extract_metadata, document)
-            reviews = list(executor.map(self._review_clause, clauses))
+            reviews = list(
+                executor.map(
+                    lambda clause: self._review_clause(
+                        clause, contract_sources=context.sources_for(clause)
+                    ),
+                    clauses,
+                )
+            )
             metadata = metadata_future.result()
         return reviews, metadata
 
@@ -172,7 +182,9 @@ class Orchestrator:
             logger.warning("contract metadata extraction failed", exc_info=True)
             return ContractMetadata()
 
-    def _review_clause(self, clause: Clause) -> ClauseReview:
+    def _review_clause(
+        self, clause: Clause, *, contract_sources: list[ContractSource] | None = None
+    ) -> ClauseReview:
         """Run one clause through classify -> match -> score -> judge.
 
         A single retry is allowed when the judge flags the first pass as
@@ -184,19 +196,32 @@ class Orchestrator:
         try:
             clause.clause_type = self.classifier.run(clause)
             hits = self.matcher.run(clause)
-            review = self.risk_scorer.run(RiskScorerInput(clause=clause, hits=hits))
+            review = self.risk_scorer.run(
+                RiskScorerInput(
+                    clause=clause,
+                    hits=hits,
+                    contract_sources=contract_sources or [],
+                )
+            )
             verdict = self.judge.run(review)
             if not verdict.grounded and verdict.should_retry:
                 review = self.risk_scorer.run(
-                    RiskScorerInput(clause=clause, hits=hits, feedback=verdict.reason)
+                    RiskScorerInput(
+                        clause=clause,
+                        hits=hits,
+                        feedback=verdict.reason,
+                        contract_sources=contract_sources or [],
+                    )
                 )
                 verdict = self.judge.run(review)
             review.verified = verdict.grounded
+            review.verification_reason = verdict.reason
             return review
         except Exception:
             logger.warning("clause %s review failed", clause.id, exc_info=True)
             return ClauseReview(
                 clause=clause,
+                contract_sources=contract_sources or [],
                 risk_level=RiskLevel.UNKNOWN,
                 rationale="Automated review failed for this clause; manual review required.",
             )

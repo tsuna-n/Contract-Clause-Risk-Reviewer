@@ -1,0 +1,1507 @@
+{
+  "report_id": "0f279fd020a94bf4aa4b66dcd1f72b70",
+  "contract_id": "datacalltechnologies-content-license-agreement",
+  "session_id": "eval",
+  "filename": "",
+  "created_at": "2026-09-17T16:59:49.231645Z",
+  "overall_risk": "high",
+  "summary": {
+    "high": 11,
+    "medium": 13,
+    "low": 5,
+    "unknown": 24
+  },
+  "reviews": [
+    {
+      "clause": {
+        "id": "clause-1",
+        "text": "1 PURPOSE OF THE AGREEMENT",
+        "span": {
+          "start": 268,
+          "end": 296,
+          "page": 1
+        },
+        "clause_type": "other",
+        "heading": "1 PURPOSE OF THE AGREEMENT"
+      },
+      "risk_level": "unknown",
+      "rationale": "The clause only states the purpose of the agreement and contains no obligations or protections that correspond to any retrieved playbook positions, so no risk assessment can be made.",
+      "citations": [],
+      "contract_sources": [],
+      "suggested_fallback": null,
+      "verified": false,
+      "verification_reason": "assessment has no playbook citations supporting its risk and rationale",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-2",
+        "text": "1.1 The purpose of this content distribution Agreement (hereinafter \"Agreement\") is to set forth the terms and conditions under which plan_b may use the Content (\"Content\" as set forth in APPENDIX 2) owned or licensed by LICENSOR for a commercial distribution to plan_b's End Users in the territory (\"Territory\" as set forth in APPENDIX 2).",
+        "span": {
+          "start": 296,
+          "end": 639,
+          "page": 1
+        },
+        "clause_type": "other",
+        "heading": "1.1 The purpose of this content distribution Agreement (hereinafter \"Agreement\") is to set forth the terms and conditions under which plan_b may use the Content (\"Content\" as set forth in APPENDIX 2) owned or licensed by LICENSOR for a commercial distribution to plan_b's End Users in the territory (\"Territory\" as set forth in APPENDIX 2)."
+      },
+      "risk_level": "high",
+      "rationale": "The clause only defines the purpose and references Appendix 2 for content, licence and territory but does not contain any provisions on intellectual property ownership or licence scope. The playbook requires a \"No joint ownership of intellectual property\" position and a \"No perpetual, irrevocable or unlimited licence\" position; their absence creates a material exposure.",
+      "citations": [
+        {
+          "citation_id": "44c0ad21a53c",
+          "playbook_position_id": "ip-no-joint-ownership",
+          "excerpt": "The parties shall not jointly own any intellectual property under this Agreement. Any jointly developed work product shall be owned by the party that contributed the underlying background intellectual property, with a licence granted to the other party as set out in this Agreement."
+        },
+        {
+          "citation_id": "f47055183908",
+          "playbook_position_id": "licence-not-perpetual",
+          "excerpt": "No licence granted under this Agreement is perpetual, irrevocable, or unlimited in volume, territory or field of use. Each licence is co-terminous with this Agreement and bounded by the metrics stated in the applicable Order Form."
+        }
+      ],
+      "contract_sources": [
+        {
+          "label": "Appendix 2",
+          "span": {
+            "start": 10108,
+            "end": 11208,
+            "page": 1
+          },
+          "text": "APPENDIX 2\n\n1 CONTENT, SHARE & TERRITORY\n\n 1.1 Contract name (for internal plan_b-ware use): Data Call Technologies, Inc.\n\nCONTENT LICENSOR TERRITORY TERMINATION SHARE\n\nTop News Headlines Top Business Headlines Science/Health News Entertainment Headlines\n\nNational Football League National Basketball Association National Hockey League Major League Baseball NCAA Football NCAA Men's Basketball Professional Golf Association NASCAR\n\nLatest Sports Lines 45% Worldwide 24 months Latest Sports Headlines Thought for Today Market Details World Financial Highlights Weather: Current Conditions 48-Hour Forecast 7-Day Forecast Weather Alerts Doppler Weather Radar\n\n2 TERMS\n\n 2.1 Contract start: 04-01-06\n\n 2.2 Contract end: 04-01-08\n\n 2.3 Commercial distribution possible from:\n\n 2.4 Sell-off period: 3 months after termination\n\n3 PAYMENTS AND REPORTS TO LICENSOR\n\n 3.1 Reporting: Quarterly; 30 days after end of quarter\n\n 3.2 Payment terms: 30 days after receipt of invoice\n\n4 EXCLUSIVITY COPYRIGHT\n\n 4.1 Content exclusive: [ ] Yes [ ] No\n\n 4.2 Copyright:\n\nSource: DATA CALL TECHNOLOGIES, SB-2/A, 9/18/2006",
+          "truncated": false
+        }
+      ],
+      "suggested_fallback": "Where the parties jointly develop intellectual property, each party owns an undivided interest in it and may exploit and licence it without accounting to or obtaining the consent of the other party.",
+      "verified": true,
+      "verification_reason": "The assessment correctly notes that the provided clause and Appendix 2 contain no provisions on intellectual property ownership or licence scope, while the cited playbook positions require such provisions. The reviewer’s risk rating of high is therefore supported by the evidence, and the suggested fallback matches the playbook fallback text verbatim.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-3",
+        "text": "1.2 End User means any third Party receiving Content on a mobile device for a payment in accordance with the terms and conditions of this Agreement for their own private and non- commercial use.",
+        "span": {
+          "start": 639,
+          "end": 836,
+          "page": 1
+        },
+        "clause_type": "other",
+        "heading": "1.2 End User means any third Party receiving Content on a mobile device for a payment in accordance with the terms and conditions of this Agreement for their own private and non- commercial use."
+      },
+      "risk_level": "unknown",
+      "rationale": "The clause defines \"End User\" as a third party receiving content for private, non‑commercial use. None of the supplied playbook positions address definitions of end‑user categories, usage restrictions, or related licensing or confidentiality obligations. Consequently, there is no applicable policy to assess compliance or deviation, leading to an unknown risk assessment.",
+      "citations": [],
+      "contract_sources": [],
+      "suggested_fallback": null,
+      "verified": false,
+      "verification_reason": "assessment has no playbook citations supporting its risk and rationale",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-4",
+        "text": "2 OBLIGATIONS OF LICENSOR",
+        "span": {
+          "start": 836,
+          "end": 863,
+          "page": 1
+        },
+        "clause_type": "other",
+        "heading": "2 OBLIGATIONS OF LICENSOR"
+      },
+      "risk_level": "unknown",
+      "rationale": "The clause provides only a heading without any substantive obligations, making it impossible to determine compliance with any retrieved playbook positions.",
+      "citations": [],
+      "contract_sources": [],
+      "suggested_fallback": null,
+      "verified": false,
+      "verification_reason": "assessment has no playbook citations supporting its risk and rationale",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-5",
+        "text": "2.1 LICENSOR shall make a first delivery of Content to plan_b within 14 days after the signing of this Agreement unless separately agreed between the Parties.",
+        "span": {
+          "start": 863,
+          "end": 1024,
+          "page": 1
+        },
+        "clause_type": "other",
+        "heading": "2.1 LICENSOR shall make a first delivery of Content to plan_b within 14 days after the signing of this Agreement unless separately agreed between the Parties."
+      },
+      "risk_level": "unknown",
+      "rationale": "The clause specifies a delivery timeline of 14 days, which does not correspond to any retrieved playbook position. No provided policy addresses delivery obligations, so the risk cannot be assessed against the company's positions.",
+      "citations": [],
+      "contract_sources": [],
+      "suggested_fallback": null,
+      "verified": false,
+      "verification_reason": "assessment has no playbook citations supporting its risk and rationale",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-6",
+        "text": "2.2 LICENSOR shall deliver Content according to the specifications (for example formats, file sizes) set by plan_b or to be agreed between the Parties in writing.",
+        "span": {
+          "start": 1024,
+          "end": 1189,
+          "page": 1
+        },
+        "clause_type": "other",
+        "heading": "2.2 LICENSOR shall deliver Content according to the specifications (for example formats, file sizes) set by plan_b or to be agreed between the Parties in writing."
+      },
+      "risk_level": "unknown",
+      "rationale": "The clause obligates the Licensor to deliver content according to specifications set by plan_b or agreed in writing. None of the retrieved playbook positions address content delivery specifications, format requirements, or related obligations, so there is no applicable policy to assess the risk.",
+      "citations": [],
+      "contract_sources": [],
+      "suggested_fallback": null,
+      "verified": false,
+      "verification_reason": "assessment has no playbook citations supporting its risk and rationale",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-7",
+        "text": "2.3 LICENSOR grants plan_b for the term of this Agreement the right to produce, market and distribute Content to End Users (in the territory specified in appendix 2) through its own and its partner's platform.",
+        "span": {
+          "start": 1189,
+          "end": 1401,
+          "page": 1
+        },
+        "clause_type": "intellectual_property",
+        "heading": "2.3 LICENSOR grants plan_b for the term of this Agreement the right to produce, market and distribute Content to End Users (in the territory specified in appendix 2) through its own and its partner's platform."
+      },
+      "risk_level": "low",
+      "rationale": "The clause grants a licence for the term of the Agreement only, without perpetual or irrevocable rights, aligning with the company's policy that licences must be limited to the agreement term.",
+      "citations": [
+        {
+          "citation_id": "f47055183908",
+          "playbook_position_id": "licence-not-perpetual",
+          "excerpt": "No licence granted under this Agreement is perpetual, irrevocable, or unlimited in volume, territory or field of use. Each licence is co-terminous with this Agreement and bounded by the metrics stated in the applicable Order Form."
+        }
+      ],
+      "contract_sources": [
+        {
+          "label": "Appendix 2",
+          "span": {
+            "start": 10108,
+            "end": 11208,
+            "page": 1
+          },
+          "text": "APPENDIX 2\n\n1 CONTENT, SHARE & TERRITORY\n\n 1.1 Contract name (for internal plan_b-ware use): Data Call Technologies, Inc.\n\nCONTENT LICENSOR TERRITORY TERMINATION SHARE\n\nTop News Headlines Top Business Headlines Science/Health News Entertainment Headlines\n\nNational Football League National Basketball Association National Hockey League Major League Baseball NCAA Football NCAA Men's Basketball Professional Golf Association NASCAR\n\nLatest Sports Lines 45% Worldwide 24 months Latest Sports Headlines Thought for Today Market Details World Financial Highlights Weather: Current Conditions 48-Hour Forecast 7-Day Forecast Weather Alerts Doppler Weather Radar\n\n2 TERMS\n\n 2.1 Contract start: 04-01-06\n\n 2.2 Contract end: 04-01-08\n\n 2.3 Commercial distribution possible from:\n\n 2.4 Sell-off period: 3 months after termination\n\n3 PAYMENTS AND REPORTS TO LICENSOR\n\n 3.1 Reporting: Quarterly; 30 days after end of quarter\n\n 3.2 Payment terms: 30 days after receipt of invoice\n\n4 EXCLUSIVITY COPYRIGHT\n\n 4.1 Content exclusive: [ ] Yes [ ] No\n\n 4.2 Copyright:\n\nSource: DATA CALL TECHNOLOGIES, SB-2/A, 9/18/2006",
+          "truncated": false
+        }
+      ],
+      "suggested_fallback": null,
+      "verified": true,
+      "verification_reason": "The clause explicitly limits the licence to “the term of this Agreement,” which satisfies the playbook position that licences must not be perpetual, irrevocable, or unlimited. The reviewer’s risk assessment (low) and rationale correctly cite the clause and the [licence-not-perpetual] policy. No fallback is required, and the assessment is fully supported by the provided evidence.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-8",
+        "text": "3 OBLIGATIONS OF PLAN_B\n\n 3.1 plan_b will distribute Content to End Users in the Territory through its distribution channels.\n\n 3.2 plan_b shall use reasonable commercial efforts to market and stimulate interest in the Content with its customers.\n\n 3.3 plan_b shall provide LICENSOR with a detailed written record, which includes the number of End User downloads and each distribution channel. Such report shall be provided to LICENSOR in electronic format within 6 weeks of the end of a quarter.",
+        "span": {
+          "start": 1401,
+          "end": 1899,
+          "page": 1
+        },
+        "clause_type": "other",
+        "heading": "3 OBLIGATIONS OF PLAN_B"
+      },
+      "risk_level": "unknown",
+      "rationale": "The clause obligates plan_b to provide quarterly download reports, but none of the retrieved playbook positions address reporting obligations or data provision, so there is no basis to assess the risk level.",
+      "citations": [],
+      "contract_sources": [],
+      "suggested_fallback": null,
+      "verified": false,
+      "verification_reason": "assessment has no playbook citations supporting its risk and rationale",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-9",
+        "text": "3.4 LICENSOR shall have the right to use a certified public accountant to inspect and audit all the related records and books of plan_b to ensure plan_b's compliance with the terms of this Agreement. In the event that any such audit reveals that plan_b has underpaid fees to the value of ten (10) percent or more of the total amount of payments for the period covered by the audit, plan_b shall bear the cost of the audit and shall in any event immediately pay to LICENSOR\n\nSource: DATA CALL TECHNOLOGIES, SB-2/A, 9/18/2006\n\n the full value of the underpaid or under-reported fees. Such audits shall normally be conducted during normal business hours at plan_b's premises.",
+        "span": {
+          "start": 1899,
+          "end": 2574,
+          "page": 1
+        },
+        "clause_type": "payment_terms",
+        "heading": "3.4 LICENSOR shall have the right to use a certified public accountant to inspect and audit all the related records and books of plan_b to ensure plan_b's compliance with the terms of this Agreement. In the event that any such audit reveals that plan_b has underpaid fees to the value of ten (10) percent or more of the total amount of payments for the period covered by the audit, plan_b shall bear the cost of the audit and shall in any event immediately pay to LICENSOR"
+      },
+      "risk_level": "medium",
+      "rationale": "The clause grants unlimited audit rights without the frequency limits (once/preferred, twice/fallback) required by the company policy and places audit cost on the licensor unless underpayment exceeds 10%, whereas the policy permits the audited party to bear cost only if underpayment exceeds 5%. This deviation creates a material exposure but aligns with the policy’s stated \"Risk if absent: medium\" severity.",
+      "citations": [
+        {
+          "citation_id": "3516d3f13c33",
+          "playbook_position_id": "audit-rights-bounded",
+          "excerpt": "A party may audit the other party's records relevant to this Agreement no more than twice in any twelve (12) month period, on fifteen (15) days' prior written notice, during normal business hours, and subject to the confidentiality obligations in this Agreement. The audited party bears the cost only if the audit reveals an underpayment of more than five percent (5%)."
+        }
+      ],
+      "contract_sources": [],
+      "suggested_fallback": "A party may audit the other party's records relevant to this Agreement no more than twice in any twelve (12) month period, on fifteen (15) days' prior written notice, during normal business hours, and subject to the confidentiality obligations in this Agreement. The audited party bears the cost only if the audit reveals an underpayment of more than five percent (5%).",
+      "verified": true,
+      "verification_reason": "The reviewer’s claims are directly supported by the clause and the cited playbook position. The clause grants unlimited audit rights and places audit cost on the audited party regardless of the 10% threshold, which deviates from the policy’s limits on frequency, notice, and cost allocation (cost only if underpayment >5%). The suggested fallback text is verbatim from the playbook fallback. Therefore the assessment is correctly grounded.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-10",
+        "text": "4 REVENUES\n\n 4.1 plan_b shall pay LICENSOR a share of its revenues as set forth in APPENDIX 2 (\"REVENUES\").",
+        "span": {
+          "start": 2574,
+          "end": 2683,
+          "page": 1
+        },
+        "clause_type": "payment_terms",
+        "heading": "4 REVENUES"
+      },
+      "risk_level": "medium",
+      "rationale": "The clause obligates plan_b to pay a revenue share but does not define the calculation method, share percentage, or audit rights; the appendix only specifies a 30‑day payment after invoice receipt, missing the detailed share definition required by the company’s policy.",
+      "citations": [
+        {
+          "citation_id": "e051856d0eff",
+          "playbook_position_id": "revenue-share-defined",
+          "excerpt": "Any revenue or profit share payable under this Agreement shall be calculated on net revenue actually received, at the percentage stated in the Order Form, and shall be payable within thirty (30) days of the end of each calendar quarter together with a statement showing the calculation."
+        }
+      ],
+      "contract_sources": [
+        {
+          "label": "Appendix 2",
+          "span": {
+            "start": 10108,
+            "end": 11208,
+            "page": 1
+          },
+          "text": "APPENDIX 2\n\n1 CONTENT, SHARE & TERRITORY\n\n 1.1 Contract name (for internal plan_b-ware use): Data Call Technologies, Inc.\n\nCONTENT LICENSOR TERRITORY TERMINATION SHARE\n\nTop News Headlines Top Business Headlines Science/Health News Entertainment Headlines\n\nNational Football League National Basketball Association National Hockey League Major League Baseball NCAA Football NCAA Men's Basketball Professional Golf Association NASCAR\n\nLatest Sports Lines 45% Worldwide 24 months Latest Sports Headlines Thought for Today Market Details World Financial Highlights Weather: Current Conditions 48-Hour Forecast 7-Day Forecast Weather Alerts Doppler Weather Radar\n\n2 TERMS\n\n 2.1 Contract start: 04-01-06\n\n 2.2 Contract end: 04-01-08\n\n 2.3 Commercial distribution possible from:\n\n 2.4 Sell-off period: 3 months after termination\n\n3 PAYMENTS AND REPORTS TO LICENSOR\n\n 3.1 Reporting: Quarterly; 30 days after end of quarter\n\n 3.2 Payment terms: 30 days after receipt of invoice\n\n4 EXCLUSIVITY COPYRIGHT\n\n 4.1 Content exclusive: [ ] Yes [ ] No\n\n 4.2 Copyright:\n\nSource: DATA CALL TECHNOLOGIES, SB-2/A, 9/18/2006",
+          "truncated": false
+        }
+      ],
+      "suggested_fallback": "Any revenue or profit share payable under this Agreement shall be calculated on gross revenue actually received, at the percentage stated in the Order Form, and shall be payable within forty-five (45) days of the end of each calendar quarter together with a statement showing the calculation.",
+      "verified": true,
+      "verification_reason": "The reviewer’s risk assessment is supported: Clause 4.1 references a revenue share to be set forth in Appendix 2, but Appendix 2 does not provide the share percentage, calculation method, or audit rights. The playbook position requires a defined, capped, auditable share with specific calculation and timing language. The reviewer correctly notes the omission and assigns a medium risk per the playbook. The suggested fallback text matches the playbook fallback verbatim. Therefore the claim is fully grounded.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-11",
+        "text": "4.2 All shares are net, plus the respective applying value added tax (if applicable).",
+        "span": {
+          "start": 2683,
+          "end": 2771,
+          "page": 1
+        },
+        "clause_type": "payment_terms",
+        "heading": "4.2 All shares are net, plus the respective applying value added tax (if applicable)."
+      },
+      "risk_level": "low",
+      "rationale": "The clause defines shares as net amounts plus applicable VAT, aligning with the preferred policy that revenue share is calculated on net revenue actually received. Adding VAT is a standard extension and does not deviate from the net revenue calculation requirement.",
+      "citations": [
+        {
+          "citation_id": "e051856d0eff",
+          "playbook_position_id": "revenue-share-defined",
+          "excerpt": "Any revenue or profit share payable under this Agreement shall be calculated on net revenue actually received, at the percentage stated in the Order Form, and shall be payable within thirty (30) days of the end of each calendar quarter together with a statement showing the calculation."
+        }
+      ],
+      "contract_sources": [],
+      "suggested_fallback": null,
+      "verified": true,
+      "verification_reason": "The reviewer correctly cites the clause defining shares as net plus VAT and the playbook preferred position requiring net revenue calculation. The rationale distinguishes the clause (net plus VAT) from the policy (net revenue calculation) and correctly concludes the risk is low. No fallback was needed and none was provided, matching the guidance.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-12",
+        "text": "5 INTELLECTUAL PROPERTY RIGHTS",
+        "span": {
+          "start": 2771,
+          "end": 2803,
+          "page": 1
+        },
+        "clause_type": "intellectual_property",
+        "heading": "5 INTELLECTUAL PROPERTY RIGHTS"
+      },
+      "risk_level": "high",
+      "rationale": "The clause provides only a title and no substantive terms governing intellectual property ownership, background IP, infringement indemnity, or licensing. Consequently, the agreement lacks the protections required by the company’s playbook, such as prohibiting joint ownership of IP and ensuring each party retains its background IP, which are high‑risk omissions.",
+      "citations": [
+        {
+          "citation_id": "44c0ad21a53c",
+          "playbook_position_id": "ip-no-joint-ownership",
+          "excerpt": "The parties shall not jointly own any intellectual property under this Agreement. Any jointly developed work product shall be owned by the party that contributed the underlying background intellectual property, with a licence granted to the other party as set out in this Agreement."
+        }
+      ],
+      "contract_sources": [],
+      "suggested_fallback": "Where the parties jointly develop intellectual property, each party owns an undivided interest in it and may exploit and licence it without accounting to or obtaining the consent of the other party.",
+      "verified": true,
+      "verification_reason": "The reviewer correctly notes that the clause contains only a title and lacks substantive IP terms, which does not meet the playbook requirement prohibiting joint ownership. The risk rating of high follows from this omission, and the rationale distinguishes the clause’s deficiency from the policy’s demand. The suggested fallback text exactly matches the playbook fallback wording.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-13",
+        "text": "5.1 LICENSOR is the owner of all intellectual property rights, including without limitation, any and all patents, utility models, trade marks, rights in designs, trade, business or domain names, know-how, rights in databases and copyrights, rights in inventions, ideas, concepts, trade secrets and confidential information which have to be given to fulfill this contract.",
+        "span": {
+          "start": 2803,
+          "end": 3177,
+          "page": 1
+        },
+        "clause_type": "intellectual_property",
+        "heading": "5.1 LICENSOR is the owner of all intellectual property rights, including without limitation, any and all patents, utility models, trade marks, rights in designs, trade, business or domain names, know-how, rights in databases and copyrights, rights in inventions, ideas, concepts, trade secrets and confidential information which have to be given to fulfill this contract."
+      },
+      "risk_level": "high",
+      "rationale": "The clause grants the Licensor ownership of all IP needed to fulfill the contract, including IP created under the contract, which contradicts the playbook's position that each party retains its background IP and does not transfer ownership of contract‑specific IP. This creates a material exposure of ownership rights.",
+      "citations": [
+        {
+          "citation_id": "24cca820d2bc",
+          "playbook_position_id": "ip-each-party-keeps-its-own",
+          "excerpt": "Each party retains all right, title and interest in the intellectual property it owned before this Agreement or develops independently of it. Nothing in this Agreement transfers ownership of a party's intellectual property to the other party."
+        }
+      ],
+      "contract_sources": [],
+      "suggested_fallback": "Each party retains all right, title and interest in the intellectual property it owned before this Agreement or develops independently of it. Ownership of intellectual property created specifically for Customer under a Statement of Work transfers to Customer on payment in full.",
+      "verified": true,
+      "verification_reason": "The reviewer’s claim that the clause grants Licensor ownership of all IP, conflicting with the playbook position that each party retains its background IP, is directly supported by the clause text and the cited playbook. The risk assessment (high) follows from this conflict, and the suggested fallback matches the playbook fallback verbatim. All elements are properly supported.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-14",
+        "text": "5.2 In the alternative, if LICENSOR is not the sole and exclusive owner of all of the foregoing intellectual property rights to the Content, LICENSOR has been granted by the owner or rightful sub-licensee of the intellectual property of the Content the right to grant the rights provided by LICENSOR to plan_b under this Agreement.",
+        "span": {
+          "start": 3177,
+          "end": 3511,
+          "page": 1
+        },
+        "clause_type": "intellectual_property",
+        "heading": "5.2 In the alternative, if LICENSOR is not the sole and exclusive owner of all of the foregoing intellectual property rights to the Content, LICENSOR has been granted by the owner or rightful sub-licensee of the intellectual property of the Content the right to grant the rights provided by LICENSOR to plan_b under this Agreement."
+      },
+      "risk_level": "medium",
+      "rationale": "The clause only confirms that the licensor has obtained the necessary rights to grant the IP to the customer but does not provide any indemnification for third‑party IP infringement claims. The company’s playbook requires a supplier indemnity (or at least a fallback right to procure continued use) for IP infringement; its absence leaves the customer exposed to infringement liability, which the playbook flags as a medium‑risk gap.",
+      "citations": [
+        {
+          "citation_id": "c69ce64e39de",
+          "playbook_position_id": "ip-infringement-indemnity",
+          "excerpt": "Supplier shall defend Customer against any third-party claim alleging that the Services or Deliverables infringe that third party's intellectual property rights, and shall at its option procure the right to continue using the affected item, modify it so it is non-infringing, or refund the fees paid for it."
+        }
+      ],
+      "contract_sources": [],
+      "suggested_fallback": "Supplier shall defend Customer against any third-party claim alleging that the Services or Deliverables infringe that third party's intellectual property rights, and shall at its option procure the right to continue using the affected item, modify it so it is non-infringing, or refund the fees paid for it.",
+      "verified": true,
+      "verification_reason": "The reviewer’s claim that the clause only confirms licensor’s rights and lacks any indemnification is directly supported by the clause text, which contains no indemnity language. The assessment that this omission conflicts with the playbook’s required indemnity or fallback is backed by the cited playbook position, and the suggested fallback text matches the playbook fallback verbatim. Therefore all statements are grounded.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-15",
+        "text": "5.3 LICENSOR grants to plan_b a license to produce, use, distribute, promote and publicly display the Content in any possible way for distribution and marketing purposes. Additionally, Licensee shall have the right to use the trademarks, trade names, or logos relating to Content (the \"TRADEMARKS\").",
+        "span": {
+          "start": 3511,
+          "end": 3813,
+          "page": 1
+        },
+        "clause_type": "intellectual_property",
+        "heading": "5.3 LICENSOR grants to plan_b a license to produce, use, distribute, promote and publicly display the Content in any possible way for distribution and marketing purposes. Additionally, Licensee shall have the right to use the trademarks, trade names, or logos relating to Content (the \"TRADEMARKS\")."
+      },
+      "risk_level": "high",
+      "rationale": "The clause grants a broad, unlimited license to use, distribute, and display the Content and permits use of trademarks without any limits on term, scope, or revocability, contrary to the company's policies that require licences to be limited, non‑transferable, and non‑perpetual.",
+      "citations": [
+        {
+          "citation_id": "6188e4f08ba9",
+          "playbook_position_id": "licence-scope-limited",
+          "excerpt": "Supplier grants Customer a non-exclusive, non-transferable, non-sublicensable licence to use the Services during the Term solely for Customer's internal business purposes. The licence terminates automatically on expiry or termination of this Agreement."
+        },
+        {
+          "citation_id": "f47055183908",
+          "playbook_position_id": "licence-not-perpetual",
+          "excerpt": "No licence granted under this Agreement is perpetual, irrevocable, or unlimited in volume, territory or field of use. Each licence is co-terminous with this Agreement and bounded by the metrics stated in the applicable Order Form."
+        }
+      ],
+      "contract_sources": [],
+      "suggested_fallback": "A licence granted under this Agreement may survive termination only for Deliverables already paid for in full, is limited to the volume, territory and field of use stated in the applicable Order Form, and remains revocable on Customer's material breach.",
+      "verified": true,
+      "verification_reason": "The clause provides an unrestricted, perpetual licence without limits on scope, term, or revocability, which directly conflicts with the playbook positions requiring licences to be limited, non‑transferable, and non‑perpetual. The reviewer’s risk rating of high is justified because both the ‘licence‑scope‑limited’ and ‘licence‑not‑perpetual’ policies are breached, and the suggested fallback text matches the playbook fallback verbatim. All statements are supported by the provided clause and playbook excerpts.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-16",
+        "text": "5.4 LICENSOR warrants that Content does not infringe an intellectual property right enforceable in the agreed country of delivery or use. LICENSOR indemnifies and holds harmless plan_b against all claims that Content infringes any of the above mentioned rights of a third Party. LICENSOR shall pay all damages awarded in a trial to a third Party.",
+        "span": {
+          "start": 3813,
+          "end": 4162,
+          "page": 1
+        },
+        "clause_type": "indemnification",
+        "heading": "5.4 LICENSOR warrants that Content does not infringe an intellectual property right enforceable in the agreed country of delivery or use. LICENSOR indemnifies and holds harmless plan_b against all claims that Content infringes any of the above mentioned rights of a third Party. LICENSOR shall pay all damages awarded in a trial to a third Party."
+      },
+      "risk_level": "medium",
+      "rationale": "The clause obligates the licensor to indemnify, hold harmless, and pay damages for IP infringement but does not include a duty to defend the customer, which is required by both the preferred and fallback IP infringement indemnity positions. The missing defense obligation triggers the medium risk defined for absence of this protection.",
+      "citations": [
+        {
+          "citation_id": "7df19cd4ae10",
+          "playbook_position_id": "ip-infringement-indemnity",
+          "excerpt": "Supplier shall defend and indemnify Customer against any third-party claim alleging that the Services or Deliverables infringe that third party's intellectual property rights, and shall pay any damages finally awarded or agreed in settlement."
+        }
+      ],
+      "contract_sources": [],
+      "suggested_fallback": null,
+      "verified": true,
+      "verification_reason": "The reviewer’s claim is supported: the clause provides indemnification and payment of damages but omits any duty to defend, which is required by both the preferred and fallback playbook positions. Accordingly, the medium risk rating aligns with the playbook’s “Risk if absent: medium.” The rationale correctly distinguishes the clause’s obligations from the policy’s additional defense requirement, and no fallback text is needed as none was suggested.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-17",
+        "text": "6 CONFIDENTIALITY",
+        "span": {
+          "start": 4162,
+          "end": 4181,
+          "page": 1
+        },
+        "clause_type": "confidentiality",
+        "heading": "6 CONFIDENTIALITY"
+      },
+      "risk_level": "high",
+      "rationale": "The clause provides only a heading with no confidentiality obligations, so the required mutual confidentiality duties and survival period are missing. This deviates from the company's preferred and fallback confidentiality policies, exposing the company to high risk.",
+      "citations": [
+        {
+          "citation_id": "556221eb5774",
+          "playbook_position_id": "confidentiality-mutual",
+          "excerpt": "Each party shall keep the other party's Confidential Information confidential, use it only to perform this Agreement, and protect it with at least the care it uses for its own confidential information. These obligations do not apply to information that is or becomes public through no fault of the receiving party, was already known to it, or is independently developed by it."
+        },
+        {
+          "citation_id": "05c95fde9902",
+          "playbook_position_id": "confidentiality-term",
+          "excerpt": "The confidentiality obligations in this Agreement survive for three (3) years after termination or expiry, and indefinitely with respect to trade secrets for so long as they remain trade secrets under applicable law."
+        }
+      ],
+      "contract_sources": [],
+      "suggested_fallback": "Each party shall keep the other party's Confidential Information confidential and use it only to perform this Agreement, provided that a party may disclose Confidential Information to the extent required by law or court order after giving the other party prompt notice and a reasonable opportunity to seek protective relief.",
+      "verified": true,
+      "verification_reason": "The reviewer correctly notes that the clause contains only a heading and lacks any confidentiality obligations, which means the mutual confidentiality duties and survival period required by the company's playbook are absent. This omission aligns with the playbook's 'Risk if absent: high' for confidentiality, justifying the high risk rating. The suggested fallback text is an exact verbatim match to the fallback provision in the confidentiality-mutual playbook position.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-18",
+        "text": "6.1 Each Party shall keep in confidence all material and information, including without limitation Content, received from the other Party and marked as confidential or which should be understood to be confidential, and may not use such material or information for any other purposes than those set forth in this Agreement. The confidentiality obligation shall, however, not be applied to material and information, which as shown by the receiving Party,\n\n 6.1.1 is generally available or otherwise public; or\n\n 6.1.2 the receiving Party has received from a third party without any obligation of confidentiality; or\n\n 6.1.3 was in the possession of the receiving Party prior to receipt of the same from the other Party without any obligation of confidentiality related thereto; or\n\n 6.1.4 the receiving party has independently developed without using material or information received from the other Party.",
+        "span": {
+          "start": 4181,
+          "end": 5087,
+          "page": 1
+        },
+        "clause_type": "confidentiality",
+        "heading": "6.1 Each Party shall keep in confidence all material and information, including without limitation Content, received from the other Party and marked as confidential or which should be understood to be confidential, and may not use such material or information for any other purposes than those set forth in this Agreement. The confidentiality obligation shall, however, not be applied to material and information, which as shown by the receiving Party,"
+      },
+      "risk_level": "high",
+      "rationale": "The clause obligates parties to keep confidential information but does not include the required standard of protecting it \"with at least the care it uses for its own confidential information\" as stipulated in the preferred confidentiality-mutual position. This missing protection creates a material exposure.",
+      "citations": [
+        {
+          "citation_id": "556221eb5774",
+          "playbook_position_id": "confidentiality-mutual",
+          "excerpt": "Each party shall keep the other party's Confidential Information confidential, use it only to perform this Agreement, and protect it with at least the care it uses for its own confidential information. These obligations do not apply to information that is or becomes public through no fault of the receiving party, was already known to it, or is independently developed by it."
+        }
+      ],
+      "contract_sources": [],
+      "suggested_fallback": null,
+      "verified": true,
+      "verification_reason": "The reviewer correctly notes that the contract clause imposes a confidentiality duty but does not include the playbook’s preferred protection standard (“protect it with at least the care it uses for its own confidential information”). The playbook position states this standard is required, and its absence triggers a high risk. The reviewer’s risk level (high) and rationale therefore follow directly from the comparison of clause text to the cited playbook position. No unsupported claim is made.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-19",
+        "text": "6.2 Each Party shall promptly upon termination of this Agreement or when the Party no longer needs the material or information in question for the purpose stated in this Agreement cease using confidential material and information received from the other Party and, unless the Parties separately agree on destruction of such material, return the material in question (including all copies thereof).",
+        "span": {
+          "start": 5087,
+          "end": 5487,
+          "page": 1
+        },
+        "clause_type": "confidentiality",
+        "heading": "6.2 Each Party shall promptly upon termination of this Agreement or when the Party no longer needs the material or information in question for the purpose stated in this Agreement cease using confidential material and information received from the other Party and, unless the Parties separately agree on destruction of such material, return the material in question (including all copies thereof)."
+      },
+      "risk_level": "high",
+      "rationale": "The clause only requires cessation of use and return of material upon termination, without any obligation to keep the other party's information confidential. This omits the core confidentiality duty required by the company's mutual confidentiality policy and lacks any survival period, creating a material exposure.",
+      "citations": [
+        {
+          "citation_id": "556221eb5774",
+          "playbook_position_id": "confidentiality-mutual",
+          "excerpt": "Each party shall keep the other party's Confidential Information confidential, use it only to perform this Agreement, and protect it with at least the care it uses for its own confidential information. These obligations do not apply to information that is or becomes public through no fault of the receiving party, was already known to it, or is independently developed by it."
+        },
+        {
+          "citation_id": "4ad9483e69a0",
+          "playbook_position_id": "confidentiality-term",
+          "excerpt": "The confidentiality obligations in this Agreement survive for five (5) years after termination or expiry, and indefinitely with respect to trade secrets for so long as they remain trade secrets under applicable law."
+        }
+      ],
+      "contract_sources": [],
+      "suggested_fallback": "The confidentiality obligations in this Agreement survive for five (5) years after termination or expiry, and indefinitely with respect to trade secrets for so long as they remain trade secrets under applicable law.",
+      "verified": true,
+      "verification_reason": "The reviewer correctly notes that the clause only mandates cessation of use and return of material, providing no confidentiality obligation or survival period, which is unsupported by the clause. The cited playbook positions are accurately referenced, and the suggested fallback matches the term fallback text verbatim. Therefore the assessment is fully supported.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-20",
+        "text": "6.3 The rights and responsibilities under this section shall survive any termination or cancellation of this Agreement for 2 years.",
+        "span": {
+          "start": 5487,
+          "end": 5621,
+          "page": 1
+        },
+        "clause_type": "termination",
+        "heading": "6.3 The rights and responsibilities under this section shall survive any termination or cancellation of this Agreement for 2 years."
+      },
+      "risk_level": "medium",
+      "rationale": "Clause 6.3 imposes a blanket two‑year survival of all rights and responsibilities, whereas the playbook’s post‑termination‑wind‑down position expects obligations to cease except those expressly stated to survive and does not prescribe a universal survival period. This creates a broader post‑termination exposure than the policy, constituting a limited deviation.",
+      "citations": [
+        {
+          "citation_id": "332c3f43345c",
+          "playbook_position_id": "post-termination-wind-down",
+          "excerpt": "On termination or expiry, Supplier shall provide reasonable transition assistance for up to ninety (90) days at its then-current rates, and shall return or delete the other party's data on request. No other post-termination obligation applies."
+        }
+      ],
+      "contract_sources": [],
+      "suggested_fallback": "On termination or expiry, Supplier shall provide reasonable transition assistance for up to ninety (90) days at its then-current rates, and shall return or delete the other party's data on request. No other post-termination obligation applies.",
+      "verified": true,
+      "verification_reason": "The reviewer’s claims are supported: the clause imposes a two‑year blanket survival, while the playbook position limits survival to expressly stated obligations and provides a fallback of 90 days. The risk level of medium aligns with the playbook’s “Risk if absent: medium”. The rationale correctly distinguishes clause language from policy expectations, and the suggested fallback matches the playbook fallback text verbatim.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-21",
+        "text": "7 TERM OF THE AGREEMENT AND TERMINATION\n\nSource: DATA CALL TECHNOLOGIES, SB-2/A, 9/18/2006",
+        "span": {
+          "start": 5621,
+          "end": 5713,
+          "page": 1
+        },
+        "clause_type": "termination",
+        "heading": "7 TERM OF THE AGREEMENT AND TERMINATION"
+      },
+      "risk_level": "unknown",
+      "rationale": "The clause provides only a heading without any substantive termination obligations or terms, so no comparison to the retrieved playbook positions can be made.",
+      "citations": [],
+      "contract_sources": [],
+      "suggested_fallback": null,
+      "verified": false,
+      "verification_reason": "assessment has no playbook citations supporting its risk and rationale",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-22",
+        "text": "7.1 Unless otherwise stated in the Appendix the term of this letter Agreement shall continue for twenty-four (24) months with the effective date unless terminated sooner or extended pursuant to the terms hereof (\"Initial Term\"). The Initial Term shall automatically be extended for an additional period of half a year unless either party provides the other party with written notification of termination of the letter Agreement at least 60 days prior to end of such period.",
+        "span": {
+          "start": 5713,
+          "end": 6189,
+          "page": 1
+        },
+        "clause_type": "termination",
+        "heading": "7.1 Unless otherwise stated in the Appendix the term of this letter Agreement shall continue for twenty-four (24) months with the effective date unless terminated sooner or extended pursuant to the terms hereof (\"Initial Term\"). The Initial Term shall automatically be extended for an additional period of half a year unless either party provides the other party with written notification of termination of the letter Agreement at least 60 days prior to end of such period."
+      },
+      "risk_level": "medium",
+      "rationale": "The clause provides automatic renewal for a six‑month period unless 60 days' notice is given, whereas the company's preferred policy requires renewal only by mutual written agreement. The fallback permits automatic renewal but with a 30‑day notice and shorter renewal term, so the clause deviates from both preferred and fallback wording, creating a material exposure.",
+      "citations": [
+        {
+          "citation_id": "0b788e80e4a0",
+          "playbook_position_id": "renewal-opt-in",
+          "excerpt": "This Agreement shall renew for successive twelve (12) month terms unless either party gives written notice of non-renewal at least thirty (30) days before the end of the then-current term, and the fees for any renewal term shall not increase by more than five percent (5%)."
+        }
+      ],
+      "contract_sources": [],
+      "suggested_fallback": "This Agreement shall renew for successive twelve (12) month terms unless either party gives written notice of non-renewal at least thirty (30) days before the end of the then-current term, and the fees for any renewal term shall not increase by more than five percent (5%).",
+      "verified": true,
+      "verification_reason": "The reviewer correctly cites the clause’s automatic six‑month extension and compares it to the playbook’s preferred opt‑in renewal and the fallback’s twelve‑month automatic renewal with 30‑day notice. The rationale distinguishes the clause’s terms from policy requirements, and the suggested fallback verbatim matches the fallback text. All claims are supported by the provided evidence.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-23",
+        "text": "7.2 Either Party shall be entitled to cancel this Agreement if the other Party is materially in breach of the terms of this Agreement. If the breach of contract is capable of being remedied, this Agreement can be cancelled only provided that the Party in breach has not rectified its breach within thirty (30) days of the written notice by the other Party.",
+        "span": {
+          "start": 6189,
+          "end": 6548,
+          "page": 1
+        },
+        "clause_type": "termination",
+        "heading": "7.2 Either Party shall be entitled to cancel this Agreement if the other Party is materially in breach of the terms of this Agreement. If the breach of contract is capable of being remedied, this Agreement can be cancelled only provided that the Party in breach has not rectified its breach within thirty (30) days of the written notice by the other Party."
+      },
+      "risk_level": "medium",
+      "rationale": "Clause provides a 30‑day cure period but does not require the written notice to describe the breach in reasonable detail, which the preferred termination‑for‑cause‑cure policy mandates. This omission constitutes a limited deviation, aligning with the medium risk if absent rating.",
+      "citations": [
+        {
+          "citation_id": "3359d192f820",
+          "playbook_position_id": "termination-for-cause-cure",
+          "excerpt": "Either party may terminate this Agreement for cause if the other party materially breaches it and fails to cure that breach within thirty (30) days after receiving written notice describing the breach in reasonable detail."
+        }
+      ],
+      "contract_sources": [],
+      "suggested_fallback": "Either party may terminate this Agreement for cause if the other party materially breaches it and fails to cure that breach within forty-five (45) days after receiving written notice describing the breach in reasonable detail.",
+      "verified": true,
+      "verification_reason": "The reviewer correctly cites the clause lacking notice detail, aligns the risk level with the playbook's medium risk for absent detail, and provides the exact fallback text as specified.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-24",
+        "text": "7.3 Either Party may cancel this Agreement already prior to the date of its fulfillment, if it becomes evident that the other Party will commit a breach of contract entitling to cancellation of this Agreement.",
+        "span": {
+          "start": 6548,
+          "end": 6760,
+          "page": 1
+        },
+        "clause_type": "termination",
+        "heading": "7.3 Either Party may cancel this Agreement already prior to the date of its fulfillment, if it becomes evident that the other Party will commit a breach of contract entitling to cancellation of this Agreement."
+      },
+      "risk_level": "medium",
+      "rationale": "The clause permits termination upon anticipated breach without any cure period or notice requirement, deviating from the playbook's termination‑for‑cause position that requires a material breach and a 30‑day (preferred) or 45‑day (fallback) cure period. This omission aligns with the playbook’s stated “Risk if absent: medium.”",
+      "citations": [
+        {
+          "citation_id": "3359d192f820",
+          "playbook_position_id": "termination-for-cause-cure",
+          "excerpt": "Either party may terminate this Agreement for cause if the other party materially breaches it and fails to cure that breach within thirty (30) days after receiving written notice describing the breach in reasonable detail."
+        }
+      ],
+      "contract_sources": [],
+      "suggested_fallback": "Either party may terminate this Agreement for cause if the other party materially breaches it and fails to cure that breach within forty-five (45) days after receiving written notice describing the breach in reasonable detail.",
+      "verified": true,
+      "verification_reason": "The reviewer’s claims are fully supported: the clause allows termination on anticipated breach without cure or notice, which differs from the playbook’s requirement of a material breach and a 30‑day (preferred) or 45‑day (fallback) cure period. The risk level of medium matches the playbook’s “Risk if absent: medium.” The suggested fallback text exactly matches the playbook’s fallback clause. All statements are properly sourced.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-25",
+        "text": "7.4 Upon termination or cancellation of this Agreement plan_b shall cease to use Content for any purpose and delete Content from any files and data storage.",
+        "span": {
+          "start": 6760,
+          "end": 6919,
+          "page": 1
+        },
+        "clause_type": "termination",
+        "heading": "7.4 Upon termination or cancellation of this Agreement plan_b shall cease to use Content for any purpose and delete Content from any files and data storage."
+      },
+      "risk_level": "medium",
+      "rationale": "The clause requires deletion of Content upon termination but provides no transition assistance, deviating from the preferred post-termination obligation which includes up to 60 days of reasonable transition assistance. This creates a limited exposure consistent with the medium risk if absent.",
+      "citations": [
+        {
+          "citation_id": "7abe1dd06ab0",
+          "playbook_position_id": "post-termination-wind-down",
+          "excerpt": "On termination or expiry, each party's obligations cease except for those that expressly survive. Supplier shall provide reasonable transition assistance for up to sixty (60) days at its then-current rates, and shall return or delete the other party's data on request."
+        }
+      ],
+      "contract_sources": [],
+      "suggested_fallback": "On termination or expiry, Supplier shall provide reasonable transition assistance for up to ninety (90) days at its then-current rates, and shall return or delete the other party's data on request. No other post-termination obligation applies.",
+      "verified": true,
+      "verification_reason": "The reviewer’s risk level (medium) is supported by the playbook’s stated risk if the post‑termination obligations are absent. The rationale correctly notes the clause lacks the 60‑day transition assistance required by the preferred playbook position. The suggested fallback text matches the playbook fallback verbatim. All claims are backed by the provided clause and playbook excerpts.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-26",
+        "text": "7.5 After termination of this contract, there shall be a sell-off period (defined in APPENDIX 2) following the date of termination of this contract.",
+        "span": {
+          "start": 6919,
+          "end": 7070,
+          "page": 1
+        },
+        "clause_type": "termination",
+        "heading": "7.5 After termination of this contract, there shall be a sell-off period (defined in APPENDIX 2) following the date of termination of this contract."
+      },
+      "risk_level": "low",
+      "rationale": "The clause requires a 3‑month (≈90 day) sell‑off period after termination. This aligns with the fallback version of the post‑termination‑wind‑down policy, which permits up to 90 days of transition assistance, thus meeting the company's acceptable post‑termination obligation.",
+      "citations": [
+        {
+          "citation_id": "332c3f43345c",
+          "playbook_position_id": "post-termination-wind-down",
+          "excerpt": "On termination or expiry, Supplier shall provide reasonable transition assistance for up to ninety (90) days at its then-current rates, and shall return or delete the other party's data on request. No other post-termination obligation applies."
+        }
+      ],
+      "contract_sources": [
+        {
+          "label": "Appendix 2",
+          "span": {
+            "start": 10108,
+            "end": 11208,
+            "page": 1
+          },
+          "text": "APPENDIX 2\n\n1 CONTENT, SHARE & TERRITORY\n\n 1.1 Contract name (for internal plan_b-ware use): Data Call Technologies, Inc.\n\nCONTENT LICENSOR TERRITORY TERMINATION SHARE\n\nTop News Headlines Top Business Headlines Science/Health News Entertainment Headlines\n\nNational Football League National Basketball Association National Hockey League Major League Baseball NCAA Football NCAA Men's Basketball Professional Golf Association NASCAR\n\nLatest Sports Lines 45% Worldwide 24 months Latest Sports Headlines Thought for Today Market Details World Financial Highlights Weather: Current Conditions 48-Hour Forecast 7-Day Forecast Weather Alerts Doppler Weather Radar\n\n2 TERMS\n\n 2.1 Contract start: 04-01-06\n\n 2.2 Contract end: 04-01-08\n\n 2.3 Commercial distribution possible from:\n\n 2.4 Sell-off period: 3 months after termination\n\n3 PAYMENTS AND REPORTS TO LICENSOR\n\n 3.1 Reporting: Quarterly; 30 days after end of quarter\n\n 3.2 Payment terms: 30 days after receipt of invoice\n\n4 EXCLUSIVITY COPYRIGHT\n\n 4.1 Content exclusive: [ ] Yes [ ] No\n\n 4.2 Copyright:\n\nSource: DATA CALL TECHNOLOGIES, SB-2/A, 9/18/2006",
+          "truncated": false
+        }
+      ],
+      "suggested_fallback": "On termination or expiry, Supplier shall provide reasonable transition assistance for up to ninety (90) days at its then-current rates, and shall return or delete the other party's data on request. No other post-termination obligation applies.",
+      "verified": true,
+      "verification_reason": "The reviewer correctly links the contract clause’s 3‑month sell‑off period to the playbook fallback provision allowing up to 90 days of transition assistance, and the suggested fallback text matches the cited playbook verbatim. All statements are supported by the provided clause, appendix, and playbook excerpt.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-27",
+        "text": "8 MISCELLANEOUS",
+        "span": {
+          "start": 7070,
+          "end": 7087,
+          "page": 1
+        },
+        "clause_type": "other",
+        "heading": "8 MISCELLANEOUS"
+      },
+      "risk_level": "unknown",
+      "rationale": "The clause provides only a heading with no substantive terms, so no obligations or protections can be evaluated against the retrieved playbook positions.",
+      "citations": [],
+      "contract_sources": [],
+      "suggested_fallback": null,
+      "verified": false,
+      "verification_reason": "assessment has no playbook citations supporting its risk and rationale",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-28",
+        "text": "8.1 The Parties acknowledge that they act as independent contractors and this Agreement does not constitute any partnership, joint venture, agency relationship or other independent legal entity separate from the Parties.",
+        "span": {
+          "start": 7087,
+          "end": 7310,
+          "page": 1
+        },
+        "clause_type": "other",
+        "heading": "8.1 The Parties acknowledge that they act as independent contractors and this Agreement does not constitute any partnership, joint venture, agency relationship or other independent legal entity separate from the Parties."
+      },
+      "risk_level": "unknown",
+      "rationale": "The clause addresses the parties' relationship as independent contractors and denies partnership or joint venture status. None of the retrieved playbook positions cover entity relationship or joint ownership of the parties themselves; they focus on IP ownership, non‑solicitation, warranties, force majeure, confidentiality, insurance, third‑party beneficiaries, and liquidated damages. Therefore there is no applicable policy to assess the risk of this clause.",
+      "citations": [],
+      "contract_sources": [],
+      "suggested_fallback": null,
+      "verified": false,
+      "verification_reason": "assessment has no playbook citations supporting its risk and rationale",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-29",
+        "text": "8.2 Neither Party shall assign or transfer to any third party, without the prior written consent of the other Party, this Agreement or any rights granted herein.",
+        "span": {
+          "start": 7310,
+          "end": 7474,
+          "page": 1
+        },
+        "clause_type": "other",
+        "heading": "8.2 Neither Party shall assign or transfer to any third party, without the prior written consent of the other Party, this Agreement or any rights granted herein."
+      },
+      "risk_level": "medium",
+      "rationale": "The clause requires prior written consent for any assignment and omits the change‑of‑control exception provided in the preferred playbook position, representing a deviation that could impede permissible transfers under a change of control.",
+      "citations": [
+        {
+          "citation_id": "49364fcfdf78",
+          "playbook_position_id": "assignment-change-of-control",
+          "excerpt": "Neither party may assign this Agreement without the other party's prior written consent, except that either party may assign it in its entirety, on notice and without consent, to a successor in connection with a merger, acquisition or sale of all or substantially all of its assets."
+        }
+      ],
+      "contract_sources": [],
+      "suggested_fallback": "Neither party may assign this Agreement without the other party's prior written consent, such consent not to be unreasonably withheld, conditioned or delayed. A change of control is not an assignment for the purposes of this clause.",
+      "verified": true,
+      "verification_reason": "The reviewer correctly cites the clause’s requirement for prior written consent and notes the absence of the change‑of‑control exception present in the playbook’s preferred position, justifying a medium risk. The suggested fallback exactly matches the fallback text from the playbook. All claims are supported by the provided evidence.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-30",
+        "text": "8.3 Any amendments to this Agreement shall be in writing and shall have no effect before signed by the duly authorized representatives of the Parties.",
+        "span": {
+          "start": 7474,
+          "end": 7627,
+          "page": 1
+        },
+        "clause_type": "other",
+        "heading": "8.3 Any amendments to this Agreement shall be in writing and shall have no effect before signed by the duly authorized representatives of the Parties."
+      },
+      "risk_level": "unknown",
+      "rationale": "The clause requires written amendments signed by authorized representatives. None of the retrieved playbook positions address amendment formalities, so there is no basis to assess risk relative to company policy.",
+      "citations": [],
+      "contract_sources": [],
+      "suggested_fallback": null,
+      "verified": false,
+      "verification_reason": "assessment has no playbook citations supporting its risk and rationale",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-31",
+        "text": "8.4 All payments will be made to Licensor in United States dollars.",
+        "span": {
+          "start": 7627,
+          "end": 7697,
+          "page": 1
+        },
+        "clause_type": "payment_terms",
+        "heading": "8.4 All payments will be made to Licensor in United States dollars."
+      },
+      "risk_level": "unknown",
+      "rationale": "The clause specifies payment in U.S. dollars, but none of the retrieved playbook positions address currency requirements, making it impossible to assess alignment or deviation.",
+      "citations": [],
+      "contract_sources": [],
+      "suggested_fallback": null,
+      "verified": false,
+      "verification_reason": "assessment has no playbook citations supporting its risk and rationale",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-32",
+        "text": "9 SEVERABILITY",
+        "span": {
+          "start": 7697,
+          "end": 7713,
+          "page": 1
+        },
+        "clause_type": "other",
+        "heading": "9 SEVERABILITY"
+      },
+      "risk_level": "unknown",
+      "rationale": "The clause only states a severability provision and does not correspond to any of the supplied playbook positions, which cover third-party beneficiaries, confidentiality, liquidated damages, liability caps, termination, warranties, consequential damages, and exclusivity. No relevant policy is available to assess compliance or deviation.",
+      "citations": [],
+      "contract_sources": [],
+      "suggested_fallback": null,
+      "verified": false,
+      "verification_reason": "assessment has no playbook citations supporting its risk and rationale",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-33",
+        "text": "9.1 In the event that any provision in this Agreement will be subject to an interpretation under which it would be void or unenforceable, such provisions will be construed so as to constitute it a valid and enforceable provision to the fullest extent possible, and in the event that it cannot be so construed, it will, to that extent, be deemed deleted and separable from the other provisions of this Agreement, which will remain in full force and effect and will be construed to effectuate its purposes to the maximum legal extent.",
+        "span": {
+          "start": 7713,
+          "end": 8248,
+          "page": 1
+        },
+        "clause_type": "other",
+        "heading": "9.1 In the event that any provision in this Agreement will be subject to an interpretation under which it would be void or unenforceable, such provisions will be construed so as to constitute it a valid and enforceable provision to the fullest extent possible, and in the event that it cannot be so construed, it will, to that extent, be deemed deleted and separable from the other provisions of this Agreement, which will remain in full force and effect and will be construed to effectuate its purposes to the maximum legal extent."
+      },
+      "risk_level": "unknown",
+      "rationale": "The clause addresses severability of provisions, but none of the retrieved playbook positions relate to severability or missing protection in this area; therefore no applicable policy can be used to assess risk.",
+      "citations": [],
+      "contract_sources": [],
+      "suggested_fallback": null,
+      "verified": false,
+      "verification_reason": "assessment has no playbook citations supporting its risk and rationale",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-34",
+        "text": "10 GOVERNING LAW AND VENUE",
+        "span": {
+          "start": 8248,
+          "end": 8276,
+          "page": 1
+        },
+        "clause_type": "governing_law",
+        "heading": "10 GOVERNING LAW AND VENUE"
+      },
+      "risk_level": "low",
+      "rationale": "The clause only provides a heading without specifying governing law or venue, thus the required protection is absent. The playbook defines a low risk if such protection is missing.",
+      "citations": [
+        {
+          "citation_id": "f55105757cfa",
+          "playbook_position_id": "governing-law-and-venue",
+          "excerpt": "This Agreement is governed by the laws of the State of New York, without regard to its conflict of laws rules, and the parties submit to the exclusive jurisdiction of the state and federal courts located in New York County, New York."
+        }
+      ],
+      "contract_sources": [],
+      "suggested_fallback": "This Agreement is governed by the laws of the State of Delaware, without regard to its conflict of laws rules, and the parties submit to the exclusive jurisdiction of the state and federal courts located in Delaware.",
+      "verified": true,
+      "verification_reason": "The reviewer correctly notes that the contract clause provides only a heading and lacks governing law or venue details, which aligns with the playbook’s indication that missing protection carries a low risk. The suggested fallback matches the playbook’s fallback text exactly. All claims are supported by the provided evidence.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-35",
+        "text": "10.1 This Agreement shall be governed and construed in accordance with the laws of the United States of America. The courts of competent jurisdiction at New York City, New York, shall have the exclusive jurisdiction over any dispute arising out of or in connection with this Agreement.",
+        "span": {
+          "start": 8276,
+          "end": 8564,
+          "page": 1
+        },
+        "clause_type": "governing_law",
+        "heading": "10.1 This Agreement shall be governed and construed in accordance with the laws of the United States of America. The courts of competent jurisdiction at New York City, New York, shall have the exclusive jurisdiction over any dispute arising out of or in connection with this Agreement."
+      },
+      "risk_level": "medium",
+      "rationale": "Clause specifies governing law as the United States of America and exclusive jurisdiction in New York City, but does not limit the governing law to the State of New York as required by the preferred position; this deviation creates a moderate exposure.",
+      "citations": [
+        {
+          "citation_id": "f55105757cfa",
+          "playbook_position_id": "governing-law-and-venue",
+          "excerpt": "This Agreement is governed by the laws of the State of New York, without regard to its conflict of laws rules, and the parties submit to the exclusive jurisdiction of the state and federal courts located in New York County, New York."
+        }
+      ],
+      "contract_sources": [],
+      "suggested_fallback": null,
+      "verified": true,
+      "verification_reason": "The reviewer correctly notes that the clause governs by U.S. law rather than the State of New York required by the preferred playbook position, and that this deviation creates a moderate exposure, which is supported by the clause and playbook citation. No fallback was suggested, which is acceptable as none was required.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-36",
+        "text": "10.2 This Agreement has been prepared in two (2) identical copies, one for each Party.\n\nPLAN_B MEDIA AG PLAN_B MEDIA AG\n\nSource: DATA CALL TECHNOLOGIES, SB-2/A, 9/18/2006\n\n03/24/06 03/24/06 ______________________________ _____________________________ Date Date\n\n/s/ Heim Brecht /s/ Stefan Meyes-Sickenagel ______________________________ _____________________________ Signature Signature\n\nHeim Brecht Stefan Meyes-Sickenagel ______________________________ _____________________________ Name (Please print) Name (Please print)\n\nCIO COO ______________________________ _____________________________ Title/Position Title/Position\n\nLICENSOR LICENSOR\n\n3/23/06 ______________________________ _____________________________ Date Date\n\n/s/ James Ammons ______________________________ _____________________________ Signature Signature\n\nJames Ammons ______________________________ _____________________________ Name (Please print) Name (Please print)\n\nPresident and CEO ______________________________ _____________________________ Title/Position Title/Position\n\nAPPENDIX I",
+        "span": {
+          "start": 8564,
+          "end": 9626,
+          "page": 1
+        },
+        "clause_type": "other",
+        "heading": "10.2 This Agreement has been prepared in two (2) identical copies, one for each Party."
+      },
+      "risk_level": "unknown",
+      "rationale": "The clause solely addresses execution formalities (signatures, copies, and contact information) and does not relate to any of the retrieved playbook positions, which cover IP, termination, insurance, escrow, data processing, liability caps, post‑termination assistance, or liquidated damages. Consequently, no applicable policy can be used to assess risk.",
+      "citations": [],
+      "contract_sources": [
+        {
+          "label": "Appendix I",
+          "span": {
+            "start": 9614,
+            "end": 10106,
+            "page": 1
+          },
+          "text": "APPENDIX I\n\n1. CONTACT PLAN_B MEDIA AG\n\n Name: Matthias Hellmann\n\n Position: Head of Content\n\n Phone: XXXXXXXXXXXXX\n\n Email: XXXXXXXXXXXXXXX\n\n2 CONTACT LICENSOR\n\n Name: Jim Ammons\n\n Position: CEO / President\n\n Phone: 866-219-2025\n\n Email: ammons@datacalltech.com\n\n3 CONTACT LICENSOR AGENT (IF APPLICABLE)\n\n Name:\n\n Position:\n\n Phone:\n\n Email:\n\n4 BANK ACCOUNT LICENSOR\n\n Bank name: Bank Of America\n\n Bank address: Dallas, Texas\n\nSource: DATA CALL TECHNOLOGIES, SB-2/A, 9/18/2006\n\n Country: USA",
+          "truncated": false
+        }
+      ],
+      "suggested_fallback": null,
+      "verified": false,
+      "verification_reason": "assessment has no playbook citations supporting its risk and rationale",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-37",
+        "text": "1. CONTACT PLAN_B MEDIA AG\n\n Name: Matthias Hellmann\n\n Position: Head of Content\n\n Phone: XXXXXXXXXXXXX\n\n Email: XXXXXXXXXXXXXXX",
+        "span": {
+          "start": 9626,
+          "end": 9756,
+          "page": 1
+        },
+        "clause_type": "other",
+        "heading": "1. CONTACT PLAN_B MEDIA AG"
+      },
+      "risk_level": "unknown",
+      "rationale": "The clause only provides contact details and does not create any contractual obligations or protections that relate to the retrieved playbook positions.",
+      "citations": [],
+      "contract_sources": [],
+      "suggested_fallback": null,
+      "verified": false,
+      "verification_reason": "assessment has no playbook citations supporting its risk and rationale",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-38",
+        "text": "2 CONTACT LICENSOR\n\n Name: Jim Ammons\n\n Position: CEO / President\n\n Phone: 866-219-2025\n\n Email: ammons@datacalltech.com",
+        "span": {
+          "start": 9756,
+          "end": 9878,
+          "page": 1
+        },
+        "clause_type": "other",
+        "heading": "2 CONTACT LICENSOR"
+      },
+      "risk_level": "unknown",
+      "rationale": "The clause only provides contact information for the licensor and does not create any obligations or protections related to the retrieved playbook positions; therefore no relevant risk assessment can be made.",
+      "citations": [],
+      "contract_sources": [],
+      "suggested_fallback": null,
+      "verified": false,
+      "verification_reason": "assessment has no playbook citations supporting its risk and rationale",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-39",
+        "text": "3 CONTACT LICENSOR AGENT (IF APPLICABLE)\n\n Name:\n\n Position:\n\n Phone:\n\n Email:",
+        "span": {
+          "start": 9878,
+          "end": 9958,
+          "page": 1
+        },
+        "clause_type": "other",
+        "heading": "3 CONTACT LICENSOR AGENT (IF APPLICABLE)"
+      },
+      "risk_level": "unknown",
+      "rationale": "The clause only provides contact details for the licensor's agent and does not relate to any of the supplied playbook positions, which cover confidentiality, licensing, warranties, liabilities, termination, force majeure, and exclusivity. No relevant policy applies, so the risk cannot be assessed against the provided positions.",
+      "citations": [],
+      "contract_sources": [],
+      "suggested_fallback": null,
+      "verified": false,
+      "verification_reason": "assessment has no playbook citations supporting its risk and rationale",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-40",
+        "text": "4 BANK ACCOUNT LICENSOR\n\n Bank name: Bank Of America\n\n Bank address: Dallas, Texas\n\nSource: DATA CALL TECHNOLOGIES, SB-2/A, 9/18/2006\n\n Country: USA\n\nAPPENDIX 2",
+        "span": {
+          "start": 9958,
+          "end": 10120,
+          "page": 1
+        },
+        "clause_type": "other",
+        "heading": "4 BANK ACCOUNT LICENSOR"
+      },
+      "risk_level": "unknown",
+      "rationale": "The clause provides only bank account details for the licensor and does not relate to any of the retrieved playbook positions such as insurance, escrow, data processing, breach notification, liability, termination, governing law, or revenue share. Consequently, no applicable policy can be cited to assess risk.",
+      "citations": [],
+      "contract_sources": [
+        {
+          "label": "Appendix 2",
+          "span": {
+            "start": 10108,
+            "end": 11208,
+            "page": 1
+          },
+          "text": "APPENDIX 2\n\n1 CONTENT, SHARE & TERRITORY\n\n 1.1 Contract name (for internal plan_b-ware use): Data Call Technologies, Inc.\n\nCONTENT LICENSOR TERRITORY TERMINATION SHARE\n\nTop News Headlines Top Business Headlines Science/Health News Entertainment Headlines\n\nNational Football League National Basketball Association National Hockey League Major League Baseball NCAA Football NCAA Men's Basketball Professional Golf Association NASCAR\n\nLatest Sports Lines 45% Worldwide 24 months Latest Sports Headlines Thought for Today Market Details World Financial Highlights Weather: Current Conditions 48-Hour Forecast 7-Day Forecast Weather Alerts Doppler Weather Radar\n\n2 TERMS\n\n 2.1 Contract start: 04-01-06\n\n 2.2 Contract end: 04-01-08\n\n 2.3 Commercial distribution possible from:\n\n 2.4 Sell-off period: 3 months after termination\n\n3 PAYMENTS AND REPORTS TO LICENSOR\n\n 3.1 Reporting: Quarterly; 30 days after end of quarter\n\n 3.2 Payment terms: 30 days after receipt of invoice\n\n4 EXCLUSIVITY COPYRIGHT\n\n 4.1 Content exclusive: [ ] Yes [ ] No\n\n 4.2 Copyright:\n\nSource: DATA CALL TECHNOLOGIES, SB-2/A, 9/18/2006",
+          "truncated": false
+        }
+      ],
+      "suggested_fallback": null,
+      "verified": false,
+      "verification_reason": "assessment has no playbook citations supporting its risk and rationale",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-41",
+        "text": "1 CONTENT, SHARE & TERRITORY",
+        "span": {
+          "start": 10120,
+          "end": 10150,
+          "page": 1
+        },
+        "clause_type": "other",
+        "heading": "1 CONTENT, SHARE & TERRITORY"
+      },
+      "risk_level": "high",
+      "rationale": "The clause provides no definition or limitation for content licensing, share or territory, leaving the agreement open to potentially perpetual or unlimited licences, which the company's policy requires to be bounded. This missing protection aligns with the high risk identified for absent licence limits.",
+      "citations": [
+        {
+          "citation_id": "f47055183908",
+          "playbook_position_id": "licence-not-perpetual",
+          "excerpt": "No licence granted under this Agreement is perpetual, irrevocable, or unlimited in volume, territory or field of use. Each licence is co-terminous with this Agreement and bounded by the metrics stated in the applicable Order Form."
+        }
+      ],
+      "contract_sources": [],
+      "suggested_fallback": "A licence granted under this Agreement may survive termination only for Deliverables already paid for in full, is limited to the volume, territory and field of use stated in the applicable Order Form, and remains revocable on Customer's material breach.",
+      "verified": true,
+      "verification_reason": "The reviewer correctly notes that the clause provides no licensing limits, which aligns with the policy requiring such limits. The cited playbook position and fallback are accurately quoted, and the suggested fallback matches the playbook fallback verbatim. All claims are supported by the provided evidence.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-42",
+        "text": "1.1 Contract name (for internal plan_b-ware use): Data Call Technologies, Inc.\n\nCONTENT LICENSOR TERRITORY TERMINATION SHARE\n\nTop News Headlines Top Business Headlines Science/Health News Entertainment Headlines\n\nNational Football League National Basketball Association National Hockey League Major League Baseball NCAA Football NCAA Men's Basketball Professional Golf Association NASCAR\n\nLatest Sports Lines 45% Worldwide 24 months Latest Sports Headlines Thought for Today Market Details World Financial Highlights Weather: Current Conditions 48-Hour Forecast 7-Day Forecast Weather Alerts Doppler Weather Radar",
+        "span": {
+          "start": 10150,
+          "end": 10766,
+          "page": 1
+        },
+        "clause_type": "other",
+        "heading": "1.1 Contract name (for internal plan_b-ware use): Data Call Technologies, Inc."
+      },
+      "risk_level": "unknown",
+      "rationale": "The clause consists of unrelated headings and does not contain any contractual obligations or protections that can be compared to the retrieved playbook positions, so no assessment against the policies is possible.",
+      "citations": [],
+      "contract_sources": [],
+      "suggested_fallback": null,
+      "verified": false,
+      "verification_reason": "assessment has no playbook citations supporting its risk and rationale",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-43",
+        "text": "2 TERMS",
+        "span": {
+          "start": 10766,
+          "end": 10775,
+          "page": 1
+        },
+        "clause_type": "other",
+        "heading": "2 TERMS"
+      },
+      "risk_level": "unknown",
+      "rationale": "The clause provides only a heading ('2 TERMS') with no substantive language, so no obligations or protections can be compared to the retrieved playbook positions.",
+      "citations": [],
+      "contract_sources": [],
+      "suggested_fallback": null,
+      "verified": false,
+      "verification_reason": "assessment has no playbook citations supporting its risk and rationale",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-44",
+        "text": "2.1 Contract start: 04-01-06",
+        "span": {
+          "start": 10775,
+          "end": 10806,
+          "page": 1
+        },
+        "clause_type": "other",
+        "heading": "2.1 Contract start: 04-01-06"
+      },
+      "risk_level": "unknown",
+      "rationale": "The clause only states the contract start date and does not contain any obligations or provisions that relate to the retrieved playbook positions, so no risk assessment can be made.",
+      "citations": [],
+      "contract_sources": [],
+      "suggested_fallback": null,
+      "verified": false,
+      "verification_reason": "assessment has no playbook citations supporting its risk and rationale",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-45",
+        "text": "2.2 Contract end: 04-01-08",
+        "span": {
+          "start": 10806,
+          "end": 10835,
+          "page": 1
+        },
+        "clause_type": "termination",
+        "heading": "2.2 Contract end: 04-01-08"
+      },
+      "risk_level": "medium",
+      "rationale": "The clause only specifies a fixed contract end date and does not address renewal. The company's policy requires a renewal mechanism (opt‑in or opt‑out) to manage continuation of obligations. Absence of such a provision creates a medium‑risk exposure per the renewal‑opt‑in position.",
+      "citations": [
+        {
+          "citation_id": "7085e7451e22",
+          "playbook_position_id": "renewal-opt-in",
+          "excerpt": "This Agreement expires at the end of the Initial Term and shall renew only if both parties agree in writing to renew it. Any renewal term shall not exceed twelve (12) months."
+        }
+      ],
+      "contract_sources": [],
+      "suggested_fallback": "This Agreement shall renew for successive twelve (12) month terms unless either party gives written notice of non-renewal at least thirty (30) days before the end of the then-current term, and the fees for any renewal term shall not increase by more than five percent (5%).",
+      "verified": true,
+      "verification_reason": "The reviewer correctly notes that the contract clause provides only an end date and lacks any renewal provision. This aligns with the playbook position that renewal must be opt‑in, and the reviewer’s risk rating of medium follows the stated risk if absent. The suggested fallback text exactly matches the playbook fallback clause. All statements are supported by the provided evidence.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-46",
+        "text": "2.3 Commercial distribution possible from:",
+        "span": {
+          "start": 10835,
+          "end": 10880,
+          "page": 1
+        },
+        "clause_type": "other",
+        "heading": "2.3 Commercial distribution possible from:"
+      },
+      "risk_level": "unknown",
+      "rationale": "The clause provides only a fragmentary statement about commercial distribution without specifying obligations, restrictions, or protections. None of the retrieved playbook positions directly address distribution terms, and there is insufficient information to determine compliance or deviation from company policy.",
+      "citations": [],
+      "contract_sources": [],
+      "suggested_fallback": null,
+      "verified": false,
+      "verification_reason": "assessment has no playbook citations supporting its risk and rationale",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-47",
+        "text": "2.4 Sell-off period: 3 months after termination",
+        "span": {
+          "start": 10880,
+          "end": 10930,
+          "page": 1
+        },
+        "clause_type": "termination",
+        "heading": "2.4 Sell-off period: 3 months after termination"
+      },
+      "risk_level": "medium",
+      "rationale": "The clause only defines a 3‑month sell‑off period and does not include any transition assistance or data return obligations, which are required by the company's post‑termination wind‑down policy. Absence of these protections constitutes a medium risk.",
+      "citations": [
+        {
+          "citation_id": "332c3f43345c",
+          "playbook_position_id": "post-termination-wind-down",
+          "excerpt": "On termination or expiry, Supplier shall provide reasonable transition assistance for up to ninety (90) days at its then-current rates, and shall return or delete the other party's data on request. No other post-termination obligation applies."
+        }
+      ],
+      "contract_sources": [],
+      "suggested_fallback": "On termination or expiry, Supplier shall provide reasonable transition assistance for up to ninety (90) days at its then-current rates, and shall return or delete the other party's data on request. No other post-termination obligation applies.",
+      "verified": true,
+      "verification_reason": "The reviewer’s claim that the clause lacks transition assistance and data return obligations is supported by the clause text, which only specifies a 3‑month sell‑off period. The cited playbook provides a fallback requiring 90‑day assistance and data handling, and the reviewer’s suggested fallback matches this verbatim. The risk level (medium) aligns with the playbook’s ‘Risk if absent: medium’. Thus all statements are supported by the provided evidence.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-48",
+        "text": "3 PAYMENTS AND REPORTS TO LICENSOR",
+        "span": {
+          "start": 10930,
+          "end": 10966,
+          "page": 1
+        },
+        "clause_type": "payment_terms",
+        "heading": "3 PAYMENTS AND REPORTS TO LICENSOR"
+      },
+      "risk_level": "unknown",
+      "rationale": "The clause provides only a heading with no substantive payment obligations or reporting requirements, making it impossible to determine compliance with any retrieved payment-related positions.",
+      "citations": [],
+      "contract_sources": [],
+      "suggested_fallback": null,
+      "verified": false,
+      "verification_reason": "assessment has no playbook citations supporting its risk and rationale",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-49",
+        "text": "3.1 Reporting: Quarterly; 30 days after end of quarter",
+        "span": {
+          "start": 10966,
+          "end": 11023,
+          "page": 1
+        },
+        "clause_type": "other",
+        "heading": "3.1 Reporting: Quarterly; 30 days after end of quarter"
+      },
+      "risk_level": "unknown",
+      "rationale": "The clause specifies a reporting schedule (quarterly, within 30 days after quarter end) but none of the retrieved playbook positions address reporting obligations, so there is no basis to assess compliance or deviation.",
+      "citations": [],
+      "contract_sources": [],
+      "suggested_fallback": null,
+      "verified": false,
+      "verification_reason": "assessment has no playbook citations supporting its risk and rationale",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-50",
+        "text": "3.2 Payment terms: 30 days after receipt of invoice",
+        "span": {
+          "start": 11023,
+          "end": 11077,
+          "page": 1
+        },
+        "clause_type": "payment_terms",
+        "heading": "3.2 Payment terms: 30 days after receipt of invoice"
+      },
+      "risk_level": "low",
+      "rationale": "The clause requires payment within 30 days of invoice receipt, which aligns with the preferred payment-net-30 policy requiring payment within thirty (30) days of receipt.",
+      "citations": [
+        {
+          "citation_id": "b068111458bd",
+          "playbook_position_id": "payment-net-30",
+          "excerpt": "Customer shall pay all undisputed invoices within thirty (30) days of receipt. Customer may withhold any amount it disputes in good faith, provided it notifies Supplier of the basis for the dispute before the due date."
+        }
+      ],
+      "contract_sources": [],
+      "suggested_fallback": null,
+      "verified": true,
+      "verification_reason": "The reviewer correctly cites the clause (30 days after receipt) and matches it to the preferred playbook position (payment within thirty days). The risk assessment as low is appropriate given the clause aligns with the preferred policy; the playbook only specifies a medium risk if absent, so presence reduces risk. The rationale separates clause wording from policy requirements, and no fallback is needed as the preferred term is present. No corrections needed.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-51",
+        "text": "4 EXCLUSIVITY COPYRIGHT",
+        "span": {
+          "start": 11077,
+          "end": 11102,
+          "page": 1
+        },
+        "clause_type": "intellectual_property",
+        "heading": "4 EXCLUSIVITY COPYRIGHT"
+      },
+      "risk_level": "high",
+      "rationale": "The clause provides no terms regarding exclusivity of copyright, leaving the agreement silent on whether exclusivity is permitted. The company's playbook requires a non‑exclusive dealing commitment (no‑exclusivity); absence of this protection creates a material exposure.",
+      "citations": [
+        {
+          "citation_id": "9022f137f87e",
+          "playbook_position_id": "no-exclusivity",
+          "excerpt": "This Agreement is non-exclusive. Each party remains free to provide to, procure from, or contract with any third party for services of the same or a similar kind, without restriction and without any obligation to the other party."
+        }
+      ],
+      "contract_sources": [],
+      "suggested_fallback": "Any exclusivity granted under this Agreement is limited to the named products, the named territory and a period of no more than twelve (12) months, and lapses if the exclusive party fails to meet the minimum performance targets stated in the Order Form.",
+      "verified": true,
+      "verification_reason": "The clause contains only a heading and no substantive terms, so the reviewer correctly states that it provides no exclusivity provisions. The playbook position requires a non‑exclusive commitment, and the reviewer cites that position. The suggested fallback text is identical to the playbook fallback. All statements are supported by the provided evidence.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-52",
+        "text": "4.1 Content exclusive: [ ] Yes [ ] No",
+        "span": {
+          "start": 11102,
+          "end": 11142,
+          "page": 1
+        },
+        "clause_type": "intellectual_property",
+        "heading": "4.1 Content exclusive: [ ] Yes [ ] No"
+      },
+      "risk_level": "high",
+      "rationale": "The clause provides only a checkbox for exclusivity without specifying the outcome; the playbook requires a non‑exclusive commitment (preferred) or limited exclusivity (fallback). The absence of a definitive non‑exclusive term constitutes a missing protection, which the playbook flags as high risk if absent.",
+      "citations": [
+        {
+          "citation_id": "9022f137f87e",
+          "playbook_position_id": "no-exclusivity",
+          "excerpt": "This Agreement is non-exclusive. Each party remains free to provide to, procure from, or contract with any third party for services of the same or a similar kind, without restriction and without any obligation to the other party."
+        }
+      ],
+      "contract_sources": [],
+      "suggested_fallback": null,
+      "verified": true,
+      "verification_reason": "The reviewer correctly notes that the clause provides only a checkbox and does not contain a definitive non‑exclusive provision. The cited playbook position states that a non‑exclusive commitment is preferred and that the risk is high if such a provision is absent. Therefore the claim of high risk and the rationale linking the missing clause to the playbook’s high‑risk flag are supported by the evidence.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-53",
+        "text": "4.2 Copyright:\n\nSource: DATA CALL TECHNOLOGIES, SB-2/A, 9/18/2006",
+        "span": {
+          "start": 11142,
+          "end": 11208,
+          "page": 1
+        },
+        "clause_type": "intellectual_property",
+        "heading": "4.2 Copyright:"
+      },
+      "risk_level": "high",
+      "rationale": "The clause provides only a citation and no substantive copyright or IP ownership terms, leaving the parties without the required background IP retention and ownership safeguards.",
+      "citations": [
+        {
+          "citation_id": "24cca820d2bc",
+          "playbook_position_id": "ip-each-party-keeps-its-own",
+          "excerpt": "Each party retains all right, title and interest in the intellectual property it owned before this Agreement or develops independently of it. Nothing in this Agreement transfers ownership of a party's intellectual property to the other party."
+        }
+      ],
+      "contract_sources": [],
+      "suggested_fallback": "Each party retains all right, title and interest in the intellectual property it owned before this Agreement or develops independently of it. Ownership of intellectual property created specifically for Customer under a Statement of Work transfers to Customer on payment in full.",
+      "verified": true,
+      "verification_reason": "The reviewer correctly notes that the clause contains only a citation and lacks substantive IP ownership language, which does not meet the playbook requirement that each party retain its background IP. The risk is appropriately identified as high, the rationale distinguishes the clause’s deficiency from the policy’s requirement, and the suggested fallback verbatim matches the playbook fallback text.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    }
+  ],
+  "metadata": {
+    "parties": [
+      "Data Call Technologies, Inc.",
+      "PLAN_B MEDIA AG"
+    ],
+    "agreement_date": null,
+    "effective_date": "04-01-06",
+    "expiration_date": "04-01-08",
+    "contract_value": null,
+    "governing_law": null
+  },
+  "disclaimer": "This automated review is for informational purposes only and does not constitute legal advice. Consult qualified counsel before relying on it."
+}

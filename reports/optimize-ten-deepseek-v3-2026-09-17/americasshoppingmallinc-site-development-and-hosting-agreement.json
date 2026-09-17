@@ -1,0 +1,1320 @@
+{
+  "report_id": "aa17aad320d14fb6a37751da53f5a511",
+  "contract_id": "americasshoppingmallinc-site-development-and-hosting-agreement",
+  "session_id": "eval",
+  "filename": "",
+  "created_at": "2026-09-17T16:43:08.998797Z",
+  "overall_risk": "high",
+  "summary": {
+    "high": 8,
+    "medium": 15,
+    "low": 5,
+    "unknown": 19
+  },
+  "reviews": [
+    {
+      "clause": {
+        "id": "clause-1",
+        "text": "1. HDI's Responsibilities.",
+        "span": {
+          "start": 574,
+          "end": 602,
+          "page": 1
+        },
+        "clause_type": "other",
+        "heading": "1. HDI's Responsibilities."
+      },
+      "risk_level": "unknown",
+      "rationale": "The clause is only a bare section heading (\"1. HDI's Responsibilities.\") with no operative obligations, so there is no substantive term to assess against the playbook. None of the retrieved positions (liability cap/carve-outs, post-termination wind-down, breach notification, IP indemnity) can be evaluated for compliance, deviation, or absence without the actual content of HDI's responsibilities; applying any of them here would be speculative. Material uncertainty: the substantive provisions of this section are simply not provided.",
+      "citations": [],
+      "suggested_fallback": null,
+      "verified": false,
+      "verification_reason": "assessment has no playbook citations supporting its risk and rationale",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-2",
+        "text": "1.1 HDI shall design, develop, implement, operate, maintain and manage, and enable the Company to establish a presence on the World Wide Web (\"Site\") to make available to Internet users on demand, men's and women's apparel and accessories from the Deerskin Catalog (\"Deerskin Products\"). As used in this Agreement, \"Deerskin Products\" shall not include (i) closeout merchandise which the Company may identify as \"Deerskin\" branded items, if such is the case, nor (ii) products from the Company's Joan Cook Catalog.",
+        "span": {
+          "start": 602,
+          "end": 1119,
+          "page": 1
+        },
+        "clause_type": "other",
+        "heading": "1.1 HDI shall design, develop, implement, operate, maintain and manage, and enable the Company to establish a presence on the World Wide Web (\"Site\") to make available to Internet users on demand, men's and women's apparel and accessories from the Deerskin Catalog (\"Deerskin Products\"). As used in this Agreement, \"Deerskin Products\" shall not include (i) closeout merchandise which the Company may identify as \"Deerskin\" branded items, if such is the case, nor (ii) products from the Company's Joan Cook Catalog."
+      },
+      "risk_level": "low",
+      "rationale": "The clause is a services/statement-of-work description: it defines the scope of offerings (men's and women's apparel and accessories from the Deerskin Catalog) and expressly carves out closeout 'Deerskin' branded items and Joan Cook Catalog products. It does not grant HDI exclusivity, impose any non-compete obligation, address personal data, assignment or indemnity, so the non-compete, data-protection, assignment and indemnity positions are not engaged. Only the no-exclusivity position is potentially relevant, and the clause is consistent with it because it contains no exclusive-dealing commitment. No material exposure or missing protection within the cited scope is identified.",
+      "citations": [
+        {
+          "citation_id": "9022f137f87e",
+          "playbook_position_id": "no-exclusivity",
+          "excerpt": "This Agreement is non-exclusive. Each party remains free to provide to, procure from, or contract with any third party for services of the same or a similar kind, without restriction and without any obligation to the other party."
+        }
+      ],
+      "suggested_fallback": null,
+      "verified": true,
+      "verification_reason": "The clause text supports the reviewer's characterization: it describes a services/statement-of-work scope (HDI to design, develop, implement, operate, maintain, manage and enable the Company's Site to offer men's and women's apparel and accessories from the Deerskin Catalog) and expressly carves out closeout 'Deerskin' branded items and Joan Cook Catalog products. Nothing in the clause grants exclusivity or imposes a non-compete, and there is no mention of personal data, assignment, or indemnity, so the statement that those positions are not engaged is supported. The no-exclusivity playbook position states no exclusive dealing commitment, and the clause contains no such commitment, so the claim of consistency with that position is supported. Because the no-exclusivity risk-if-absent is high but the clause itself contains no exclusive-dealing commitment, the position is satisfied and not triggered; the low risk assessment follows from the comparison. The rationale properly distinguishes what the clause states (a scope description with product carve-outs) from what policy requests (no exclusive dealing commitment), and the 'Suggested fallback: None' is consistent with no fallback being required when the preferred position is already met.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-3",
+        "text": "1.2 HDI shall bear all costs associated with the design, development, implementation, operation, maintenance and management of the Site, including, without limitation, technology and labor.",
+        "span": {
+          "start": 1119,
+          "end": 1311,
+          "page": 1
+        },
+        "clause_type": "payment_terms",
+        "heading": "1.2 HDI shall bear all costs associated with the design, development, implementation, operation, maintenance and management of the Site, including, without limitation, technology and labor."
+      },
+      "risk_level": "unknown",
+      "rationale": "This clause only allocates the costs of designing, developing, implementing, operating, maintaining and managing the Site to HDI. None of the retrieved positions addresses cost allocation for a site or the other subjects covered (insurance limits, exclusivity, IP joint ownership, minimum commitments, or fee escalation). Although 'no-minimum-commitment' and 'price-increase-capped' are tagged as payment_terms, they concern minimum purchase obligations and fee increases respectively, not which party bears development and operating costs, so applying them would be an unrelated policy. No supplied position supports a risk assessment.",
+      "citations": [],
+      "suggested_fallback": null,
+      "verified": false,
+      "verification_reason": "assessment has no playbook citations supporting its risk and rationale",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-4",
+        "text": "1.3 HDI shall host and maintain the Site on a server provided by HDI.",
+        "span": {
+          "start": 1311,
+          "end": 1383,
+          "page": 1
+        },
+        "clause_type": "other",
+        "heading": "1.3 HDI shall host and maintain the Site on a server provided by HDI."
+      },
+      "risk_level": "unknown",
+      "rationale": "The clause merely states that HDI shall host and maintain the Site on an HDI-provided server. None of the retrieved playbook positions address hosting, server provision, service levels, or infrastructure obligations: they concern insurance limits, mutual confidentiality, data processing on instruction, confidentiality survival, and licence scope. Because no supplied position is relevant to this clause's obligations, no grounded assessment of deviation or missing protection can be made; the risk is therefore unknown rather than low/medium/high.",
+      "citations": [],
+      "suggested_fallback": null,
+      "verified": false,
+      "verification_reason": "assessment has no playbook citations supporting its risk and rationale",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-5",
+        "text": "1.4 HDI shall provide the Company with access to, and\n\nthe right to use, a computer system on which the Site will be stored and operated, with a direct Internet connection of shared but greater than T-1 bandwidth, plus capacity to process continuously during burst periods. HDI shall also provide the Company with access to HDI's software and Content administration tools for purposes of allowing the Company to monitor current catalog information.",
+        "span": {
+          "start": 1383,
+          "end": 1834,
+          "page": 1
+        },
+        "clause_type": "intellectual_property",
+        "heading": "1.4 HDI shall provide the Company with access to, and"
+      },
+      "risk_level": "medium",
+      "rationale": "The clause grants the Company a right to use HDI's system, software, and administration tools, but omits the licence limitations central to the playbook (non-exclusive, non-transferable, non-sublicensable, internal-business-purpose only, and automatic termination on expiry/termination). Because this is a licence grant, the licence-scope-limited position applies and supports evaluating the deviation: the absence of scope, non-transferability, and term restrictions leaves a limited, negotiable residual exposure rather than an outright prohibition breach. Other retrieved positions (data processing, confidentiality, wind-down, background IP) are unrelated to this access/licence obligation and are not applied.",
+      "citations": [
+        {
+          "citation_id": "6188e4f08ba9",
+          "playbook_position_id": "licence-scope-limited",
+          "excerpt": "Supplier grants Customer a non-exclusive, non-transferable, non-sublicensable licence to use the Services during the Term solely for Customer's internal business purposes. The licence terminates automatically on expiry or termination of this Agreement."
+        }
+      ],
+      "suggested_fallback": "Supplier grants Customer a non-exclusive, non-transferable licence to use the Services during the Term for the internal business purposes of Customer and its Affiliates, sublicensable only to a subcontractor acting on Customer's behalf and bound by equivalent terms. The licence terminates automatically on expiry or termination of this Agreement.",
+      "verified": true,
+      "verification_reason": "The assessment is supported. The clause grants the Company access to and use of HDI's system, software, and administration tools, so applying the licence-scope-limited position is reasonable. The rationale correctly identifies that the clause omits the playbook's licence limitations (non-exclusive, non-transferable, non-sublicensable, internal-business-purpose only, automatic termination), and these omissions are genuine relative to the cited preferred position. The risk level of medium matches the cited playbook 'Risk if absent: medium'. The fallback text matches the cited playbook fallback verbatim. The rationale also properly distinguishes the clause's actual grant from the policy's requested protections.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-6",
+        "text": "1.5 For the purposes of collecting orders for Deerskin Products from the Site and to communicate to the Site the unavailability of certain Deerskin Products, HDI shall provide export files in the format provided by the Company. HDI shall bear the programming and software costs relating to efforts required to create order export files and receive and process import files of the Company's inventory information.",
+        "span": {
+          "start": 1834,
+          "end": 2249,
+          "page": 1
+        },
+        "clause_type": "other",
+        "heading": "1.5 For the purposes of collecting orders for Deerskin Products from the Site and to communicate to the Site the unavailability of certain Deerskin Products, HDI shall provide export files in the format provided by the Company. HDI shall bear the programming and software costs relating to efforts required to create order export files and receive and process import files of the Company's inventory information."
+      },
+      "risk_level": "unknown",
+      "rationale": "The clause governs HDI's technical obligations to provide order export files and process inventory import files, and to bear the associated programming and software costs. None of the retrieved playbook positions address operational/technical data-exchange obligations or cost allocation; the closest candidates (data-processing-terms, confidentiality, non-exclusivity, minimum commitment, renewal) concern unrelated subjects. Because no supplied position supports an assessment of this clause, the risk level is unknown.",
+      "citations": [],
+      "suggested_fallback": null,
+      "verified": false,
+      "verification_reason": "assessment has no playbook citations supporting its risk and rationale",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-7",
+        "text": "1.6 HDI shall have the Site fully operational and accessible on demand by users of the Internet no later than sixty (60) days from the date this Agreement has been executed by both Parties. In the event that HDI fails to have the Site fully operational within seventy (70) days from the date of this Agreement, the Company shall have the right to terminate this Agreement without penalty.",
+        "span": {
+          "start": 2249,
+          "end": 2640,
+          "page": 1
+        },
+        "clause_type": "termination",
+        "heading": "1.6 HDI shall have the Site fully operational and accessible on demand by users of the Internet no later than sixty (60) days from the date this Agreement has been executed by both Parties. In the event that HDI fails to have the Site fully operational within seventy (70) days from the date of this Agreement, the Company shall have the right to terminate this Agreement without penalty."
+      },
+      "risk_level": "medium",
+      "rationale": "The clause grants the Company a termination right tied to a specific failure by HDI (Site not fully operational within 70 days), but it does not include any cure or notice mechanism before termination, which is the protection contemplated by the termination-for-cause-cure policy. Because the trigger is a defined, objective milestone failure rather than a general material breach, the exposure is limited; however, the absence of a cure period and written notice is a negotiable deviation from the preferred/fallback position and leaves HDI with no opportunity to remedy the delay before losing the contract.",
+      "citations": [
+        {
+          "citation_id": "3359d192f820",
+          "playbook_position_id": "termination-for-cause-cure",
+          "excerpt": "Either party may terminate this Agreement for cause if the other party materially breaches it and fails to cure that breach within thirty (30) days after receiving written notice describing the breach in reasonable detail."
+        }
+      ],
+      "suggested_fallback": "Either party may terminate this Agreement for cause if the other party materially breaches it and fails to cure that breach within forty-five (45) days after receiving written notice describing the breach in reasonable detail.",
+      "verified": true,
+      "verification_reason": "The assessment accurately reflects the clause: the Company has a termination right without cure or notice if the Site is not operational within 70 days. It also correctly identifies the absence of any cure/notice mechanism, which is the protection in the termination-for-cause-cure policy. The risk level of medium is supported by the cited policy position (risk if absent: medium), while the rationale reasonably distinguishes the objective 70-day milestone trigger from a general material breach and explains why the deviation is negotiable. The suggested fallback matches the playbook fallback verbatim.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-8",
+        "text": "1.7 HDI shall distribute the Site through the world wide protocol of the Internet using distribution channels used by HDI sites and other similar distribution channels.",
+        "span": {
+          "start": 2640,
+          "end": 2811,
+          "page": 1
+        },
+        "clause_type": "other",
+        "heading": "1.7 HDI shall distribute the Site through the world wide protocol of the Internet using distribution channels used by HDI sites and other similar distribution channels."
+      },
+      "risk_level": "unknown",
+      "rationale": "The clause is a distribution obligation describing how HDI will distribute the Site (via Internet protocols and channels used by HDI and similar sites). None of the retrieved playbook positions address distribution obligations, distribution channels, or scope of distribution rights: confidentiality-mutual concerns information protection, no-exclusivity concerns exclusivity commitments, ip-infringement-indemnity concerns IP infringement indemnity, governing-law-and-venue concerns law and venue, and renewal-opt-in concerns term renewal. Because no relevant position supports assessing this clause, the risk level is unknown. Note that the clause's reference to 'distribution channels used by HDI' could implicate exclusivity or non-compete concerns, but the clause does not grant exclusivity, and the no-exclusivity position does not map to this obligation.",
+      "citations": [],
+      "suggested_fallback": null,
+      "verified": false,
+      "verification_reason": "assessment has no playbook citations supporting its risk and rationale",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-9",
+        "text": "1.8 HDI agrees that it shall promote the Site and Deerskin Products no less favorably than it promotes HDI's\n\n -2-\n\ncatalog titles. HDI's promotion of the Site and Deerskin Products shall include, but not be limited to, the incorporation of the Site and Deerskin Products into HDI's promotion calendars with Xoom.com and Excite for the term of this Agreement. HDI agrees that the costs of any such promotions shall be borne by HDI.",
+        "span": {
+          "start": 2811,
+          "end": 3245,
+          "page": 1
+        },
+        "clause_type": "non_compete",
+        "heading": "1.8 HDI agrees that it shall promote the Site and Deerskin Products no less favorably than it promotes HDI's"
+      },
+      "risk_level": "high",
+      "rationale": "The clause imposes a preferential-promotion obligation: HDI must promote the Site and Deerskin Products no less favorably than its own catalog titles, incorporate them into its promotion calendars with Xoom.com and Excite for the term, and bear all promotion costs. This is a one-sided, exclusive-style commitment that restricts HDI's freedom to deal with and promote third-party products on equal or better terms, and it operates for the entire term without the product, territory, or duration limits contemplated by the non-exclusivity policy. No minimum performance or commitment counterpart protects HDI, and the broad 'not limited to' promotional obligation with HDI bearing costs creates material open-ended exposure. The relevant no-exclusivity position is absent and indicates high risk when an exclusivity-like commitment is not so limited.",
+      "citations": [
+        {
+          "citation_id": "9022f137f87e",
+          "playbook_position_id": "no-exclusivity",
+          "excerpt": "This Agreement is non-exclusive. Each party remains free to provide to, procure from, or contract with any third party for services of the same or a similar kind, without restriction and without any obligation to the other party."
+        },
+        {
+          "citation_id": "f9a7d524be27",
+          "playbook_position_id": "no-exclusivity",
+          "excerpt": "Any exclusivity granted under this Agreement is limited to the named products, the named territory and a period of no more than twelve (12) months, and lapses if the exclusive party fails to meet the minimum performance targets stated in the Order Form."
+        }
+      ],
+      "suggested_fallback": "Any exclusivity granted under this Agreement is limited to the named products, the named territory and a period of no more than twelve (12) months, and lapses if the exclusive party fails to meet the minimum performance targets stated in the Order Form.",
+      "verified": true,
+      "verification_reason": "The clause text supports the assessment: HDI must promote the Site and Deerskin Products no less favorably than its catalog titles, incorporate them into promotion calendars with Xoom.com and Excite for the Agreement term, and bear all promotion costs. The 'not limited to' language supports the claim of a broad promotional obligation, and the absence of product, territory, duration limits, or performance counterpart is consistent with the cited playbook's non-exclusivity position and fallback. The risk level of high follows from the playbook position 'Risk if absent: high' and the preferential/exclusivity-like commitment. The suggested fallback matches the cited playbook fallback verbatim. The rationale correctly distinguishes the clause's promotion obligations from the policy's requested non-exclusive/default position and limited-exclusivity fallback.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-10",
+        "text": "2. Company's Responsibilities.",
+        "span": {
+          "start": 3245,
+          "end": 3277,
+          "page": 1
+        },
+        "clause_type": "other",
+        "heading": "2. Company's Responsibilities."
+      },
+      "risk_level": "unknown",
+      "rationale": "The clause text is only a heading, '2. Company's Responsibilities.', with no substantive obligations. None of the retrieved playbook positions (insurance, confidentiality, data processing, third-party beneficiaries, liability cap) is triggered by any actual obligation in the clause, so no supported assessment can be made. This is not a finding that a protection is missing from the agreement; the operative text simply was not supplied.",
+      "citations": [],
+      "suggested_fallback": null,
+      "verified": false,
+      "verification_reason": "assessment has no playbook citations supporting its risk and rationale",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-11",
+        "text": "2.1 The Company shall provide all Content to HDI to be included in the Site no later than ten (10) days from the date this Agreement has been executed by both Parties.",
+        "span": {
+          "start": 3277,
+          "end": 3447,
+          "page": 1
+        },
+        "clause_type": "other",
+        "heading": "2.1 The Company shall provide all Content to HDI to be included in the Site no later than ten (10) days from the date this Agreement has been executed by both Parties."
+      },
+      "risk_level": "unknown",
+      "rationale": "The clause is a content-delivery deadline (Company must provide all Content to HDI within 10 days of execution). None of the retrieved playbook positions—renewal opt-in, IP joint ownership, non-exclusivity/non-compete, or Net 30 payment—address content delivery timing, so no supplied policy supports an assessment. The obligation itself is unremarkable; the relevant concern (e.g., consequences of delay or whether the 10-day period is feasible) is not covered by any cited position.",
+      "citations": [],
+      "suggested_fallback": null,
+      "verified": false,
+      "verification_reason": "assessment has no playbook citations supporting its risk and rationale",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-12",
+        "text": "2.2 The Company shall bear all costs associated with the processing of customer orders.",
+        "span": {
+          "start": 3447,
+          "end": 3537,
+          "page": 1
+        },
+        "clause_type": "payment_terms",
+        "heading": "2.2 The Company shall bear all costs associated with the processing of customer orders."
+      },
+      "risk_level": "medium",
+      "rationale": "The clause allocates order-processing costs to the Company, but it does not address the core payment obligations governed by the playbook, notably payment timing for undisputed invoices and dispute-withholding rights. The closest relevant position (payment-net-30) requires payment within 30 days (preferred) or 45 days (fallback) and permits withholding disputed amounts; the clause neither contradicts nor satisfies that position, leaving a residual gap that is negotiable. It is not high risk because the clause does not impose a prohibited obligation such as a minimum commitment, MFN pricing, or data-processing breach, and the missing payment-timing protection carries only medium risk if absent under the playbook.",
+      "citations": [
+        {
+          "citation_id": "b068111458bd",
+          "playbook_position_id": "payment-net-30",
+          "excerpt": "Customer shall pay all undisputed invoices within thirty (30) days of receipt. Customer may withhold any amount it disputes in good faith, provided it notifies Supplier of the basis for the dispute before the due date."
+        }
+      ],
+      "suggested_fallback": "Customer shall pay all undisputed invoices within forty-five (45) days of receipt. Customer may withhold any amount it disputes in good faith, provided it notifies Supplier of the basis for the dispute before the due date.",
+      "verified": true,
+      "verification_reason": "The clause text supports that the Company bears order-processing costs. The cited playbook position [payment-net-30] addresses payment timing and dispute-withholding rights, which the clause does not address. The rationale correctly distinguishes the clause's content from the playbook requirements and concludes a medium risk, consistent with the playbook's 'Risk if absent: medium'. The suggested fallback matches the playbook fallback text verbatim.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-13",
+        "text": "3. Fees; Payment.",
+        "span": {
+          "start": 3537,
+          "end": 3556,
+          "page": 1
+        },
+        "clause_type": "payment_terms",
+        "heading": "3. Fees; Payment."
+      },
+      "risk_level": "high",
+      "rationale": "The clause consists only of the heading '3. Fees; Payment.' and contains no substantive payment obligation. It omits the critical protection of a payment deadline for undisputed invoices and the right to withhold disputed amounts in good faith, which is the core subject matter of the payment-net-30 position (risk if absent: medium). It likewise omits any fee-increase cap or advance notice under price-increase-capped, which also carries medium risk if absent. Because the operative payment term is entirely missing, a material exposure exists across the payment-terms scope rather than a mere wording deviation.",
+      "citations": [
+        {
+          "citation_id": "b068111458bd",
+          "playbook_position_id": "payment-net-30",
+          "excerpt": "Customer shall pay all undisputed invoices within thirty (30) days of receipt. Customer may withhold any amount it disputes in good faith, provided it notifies Supplier of the basis for the dispute before the due date."
+        },
+        {
+          "citation_id": "ee1b94674dd4",
+          "playbook_position_id": "price-increase-capped",
+          "excerpt": "Fees are fixed for the Initial Term. Supplier may increase fees for a renewal term by no more than five percent (5%) over the fees for the preceding term, on at least sixty (60) days' prior written notice."
+        }
+      ],
+      "suggested_fallback": "Customer shall pay all undisputed invoices within forty-five (45) days of receipt. Customer may withhold any amount it disputes in good faith, provided it notifies Supplier of the basis for the dispute before the due date.",
+      "verified": true,
+      "verification_reason": "The clause text is only the heading '3. Fees; Payment.', so the assessment's claim that no substantive payment obligation exists is supported. The omission of payment deadline/dispute-withholding protections matches the payment-net-30 policy subject matter and its medium risk-if-absent rating, and the omission of fee-increase caps/notice matches price-increase-capped. The rationale correctly distinguishes the silent clause from the policy protections and fallbacks. The suggested fallback matches the payment-net-30 fallback verbatim.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-14",
+        "text": "3.1 The Company shall pay HDI thirty percent (3016) of the Net Sales in excess of Eleven Thousand Dollars ($11,000) per calendar month. \"Net Sales\" shall mean all revenues from the sale of Deerskin Products on the Site including shipping and handling charges, minus refunds and exchanges.",
+        "span": {
+          "start": 3556,
+          "end": 3847,
+          "page": 1
+        },
+        "clause_type": "payment_terms",
+        "heading": "3.1 The Company shall pay HDI thirty percent (3016) of the Net Sales in excess of Eleven Thousand Dollars ($11,000) per calendar month. \"Net Sales\" shall mean all revenues from the sale of Deerskin Products on the Site including shipping and handling charges, minus refunds and exchanges."
+      },
+      "risk_level": "high",
+      "rationale": "The clause defines Net Sales as revenues including shipping and handling minus refunds and exchanges, which is closer to gross revenue than to the preferred net revenue actually received. Combined with the absence of any payment deadline, calculation statement, or audit right, this is a material deviation from the revenue-share-defined position and warrants high risk. The 30% rate and $11,000 monthly threshold are contract-specific figures not addressed by the playbook wording.",
+      "citations": [
+        {
+          "citation_id": "e051856d0eff",
+          "playbook_position_id": "revenue-share-defined",
+          "excerpt": "Any revenue or profit share payable under this Agreement shall be calculated on net revenue actually received, at the percentage stated in the Order Form, and shall be payable within thirty (30) days of the end of each calendar quarter together with a statement showing the calculation."
+        },
+        {
+          "citation_id": "2f1e619d9b1c",
+          "playbook_position_id": "audit-rights-bounded",
+          "excerpt": "A party may audit the other party's records relevant to this Agreement no more than once in any twelve (12) month period, on thirty (30) days' prior written notice, during normal business hours, at the auditing party's cost, and subject to the confidentiality obligations in this Agreement."
+        }
+      ],
+      "suggested_fallback": "Any revenue or profit share payable under this Agreement shall be calculated on gross revenue actually received, at the percentage stated in the Order Form, and shall be payable within forty-five (45) days of the end of each calendar quarter together with a statement showing the calculation.",
+      "verified": true,
+      "verification_reason": "The assessment is supported. The clause's Net Sales definition (revenues including shipping/handling minus refunds/exchanges) reasonably supports the claim it is closer to gross revenue than the preferred net-revenue-received formulation, and the clause indeed contains no payment deadline, calculation statement, or audit right. The citation to [revenue-share-defined] preferred text is verbatim accurate. The audit-rights citation is also verbatim accurate and correctly supports the observation that no audit right exists in the clause. The suggested fallback matches the [revenue-share-defined] fallback text verbatim. The statement that 30% and $11,000 are contract-specific figures not addressed by the playbook wording is accurate. Risk level of high is a defensible judgment given the deviation plus the absence of both payment/statement mechanics and audit rights, though the playbook's 'medium' risk-if-absent labels make 'high' somewhat aggressive; the rationale nonetheless distinguishes clause content from policy requests.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-15",
+        "text": "3.2 Payments to HDI shall be due monthly within thirty (30) days of the end of each calendar month and shall be accompanied by documentation reasonably detailing the calculation of the payment.",
+        "span": {
+          "start": 3847,
+          "end": 4043,
+          "page": 1
+        },
+        "clause_type": "payment_terms",
+        "heading": "3.2 Payments to HDI shall be due monthly within thirty (30) days of the end of each calendar month and shall be accompanied by documentation reasonably detailing the calculation of the payment."
+      },
+      "risk_level": "medium",
+      "rationale": "The clause's core timing (payment due monthly within 30 days of month-end) aligns with the Net-30 preferred position's 30-day horizon, and it includes calculation documentation. However, it does not expressly address the preferred policy's protection for disputed amounts (the right to withhold undisputed-only portions with pre-due-date notice and good-faith dispute), leaving that residual exposure open to negotiation.",
+      "citations": [
+        {
+          "citation_id": "b068111458bd",
+          "playbook_position_id": "payment-net-30",
+          "excerpt": "Customer shall pay all undisputed invoices within thirty (30) days of receipt. Customer may withhold any amount it disputes in good faith, provided it notifies Supplier of the basis for the dispute before the due date."
+        },
+        {
+          "citation_id": "e051856d0eff",
+          "playbook_position_id": "revenue-share-defined",
+          "excerpt": "Any revenue or profit share payable under this Agreement shall be calculated on net revenue actually received, at the percentage stated in the Order Form, and shall be payable within thirty (30) days of the end of each calendar quarter together with a statement showing the calculation."
+        }
+      ],
+      "suggested_fallback": "Customer shall pay all undisputed invoices within forty-five (45) days of receipt. Customer may withhold any amount it disputes in good faith, provided it notifies Supplier of the basis for the dispute before the due date.",
+      "verified": true,
+      "verification_reason": "The clause text supports the description: payment is due monthly within 30 days of month-end, with documentation detailing the calculation. The playbook [payment-net-30] preferred position supports a 30-day payment window and the reviewer correctly notes the clause does not expressly include the disputed-amount withholding/notice protections. The risk level of medium follows reasonably from that gap, though the clause's 30-day timing is arguably close to preferred on timing alone. The suggested fallback matches the [payment-net-30] fallback text verbatim. The [revenue-share-defined] citation appears irrelevant to this payment-timing clause, but the assessment does not rely on it for the risk conclusion, so it does not make the assessment unsupported.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-16",
+        "text": "3.3 Quarterly reconciliation of payments shall be conducted within thirty (30) days of the end of each calendar quarter to adjust for refunds and exchanges not taken into account in payments made to HDI.\n\n -3-",
+        "span": {
+          "start": 4043,
+          "end": 4255,
+          "page": 1
+        },
+        "clause_type": "payment_terms",
+        "heading": "3.3 Quarterly reconciliation of payments shall be conducted within thirty (30) days of the end of each calendar quarter to adjust for refunds and exchanges not taken into account in payments made to HDI."
+      },
+      "risk_level": "medium",
+      "rationale": "The clause provides for quarterly reconciliations within thirty days but omits any statement or audit mechanism for the revenue-share calculation. The closest relevant playbook position, revenue-share-defined, requires the share to be based on net revenue actually received at the stated percentage and to be payable with a statement showing the calculation; the clause's reconciliation provision does not establish a defined, capped, or auditable revenue-share basis, leaving residual exposure that can be negotiated by adding a calculation statement or audit right.",
+      "citations": [
+        {
+          "citation_id": "e051856d0eff",
+          "playbook_position_id": "revenue-share-defined",
+          "excerpt": "Any revenue or profit share payable under this Agreement shall be calculated on net revenue actually received, at the percentage stated in the Order Form, and shall be payable within thirty (30) days of the end of each calendar quarter together with a statement showing the calculation."
+        }
+      ],
+      "suggested_fallback": "Any revenue or profit share payable under this Agreement shall be calculated on gross revenue actually received, at the percentage stated in the Order Form, and shall be payable within forty-five (45) days of the end of each calendar quarter together with a statement showing the calculation.",
+      "verified": true,
+      "verification_reason": "The assessment is supported by the evidence. The clause does establish quarterly reconciliation within 30 days and does not contain any statement/audit mechanism or defined, capped revenue-share basis, which the rationale correctly notes. The cited playbook position [revenue-share-defined] supports the description of the preferred terms (net revenue actually received, stated percentage, payable with a statement showing the calculation). The rationale properly distinguishes what the clause says from what the playbook prefers, and the medium risk level is consistent with the playbook's 'Risk if absent: medium' since the relevant defined/auditable revenue-share terms are absent. The suggested fallback matches the playbook fallback text verbatim.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-17",
+        "text": "3.4 HDI's General Manager (as hereinafter defined), may upon no less than thirty (30) days prior written notice to the Company, have the right to inspect the records of the Company's General Manager reasonably related to the calculation of such payments during the Company's normal business hours. The fees incurred by HDI in connection with the inspection shall be borne by HDI.",
+        "span": {
+          "start": 4255,
+          "end": 4637,
+          "page": 1
+        },
+        "clause_type": "payment_terms",
+        "heading": "3.4 HDI's General Manager (as hereinafter defined), may upon no less than thirty (30) days prior written notice to the Company, have the right to inspect the records of the Company's General Manager reasonably related to the calculation of such payments during the Company's normal business hours. The fees incurred by HDI in connection with the inspection shall be borne by HDI."
+      },
+      "risk_level": "medium",
+      "rationale": "Clause 3.4 grants HDI a right to inspect the Company's General Manager's records related to payment calculation on 30 days' notice, during normal business hours, at HDI's cost. It matches the preferred audit-rights-bounded position on notice (30 days), timing, and cost allocation, but omits the preferred position's frequency cap (no more than once per 12 months) and confidentiality gate. These are limited, negotiable deviations creating residual exposure to unlimited inspection frequency and unaddressed confidentiality, rather than material exposure or a prohibition breach. No explicit absence of a critical protection; the clause affirmatively grants a bounded-purpose inspection right. Suggested fallback aligns cost allocation with audit underpayment trigger and adds a twice-per-year frequency cap. Clause type (payment_terms) is supported by audit-rights-bounded.",
+      "citations": [
+        {
+          "citation_id": "2f1e619d9b1c",
+          "playbook_position_id": "audit-rights-bounded",
+          "excerpt": "A party may audit the other party's records relevant to this Agreement no more than once in any twelve (12) month period, on thirty (30) days' prior written notice, during normal business hours, at the auditing party's cost, and subject to the confidentiality obligations in this Agreement."
+        }
+      ],
+      "suggested_fallback": "A party may audit the other party's records relevant to this Agreement no more than twice in any twelve (12) month period, on fifteen (15) days' prior written notice, during normal business hours, and subject to the confidentiality obligations in this Agreement. The audited party bears the cost only if the audit reveals an underpayment of more than five percent (5%).",
+      "verified": true,
+      "verification_reason": "All claims are supported: the clause text confirms 30 days' notice, normal business hours, inspection of General Manager's records related to payment calculation, and HDI bearing costs. The rationale correctly identifies alignment with the preferred position on notice, timing, and cost, and correctly notes omission of the frequency cap (no more than once per 12 months) and confidentiality gate, which are in the cited playbook. The medium risk level follows from the limited, negotiable deviations. The suggested fallback matches the cited playbook fallback verbatim.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-18",
+        "text": "4. Term; Termination; Termination Payment.",
+        "span": {
+          "start": 4637,
+          "end": 4681,
+          "page": 1
+        },
+        "clause_type": "termination",
+        "heading": "4. Term; Termination; Termination Payment."
+      },
+      "risk_level": "unknown",
+      "rationale": "The clause text is only a heading (\"4. Term; Termination; Termination Payment.\") with no substantive obligations, so it cannot be evaluated against the termination-related playbook positions; the presence of a \"Termination Payment\" reference also raises an unevaluated topic not covered by the retrieved positions. No relevant obligation or protection can be confirmed or found missing from the provided evidence.",
+      "citations": [],
+      "suggested_fallback": null,
+      "verified": false,
+      "verification_reason": "assessment has no playbook citations supporting its risk and rationale",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-19",
+        "text": "4.1 Term; Termination. This Agreement shall be effective as of that date (the \"Effective Date\") the Site becomes fully operational as set forth in writing and executed by both Parties and shall continue for a period of one (1) year from the Effective Date. This Agreement shall be automatically renewed for an additional one year period on each anniversary of the Effective Date, unless terminated by either Party hereto upon ninety (90) days written notice to the other. Such notice shall specify the date on which this Agreement is to be terminated (the \"Termination Date\").",
+        "span": {
+          "start": 4681,
+          "end": 5260,
+          "page": 1
+        },
+        "clause_type": "termination",
+        "heading": "4.1 Term; Termination. This Agreement shall be effective as of that date (the \"Effective Date\") the Site becomes fully operational as set forth in writing and executed by both Parties and shall continue for a period of one (1) year from the Effective Date. This Agreement shall be automatically renewed for an additional one year period on each anniversary of the Effective Date, unless terminated by either Party hereto upon ninety (90) days written notice to the other. Such notice shall specify the date on which this Agreement is to be terminated (the \"Termination Date\")."
+      },
+      "risk_level": "medium",
+      "rationale": "The clause permits termination for convenience on 90 days' notice, which is a longer notice period than the playbook's preferred 30 days or acceptable 60-day fallback, but it is not a prohibition and results in limited, negotiable exposure. Separately, the clause makes renewal automatic (successive one-year terms) rather than opt-in, deviating from the renewal-opt-in policy's preference for renewal only by written agreement; this is an acceptable fallback structure but lacks the 30-day non-renewal notice and 5% fee cap specified in the fallback, leaving residual auto-renewal exposure.",
+      "citations": [
+        {
+          "citation_id": "2bf98c701405",
+          "playbook_position_id": "termination-for-convenience",
+          "excerpt": "Either party may terminate this Agreement for convenience upon thirty (30) days' prior written notice to the other party, without penalty or further liability other than for amounts accrued prior to the effective date of termination."
+        },
+        {
+          "citation_id": "284f75c1a5d7",
+          "playbook_position_id": "termination-for-convenience",
+          "excerpt": "Either party may terminate this Agreement for convenience upon sixty (60) days' prior written notice to the other party, without penalty or further liability other than for amounts accrued prior to the effective date of termination."
+        },
+        {
+          "citation_id": "7085e7451e22",
+          "playbook_position_id": "renewal-opt-in",
+          "excerpt": "This Agreement expires at the end of the Initial Term and shall renew only if both parties agree in writing to renew it. Any renewal term shall not exceed twelve (12) months."
+        },
+        {
+          "citation_id": "0b788e80e4a0",
+          "playbook_position_id": "renewal-opt-in",
+          "excerpt": "This Agreement shall renew for successive twelve (12) month terms unless either party gives written notice of non-renewal at least thirty (30) days before the end of the then-current term, and the fees for any renewal term shall not increase by more than five percent (5%)."
+        }
+      ],
+      "suggested_fallback": "This Agreement shall renew for successive twelve (12) month terms unless either party gives written notice of non-renewal at least thirty (30) days before the end of the then-current term, and the fees for any renewal term shall not increase by more than five percent (5%).",
+      "verified": true,
+      "verification_reason": "The clause text supports the assessment: it permits termination for convenience on 90 days' notice, which is longer than the preferred 30-day and fallback 60-day periods, and it provides for automatic successive one-year renewals. These accurately reflect the cited playbook positions and fallbacks. The renewal-opt-in fallback is cited and reproduced verbatim in the suggested fallback. The rationale correctly distinguishes the clause's terms from policy preferences/fallbacks, and the medium risk level is consistent with the cited 'Risk if absent: medium' for both topics. One minor imprecision is calling the automatic renewal an 'acceptable fallback structure' when it actually deviates from the fallback by lacking the non-renewal notice and fee cap, but the rationale immediately identifies those missing elements, so the overall assessment remains grounded.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-20",
+        "text": "4.2 Termination Payment.\n\n (a) In the event the Company terminates this Agreement, the Company shall pay to HDI a termination payment, (the \"Termination Payment\") the amount of which shall be an amount equal to the aggregate Net Sales for the twelve (12) months preceding the Termination Date less $800,000, the balance of which shall be divided by two.\n\n (b) In the event that the amount of the Termination\n\n -4-\n\nPayment is determined pursuant to this Section 4.2 to be less than or equal to zero, then no Termination Payment shall be due to HDI nor shall HDI be required to make any termination payment to the Company if the amount is determined to be less than zero.\n\n (c) The Termination Payment, if any, shall be payable by the Company in eight (8) equal payments to be made quarterly, commencing thirty (30) days after the termination date.",
+        "span": {
+          "start": 5260,
+          "end": 6110,
+          "page": 1
+        },
+        "clause_type": "termination",
+        "heading": "4.2 Termination Payment."
+      },
+      "risk_level": "medium",
+      "rationale": "The clause obligates the Company to pay a termination payment tied to trailing Net Sales with no notice period and no carve-out for cause, which departs from the preferred position that termination for convenience carry no penalty or further liability beyond amounts accrued. The eight-quarter installment payout extending well beyond termination increases residual exposure, but this is a limited, negotiable deviation rather than an explicit prohibition breach.",
+      "citations": [
+        {
+          "citation_id": "2bf98c701405",
+          "playbook_position_id": "termination-for-convenience",
+          "excerpt": "Either party may terminate this Agreement for convenience upon thirty (30) days' prior written notice to the other party, without penalty or further liability other than for amounts accrued prior to the effective date of termination."
+        }
+      ],
+      "suggested_fallback": "Either party may terminate this Agreement for convenience upon sixty (60) days' prior written notice to the other party, without penalty or further liability other than for amounts accrued prior to the effective date of termination.",
+      "verified": true,
+      "verification_reason": "The assessment is supported. The clause (4.2) does impose a termination payment on the Company tied to trailing twelve-month Net Sales with no notice period or cause carve-out, consistent with the rationale. The playbook preferred position (thirty days' notice, no penalty beyond accrued amounts) is accurately characterized, and the clause's payment obligation/further liability departs from it, supporting a medium risk. The rationale distinguishes the clause's payment/installment mechanics from policy's no-penalty preference. The suggested fallback matches the cited fallback verbatim.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-21",
+        "text": "5. Site; Site Management.",
+        "span": {
+          "start": 6110,
+          "end": 6137,
+          "page": 1
+        },
+        "clause_type": "other",
+        "heading": "5. Site; Site Management."
+      },
+      "risk_level": "unknown",
+      "rationale": "The clause is a bare heading (\"5. Site; Site Management.\") with no operative obligations, so no substantive contract term can be matched against any retrieved playbook position. The supplied positions address confidentiality survival, renewal mechanics, price-increase caps, audit rights, and third-party beneficiaries — none of which is triggered by a heading alone. Absence of these protections elsewhere in the agreement cannot be assessed from the text provided.",
+      "citations": [],
+      "suggested_fallback": null,
+      "verified": false,
+      "verification_reason": "assessment has no playbook citations supporting its risk and rationale",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-22",
+        "text": "5.1 URL. The Uniform Resource Locator, or address on the World Wide Web for the Site (\"URL\") shall be as mutually agreed by the Parties and shall be established and registered as necessary by HDI at no cost to the Company.",
+        "span": {
+          "start": 6137,
+          "end": 6362,
+          "page": 1
+        },
+        "clause_type": "intellectual_property",
+        "heading": "5.1 URL. The Uniform Resource Locator, or address on the World Wide Web for the Site (\"URL\") shall be as mutually agreed by the Parties and shall be established and registered as necessary by HDI at no cost to the Company."
+      },
+      "risk_level": "unknown",
+      "rationale": "The clause only addresses allocation and registration of a website URL/hostname. The supplied IP positions concern personal-data processing instructions, joint ownership of jointly developed IP, background IP retention and transfer of work-product ownership, and the non-IP positions concern liquidated damages and renewal terms. None of these govern ownership or registration of a URL, and the clause neither grants nor transfers intellectual property rights or creates joint ownership. No supplied position is relevant, so no assessment can be grounded in the playbook.",
+      "citations": [],
+      "suggested_fallback": null,
+      "verified": false,
+      "verification_reason": "assessment has no playbook citations supporting its risk and rationale",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-23",
+        "text": "5.2 The Company shall have exclusive artistic and editorial control over the Site, including, without limitation, the implementation of the Content on the Site and the design and look and feel of the Site. Neither the Site nor any portion of thereof shall be deemed accepted and approved by the Company unless and until the Company accepts and approves same in writing to HDI. No portion of the Site shall be made available on the Internet without the consent of the Company.",
+        "span": {
+          "start": 6362,
+          "end": 6840,
+          "page": 1
+        },
+        "clause_type": "intellectual_property",
+        "heading": "5.2 The Company shall have exclusive artistic and editorial control over the Site, including, without limitation, the implementation of the Content on the Site and the design and look and feel of the Site. Neither the Site nor any portion of thereof shall be deemed accepted and approved by the Company unless and until the Company accepts and approves same in writing to HDI. No portion of the Site shall be made available on the Internet without the consent of the Company."
+      },
+      "risk_level": "medium",
+      "rationale": "Clause 5.2 grants the Company exclusive artistic and editorial control over the Site and conditions any acceptance or Internet availability on the Company's written consent. This is an approval/control provision, not an assignment or ownership-transfer clause, so the assignment and IP-ownership positions do not directly govern it. However, requiring the Company's consent before any portion of the Site is made available on the Internet, combined with a written acceptance requirement, creates residual operational exposure: no deemed-approval mechanism or time limit protects HDI from the Company withholding approval. That is a limited, negotiable deviation rather than a missing critical protection or a breach of a governing policy, so it is rated medium.",
+      "citations": [
+        {
+          "citation_id": "24cca820d2bc",
+          "playbook_position_id": "ip-each-party-keeps-its-own",
+          "excerpt": "Each party retains all right, title and interest in the intellectual property it owned before this Agreement or develops independently of it. Nothing in this Agreement transfers ownership of a party's intellectual property to the other party."
+        },
+        {
+          "citation_id": "44c0ad21a53c",
+          "playbook_position_id": "ip-no-joint-ownership",
+          "excerpt": "The parties shall not jointly own any intellectual property under this Agreement. Any jointly developed work product shall be owned by the party that contributed the underlying background intellectual property, with a licence granted to the other party as set out in this Agreement."
+        }
+      ],
+      "suggested_fallback": null,
+      "verified": true,
+      "verification_reason": "Clause 5.2 does grant the Company exclusive artistic and editorial control, requires written acceptance/approval with no deemed-approval or time limit, and requires Company consent before any portion of the Site goes on the Internet — all accurately described. The assessment correctly distinguishes that this is an approval/control provision rather than an assignment or ownership-transfer clause, so the cited IP-ownership positions (each party keeps its own background IP; no joint ownership) are not directly engaged. The medium risk rating is presented as a limited operational deviation (lack of deemed-approval/time limit) rather than a breach of those governing policies, which follows from the clause/policy comparison. No fallback is suggested, and none is required by the cited positions for this clause, so there is no verbatim-fallback mismatch.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-24",
+        "text": "5.3 The Company shall be deemed the \"merchant of record\" for all commercial transactions on the Site related to Deerskin Products. Until the sale of the Deerskin Products to the consumer from the Site all title to the Deerskin Products shall remain with the Company.",
+        "span": {
+          "start": 6840,
+          "end": 7109,
+          "page": 1
+        },
+        "clause_type": "payment_terms",
+        "heading": "5.3 The Company shall be deemed the \"merchant of record\" for all commercial transactions on the Site related to Deerskin Products. Until the sale of the Deerskin Products to the consumer from the Site all title to the Deerskin Products shall remain with the Company."
+      },
+      "risk_level": "unknown",
+      "rationale": "The clause addresses merchant-of-record status and retention of title to Deerskin Products until sale to the consumer, but it contains no payment obligation, payment timing, dispute-withholding right, or minimum commitment term. The only payment_terms positions supplied (payment-net-30 and no-minimum-commitment) concern invoice payment deadlines and minimum purchase/volume commitments, neither of which is implicated by this title-retention provision. No supplied playbook position addresses merchant-of-record designation or passage of title, so there is no relevant policy against which to assess this clause.",
+      "citations": [],
+      "suggested_fallback": null,
+      "verified": false,
+      "verification_reason": "assessment has no playbook citations supporting its risk and rationale",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-25",
+        "text": "5.4 Each of HDI and the Company shall appoint a\n\n -5-\n\nGeneral Manager of its own to act as liaison with the other Party for the Site (each a \"General Manager\") who shall bear sole responsibility for bookkeeping and business operations of the Site on a day-today basis. Each General Manager shall have the authority to make and convey decisions on behalf of each Party and to be the liaison with the other Party for all production and Content matters.",
+        "span": {
+          "start": 7109,
+          "end": 7563,
+          "page": 1
+        },
+        "clause_type": "other",
+        "heading": "5.4 Each of HDI and the Company shall appoint a"
+      },
+      "risk_level": "unknown",
+      "rationale": "The clause merely establishes that each party appoints its own General Manager to act as liaison and to handle day-to-day bookkeeping, operations, and decision-making for the Site. None of the retrieved playbook positions address liaison/governance appointments: the non-solicit, audit, insurance, assignment, and IP-joint-ownership positions concern unrelated obligations, so no relevant policy supports a risk assessment.",
+      "citations": [],
+      "suggested_fallback": null,
+      "verified": false,
+      "verification_reason": "assessment has no playbook citations supporting its risk and rationale",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-26",
+        "text": "6. Exclusivity.",
+        "span": {
+          "start": 7563,
+          "end": 7580,
+          "page": 1
+        },
+        "clause_type": "non_compete",
+        "heading": "6. Exclusivity."
+      },
+      "risk_level": "high",
+      "rationale": "The clause is only the heading \"6. Exclusivity.\" with no operative text, so its meaning and scope are undefined. The relevant playbook position is no-exclusivity, which provides that the Agreement is non-exclusive absent a narrow, bounded carve-out, with a stated risk-if-absent of high. Because the clause contains no non-exclusivity language and no bounded exclusivity terms (products, territory, or limited duration), the material protection against an exclusive-dealing commitment is missing. Note the uncertainty that the clause text may be truncated or the operative terms may appear elsewhere, but on the evidence supplied the exclusivity obligation is unconstrained.",
+      "citations": [
+        {
+          "citation_id": "9022f137f87e",
+          "playbook_position_id": "no-exclusivity",
+          "excerpt": "This Agreement is non-exclusive. Each party remains free to provide to, procure from, or contract with any third party for services of the same or a similar kind, without restriction and without any obligation to the other party."
+        }
+      ],
+      "suggested_fallback": "Any exclusivity granted under this Agreement is limited to the named products, the named territory and a period of no more than twelve (12) months, and lapses if the exclusive party fails to meet the minimum performance targets stated in the Order Form.",
+      "verified": true,
+      "verification_reason": "The assessment is supported by the supplied evidence. The clause text contains only the heading '6. Exclusivity.' with no operative terms, so the claim that its meaning and scope are undefined is accurate. The cited no-exclusivity playbook position is correctly characterized as requiring non-exclusive dealing with only a narrow, bounded carve-out, and it states a risk-if-absent of high, matching the assigned risk level. The rationale properly distinguishes the clause's absence of non-exclusivity or bounded exclusivity terms from the policy's requested protection. The suggested fallback matches the cited playbook fallback text verbatim. The note about possible truncation or terms elsewhere is appropriately framed as uncertainty rather than an unsupported claim.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-27",
+        "text": "6.1 Except as provided in Section 6.2, during the term of this Agreement, the Company shall not participate in any project similar to the Site on the Internet with respect to Deerskin Products or products substantially similar to Deerskin Products (including, without limitation, the products of Wilson's House of Leather, Excelled and companies similar to Wilson's House of Leather and Excelled) and HDI shall have the exclusive right to use of the \"Deerskin\" brand for a self-contained web site for the offering of Deerskin Products directly to the consumer on the Internet.\n\n The Company hereby grants to HDI a non-exclusive, limited, non-transferable license to use the Company's \"Deerskin\" trademarks, service\n\nmarks, and logos (collectively, \"Marks\") solely for the purpose of carrying out its obligations under this Agreement. Except as provided herein, no licenses of the Company's Marks are granted or implied under this Agreement.",
+        "span": {
+          "start": 7580,
+          "end": 8523,
+          "page": 1
+        },
+        "clause_type": "non_compete",
+        "heading": "6.1 Except as provided in Section 6.2, during the term of this Agreement, the Company shall not participate in any project similar to the Site on the Internet with respect to Deerskin Products or products substantially similar to Deerskin Products (including, without limitation, the products of Wilson's House of Leather, Excelled and companies similar to Wilson's House of Leather and Excelled) and HDI shall have the exclusive right to use of the \"Deerskin\" brand for a self-contained web site for the offering of Deerskin Products directly to the consumer on the Internet."
+      },
+      "risk_level": "high",
+      "rationale": "The clause grants HDI an exclusive right to use the \"Deerskin\" brand for a self-contained consumer website and bars the Company from participating in any similar project, including with named competitors. This conflicts with both relevant playbook positions: no-exclusivity prohibits exclusive dealing commitments (preferred) or permits exclusivity only if limited to named products/territory and capped at 12 months with performance targets (fallback), whereas this clause contains no time limit, no territory limitation, and no performance exit; and non-compete-bounded requires that any non-compete be limited to 12 months post-termination, actual performance territory, and directly competing services (fallback), while this clause runs for the Agreement term with open-ended \"products substantially similar\" scope. The provision is one-sided and imposes material, potentially indefinite competitive restrictions without the boundary safeguards the playbook requires.",
+      "citations": [
+        {
+          "citation_id": "9022f137f87e",
+          "playbook_position_id": "no-exclusivity",
+          "excerpt": "This Agreement is non-exclusive. Each party remains free to provide to, procure from, or contract with any third party for services of the same or a similar kind, without restriction and without any obligation to the other party."
+        },
+        {
+          "citation_id": "a7c01ef92ee7",
+          "playbook_position_id": "non-compete-bounded",
+          "excerpt": "Any non-compete obligation under this Agreement shall be limited to twelve (12) months after termination, to the territory in which the restricted party actually performed, and to services that directly compete with those supplied under this Agreement."
+        }
+      ],
+      "suggested_fallback": "Any non-compete obligation under this Agreement shall be limited to twelve (12) months after termination, to the territory in which the restricted party actually performed, and to services that directly compete with those supplied under this Agreement.",
+      "verified": true,
+      "verification_reason": "All contract claims are supported by the clause text: the exclusive 'Deerskin' brand right for a self-contained consumer website, the bar on participating in similar projects including named competitors, and the absence of time, territory, or performance-exit limits. The policy claims accurately reflect the cited playbook positions: no-exclusivity's preferred position prohibits exclusive dealing unless narrowed, and non-compete-bounded requires 12-month, territory, and scope limits. The high risk level follows from this conflict, and the rationale properly distinguishes clause terms from policy requirements. The suggested fallback matches the non-compete-bounded fallback text verbatim.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-28",
+        "text": "6.2 The Company retains the right to establish a web site on the Internet for the purpose of offering closeout\n\n -6-\n\nmerchandise which may be identified as \"Deerskin\" branded products, if such is the case.",
+        "span": {
+          "start": 8523,
+          "end": 8732,
+          "page": 1
+        },
+        "clause_type": "intellectual_property",
+        "heading": "6.2 The Company retains the right to establish a web site on the Internet for the purpose of offering closeout"
+      },
+      "risk_level": "low",
+      "rationale": "The clause only preserves 'The Company' a right to establish a website offering closeout merchandise that may be identified as 'Deerskin' branded products. It contains no exclusivity commitment and no transfer or joint ownership of intellectual property. The only relevant retrieved position is no-exclusivity, whose preferred form states that the Agreement is non-exclusive and each party remains free to contract with third parties. The clause does not grant exclusive rights, so it does not deviate from that preferred position. The IP positions are not engaged because the clause does not address ownership or development of intellectual property, and no assignment position was retrieved. Because the clause imposes no third-party restriction and the preferred non-exclusivity position is met, the risk is low.",
+      "citations": [
+        {
+          "citation_id": "9022f137f87e",
+          "playbook_position_id": "no-exclusivity",
+          "excerpt": "This Agreement is non-exclusive. Each party remains free to provide to, procure from, or contract with any third party for services of the same or a similar kind, without restriction and without any obligation to the other party."
+        }
+      ],
+      "suggested_fallback": null,
+      "verified": true,
+      "verification_reason": "The clause is accurately described as merely allowing the Company to establish a website for closeout 'Deerskin' branded merchandise, with no exclusivity or IP ownership terms. This supports the claim that it does not conflict with the [no-exclusivity] preferred position, which requires that parties remain free to contract with third parties. The clause imposes no exclusivity and the preferred non-exclusivity position is therefore met, making the low risk rationale consistent. The reviewer also properly notes that IP positions are not engaged and no assignment position was retrieved, and no fallback is suggested where none is needed. The assessment is grounded and the quoted preferred text matches the cited playbook position verbatim.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-29",
+        "text": "6.3 During the term of this Agreement and for a period of two years after the expiration date of this Agreement, HDI shall not participate in any project similar to the Site on the Internet from which products substantially similar to Deerskin Products (including, without limitation, the products of Wilson's House of Leather, Excelled and and companies similar to Wilson's House of Leather and Excelled) are offered for sale to consumers on the Internet.",
+        "span": {
+          "start": 8732,
+          "end": 9191,
+          "page": 1
+        },
+        "clause_type": "non_compete",
+        "heading": "6.3 During the term of this Agreement and for a period of two years after the expiration date of this Agreement, HDI shall not participate in any project similar to the Site on the Internet from which products substantially similar to Deerskin Products (including, without limitation, the products of Wilson's House of Leather, Excelled and and companies similar to Wilson's House of Leather and Excelled) are offered for sale to consumers on the Internet."
+      },
+      "risk_level": "high",
+      "rationale": "Clause 6.3 imposes a one-sided, two-year post-termination non-compete on HDI, barring participation in any internet project offering substantially similar products. This materially exceeds the applicable bounded non-compete fallback (max 12 months, territory where the restricted party actually performed, and services directly competing with those supplied under the Agreement), and it is not non-exclusive under no-exclusivity policy. The two-year duration and open-ended scope create material exposure. It is unclear which position is stronger where multiple positions are relevant, but the non-compete-bounded fallback is directly applicable and deviates both in duration and scope; no-exclusivity also weighs against the clause.",
+      "citations": [
+        {
+          "citation_id": "a7c01ef92ee7",
+          "playbook_position_id": "non-compete-bounded",
+          "excerpt": "Any non-compete obligation under this Agreement shall be limited to twelve (12) months after termination, to the territory in which the restricted party actually performed, and to services that directly compete with those supplied under this Agreement."
+        },
+        {
+          "citation_id": "9022f137f87e",
+          "playbook_position_id": "no-exclusivity",
+          "excerpt": "This Agreement is non-exclusive. Each party remains free to provide to, procure from, or contract with any third party for services of the same or a similar kind, without restriction and without any obligation to the other party."
+        }
+      ],
+      "suggested_fallback": "Any non-compete obligation under this Agreement shall be limited to twelve (12) months after termination, to the territory in which the restricted party actually performed, and to services that directly compete with those supplied under this Agreement.",
+      "verified": true,
+      "verification_reason": "The assessment is supported. Clause 6.3 does impose a one-sided non-compete on HDI lasting two years post-expiration, barring participation in internet projects offering substantially similar products; this supports the characterization of a two-year, one-sided, open-ended restriction. The cited non-compete-bounded fallback requires limitation to twelve months, the territory where the restricted party performed, and directly competing services, so the clause deviates in both duration and scope. The no-exclusivity position is relevant to exclusivity commitments, and clause 6.3 restricts HDI from participating in similar projects, which supports the reference that it is not non-exclusive, though this is a secondary point. The risk level of high is consistent with the non-compete-bounded 'Risk if absent: high' where the clause materially exceeds the bounded fallback. The suggested fallback quotes the non-compete-bounded fallback verbatim. The rationale distinguishes the clause content from the policy fallback expectations.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-30",
+        "text": "7. Cross-Promotions.",
+        "span": {
+          "start": 9191,
+          "end": 9213,
+          "page": 1
+        },
+        "clause_type": "other",
+        "heading": "7. Cross-Promotions."
+      },
+      "risk_level": "unknown",
+      "rationale": "The clause consists only of the heading \"7. Cross-Promotions.\" with no operative text, so there is no obligation, grant, or restriction to compare against any retrieved playbook position. The supplied positions (no third-party beneficiaries, mutual confidentiality and its term, liability cap at fees, mutual indemnity) each govern substantive obligations that this heading does not address, so applying any of them would be speculative. No relevant position supports an assessment of this empty clause.",
+      "citations": [],
+      "suggested_fallback": null,
+      "verified": false,
+      "verification_reason": "assessment has no playbook citations supporting its risk and rationale",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-31",
+        "text": "7.1 Joint Efforts. The Parties agree to cross-promote one another's products through the use of their respective customer e-mail lists on a reciprocal and equitable basis. The Parties specifically agree that the form, content and design of any and all advertisements or promotional materials featuring the other Party or such Party's products shall continue to be developed by or on behalf of such Party and shall be subject to such Party's final approval. The Parties agree further that any promotions or advertisements involving the use of a Party's customer e-mail list by the other Party shall be subject to the prior approval of such Party.",
+        "span": {
+          "start": 9213,
+          "end": 9861,
+          "page": 1
+        },
+        "clause_type": "other",
+        "heading": "7.1 Joint Efforts. The Parties agree to cross-promote one another's products through the use of their respective customer e-mail lists on a reciprocal and equitable basis. The Parties specifically agree that the form, content and design of any and all advertisements or promotional materials featuring the other Party or such Party's products shall continue to be developed by or on behalf of such Party and shall be subject to such Party's final approval. The Parties agree further that any promotions or advertisements involving the use of a Party's customer e-mail list by the other Party shall be subject to the prior approval of such Party."
+      },
+      "risk_level": "high",
+      "rationale": "The clause creates a cross-promotion arrangement involving each party's customer e-mail lists and promotional materials. It is silent on ownership of any intellectual property (e.g., jointly developed advertisements or promotional materials), which conflicts with the playbook's prohibition on joint ownership of IP and the default allocation rules. No assignment, third-party beneficiary, non-solicit, or confidentiality terms are implicated by this clause, so those positions are not applied. The missing protection is the ownership/allocation of jointly developed work product, a high-risk gap under the ip-no-joint-ownership position's risk_if_absent rating.",
+      "citations": [
+        {
+          "citation_id": "44c0ad21a53c",
+          "playbook_position_id": "ip-no-joint-ownership",
+          "excerpt": "The parties shall not jointly own any intellectual property under this Agreement. Any jointly developed work product shall be owned by the party that contributed the underlying background intellectual property, with a licence granted to the other party as set out in this Agreement."
+        }
+      ],
+      "suggested_fallback": "Where the parties jointly develop intellectual property, each party owns an undivided interest in it and may exploit and licence it without accounting to or obtaining the consent of the other party.",
+      "verified": true,
+      "verification_reason": "The clause describes a cross-promotion arrangement involving customer e-mail lists and promotional materials, and it is indeed silent on IP ownership of any jointly developed advertisements or materials. This silence is consistent with the cited playbook position [ip-no-joint-ownership], which prohibits joint ownership of IP and requires allocation of jointly developed work product. The rationale correctly distinguishes what the clause states (cross-promotion and approval rights) from what policy requests (no joint ownership and defined allocation), and the risk level 'high' follows from the position's stated risk_if_absent. The suggested fallback matches the playbook fallback text verbatim. The note about assignment, third-party beneficiary, non-solicit, and confidentiality positions is explanatory, and those positions were not cited, so no unsupported policy claims are made. One minor imprecision is the phrase 'conflicts with the playbook's prohibition,' since silence does not directly conflict so much as fail to include the required protection, but this does not undermine the grounding of the assessment.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-32",
+        "text": "7.2 Mutual Covenants as to Advertisements. The Parties hereby covenant and agree that their respective marketing and advertising efforts provided for herein shall at all times comply with all applicable laws rules and regulations and will\n\n -7-\n\nnot contain any material which is obscene, threatening, fraudulent, harassing, libelous, infringing of third party intellectual property rights, otherwise illegal or, in the reasonable judgment of the Party required to display or transmit the advertisement, offensive.",
+        "span": {
+          "start": 9861,
+          "end": 10378,
+          "page": 1
+        },
+        "clause_type": "warranty",
+        "heading": "7.2 Mutual Covenants as to Advertisements. The Parties hereby covenant and agree that their respective marketing and advertising efforts provided for herein shall at all times comply with all applicable laws rules and regulations and will"
+      },
+      "risk_level": "medium",
+      "rationale": "The clause imposes mutual marketing/advertising compliance covenants, but it only addresses advertising content and omits the broader warranty of authority and legal compliance found in the playbook position, including anti-bribery, sanctions, and export control compliance. This is a limited deviation from the preferred warranty policy that can be negotiated.",
+      "citations": [
+        {
+          "citation_id": "63c38393e9ce",
+          "playbook_position_id": "warranty-compliance-and-authority",
+          "excerpt": "Each party warrants that it has full power and authority to enter into this Agreement, and that it will comply with all laws and regulations applicable to its performance under it, including anti-bribery, sanctions and export control laws."
+        }
+      ],
+      "suggested_fallback": "Each party warrants that it has full power and authority to enter into this Agreement and that its performance will not violate any law or any agreement by which it is bound.",
+      "verified": true,
+      "verification_reason": "The clause text supports the claim that it imposes mutual marketing/advertising compliance covenants limited to advertising content (obscenity, threats, fraud, harassment, libel, IP infringement, illegality, offensiveness). The cited playbook position indeed covers a broader warranty of authority and legal compliance including anti-bribery, sanctions and export control laws, which the clause omits, so the deviation claim is supported. The risk level of medium matches the playbook position's stated 'Risk if absent: medium.' The rationale distinguishes the clause's advertising-content scope from the policy's authority/compliance warranty. The suggested fallback matches the cited playbook fallback verbatim: 'Each party warrants that it has full power and authority to enter into this Agreement and that its performance will not violate any law or any agreement by which it is bound.'",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-33",
+        "text": "8. Confidentiality.",
+        "span": {
+          "start": 10378,
+          "end": 10399,
+          "page": 1
+        },
+        "clause_type": "confidentiality",
+        "heading": "8. Confidentiality."
+      },
+      "risk_level": "high",
+      "rationale": "The confidentiality clause consists only of the heading \"8. Confidentiality.\" and contains no operative confidentiality obligations, no permitted-use restriction, no standard exclusions, and no survival period. The mutual confidentiality position makes the mutual obligation and standard exclusions the core protection and rates its absence as high risk, so this empty clause leaves that critical protection missing. Because no substantive confidentiality terms are stated, the survival period in the confidentiality-term position is also absent.",
+      "citations": [
+        {
+          "citation_id": "556221eb5774",
+          "playbook_position_id": "confidentiality-mutual",
+          "excerpt": "Each party shall keep the other party's Confidential Information confidential, use it only to perform this Agreement, and protect it with at least the care it uses for its own confidential information. These obligations do not apply to information that is or becomes public through no fault of the receiving party, was already known to it, or is independently developed by it."
+        },
+        {
+          "citation_id": "4ad9483e69a0",
+          "playbook_position_id": "confidentiality-term",
+          "excerpt": "The confidentiality obligations in this Agreement survive for five (5) years after termination or expiry, and indefinitely with respect to trade secrets for so long as they remain trade secrets under applicable law."
+        }
+      ],
+      "suggested_fallback": "Each party shall keep the other party's Confidential Information confidential and use it only to perform this Agreement, provided that a party may disclose Confidential Information to the extent required by law or court order after giving the other party prompt notice and a reasonable opportunity to seek protective relief.",
+      "verified": true,
+      "verification_reason": "The clause text is only the heading '8. Confidentiality.' with no operative terms, supporting the claims that no confidentiality obligations, use restriction, exclusions, or survival period are present. The [confidentiality-mutual] position does state mutual obligation with standard exclusions as core protection and rates absence as high risk, supporting the high rating. The [confidentiality-term] position is correctly identified as concerning survival, and its absence is properly noted as a consequence. The suggested fallback matches the [confidentiality-mutual] fallback text verbatim. The rationale distinguishes the empty clause from what the playbook requests. All claims are grounded.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-34",
+        "text": "8.1 Unless otherwise agreed to in writing by the Company, HDI shall maintain the strict confidentiality and shall not disclose to any third party the existence of, or terms and conditions of this Agreement. In addition, HDI, in performing the Services for the Company hereunder, may have access to or be exposed to, directly or indirectly, Content, user information, data, knowledge and proprietary and trade secret information of the Company in oral, graphic, written, electronic or machine readable form (hereinafter collectively referred to as \"Confidential Information\"). Confidential Information shall not include information which can be demonstrated: (a) to have been rightfully in the possession of HDI from a source other than the Company prior to the time of disclosure of said information to HDI hereunder (\"Time of Receipt\"); (b) to have been in the public domain prior to the Time of Receipt; (c) to have become part of the public domain after the Time of Receipt by a publication or by any other means except an unauthorized act or omission or breach of this Agreement on the part of HDI, its employees, or agents; or (d) to have been supplied to HDI after the Time of Receipt by a third party who is under no obligation to the\n\n -8-\n\nCompany to maintain such information in confidence.",
+        "span": {
+          "start": 10399,
+          "end": 11702,
+          "page": 1
+        },
+        "clause_type": "confidentiality",
+        "heading": "8.1 Unless otherwise agreed to in writing by the Company, HDI shall maintain the strict confidentiality and shall not disclose to any third party the existence of, or terms and conditions of this Agreement. In addition, HDI, in performing the Services for the Company hereunder, may have access to or be exposed to, directly or indirectly, Content, user information, data, knowledge and proprietary and trade secret information of the Company in oral, graphic, written, electronic or machine readable form (hereinafter collectively referred to as \"Confidential Information\"). Confidential Information shall not include information which can be demonstrated: (a) to have been rightfully in the possession of HDI from a source other than the Company prior to the time of disclosure of said information to HDI hereunder (\"Time of Receipt\"); (b) to have been in the public domain prior to the Time of Receipt; (c) to have become part of the public domain after the Time of Receipt by a publication or by any other means except an unauthorized act or omission or breach of this Agreement on the part of HDI, its employees, or agents; or (d) to have been supplied to HDI after the Time of Receipt by a third party who is under no obligation to the"
+      },
+      "risk_level": "medium",
+      "rationale": "The clause imposes confidentiality obligations on HDI only, so it is one-way rather than the mutual protection contemplated by the confidentiality-mutual position (risk if absent: high). It does contain standard exclusions for prior possession, public domain, and third-party disclosure, which partially aligns with the preferred position, but it omits a residual obligation not to use Confidential Information except in performing the Services and omits the permitted-disclosure carve-out (legal/court order with notice). Additionally, the excerpt does not show any confidentiality survival period, and no 3-year/5-year post-termination term or indefinite trade-secret protection is present as in the confidentiality-term position (risk if absent: medium). These are material but negotiable deviations.",
+      "citations": [
+        {
+          "citation_id": "556221eb5774",
+          "playbook_position_id": "confidentiality-mutual",
+          "excerpt": "Each party shall keep the other party's Confidential Information confidential, use it only to perform this Agreement, and protect it with at least the care it uses for its own confidential information. These obligations do not apply to information that is or becomes public through no fault of the receiving party, was already known to it, or is independently developed by it."
+        },
+        {
+          "citation_id": "05c95fde9902",
+          "playbook_position_id": "confidentiality-term",
+          "excerpt": "The confidentiality obligations in this Agreement survive for three (3) years after termination or expiry, and indefinitely with respect to trade secrets for so long as they remain trade secrets under applicable law."
+        }
+      ],
+      "suggested_fallback": "Each party shall keep the other party's Confidential Information confidential and use it only to perform this Agreement, provided that a party may disclose Confidential Information to the extent required by law or court order after giving the other party prompt notice and a reasonable opportunity to seek protective relief.",
+      "verified": true,
+      "verification_reason": "All claims are supported: the clause is one-way (obligations on HDI only) with standard exclusions (a)-(d), omits a use restriction and legal/court-order carve-out, and shows no survival period. The mutual playbook position is correctly cited (risk if absent: high) and the term position (risk if absent: medium) is correctly invoked given the absence of any survival term. The rationale distinguishes what the clause states from what policy requests, and the fallback matches the playbook fallback text verbatim. The medium risk level, blending a high-risk mutual gap with a medium-risk term gap, is a reasonable assessment.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-35",
+        "text": "8.2 HDI Obligations. All Confidential Information of the Company shall be held in strict confidence by HDI and shall not be disclosed or used without express written consent of the Company, except as may be required by law. HDI shall use reasonable measures and reasonable efforts to provide protection for Confidential Information, including measures at least as strict as those HDI uses to protect its own Confidential Information.",
+        "span": {
+          "start": 11702,
+          "end": 12138,
+          "page": 1
+        },
+        "clause_type": "confidentiality",
+        "heading": "8.2 HDI Obligations. All Confidential Information of the Company shall be held in strict confidence by HDI and shall not be disclosed or used without express written consent of the Company, except as may be required by law. HDI shall use reasonable measures and reasonable efforts to provide protection for Confidential Information, including measures at least as strict as those HDI uses to protect its own Confidential Information."
+      },
+      "risk_level": "medium",
+      "rationale": "Clause 8.2 imposes confidentiality obligations on HDI only, not mutually; the Company receives protection while HDI does not, deviating from the mutual-confidentiality preferred position, though not a prohibition. It also lacks the standard carve-outs (public information, prior knowledge, independent development) and conditions the legal-disclosure exception only on legal requirement, without the fallback's prompt-notice and opportunity-to-seek-protective-relief requirements, leaving residual exposure. It does include a reasonable-measures protection standard consistent with the preferred care standard, so the deviation is limited and negotiable rather than material.",
+      "citations": [
+        {
+          "citation_id": "556221eb5774",
+          "playbook_position_id": "confidentiality-mutual",
+          "excerpt": "Each party shall keep the other party's Confidential Information confidential, use it only to perform this Agreement, and protect it with at least the care it uses for its own confidential information. These obligations do not apply to information that is or becomes public through no fault of the receiving party, was already known to it, or is independently developed by it."
+        },
+        {
+          "citation_id": "3e8d363067f8",
+          "playbook_position_id": "confidentiality-mutual",
+          "excerpt": "Each party shall keep the other party's Confidential Information confidential and use it only to perform this Agreement, provided that a party may disclose Confidential Information to the extent required by law or court order after giving the other party prompt notice and a reasonable opportunity to seek protective relief."
+        }
+      ],
+      "suggested_fallback": "Each party shall keep the other party's Confidential Information confidential and use it only to perform this Agreement, provided that a party may disclose Confidential Information to the extent required by law or court order after giving the other party prompt notice and a reasonable opportunity to seek protective relief.",
+      "verified": true,
+      "verification_reason": "The assessment's contract claims are supported by the clause: Clause 8.2 imposes obligations only on HDI, not mutually; it omits the public-information, prior-knowledge, and independent-development carve-outs; it excepts disclosures 'as may be required by law' without prompt-notice or opportunity-to-seek-protective-relief conditions; and it requires HDI to use reasonable measures at least as strict as it uses for its own Confidential Information. The policy claims accurately track the cited positions: mutual confidentiality with standard exclusions is preferred, the fallback includes prompt notice and protective relief, and risk-if-absent is high. The rationale distinguishes the clause text from the policy requests. The suggested fallback matches the cited fallback verbatim. The medium rating is a reasonable downgrade from the high risk-if-absent because the clause still provides reasonable-measures protection and limited legal-disclosure protection, though the non-mutuality is a notable deviation for a generally mutual playbook position.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-36",
+        "text": "8.3 Company's Obligations. The Company acknowledges that it may receive confidential information of HDI relating to its technical, marketing, product and/or business affairs. All such confidential information of HDI shall be-held in strict confidence by the Company and shall not be disclosed or used without express written consent of HDI, except as may be required by law. The Company shall use reasonable measures and reasonable efforts to provide protection for such confidential information of HDI, including measures at least as strict as those the Company uses to protect its own Confidential Information.\n\n -9-",
+        "span": {
+          "start": 12138,
+          "end": 12759,
+          "page": 1
+        },
+        "clause_type": "confidentiality",
+        "heading": "8.3 Company's Obligations. The Company acknowledges that it may receive confidential information of HDI relating to its technical, marketing, product and/or business affairs. All such confidential information of HDI shall be-held in strict confidence by the Company and shall not be disclosed or used without express written consent of HDI, except as may be required by law. The Company shall use reasonable measures and reasonable efforts to provide protection for such confidential information of HDI, including measures at least as strict as those the Company uses to protect its own Confidential Information."
+      },
+      "risk_level": "medium",
+      "rationale": "The clause imposes confidentiality only on the Company, protecting HDI's information, and lacks the mutual, reciprocal confidentiality obligation required by the confidentiality-mutual preferred position. It also omits the standard exclusions for public information, information already known, or independently developed information. However, the clause does contain a confidentiality obligation, a use restriction, reasonable-care protection, and a legal-compulsion disclosure carve-out, so this is a negotiable deviation rather than a missing critical protection. The confidentiality-term and assignment positions are cited only as potentially relevant surviving obligations, but neither is expressly addressed here.",
+      "citations": [
+        {
+          "citation_id": "556221eb5774",
+          "playbook_position_id": "confidentiality-mutual",
+          "excerpt": "Each party shall keep the other party's Confidential Information confidential, use it only to perform this Agreement, and protect it with at least the care it uses for its own confidential information. These obligations do not apply to information that is or becomes public through no fault of the receiving party, was already known to it, or is independently developed by it."
+        },
+        {
+          "citation_id": "05c95fde9902",
+          "playbook_position_id": "confidentiality-term",
+          "excerpt": "The confidentiality obligations in this Agreement survive for three (3) years after termination or expiry, and indefinitely with respect to trade secrets for so long as they remain trade secrets under applicable law."
+        }
+      ],
+      "suggested_fallback": "Each party shall keep the other party's Confidential Information confidential and use it only to perform this Agreement, provided that a party may disclose Confidential Information to the extent required by law or court order after giving the other party prompt notice and a reasonable opportunity to seek protective relief.",
+      "verified": true,
+      "verification_reason": "The clause supports the claim of one-way confidentiality: it obliges only 'the Company' to hold and use HDI's confidential information in confidence. The rationale correctly notes the absence of the mutual, reciprocal obligation and standard exclusions from the confidentiality-mutual preferred position. It also fairly describes clause elements present (use restriction, reasonable-care protection, and a legal-compulsion carve-out). The risk rating of medium is plausible rather than high, since the clause is not entirely absent and the preferred mutual position is the cited high-risk baseline; the reviewer treats the deviation as negotiable. The suggested fallback matches the confidentiality-mutual fallback verbatim. The confidentiality-term citation does not support a survival-term claim, but the reviewer expressly says neither term survives nor is addressed in the clause, so it is not misused as support.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-37",
+        "text": "9. Warranties.\n\n (a) Each Party represents and warrants to the other Party that (1) it is a corporation organized, validly existing and in goodstanding under the laws of the state of its incorporation; (2) it has the full right power and authority to enter into, and to perform the obligations contemplated in this Agreement, and the person signing on its behalf has the full right,\n\npower and authority to enter into this Agreement on behalf of the Party; (3) this Agreement constitutes a legal valid and binding obligation of the Party, enforceable in accordance with its terms; and (4) the execution of this Agreement will not conflict in any way with any pre-existing agreements or understandings of the Party with any person or entity.\n\n -10-\n\n (b) HDI acknowledges that the Company is currently a party to a web-hosting agreement with Globix Corporation (the \"Globix Agreement\") for the Company's web site offering Deerskin Products to Internet customers. HDI agrees that the Company shall not be deemed in breach of any provision of this Agreement by virtue of the Globix Agreement remaining in effect after this Agreement has been executed by both Parties, provided, that the Globix Agreement is terminated on or prior to the Effective Date",
+        "span": {
+          "start": 12759,
+          "end": 14009,
+          "page": 1
+        },
+        "clause_type": "warranty",
+        "heading": "9. Warranties."
+      },
+      "risk_level": "low",
+      "rationale": "The clause contains mutual corporate authority warranties: valid existence, full power and authority to enter and bind, enforceability, and no conflict with pre-existing agreements. This aligns with the warranty-compliance-and-authority position's core authority warranty, and the no-conflict warranty even exceeds it. The clause does not include the preferred position's express legal-compliance warranty (anti-bribery, sanctions, export control), but the position's risk-if-absent rating for that protection is only medium, and the clause's authority warranties otherwise satisfy the relevant policy; no unrelated policy (IP, governing law, third-party beneficiaries, services warranty) applies. Residual exposure from the missing express compliance covenant is limited and negotiable.",
+      "citations": [
+        {
+          "citation_id": "63c38393e9ce",
+          "playbook_position_id": "warranty-compliance-and-authority",
+          "excerpt": "Each party warrants that it has full power and authority to enter into this Agreement, and that it will comply with all laws and regulations applicable to its performance under it, including anti-bribery, sanctions and export control laws."
+        }
+      ],
+      "suggested_fallback": "Each party warrants that it has full power and authority to enter into this Agreement and that its performance will not violate any law or any agreement by which it is bound.",
+      "verified": true,
+      "verification_reason": "All contract claims are supported by the clause: it contains mutual corporate authority warranties (valid existence, power/authority to enter and bind, enforceability, no conflict with pre-existing agreements). The policy claims accurately reflect the cited position: the preferred standard includes an express legal-compliance warranty (anti-bribery, sanctions, export control) which the clause lacks, while the no-conflict warranty is additional. The risk-if-absent rating of medium is correctly cited. The suggested fallback matches the cited playbook fallback verbatim. The rationale properly distinguishes what the clause states from what the preferred policy requests, and the low risk rating, while somewhat lenient given the missing compliance covenant, is a permissible judgment call because the position's fallback is effectively satisfied by the authority/no-conflict warranties and the risk-if-absent is only medium.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-38",
+        "text": "10. General Provisions.",
+        "span": {
+          "start": 14009,
+          "end": 14034,
+          "page": 1
+        },
+        "clause_type": "other",
+        "heading": "10. General Provisions."
+      },
+      "risk_level": "unknown",
+      "rationale": "The clause is only a section heading (\"10. General Provisions.\") with no substantive obligations, so there is nothing to assess against the retrieved positions. The cited policies (insurance, non-solicit, third-party beneficiaries, liability cap, confidentiality) address distinct substantive topics not embodied in this heading, and applying them would be speculative. Material uncertainty: the actual content of Section 10 is not provided.",
+      "citations": [],
+      "suggested_fallback": null,
+      "verified": false,
+      "verification_reason": "assessment has no playbook citations supporting its risk and rationale",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-39",
+        "text": "10.1 Notices. Any notice under this Agreement will be in writing and delivered by personal delivery, express courier, confirmed facsimile, or certified or registered mail, return receipt requested and will be deemed given upon personal delivery, one (1) day after deposit with express courier, upon confirmation of receipt of facsimile or five (5),days after deposit in the mail. Notices will be sent to a Party at its address set forth above or such other address as that Party may specify in writing pursuant to this Section.",
+        "span": {
+          "start": 14034,
+          "end": 14564,
+          "page": 1
+        },
+        "clause_type": "other",
+        "heading": "10.1 Notices. Any notice under this Agreement will be in writing and delivered by personal delivery, express courier, confirmed facsimile, or certified or registered mail, return receipt requested and will be deemed given upon personal delivery, one (1) day after deposit with express courier, upon confirmation of receipt of facsimile or five (5),days after deposit in the mail. Notices will be sent to a Party at its address set forth above or such other address as that Party may specify in writing pursuant to this Section."
+      },
+      "risk_level": "unknown",
+      "rationale": "This clause is a routine notices provision governing the form, delivery method, and deemed-receipt timing of contractual notices. The retrieved positions address warranty/compliance, limitation of liability, assignment/change of control, termination for convenience, and data processing. None of these obligations is triggered by or relevant to a notice mechanics clause, so no supplied position supports an assessment of this clause. Assessment is therefore unknown rather than treating any wording difference as risk.",
+      "citations": [],
+      "suggested_fallback": null,
+      "verified": false,
+      "verification_reason": "assessment has no playbook citations supporting its risk and rationale",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-40",
+        "text": "10.2 No Joint Venture. The Parties agree that and acknowledge that the relationship of the Parties is in the nature of an independent contractor. This Agreement shall not be deemed to create a partnership or joint venture and neither Party is the other's agent, partner, employee or representative. Neither Party shall have any right, power or authority to enter into any agreement for or on behalf of, or to assume or create any obligation, liability, or responsibility on behalf of the other.\n\n -11-\n\nThis Agreement will not be construed to create or imply an association, joint venture, co-ownership, or partnership between the Parties or to impose any partnership obligation or liability upon either Party.",
+        "span": {
+          "start": 14564,
+          "end": 15277,
+          "page": 1
+        },
+        "clause_type": "other",
+        "heading": "10.2 No Joint Venture. The Parties agree that and acknowledge that the relationship of the Parties is in the nature of an independent contractor. This Agreement shall not be deemed to create a partnership or joint venture and neither Party is the other's agent, partner, employee or representative. Neither Party shall have any right, power or authority to enter into any agreement for or on behalf of, or to assume or create any obligation, liability, or responsibility on behalf of the other."
+      },
+      "risk_level": "low",
+      "rationale": "The clause is a standard independent-contractor / no-joint-venture provision disclaiming partnership, agency, and authority to bind. This does not conflict with the retrieved positions: it concerns the Parties' general legal relationship rather than intellectual property ownership, so the ip-no-joint-ownership position on joint IP ownership is not triggered. No supplied position prohibits or restricts such a disclaimer, so it meets policy.",
+      "citations": [
+        {
+          "citation_id": "44c0ad21a53c",
+          "playbook_position_id": "ip-no-joint-ownership",
+          "excerpt": "The parties shall not jointly own any intellectual property under this Agreement. Any jointly developed work product shall be owned by the party that contributed the underlying background intellectual property, with a licence granted to the other party as set out in this Agreement."
+        }
+      ],
+      "suggested_fallback": null,
+      "verified": true,
+      "verification_reason": "The clause text supports the reviewer's characterization as an independent-contractor / no-joint-venture provision disclaiming partnership, agency, and authority to bind. The cited playbook position [ip-no-joint-ownership] concerns joint ownership of intellectual property, which the clause does not address, so the reviewer correctly reasons that the position is not triggered. The risk level of low follows from the fact that the only retrieved position is inapplicable and no supplied policy text restricts such relationship disclaimers. The rationale distinguishes the clause's subject matter (general legal relationship) from the policy's subject matter (IP ownership). The citation quotes the playbook preferred position accurately; no fallback was suggested, so the verbatim-match check is not implicated.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-41",
+        "text": "10.3 Assignment. This Agreement shall be binding upon, and shall inure to the benefit of and be enforceable by, the parties hereto and their respective legal representatives, successors and assigns, but no other person shall acquire or have any rights under this Agreement.",
+        "span": {
+          "start": 15277,
+          "end": 15553,
+          "page": 1
+        },
+        "clause_type": "other",
+        "heading": "10.3 Assignment. This Agreement shall be binding upon, and shall inure to the benefit of and be enforceable by, the parties hereto and their respective legal representatives, successors and assigns, but no other person shall acquire or have any rights under this Agreement."
+      },
+      "risk_level": "low",
+      "rationale": "Clause 10.3 is a standard successors-and-assigns clause that mirrors the preferred no-third-party-beneficiaries policy: it binds the parties and their legal representatives, successors and assigns, and expressly excludes rights in any other person. However, the clause is silent on restriction of assignment, which the assignment-change-of-control policy would ordinarily govern; as drafted it permits free assignment. Because the retrieved text supply only includes the no-third-party-beneficiaries position explicitly, the best-supported assessment is low on third-party-beneficiary exposure, but the absence of an assignment-consent mechanic is a residual (medium-type) gap flagged by the assignment position.",
+      "citations": [
+        {
+          "citation_id": "9e110330b955",
+          "playbook_position_id": "no-third-party-beneficiaries",
+          "excerpt": "This Agreement is for the benefit of the parties and their permitted successors and assigns only. No other person has any right to enforce any of its terms."
+        },
+        {
+          "citation_id": "49364fcfdf78",
+          "playbook_position_id": "assignment-change-of-control",
+          "excerpt": "Neither party may assign this Agreement without the other party's prior written consent, except that either party may assign it in its entirety, on notice and without consent, to a successor in connection with a merger, acquisition or sale of all or substantially all of its assets."
+        }
+      ],
+      "suggested_fallback": null,
+      "verified": true,
+      "verification_reason": "The assessment is supported by the evidence. Clause 10.3 states the agreement binds the parties and their legal representatives, successors and assigns, and that 'no other person shall acquire or have any rights under this Agreement.' This aligns with the no-third-party-beneficiaries preferred position, supporting a low risk on that point. The rationale also correctly notes the clause is silent on assignment restrictions, and the assignment-change-of-control playbook (risk if absent: medium) accordingly flags a residual gap, which the reviewer surfaces. The rationale distinguishes clause text from policy positions, and no suggested fallback is given (so no verbatim fallback mismatch). One minor note: the rationale says only the no-third-party-beneficiaries position is explicitly supplied, yet the assignment-change-of-control position is also cited, but this does not undermine the grounded claims or risk level.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-42",
+        "text": "10.4 Waiver of Breach. The failure of either Party at any time to enforce any of the provisions of this Agreement shall not be deemed or construed to be a waiver of any such provisions, or in any way to affect the right of any Party hereto to thereafter enforce each and every provision of this Agreement. No waiver of any breach of any provisions of this Agreement shall be effective unless set forth in writing and executed by the Party against which enforcement of such waiver is sought; and no waiver of any such breach shall be construed or deemed to be a waiver of any other or subsequent breach.",
+        "span": {
+          "start": 15553,
+          "end": 16158,
+          "page": 1
+        },
+        "clause_type": "other",
+        "heading": "10.4 Waiver of Breach. The failure of either Party at any time to enforce any of the provisions of this Agreement shall not be deemed or construed to be a waiver of any such provisions, or in any way to affect the right of any Party hereto to thereafter enforce each and every provision of this Agreement. No waiver of any breach of any provisions of this Agreement shall be effective unless set forth in writing and executed by the Party against which enforcement of such waiver is sought; and no waiver of any such breach shall be construed or deemed to be a waiver of any other or subsequent breach."
+      },
+      "risk_level": "unknown",
+      "rationale": "The clause is a standard no-waiver provision: failure to enforce is not a waiver, and any waiver must be written and signed by the party against which enforcement is sought. None of the retrieved playbook positions addresses waiver, non-waiver, or enforcement of contractual provisions; they cover liquidated damages/termination fees, consequential damages exclusions, third-party beneficiaries, assignment/change of control, and mutual indemnity. Because no supplied position is relevant to this clause's obligations, no supported assessment can be made without inventing policy.",
+      "citations": [],
+      "suggested_fallback": null,
+      "verified": false,
+      "verification_reason": "assessment has no playbook citations supporting its risk and rationale",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-43",
+        "text": "10.5 Governing Law. This Agreement shall be governed and construed and enforced in accordance with the laws of the State of New York applicable to contracts made and to be performed exclusively in that State without giving effect to the principles of conflict of laws.",
+        "span": {
+          "start": 16158,
+          "end": 16429,
+          "page": 1
+        },
+        "clause_type": "governing_law",
+        "heading": "10.5 Governing Law. This Agreement shall be governed and construed and enforced in accordance with the laws of the State of New York applicable to contracts made and to be performed exclusively in that State without giving effect to the principles of conflict of laws."
+      },
+      "risk_level": "medium",
+      "rationale": "The clause selects New York law, matching the preferred governing law, but omits any exclusive venue or jurisdiction submission. The governing-law-and-venue position treats governing law and exclusive venue together, so the missing venue designation is a limited, negotiable protection gap rather than a prohibited term. Certainty is reduced because no other provided position addresses venue.",
+      "citations": [
+        {
+          "citation_id": "f55105757cfa",
+          "playbook_position_id": "governing-law-and-venue",
+          "excerpt": "This Agreement is governed by the laws of the State of New York, without regard to its conflict of laws rules, and the parties submit to the exclusive jurisdiction of the state and federal courts located in New York County, New York."
+        }
+      ],
+      "suggested_fallback": "This Agreement is governed by the laws of the State of Delaware, without regard to its conflict of laws rules, and the parties submit to the exclusive jurisdiction of the state and federal courts located in Delaware.",
+      "verified": true,
+      "verification_reason": "The clause indeed selects New York law and omits any venue or jurisdiction submission, so the factual claims are supported. The playbook position pairs governing law with exclusive venue and names New York as preferred, so the reviewer's characterization of a venue omission as a limited protection gap is a reasonable comparison. The suggested fallback matches the cited fallback text verbatim. Risk level of medium is arguably elevated relative to the playbook's 'low' risk-if-absent label, but given the missing venue designation tied to the position, the assessment is not unsupported.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-44",
+        "text": "10.6 Severability. If any provision of this Agreement is declared invalid or otherwise determined to be unenforceable\n\n -12-\n\nfor any reason, such provision shall be deemed to be severable from the remaining provisions of this Agreement, which shall otherwise remain in full force and effect.",
+        "span": {
+          "start": 16429,
+          "end": 16724,
+          "page": 1
+        },
+        "clause_type": "other",
+        "heading": "10.6 Severability. If any provision of this Agreement is declared invalid or otherwise determined to be unenforceable"
+      },
+      "risk_level": "unknown",
+      "rationale": "The clause is a standard severability provision stating that invalid or unenforceable provisions are severed while the remainder of the Agreement stays in effect. None of the retrieved playbook positions address severability: they concern limitation of liability (consequential damages, liquidated damages), assignment/change of control, exclusivity, and warranties of authority and compliance. Applying any of these to a severability clause would mean importing an unrelated policy, so no supplied position supports an assessment. This is not a situation where the clause merely deviates in wording, jurisdiction, or duration from a relevant preferred/fallback text; there is no relevant policy at all.",
+      "citations": [],
+      "suggested_fallback": null,
+      "verified": false,
+      "verification_reason": "assessment has no playbook citations supporting its risk and rationale",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-45",
+        "text": "10.7 Survival. Sections 6.3, 7, 9 and 10 of this Agreement shall survive and continue in full force and effect for a period of two years from the expiration or termination of this Agreement.",
+        "span": {
+          "start": 16724,
+          "end": 16917,
+          "page": 1
+        },
+        "clause_type": "termination",
+        "heading": "10.7 Survival. Sections 6.3, 7, 9 and 10 of this Agreement shall survive and continue in full force and effect for a period of two years from the expiration or termination of this Agreement."
+      },
+      "risk_level": "medium",
+      "rationale": "The clause also touches obligations that the playbook governs. Section 10 is the survival clause; where it preserves confidentiality obligations (Section 7 or 6.3), a two-year survival period falls short of the preferred three-year period and the fallback five-year period, and it omits the required indefinite survival for trade secrets, which is a limited deviation that can be negotiated. The same survival period, if it applies to any licence, deviates from the preferred position that licences are co-terminous with the Agreement and from the fallback that survival is limited to fully paid Deliverables, creating residual exposure. The policy positions addressing termination for cause and liquidated damages are not engaged: this clause creates no termination right, cure regime, fee, or pre-agreed sum, and the absence of such protections is outside this clause's scope.",
+      "citations": [
+        {
+          "citation_id": "05c95fde9902",
+          "playbook_position_id": "confidentiality-term",
+          "excerpt": "The confidentiality obligations in this Agreement survive for three (3) years after termination or expiry, and indefinitely with respect to trade secrets for so long as they remain trade secrets under applicable law."
+        },
+        {
+          "citation_id": "4ad9483e69a0",
+          "playbook_position_id": "confidentiality-term",
+          "excerpt": "The confidentiality obligations in this Agreement survive for five (5) years after termination or expiry, and indefinitely with respect to trade secrets for so long as they remain trade secrets under applicable law."
+        },
+        {
+          "citation_id": "f47055183908",
+          "playbook_position_id": "licence-not-perpetual",
+          "excerpt": "No licence granted under this Agreement is perpetual, irrevocable, or unlimited in volume, territory or field of use. Each licence is co-terminous with this Agreement and bounded by the metrics stated in the applicable Order Form."
+        },
+        {
+          "citation_id": "7249114f13c0",
+          "playbook_position_id": "licence-not-perpetual",
+          "excerpt": "A licence granted under this Agreement may survive termination only for Deliverables already paid for in full, is limited to the volume, territory and field of use stated in the applicable Order Form, and remains revocable on Customer's material breach."
+        }
+      ],
+      "suggested_fallback": "The confidentiality obligations in this Agreement survive for five (5) years after termination or expiry, and indefinitely with respect to trade secrets for so long as they remain trade secrets under applicable law.",
+      "verified": true,
+      "verification_reason": "The clause is a survival provision with a two-year period covering Sections 6.3, 7, 9 and 10. The assessment correctly notes that where this touches confidentiality obligations, the two-year period is below the preferred three-year term and the fallback five-year term, and omits indefinite trade-secret survival, consistent with the cited [confidentiality-term] positions. Its observation that the same period could apply to licence provisions and thereby conflict with the [licence-not-perpetual] preferred co-terminous position and the fallback's limited survival for fully paid Deliverables is also supported. The medium risk level follows from the limited, negotiable deviations relative to the cited policies. The suggested fallback matches the cited [confidentiality-term] fallback text verbatim. The statement that termination-for-cause and liquidated-damages policies are not engaged is supported because the clause creates no such rights, fees, or sums. No unsupported claim or misquotation is present.",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-46",
+        "text": "10.7 Entire Agreement. This Agreement is the complete and exclusive agreement between the Parties with respect to the subject matter hereof, superseding any prior agreements and communications (both written and oral) regarding such subject matter. This Agreement may only be modified, or any rights under it waived, by a written document executed by both Parties.",
+        "span": {
+          "start": 16917,
+          "end": 17283,
+          "page": 1
+        },
+        "clause_type": "other",
+        "heading": "10.7 Entire Agreement. This Agreement is the complete and exclusive agreement between the Parties with respect to the subject matter hereof, superseding any prior agreements and communications (both written and oral) regarding such subject matter. This Agreement may only be modified, or any rights under it waived, by a written document executed by both Parties."
+      },
+      "risk_level": "unknown",
+      "rationale": "The clause is a standard entire-agreement and amendment/waiver provision (integration clause), requiring modifications and waivers to be in a writing executed by both parties. None of the retrieved playbook positions addresses integration clauses, amendment formalities, or waiver mechanics: renewal-opt-in concerns term renewal, assignment-change-of-control concerns assignment, ip-no-joint-ownership concerns IP ownership, no-third-party-beneficiaries concerns enforcement rights of non-parties, and mutual-indemnity concerns indemnification. Because no supplied position governs this clause type, there is no policy basis to rate it low, medium, or high, and no applicable fallback to suggest.",
+      "citations": [],
+      "suggested_fallback": null,
+      "verified": false,
+      "verification_reason": "assessment has no playbook citations supporting its risk and rationale",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    },
+    {
+      "clause": {
+        "id": "clause-47",
+        "text": "10.8 Headings; Counterparts. The section headings in this Agreement are for reference purposes only and shall not define, limit or affect the meaning or interpretation of this Agreement. This Agreement is being executed in two or more counterparts, each of which shall be deemed an original but all of which shall constitute one and the same instrument.\n\n IN WITNESS WHEREOF, the parties have duly executed this Agreement as of the date first above written.\n\nTHE DEERSKIN COMPANIES, INC. HANOVER DIRECT, INC.\n\nBy By ------------------------------ --------------------------\n\n Name: Irwin Schneidmill Name: Rakesh K. Kaul Tilte: President Title:President\n\n -13-",
+        "span": {
+          "start": 17283,
+          "end": 17944,
+          "page": 1
+        },
+        "clause_type": "other",
+        "heading": "10.8 Headings; Counterparts. The section headings in this Agreement are for reference purposes only and shall not define, limit or affect the meaning or interpretation of this Agreement. This Agreement is being executed in two or more counterparts, each of which shall be deemed an original but all of which shall constitute one and the same instrument."
+      },
+      "risk_level": "unknown",
+      "rationale": "The clause is a boilerplate headings/counterparts provision with no substantive obligations. None of the retrieved positions (renewal, assignment, governing law, IP, or liability cap) bears on headings interpretation or counterpart execution, so no supplied policy supports an assessment. Note also the execution block names parties and titles but leaves the party role and agreement context unstated, which cannot be resolved from this clause alone.",
+      "citations": [],
+      "suggested_fallback": null,
+      "verified": false,
+      "verification_reason": "assessment has no playbook citations supporting its risk and rationale",
+      "accepted": false,
+      "accepted_by": null,
+      "accepted_at": null
+    }
+  ],
+  "metadata": {
+    "parties": [
+      "Hanover Direct, Inc. (\"HDI\"), a New Jersey Corporation, located at 1500 Harbor Boulevard, Weehawken, NJ 07087",
+      "The Deerskin Companies, Inc. (the \"Company\"), a Nevada corporation, located at 2500 Arrowhead Drive, Carson City, NV 89706"
+    ],
+    "agreement_date": "August 9, 1999",
+    "effective_date": null,
+    "expiration_date": null,
+    "contract_value": "thirty percent (3016) of the Net Sales in excess of Eleven Thousand Dollars ($11,000) per calendar month",
+    "governing_law": "the laws of the State of New York applicable to contracts made and to be performed exclusively in that State without giving effect to the principles of conflict of laws"
+  },
+  "disclaimer": "This automated review is for informational purposes only and does not constitute legal advice. Consult qualified counsel before relying on it."
+}

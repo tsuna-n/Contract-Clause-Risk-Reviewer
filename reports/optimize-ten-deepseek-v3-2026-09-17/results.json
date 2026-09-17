@@ -1,0 +1,347 @@
+{
+  "started_at": "2026-09-17T16:40:04.115927+00:00",
+  "status": "complete",
+  "process_id": 150414,
+  "source_sha256": {
+    "__init__.py": "a79550a9aeb916c5f0a457211b08d6f7dcadd878216b816e992e21a08bb0dfdb",
+    "ai/__init__.py": "f9f83284102eef0f52966454db3c35419d85e6fb67d61259c011967d84d57907",
+    "ai/agents.py": "c63361b30f15b9ccb65ade3911e038f67882cc75e5593d9275fa196dbda80510",
+    "ai/guardrails.py": "864292a4c98462db312807cc3e016e2f8bf393871a7d6aeaabf9828e79898eae",
+    "ai/llm.py": "6e075f96cc635851c02790ef0ffac78d80081b310d66a5110ff4dd13f0ab56af",
+    "ai/pipeline.py": "45b5ef9c1ca819cdb73bb20c7244d01ea31e2ac730a8c82d19741eb0a8fe5039",
+    "ai/prompts/classifier.v1.jinja": "0f31ebf2469206b4f6ac666078c184959b869d12738fd9dc5a74e16ba53faadb",
+    "ai/prompts/classifier.v2.jinja": "c27d0a4479f78979562cdf6a5279f95c8afe7f0791f1e7872ccfeaf202c296bd",
+    "ai/prompts/judge.v1.jinja": "ea44149ac16bb93334f71d6d68305a04ca87bcddb3d62605d59b56027f430bf9",
+    "ai/prompts/judge.v2.jinja": "b536f7667c592c9652ec5e51ca2a0c36292e92be6e097a6b90ae0c03918118e9",
+    "ai/prompts/metadata.v1.jinja": "76f86cc08fc1ef6e2143d03d57d75ea086ad99c3810fbc8c0438b00388be9d57",
+    "ai/prompts/risk_scorer.v1.jinja": "cb582c3b0abd04a069eadc52957c8294b1cb6c20a9c85e3a0c5ef7e46f056ed9",
+    "ai/prompts/risk_scorer.v2.jinja": "9f8d6d7fb94a187ac1126f2b85255e4756584deb4bc3bfb2bc2454e70a2a47ef",
+    "ai/prompts/risk_scorer.v3.jinja": "750cfec43a44dcd8e8cd002070de6054487f23b2554208428157e18c6ebf89aa",
+    "ai/providers.py": "bbd39da02e2a1c0ea27c4f440fde7a747d9cce49f959795e23859f0ef85a6dcd",
+    "ai/retrieval.py": "4e2a5e5b7bd75775464dcc692ab4bc78b1d8d37d7da5a552637f80fce2433e23",
+    "config.py": "0ef40c7329014cb13c9632e957ae758d82f41e25870240df80ad457f098c5089",
+    "database.py": "a8aca3b68f7be838a867347b8628450efa09e58b3b34e36656965674dd2626d9",
+    "dependencies.py": "e1c9c32ad97eec6d242384e5b2636d346d5314ca46cff508f0f8e3b936cef3db",
+    "errors.py": "9626c935c609a8f43fde9f1b292ed123619a1ebaebf002db3218bcb9365087ab",
+    "logger.py": "fc14301da92b0c9b6590c9a789abdc0b96afcfea1807570b9e4606cfc5802387",
+    "main.py": "bc2df519d52527676802187188a28ce383bdd3d5582a31912e72153c2e79728f",
+    "models.py": "c21438c986a44b97d3e572c2eaea8a45f4dfb27f701456fa79a7476dfe13744a",
+    "parsers.py": "f0a843d926a5b0bc2145c44b3d59ea47ae3dfbbca99cec2f67c4f2b3a5845b96",
+    "repositories/__init__.py": "f4dad6a064be217f12ce285c7ab01953d77b32d6a8c1573937c819f26673818f",
+    "repositories/audit.py": "097fb8d3d1d4732e4dd42730e57b748b1655108c31ff21a1e52d404d2f963d80",
+    "repositories/contract.py": "928bce97325605eb9e22a4db539661cb343e6e57f1e0646c3f202f963ad67c88",
+    "repositories/playbook.py": "c385a8d42a74e4e3e960d1d17da0de1e6b09026493dc124c4ddb3a63502a74f0",
+    "repositories/report.py": "d6fb8fcc1779f0a745a2c34999d11f7fc944b98b02adce1ce42322ddc6dc95f5",
+    "routes/__init__.py": "d34658eb258b01a28bfea48a9c916d944966686abd95f140e70582d6737afc35",
+    "routes/auth.py": "575c436b9e7c57a16fd8dd6f3ef66006667348ee4d1c40476440a3235af8ae5f",
+    "routes/contracts.py": "ac8af801fe63f5216fcaf2b19f91909d676180de0c74425363a65d5cbcb1cb64",
+    "routes/evaluate.py": "08b0e8585b595313957911f971ba3a378bac12537ddce4c02b1a20993ce356ce",
+    "routes/health.py": "f218963d114e1729d045ec5293a3a2de2c389e0173cb2dcf3972fd933ff65e8a",
+    "routes/playbook.py": "bf9f41129523285d7d8d13909d6235a67b716a366778479847eb1b438659e7ca",
+    "schemas.py": "e8caa860b59e1b8dc2c7549520a3f9002aa1307888e5f31cb41c32e1eb4d1697",
+    "security.py": "7951539756ebd69b3d7347482b4eb8fe23747f4d163d193b58ac6720be039a24",
+    "services/__init__.py": "ce0d413c2261e74d7bad24026a3224bf437ac40d49de4215220445aadb32f8d3",
+    "services/evaluation.py": "ac4092e1bb8f559f3c7f5e3818e83226a4b6d862ea97dc3397aec6cae2e2ab23",
+    "services/override.py": "09cf56249794ad3b1daacbfea541846ed6ef4490624ccd8764bb204f944e3c43",
+    "services/playbook.py": "4f0722057da3f73fe036317326337daac591a53486209ffb530593847662ee8f",
+    "services/report.py": "f06011e48a121bcc23fef47974e1afa098639dae4e3f12b0fa8d0d08eb37baa2",
+    "services/review.py": "df079dcaa45d31def5513223ac8f50f179c99b564f455f5a2085f9d4425b24ff"
+  },
+  "runner_sha256": "14543ac30f58fe0bbde24cf6d5f7f9773b3d3ada288952170cd6b88196e88c77",
+  "git_revision": "68ada1cdbc130024177ada432dca42b8f0cfc9b8",
+  "gold_sha256": "e91c31899d6be84efd92af36a0a2cfda03805eeedd7933671951685b8fe3d2c5",
+  "fixture_sha256": {
+    "americasshoppingmallinc-site-development-and-hosting-agreement": "800a8e3e69cecab83863c1f6ff97587419bd873245d7f98b59e460a747f03228",
+    "blackboxstocksinc-distributor-agreement": "0d2edecafe20a5de97f47ed19b08e2df988b3471e3da810944017ec8675adba5",
+    "legacytechnologyholdings-inc-distributor-agreement": "b4322d0d017a7c697dee87ca9b3d5aa963c4b5ca6f8b136c583fcc87e5f0e5c4",
+    "ecosciencesolutionsinc-endorsement-agreement": "4294c59e488ca8db726621f1a024bfe8213ae06fa6c88226b6bcd20b23cb0ec8",
+    "kiromicbiopharma-inc-consulting-agreement": "aacd48ab914fdede120150e2da4e222b342fa4f963a830384f8c848e9bf738a9",
+    "datacalltechnologies-content-license-agreement": "20f0f1630d8ae7ba221fbbf9d0449a593605989dfa3c779cafdb9c233bb6ebe7",
+    "gainscoinc-sponsorship-agreement": "c9c939c124076c8aeec0cbdf6f0cd6f3328a1c3ce5f1afe90d11449172122a4c",
+    "martinmidstreampartnerslp-transportation-services-agreement": "db9503241d99bb769627041be15e098f5f21b7fc0a14140e015f3bd0ddd007f4",
+    "ticketscominc-sponsorship-agreement": "4928e56782c0c6c8d589f9ceb019dc418e38b7b324be28f49a20a81b03d1eaa7",
+    "tuniucorp-cooperation-agreement": "de64f561a87663b8a6fb9d4be477fd0c0eba01695499870e754f108474440e8d"
+  },
+  "playbook_sha256": "afe53e42bb084f1bfdc72847db32f418c611ac43ab722b429bd41e26236bc9f7",
+  "config": {
+    "provider": "openrouter",
+    "model": "deepseek/deepseek-v4.1-flash",
+    "embedding_provider": "openrouter",
+    "embedding_model": "google/gemini-embedding-001",
+    "embedding_dim": 768,
+    "enable_judge": true,
+    "thinking": "disabled",
+    "concurrency": 4,
+    "timeout_seconds": 120,
+    "max_attempts": 3,
+    "judge_prompt_version": "v2",
+    "scorer_prompt_version": "v3",
+    "classifier_prompt_version": "v2",
+    "openrouter_providers": []
+  },
+  "expected": {
+    "contracts": 10,
+    "clauses": 281,
+    "labelled_clauses": 72
+  },
+  "completed_contracts": [
+    {
+      "contract_id": "ticketscominc-sponsorship-agreement",
+      "elapsed_seconds": 54.84075314899928,
+      "gold_clauses": 8,
+      "predicted_clauses": 8,
+      "labelled_clauses": 4,
+      "segmentation_f1": 1.0,
+      "verified_clauses": 8,
+      "unknown_risk_clauses": 1,
+      "failed_clauses": 0,
+      "citations": 14,
+      "valid_citations": 14
+    },
+    {
+      "contract_id": "americasshoppingmallinc-site-development-and-hosting-agreement",
+      "elapsed_seconds": 130.03694324699973,
+      "gold_clauses": 47,
+      "predicted_clauses": 47,
+      "labelled_clauses": 9,
+      "segmentation_f1": 1.0,
+      "verified_clauses": 28,
+      "unknown_risk_clauses": 19,
+      "failed_clauses": 0,
+      "citations": 46,
+      "valid_citations": 46
+    },
+    {
+      "contract_id": "blackboxstocksinc-distributor-agreement",
+      "elapsed_seconds": 142.92347844300093,
+      "gold_clauses": 21,
+      "predicted_clauses": 21,
+      "labelled_clauses": 5,
+      "segmentation_f1": 1.0,
+      "verified_clauses": 15,
+      "unknown_risk_clauses": 4,
+      "failed_clauses": 0,
+      "citations": 26,
+      "valid_citations": 26
+    },
+    {
+      "contract_id": "legacytechnologyholdings-inc-distributor-agreement",
+      "elapsed_seconds": 96.4827158879998,
+      "gold_clauses": 22,
+      "predicted_clauses": 22,
+      "labelled_clauses": 8,
+      "segmentation_f1": 1.0,
+      "verified_clauses": 14,
+      "unknown_risk_clauses": 7,
+      "failed_clauses": 0,
+      "citations": 30,
+      "valid_citations": 30
+    },
+    {
+      "contract_id": "ecosciencesolutionsinc-endorsement-agreement",
+      "elapsed_seconds": 76.95517546200062,
+      "gold_clauses": 28,
+      "predicted_clauses": 28,
+      "labelled_clauses": 6,
+      "segmentation_f1": 1.0,
+      "verified_clauses": 15,
+      "unknown_risk_clauses": 12,
+      "failed_clauses": 0,
+      "citations": 27,
+      "valid_citations": 27
+    },
+    {
+      "contract_id": "kiromicbiopharma-inc-consulting-agreement",
+      "elapsed_seconds": 68.27881075699952,
+      "gold_clauses": 18,
+      "predicted_clauses": 18,
+      "labelled_clauses": 5,
+      "segmentation_f1": 1.0,
+      "verified_clauses": 8,
+      "unknown_risk_clauses": 9,
+      "failed_clauses": 0,
+      "citations": 17,
+      "valid_citations": 17
+    },
+    {
+      "contract_id": "datacalltechnologies-content-license-agreement",
+      "elapsed_seconds": 98.27592332899985,
+      "gold_clauses": 53,
+      "predicted_clauses": 53,
+      "labelled_clauses": 11,
+      "segmentation_f1": 1.0,
+      "verified_clauses": 27,
+      "unknown_risk_clauses": 27,
+      "failed_clauses": 0,
+      "citations": 40,
+      "valid_citations": 40
+    },
+    {
+      "contract_id": "gainscoinc-sponsorship-agreement",
+      "elapsed_seconds": 80.32941252500132,
+      "gold_clauses": 15,
+      "predicted_clauses": 15,
+      "labelled_clauses": 9,
+      "segmentation_f1": 1.0,
+      "verified_clauses": 14,
+      "unknown_risk_clauses": 2,
+      "failed_clauses": 0,
+      "citations": 22,
+      "valid_citations": 22
+    },
+    {
+      "contract_id": "martinmidstreampartnerslp-transportation-services-agreement",
+      "elapsed_seconds": 89.4250340260005,
+      "gold_clauses": 12,
+      "predicted_clauses": 12,
+      "labelled_clauses": 4,
+      "segmentation_f1": 1.0,
+      "verified_clauses": 8,
+      "unknown_risk_clauses": 4,
+      "failed_clauses": 0,
+      "citations": 14,
+      "valid_citations": 14
+    },
+    {
+      "contract_id": "tuniucorp-cooperation-agreement",
+      "elapsed_seconds": 145.05604402300014,
+      "gold_clauses": 57,
+      "predicted_clauses": 57,
+      "labelled_clauses": 11,
+      "segmentation_f1": 1.0,
+      "verified_clauses": 38,
+      "unknown_risk_clauses": 21,
+      "failed_clauses": 0,
+      "citations": 60,
+      "valid_citations": 60
+    }
+  ],
+  "comparison": {
+    "iteration_2": "Awaiting source baseline; not identified in repository.",
+    "prd_thresholds": "Awaiting PRD; repository regression gates are separate."
+  },
+  "elapsed_seconds": 982.6404309459995,
+  "metrics": {
+    "segmentation_f1": 1.0,
+    "classification_accuracy": 0.7638888888888888,
+    "risk_accuracy": 0.5277777777777778,
+    "citation_validity": 1.0,
+    "per_type": [
+      {
+        "clause_type": "intellectual_property",
+        "support": 7,
+        "accuracy": 1.0
+      },
+      {
+        "clause_type": "payment_terms",
+        "support": 8,
+        "accuracy": 0.75
+      },
+      {
+        "clause_type": "other",
+        "support": 13,
+        "accuracy": 0.46153846153846156
+      },
+      {
+        "clause_type": "termination",
+        "support": 15,
+        "accuracy": 1.0
+      },
+      {
+        "clause_type": "limitation_of_liability",
+        "support": 6,
+        "accuracy": 0.5
+      },
+      {
+        "clause_type": "non_compete",
+        "support": 14,
+        "accuracy": 0.6428571428571429
+      },
+      {
+        "clause_type": "governing_law",
+        "support": 7,
+        "accuracy": 1.0
+      },
+      {
+        "clause_type": "warranty",
+        "support": 2,
+        "accuracy": 1.0
+      }
+    ],
+    "classification_confusion": {
+      "intellectual_property": {
+        "intellectual_property": 7
+      },
+      "payment_terms": {
+        "termination": 1,
+        "payment_terms": 6,
+        "non_compete": 1
+      },
+      "other": {
+        "payment_terms": 2,
+        "intellectual_property": 1,
+        "warranty": 2,
+        "other": 6,
+        "governing_law": 2
+      },
+      "termination": {
+        "termination": 15
+      },
+      "limitation_of_liability": {
+        "termination": 1,
+        "indemnification": 1,
+        "limitation_of_liability": 3,
+        "payment_terms": 1
+      },
+      "non_compete": {
+        "non_compete": 9,
+        "intellectual_property": 3,
+        "payment_terms": 1,
+        "termination": 1
+      },
+      "governing_law": {
+        "governing_law": 7
+      },
+      "warranty": {
+        "warranty": 2
+      }
+    }
+  },
+  "quality": {
+    "reviewed_clauses": 281,
+    "verified_clauses": 175,
+    "failed_clauses": 0,
+    "unknown_risk_clauses": 106,
+    "citations": 296,
+    "valid_citations": 296,
+    "all_contracts_segmentation_f1": {
+      "ticketscominc-sponsorship-agreement": 1.0,
+      "americasshoppingmallinc-site-development-and-hosting-agreement": 1.0,
+      "blackboxstocksinc-distributor-agreement": 1.0,
+      "legacytechnologyholdings-inc-distributor-agreement": 1.0,
+      "ecosciencesolutionsinc-endorsement-agreement": 1.0,
+      "kiromicbiopharma-inc-consulting-agreement": 1.0,
+      "datacalltechnologies-content-license-agreement": 1.0,
+      "gainscoinc-sponsorship-agreement": 1.0,
+      "martinmidstreampartnerslp-transportation-services-agreement": 1.0,
+      "tuniucorp-cooperation-agreement": 1.0
+    }
+  },
+  "repository_regression_gates": {
+    "source": "tests/eval/test_regression.py (not verified PRD thresholds)",
+    "segmentation_f1": {
+      "minimum": 0.95,
+      "passed": true
+    },
+    "citation_validity": {
+      "minimum": 1.0,
+      "passed": true
+    }
+  },
+  "token_usage": {
+    "input_tokens": 1057174,
+    "output_tokens": 113058,
+    "cache_read_input_tokens": 209998
+  },
+  "finished_at": "2026-09-17T16:56:26.759394+00:00"
+}
