@@ -20,6 +20,7 @@ from sqlalchemy.dialects.postgresql import insert
 
 from app.ai.providers import (
     GEMINI,
+    OPENROUTER,
     ProviderConfigError,
     is_transient,
     resolve_api_key,
@@ -63,8 +64,10 @@ class GeminiEmbedder:
         dim: int | None = None,
         timeout_seconds: int | None = None,
         api_key: str | None = None,
+        *,
+        settings: Settings | None = None,
     ) -> None:
-        settings = get_settings()
+        settings = settings or get_settings()
         self.model = model or resolve_embedding_model(GEMINI, settings.embedding_model)
         self.dim = dim or settings.embedding_dim
         self._api_key = api_key or resolve_api_key(
@@ -111,7 +114,7 @@ class GeminiEmbedder:
 
 
 class OpenAICompatibleEmbedder:
-    """Embedder for any OpenAI-shaped embeddings API, Z.AI's included.
+    """Embedder for OpenAI-compatible embeddings APIs, including OpenRouter.
 
     ``dimensions`` is optional in that API and not every host implements it, so
     a rejection is treated as "this model has one fixed width" and retried
@@ -128,16 +131,26 @@ class OpenAICompatibleEmbedder:
         api_key: str | None = None,
         base_url: str | None = None,
         provider: str | None = None,
+        *,
+        settings: Settings | None = None,
     ) -> None:
-        settings = get_settings()
+        settings = settings or get_settings()
         resolved_provider = provider or resolve_embedding_provider(settings)
+        self._provider = resolved_provider
         self.model = model or resolve_embedding_model(resolved_provider, settings.embedding_model)
         self.dim = dim or settings.embedding_dim
         self._api_key = api_key or resolve_api_key(
             settings, resolved_provider, override=settings.embedding_api_key
         )
+        # A chat host override only applies when both providers are the same.
+        # Otherwise an OpenRouter embedder could accidentally call api.z.ai.
+        chat_base_url = (
+            settings.llm_base_url
+            if resolved_provider == settings.llm_provider.strip().lower()
+            else None
+        )
         self._base_url = base_url or resolve_base_url(
-            resolved_provider, settings.embedding_base_url or settings.llm_base_url
+            resolved_provider, settings.embedding_base_url or chat_base_url
         )
         self._timeout_seconds = timeout_seconds or settings.llm_timeout_seconds
         self._client = None  # lazily constructed openai.OpenAI
@@ -164,16 +177,25 @@ class OpenAICompatibleEmbedder:
         if not texts:
             return []
 
+        request = {"model": self.model, "input": texts, "encoding_format": "float"}
+        if self._provider == OPENROUTER and self.model.startswith("google/gemini-embedding-"):
+            # Match GeminiEmbedder's RETRIEVAL_DOCUMENT task for both ingestion
+            # and review, using OpenRouter's equivalent parameter.
+            request["extra_body"] = {"input_type": "search_document"}
         if self._supports_dimensions:
             try:
-                response = self._get_client().embeddings.create(
-                    model=self.model, input=texts, dimensions=self.dim
-                )
-                return self._vectors(response)
-            except Exception:  # noqa: BLE001 - host may not implement `dimensions`
+                response = self._get_client().embeddings.create(**request, dimensions=self.dim)
+            except Exception as exc:  # noqa: BLE001 - host may not implement `dimensions`
+                if (
+                    getattr(exc, "status_code", None) not in (400, 422)
+                    or "dimension" not in str(exc).lower()
+                ):
+                    raise
                 self._supports_dimensions = False
+            else:
+                return self._vectors(response)
 
-        response = self._get_client().embeddings.create(model=self.model, input=texts)
+        response = self._get_client().embeddings.create(**request)
         return self._vectors(response)
 
     def _vectors(self, response) -> list[list[float]]:
@@ -374,7 +396,11 @@ def build_embedder(
     """
     settings = settings or get_settings()
     provider = resolve_embedding_provider(settings)
-    base = GeminiEmbedder() if provider == GEMINI else OpenAICompatibleEmbedder(provider=provider)
+    base = (
+        GeminiEmbedder(settings=settings)
+        if provider == GEMINI
+        else OpenAICompatibleEmbedder(provider=provider, settings=settings)
+    )
 
     embedder: Embedder = RetryingEmbedder(
         base,

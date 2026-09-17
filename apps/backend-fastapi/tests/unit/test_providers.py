@@ -134,12 +134,10 @@ def test_api_key_falls_back_to_the_providers_own_env_var() -> None:
 
 def test_embedding_provider_follows_chat_unless_that_vendor_cannot_embed() -> None:
     assert resolve_embedding_provider(_settings(llm_provider="openai")) == OPENAI
-    # Anthropic has no embedding API, api.z.ai serves chat models only, and
-    # OpenRouter routes chat completions only - retrieval quietly stays on
-    # Gemini for all three.
+    # Anthropic has no embedding API and api.z.ai serves chat models only.
     assert resolve_embedding_provider(_settings(llm_provider="anthropic")) == GEMINI
     assert resolve_embedding_provider(_settings(llm_provider="zai")) == GEMINI
-    assert resolve_embedding_provider(_settings(llm_provider="openrouter")) == GEMINI
+    assert resolve_embedding_provider(_settings(llm_provider="openrouter")) == OPENROUTER
     # An explicit setting wins over both.
     assert (
         resolve_embedding_provider(
@@ -167,8 +165,11 @@ def test_embedding_model_defaults_per_provider_and_rejects_the_ones_that_cannot(
     # Pointed at a host that does serve one, it is still allowed through.
     assert resolve_embedding_model(ZAI, "embedding-3") == "embedding-3"
 
-    with pytest.raises(ProviderConfigError, match="routes chat completions only"):
-        resolve_embedding_model(OPENROUTER, None)
+    assert resolve_embedding_model(OPENROUTER, None) == "google/gemini-embedding-001"
+    assert (
+        resolve_embedding_model(OPENROUTER, "openai/text-embedding-3-small")
+        == "openai/text-embedding-3-small"
+    )
 
 
 @pytest.mark.parametrize(

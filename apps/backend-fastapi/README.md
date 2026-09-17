@@ -340,7 +340,7 @@ adapter จริง 3 ตัวใน `app/ai/providers.py` (`zai` และ `o
 | Gemini | `LLM_PROVIDER=gemini` + `GEMINI_API_KEY` | `gemini-3.5-flash` | ค่าเดิมของโปรเจกต์ |
 | Claude | `LLM_PROVIDER=anthropic` + `ANTHROPIC_API_KEY` | `claude-opus-5` | ไม่มี embedding API → retrieval ตกไปใช้ Gemini อัตโนมัติ |
 | Z.AI (GLM) | `LLM_PROVIDER=zai` + `ZAI_API_KEY` | `glm-4.6` | เติม `https://api.z.ai/api/paas/v4` ให้เอง; **ไม่มี embedding model บน host นี้** → retrieval ตกไปใช้ Gemini อัตโนมัติเหมือน Claude |
-| OpenRouter | `LLM_PROVIDER=openrouter` + `OPENROUTER_API_KEY` + `LLM_MODEL` | — | เติม `https://openrouter.ai/api/v1` ให้เอง; `LLM_MODEL` ต้องมี prefix ของค่ายจริง เช่น `anthropic/claude-opus-5`, `deepseek/deepseek-chat`; **ไม่มี embedding endpoint** → retrieval ตกไปใช้ Gemini อัตโนมัติเหมือน Z.AI |
+| OpenRouter | `LLM_PROVIDER=openrouter` + `OPENROUTER_API_KEY` + `LLM_MODEL` | — | เติม `https://openrouter.ai/api/v1` ให้เอง; `LLM_MODEL` ต้องมี prefix ของค่ายจริง เช่น `anthropic/claude-opus-5`, `deepseek/deepseek-chat`; รองรับ embedding โดย default เป็น `google/gemini-embedding-001` ผ่าน OpenRouter ใช้คีย์เดียวกัน |
 | OpenAI-compatible | `LLM_PROVIDER=openai` + `OPENAI_API_KEY` + `LLM_MODEL` + `LLM_BASE_URL` | — | ครอบคลุม OpenAI, DeepSeek, Ollama, vLLM; **ต้องระบุ `LLM_MODEL` เอง** |
 
 ตัวแปรที่เพิ่มมา (ไม่ตั้งก็ได้ทั้งหมด ยกเว้นคีย์ของค่ายที่เลือก):
@@ -353,7 +353,7 @@ LLM_MODEL=claude-opus-5         # ไม่ตั้ง = ใช้ default ข�
 LLM_BASE_URL=...                # เฉพาะ host แบบ OpenAI-compatible ที่ไม่ใช่ zai/openrouter (สองตัวนี้เติมให้เอง)
 
 EMBEDDING_PROVIDER=gemini       # ไม่ตั้ง = ตามค่าย LLM ถ้าค่ายนั้น embed ได้ ไม่งั้นเป็น gemini
-                                # embed ได้จริงมีแค่ gemini กับ openai (anthropic/zai/openrouter ไม่มี)
+                                # embed ได้จริง: gemini, openai, openrouter (anthropic/zai ไม่มี)
 EMBEDDING_MODEL=gemini-embedding-001
 EMBEDDING_API_KEY=...           # ไม่ตั้ง = ใช้คีย์ของ EMBEDDING_PROVIDER
 EMBEDDING_BASE_URL=...
@@ -361,6 +361,21 @@ EMBEDDING_BASE_URL=...
 ENABLE_EMBEDDING_CACHE=true     # เก็บ vector ที่เคย embed ไว้ใน Redis (ค่า default)
 EMBEDDING_CACHE_TTL_SECONDS=604800
 ```
+
+ใช้ embedding ผ่าน OpenRouter แยกจากค่าย LLM ได้:
+
+```env
+EMBEDDING_PROVIDER=openrouter
+OPENROUTER_API_KEY=sk-or-v1-...
+EMBEDDING_MODEL=google/gemini-embedding-001
+EMBEDDING_DIM=768
+```
+
+ใช้ endpoint `https://openrouter.ai/api/v1/embeddings` อัตโนมัติ; ดู
+[เอกสาร OpenRouter](https://openrouter.ai/docs/api/api-reference/embeddings/submit-an-embedding-request)
+และ [รายชื่อโมเดล](https://openrouter.ai/api/v1/embeddings/models).
+หลังเปลี่ยน provider ให้ re-ingest playbook แล้ว restart backend; หากเปลี่ยนขนาด vector
+ต้องเพิ่ม migration ด้วย. Cache แยกตาม provider/model/dim จึงไม่ปนกับ provider เดิม.
 
 **เรื่องโควตา:** การรีวิว 1 ฉบับยิง embedding **1 request** ไม่ใช่ 1 request ต่อ clause —
 `Orchestrator.review()` เรียก `Retriever.prewarm()` ยัดทุก clause ไปในคำขอเดียวก่อน แล้ว

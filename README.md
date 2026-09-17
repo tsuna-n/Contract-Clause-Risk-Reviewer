@@ -219,16 +219,17 @@ LLM_PROVIDER=openrouter
 OPENROUTER_API_KEY=sk-or-v1-...
 LLM_MODEL=anthropic/claude-opus-5   # ต้องมี prefix ของค่ายจริงเสมอ — ดูข้อ 7 ด้านล่าง
 
-# --- Embeddings: ยังเป็น Gemini (OpenRouter ไม่มี endpoint embedding ให้เลย) ---
-EMBEDDING_PROVIDER=gemini
-GEMINI_API_KEY=AIza...
-EMBEDDING_MODEL=gemini-embedding-001
+# --- Embeddings: Gemini ผ่าน OpenRouter ใช้ OPENROUTER_API_KEY เดียวกัน ---
+EMBEDDING_PROVIDER=openrouter
+EMBEDDING_MODEL=google/gemini-embedding-001
+EMBEDDING_DIM=768
 ```
 
 ชื่อโมเดลอื่นที่ใช้ได้ตามรูปแบบ `<ค่าย>/<model>` เดียวกัน เช่น `google/gemini-3.5-flash`,
 `deepseek/deepseek-chat`, `meta-llama/llama-3.3-70b-instruct` — ดูรายชื่อทั้งหมดที่
-[openrouter.ai/models](https://openrouter.ai/models) เคสนี้ก็ **ไม่ต้อง re-ingest playbook**
-เหมือนกัน เพราะ embedding ยังเป็น Gemini ตัวเดิม
+[openrouter.ai/models](https://openrouter.ai/models) สำหรับ embedding ดู
+[รายชื่อ embedding models](https://openrouter.ai/api/v1/embeddings/models) และหลังเปลี่ยน provider
+ควรรัน `python -m scripts.ingest_playbook` เพื่อให้ vector ในฐานข้อมูลตรงกับการตั้งค่าใหม่
 
 ตรวจว่าได้ค่ายที่ตั้งใจหลัง restart:
 
@@ -238,12 +239,13 @@ from app.ai.providers import build_chat_backend
 from app.ai.retrieval import build_embedder
 from app.config import get_settings
 b = build_chat_backend(get_settings()); e = build_embedder()
+while hasattr(e, 'inner'): e = e.inner
 print('chat :', type(b).__name__, '->', b.model)
 print('embed:', type(e).__name__, '->', e.model, f'({e.dim} dim)')
 "
 ```
 
-คอนฟิกที่ `.env` ของ repo นี้ใช้อยู่ตอนนี้คือ **Z.AI GLM-4.7-flash อ่านสัญญา + Gemini ทำ embedding**
+ตัวอย่างคอนฟิกเดิมเมื่อ 2026-08-01 คือ **Z.AI GLM-4.7-flash อ่านสัญญา + Gemini ทำ embedding**
 (ผลจริงของคำสั่งด้านบน เมื่อ 2026-08-01):
 
 ```
@@ -264,15 +266,10 @@ embed: GeminiEmbedder -> gemini-embedding-001 (768 dim)
 3. **เปลี่ยน embedding = ต้อง re-ingest** — vector จากคนละโมเดลเทียบ cosine กันไม่ได้ ถ้า
    `EMBEDDING_DIM` เปลี่ยนด้วยต้องมี Alembic migration ใหม่ (`0c41a8268ed0` hardcode `VECTOR(768)`)
    แล้วรัน `python -m scripts.ingest_playbook`
-4. **`zai` และ `openrouter` ทำ embedding ไม่ได้ มีแต่ chat** — `api.z.ai` เสิร์ฟเฉพาะโมเดล GLM
-   (`/models` คืน 8 ตัว ไม่มี `embedding-*` เลย ขอไปได้ `400 code 1211 Unknown Model`) ชื่อ
-   `embedding-2/3` เป็นของ BigModel ของ Zhipu คนละแพลตฟอร์มกัน ส่วน OpenRouter ไม่มี endpoint
-   embedding ให้เลย (route แต่ chat completion) ดังนั้น `EMBEDDING_PROVIDER=zai` หรือ `openrouter`
-   เฉย ๆ จะถูกปฏิเสธพร้อมบอกว่าต้องตั้งอะไร — ตั้ง `EMBEDDING_PROVIDER=gemini` (หรือไม่ตั้งเลยก็
-   fallback ไป Gemini ให้) ถ้าบัญชีคุณมี embedding ที่ host อื่นค่อยระบุ `EMBEDDING_MODEL` +
-   `EMBEDDING_BASE_URL` เอง (เคยตั้ง `EMBEDDING_PROVIDER=zai` + `EMBEDDING_MODEL=embedding-1` ไว้จริง
-   เมื่อ 2026-08-01 ผลคือทุก clause กลายเป็น `unknown` เพราะ `400` ถูกกลืนตามข้อ 2 — vector ใน DB
-   ไม่ได้เสียหายอะไร)
+4. **OpenRouter รองรับ embedding แล้ว** — ตั้ง `EMBEDDING_PROVIDER=openrouter` +
+   `OPENROUTER_API_KEY`; default คือ `google/gemini-embedding-001` ผ่าน
+   `https://openrouter.ai/api/v1/embeddings` และส่งขนาดตาม `EMBEDDING_DIM` (default 768)
+   ส่วน `zai` ไม่มี embedding model บน `api.z.ai` จึงยัง fallback ไป Gemini เมื่อไม่ตั้ง provider
 5. **restart เสมอ** — `get_settings()` / `get_llm_client()` / `get_embedder()` เป็น `@lru_cache`
    ทั้งหมด และ `uvicorn --reload` จับแค่ไฟล์ `.py` ไม่จับ `.env`
 6. **ย้ายไปค่ายที่เป็น reasoning model ให้ดู `LLM_THINKING`** — ค่า default คือ `disabled` เพราะ

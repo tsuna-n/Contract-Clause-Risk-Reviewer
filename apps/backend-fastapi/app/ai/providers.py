@@ -59,19 +59,19 @@ _DEFAULT_CHAT_MODELS = {
 _DEFAULT_EMBEDDING_MODELS = {
     GEMINI: "gemini-embedding-001",
     OPENAI: "text-embedding-3-small",
+    OPENROUTER: "google/gemini-embedding-001",
 }
 
 #: Providers that can embed with nothing configured beyond a key.
 #: ``embedding_provider`` falls back to Gemini when the chat provider isn't one
 #: of these, which is what makes "Claude (or GLM) for review, Gemini for
 #: retrieval" work without extra configuration.
-EMBEDDING_PROVIDERS = (GEMINI, OPENAI)
+EMBEDDING_PROVIDERS = (GEMINI, OPENAI, OPENROUTER)
 
 #: Why a provider has no default embedding model, in the words the error uses.
 _NO_EMBEDDING_MODEL_REASONS = {
     ANTHROPIC: "has no embedding API",
     ZAI: "serves no embedding model on api.z.ai",
-    OPENROUTER: "has no embeddings endpoint - it routes chat completions only",
 }
 
 _BASE_URLS = {
