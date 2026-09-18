@@ -52,7 +52,7 @@ function SideDetail({ report, onClose }: SideDetailProps) {
 
       {/* แผง sidebar ทางขวา */}
       <aside
-        className="fixed inset-y-0 right-0 z-50 w-full max-w-sm border-l border-navy-800 bg-navy-950 shadow-2xl shadow-navy-950/50 overflow-y-auto transition-transform duration-300 ease-out"
+        className="fixed inset-y-0 right-0 z-50 w-full max-w-md border-l border-navy-800 bg-navy-900 shadow-2xl shadow-navy-950/50 overflow-y-auto transition-transform duration-300 ease-out"
         role="dialog"
         aria-label="ภาพรวมรายงาน"
       >
@@ -63,7 +63,7 @@ function SideDetail({ report, onClose }: SideDetailProps) {
               <p className="text-xs uppercase tracking-[0.2em] text-navy-300 mb-1">ภาพรวม</p>
               <h2
                 className="text-lg font-semibold text-white leading-snug break-words"
-                style={{ fontFamily: 'Georgia, "Noto Serif Thai", serif' }}
+
               >
                 {report.filename || report.contractId}
               </h2>

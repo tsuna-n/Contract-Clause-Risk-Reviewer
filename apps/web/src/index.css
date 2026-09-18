@@ -1,25 +1,9 @@
 @import "tailwindcss";
 
-/* ─── Navy blue theme tokens ──────────────────────────────────────────────────
-   Single source of truth for the brand palette. Every page references these
-   via utilities (bg-navy-*, text-navy-*, border-navy-*, ring-navy-*) so no
-   brand colour is hardcoded. Semantic colours (risk / error / success /
-   warning) stay on the standard Tailwind palette because they convey meaning,
-   not branding — swapping them for navy would erase the signal.
-*/
-@theme {
-  --color-navy-50:  #eef3fb;
-  --color-navy-100: #d8e3f4;
-  --color-navy-200: #b3c6e6;
-  --color-navy-300: #84a3d2;
-  --color-navy-400: #5680bf;
-  --color-navy-500: #3a64a8;
-  --color-navy-600: #2c4d82;
-  --color-navy-700: #213a63;
-  --color-navy-800: #182843;
-  --color-navy-900: #101e36;
-  --color-navy-950: #0a1424;
-}
+@font-face { font-family: "IBM Plex Sans Thai"; src: url("/fonts/IBMPlexSansThai-Regular.ttf") format("truetype"); font-weight: 400; font-style: normal; font-display: swap; }
+@font-face { font-family: "IBM Plex Sans Thai"; src: url("/fonts/IBMPlexSansThai-Medium.ttf") format("truetype"); font-weight: 500; font-style: normal; font-display: swap; }
+@font-face { font-family: "IBM Plex Sans Thai"; src: url("/fonts/IBMPlexSansThai-SemiBold.ttf") format("truetype"); font-weight: 600; font-style: normal; font-display: swap; }
+@font-face { font-family: "IBM Plex Sans Thai"; src: url("/fonts/IBMPlexSansThai-Bold.ttf") format("truetype"); font-weight: 700; font-style: normal; font-display: swap; }
 
 /* ─── Base styles ──────────────────────────────────────────────────────────── */
 @layer base {
@@ -66,3 +50,117 @@
 ::-webkit-scrollbar-track     { background: rgba(16, 30, 54, 0.4); }
 ::-webkit-scrollbar-thumb     { background: rgba(84, 128, 191, 0.25); border-radius: 4px; }
 ::-webkit-scrollbar-thumb:hover { background: rgba(84, 128, 191, 0.45); }
+
+/* Shared desktop workspace. Risk colours remain semantic. */
+@theme {
+  --font-sans: "IBM Plex Sans Thai", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --color-navy-50: #f0f5fc;
+  --color-navy-100: #dce7f5;
+  --color-navy-200: #bbcee4;
+  --color-navy-300: #99afca;
+  --color-navy-400: #7891b0;
+  --color-navy-500: #526e94;
+  --color-navy-600: #3b5375;
+  --color-navy-700: #2a3d58;
+  --color-navy-800: #1c2b41;
+  --color-navy-900: #121e30;
+  --color-navy-950: #0b1320;
+}
+@layer base {
+  html { color-scheme: dark; }
+  body { margin: 0; }
+  button:not(:disabled), select { cursor: pointer; }
+  button, a { transition: background-color .18s, border-color .18s, color .18s, box-shadow .18s; }
+  :focus-visible { outline: 2px solid #5eead4; outline-offset: 4px; }
+  input, textarea, select { color-scheme: dark; }
+  input::placeholder, textarea::placeholder { color: #7891b0; }
+}
+@layer components {
+  .brand-lockup { display: flex; align-items: center; gap: 12px; color: #f0f5fc; font-size: 24px; font-weight: 700; letter-spacing: -.8px; flex-shrink: 0; }
+  .brand-icon { display: inline-flex; width: 44px; height: 44px; align-items: center; justify-content: center; border-radius: 13px; border: 1px solid rgb(94 234 212 / .25); color: #5eead4; background: linear-gradient(145deg, rgb(94 234 212 / .13), rgb(94 234 212 / .03)); }
+  .brand-subtitle { display: block; margin-top: 2px; font-size: 8px; font-weight: 500; letter-spacing: 1.8px; color: #99afca; }
+  .eyebrow { color: #5eead4; font-size: 10px; font-weight: 600; letter-spacing: 2px; line-height: 1.7; }
+  .primary-button { display: inline-flex; align-items: center; gap: 8px; min-height: 42px; padding: 11px 18px; border: 1px solid #5eead4; border-radius: 10px; background: #5eead4; color: #0b1320; font-size: 13px; font-weight: 650; box-shadow: 0 3px 14px rgb(45 212 191 / .08); }
+  .primary-button:hover { background: #99f6e4; border-color: #99f6e4; }
+  .secondary-button { display: inline-flex; align-items: center; gap: 8px; min-height: 40px; padding: 10px 16px; border: 1px solid #2a3d58; border-radius: 10px; background: #18263b; color: #dce7f5; font-size: 12px; font-weight: 500; }
+  .secondary-button:hover { background: #1c2b41; border-color: #526e94; }
+  .primary-button:disabled, .secondary-button:disabled { opacity: .5; cursor: wait; }
+  .workspace-header { display: flex; align-items: center; justify-content: space-between; gap: 24px; min-height: 88px; padding: 18px 32px; border-bottom: 1px solid #1c2b41; background: rgb(11 19 32 / .9); }
+  .workspace-nav { display: flex; gap: 6px; }
+  .workspace-nav-link { display: inline-flex; align-items: center; gap: 8px; border-radius: 9px; padding: 11px 14px; font-size: 12px; color: #99afca; }
+  .workspace-nav-link:hover { color: #f0f5fc; background: #121e30; }
+  .workspace-nav-link.is-active { color: #5eead4; background: rgb(94 234 212 / .08); }
+  .header-return { display: flex; align-items: center; gap: 7px; color: #99afca; font-size: 11px; }
+  .header-return:hover { color: #5eead4; }
+  .tool-page { background: radial-gradient(ellipse at 85% 0%, rgb(36 65 82 / .13), transparent 50%), #0b1320; }
+  .page-intro { display: flex; align-items: center; justify-content: space-between; gap: 24px; padding-bottom: 28px; }
+  .page-intro h1 { margin: 9px 0 10px; font-size: 32px; font-weight: 600; letter-spacing: -.8px; line-height: 1.4; color: #f0f5fc; }
+  .page-description { font-size: 13px; color: #99afca; line-height: 1.9; }
+  .count-chip { display: inline-flex; align-items: center; padding: 9px 14px; border: 1px solid #2a3d58; border-radius: 999px; font-size: 11px; color: #bbcee4; background: #121e30; }
+  .panel-title { color: #f0f5fc; font-size: 17px; font-weight: 600; letter-spacing: -.3px; }
+  .tool-page main > form, .tool-page main > div.bg-navy-900 { border-radius: 16px; padding: 24px; box-shadow: 0 8px 30px rgb(0 0 0 / .08); }
+  .tool-page input, .tool-page textarea, .tool-page select { min-height: 42px; background: #0d1726; border-color: #2a3d58; }
+  .tool-page table { min-width: 850px; }
+  .tool-page thead th { padding-top: 18px; padding-bottom: 18px; font-size: 10px; letter-spacing: 1px; }
+  .tool-page tbody td { padding-top: 20px; padding-bottom: 20px; }
+  .tool-page tbody tr:hover { background: rgb(94 234 212 / .025); }
+  .tool-page main { animation: fadeInUp .35s ease both; }
+  .review-layout { display: flex; height: 100dvh; overflow: hidden; background: #0b1320; }
+  .history-pane { width: 308px; flex-shrink: 0; height: 100%; border-right: 1px solid #1c2b41; background: #0d1726; }
+  .review-main { flex: 1; min-width: 0; display: flex; flex-direction: column; padding: 18px; }
+  .review-content { flex: 1; min-height: 0; overflow: hidden; border: 1px solid #1c2b41; border-radius: 20px; background: #0e1828; box-shadow: 0 15px 50px rgb(0 0 0 / .1); }
+  .upload-page { background: radial-gradient(ellipse at 65% 50%, rgb(45 212 191 / .025), transparent 70%), #0e1828; }
+  .upload-page .page-intro { border-bottom: 1px solid #1c2b41; padding-bottom: 25px; }
+  .upload-body { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 36px; padding: 36px 0; }
+  .upload-zone { box-shadow: inset 0 1px 0 rgb(255 255 255 / .02); }
+  .upload-steps { display: grid; width: 100%; max-width: 720px; grid-template-columns: repeat(3, 1fr); gap: 20px; padding-top: 24px; }
+  .upload-steps > div { display: flex; align-items: flex-start; gap: 10px; }
+  .upload-steps > div > span { font-family: ui-monospace, monospace; font-size: 10px; border: 1px solid #2a3d58; border-radius: 7px; padding: 6px; color: #5eead4; }
+  .upload-steps p { font-size: 12px; color: #dce7f5; padding-top: 3px; }
+  .upload-steps small { display: block; font-size: 10px; color: #7891b0; margin-top: 5px; line-height: 1.8; }
+  .manifest-item { animation: fadeInUp .25s ease both; }
+  .login-page { position: relative; min-height: 100dvh; display: flex; flex-direction: column; background: radial-gradient(ellipse at 10% 60%, rgb(25 82 91 / .16), transparent 55%), #0b1320; }
+  .login-header { position: relative; display: flex; justify-content: space-between; align-items: center; margin: 0 5vw; padding: 30px 0; border-bottom: 1px solid rgb(153 175 202 / .12); }
+  .login-main { position: relative; flex: 1; width: 100%; max-width: 1360px; margin: auto; display: grid; grid-template-columns: 1.35fr 1fr; gap: 80px; align-items: center; padding: 60px 5vw; }
+  .login-story h1 { font-size: clamp(38px, 3.6vw, 58px); font-weight: 600; line-height: 1.6; letter-spacing: -1.5px; color: #f0f5fc; margin: 24px 0 18px; }
+  .login-story h1 span { color: #5eead4; }
+  .login-description { font-size: 15px; color: #99afca; line-height: 2; }
+  .login-features { display: flex; flex-direction: column; gap: 22px; margin-top: 38px; }
+  .login-features > div { display: flex; align-items: center; gap: 16px; color: #5eead4; }
+  .login-features span { font-size: 13px; color: #dce7f5; }
+  .login-features small { display: block; font-size: 11px; margin-top: 3px; color: #7891b0; }
+  .login-note { margin-top: 42px; display: flex; align-items: center; gap: 12px; font-size: 10px; color: #7891b0; }
+  .note-line { width: 32px; height: 1px; background: #3b5375; }
+  .login-auth { width: 100%; max-width: 430px; justify-self: end; }
+  .login-card { padding: 38px; border: 1px solid #2a3d58; border-radius: 24px; background: linear-gradient(145deg, rgb(28 43 65 / .85), rgb(18 30 48 / .92)); backdrop-filter: blur(20px); box-shadow: 0 20px 60px rgb(0 0 0 / .22); }
+  .login-footer { position: relative; margin: 0 5vw; padding: 22px 0; border-top: 1px solid rgb(153 175 202 / .12); display: flex; justify-content: space-between; font-size: 10px; color: #7891b0; }
+  .state-page { min-height: 100dvh; display: flex; align-items: center; justify-content: center; background: radial-gradient(ellipse at center, #182b3e, #0b1320 70%); padding: 32px; }
+  .state-card { display: flex; flex-direction: column; align-items: center; gap: 20px; max-width: 480px; width: 100%; text-align: center; padding: 42px; border: 1px solid #2a3d58; border-radius: 24px; background: rgb(18 30 48 / .8); }
+  .contract-workspace { background: #0b1320; }
+  .contract-workspace > .workspace-header { min-height: 78px; flex-shrink: 0; }
+}
+@media (min-width: 1600px) {
+  .history-pane { width: 340px; }
+  .review-main { padding: 24px; }
+  .upload-page { padding: 40px 56px; }
+}
+@media (max-width: 1100px) {
+  .workspace-header { gap: 12px; padding-left: 24px; padding-right: 24px; }
+  .workspace-nav-link { padding-left: 9px; padding-right: 9px; }
+  .header-return { display: none; }
+  .login-main { gap: 40px; }
+  .login-card { padding: 28px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+}
+
+@media (min-width: 1100px) and (max-height: 800px) {
+  .login-main { padding-top: 20px; padding-bottom: 20px; }
+  .login-header { padding-top: 22px; padding-bottom: 22px; }
+  .login-story h1 { font-size: 42px; }
+  .login-card { padding: 30px; }
+  .login-story h1 { margin-top: 15px; line-height: 1.4; }
+  .login-features { gap: 16px; margin-top: 26px; }
+  .login-note { margin-top: 26px; }
+}

@@ -151,9 +151,9 @@ function Chat() {
   const showDetail = selectedId !== null;
 
   return (
-    <div className="flex h-screen overflow-hidden">
+    <div className="review-layout">
       {/* Sidebar */}
-      <div className="flex-1 rounded-lg p-4 overflow-hidden">
+      <div className="history-pane">
         <Sidebar
           reports={reports}
           loading={historyStatus === "loading"}
@@ -179,8 +179,8 @@ function Chat() {
       </div>
 
       {/* Main Content */}
-      <div className="flex-[3] m-3 rounded-lg flex flex-col h-[calc(100vh-1.5rem)]">
-        <div className="flex-1 min-h-0 border-2 border-navy-700 rounded-lg my-1 overflow-hidden">
+      <div className="review-main">
+        <div className="review-content">
           {showDetail ? (
             <Detail
               report={selected}

@@ -1,3 +1,4 @@
+import WorkspaceHeader from "../component/WorkspaceHeader";
 import { useCallback, useEffect, useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import {
@@ -194,7 +195,8 @@ export default function ContractPage() {
   const gaugeBackground = `conic-gradient(${RISK_COLORS.high.hex} 0% ${highEnd}%, ${RISK_COLORS.medium.hex} ${highEnd}% ${mediumEnd}%, ${RISK_COLORS.low.hex} ${mediumEnd}% ${lowEnd}%, ${RISK_COLORS.unknown.hex} ${lowEnd}% 100%)`;
 
   return (
-    <div className="flex h-screen flex-col overflow-hidden bg-navy-950 text-white">
+    <div className="contract-workspace flex h-screen flex-col overflow-hidden text-white">
+      <WorkspaceHeader />
       {/* ── Status / error — global, thin, above everything else so neither
           the sidebar nor the reading pane has to make room for them ──────── */}
       {busy && (
@@ -235,7 +237,7 @@ export default function ContractPage() {
         {/* ── Sidebar — everything about the report that isn't the contract
             text itself, grouped once so the reading pane starts clean:
             identity, the risk gauge, counts, metadata, and notices ──────── */}
-        <aside className="flex w-full shrink-0 flex-col overflow-y-auto border-b border-navy-800 bg-navy-900/60 backdrop-blur-sm lg:h-full lg:w-[300px] lg:border-b-0 lg:border-r">
+        <aside className="flex w-full shrink-0 flex-col overflow-y-auto border-b border-navy-800 bg-navy-900/60 backdrop-blur-sm lg:h-full lg:w-[280px] lg:border-b-0 lg:border-r">
           <div className="flex items-center gap-3 px-5 py-4">
             <Link
               to="/manual"
@@ -248,7 +250,7 @@ export default function ContractPage() {
 
           <div className="px-5 pb-1">
             <h1 className="text-base font-bold leading-tight tracking-tight text-white">
-              Contract Clause Risk Reviewer
+              Review workspace
             </h1>
             <p className="mt-0.5 truncate text-xs font-medium tracking-wide text-slate-400">
               {fileName ?? "No contract loaded"}

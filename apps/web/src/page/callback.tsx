@@ -1,3 +1,4 @@
+import LoadingScreen from "../component/LoadingScreen";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { consumeTokenFromUrl, getToken } from "../lib/auth";
@@ -22,8 +23,6 @@ export default function AuthCallbackPage() {
   }, [navigate, refresh]);
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-black text-sm text-zinc-400">
-      Signing you in…
-    </div>
+    <LoadingScreen message="กำลังเข้าสู่พื้นที่ตรวจสัญญา…" />
   );
 }

@@ -1,3 +1,5 @@
+import LoadingScreen from "./LoadingScreen";
+import { WifiOff } from "lucide-react";
 import { Navigate } from "react-router-dom";
 import { useAuth } from "../lib/auth-context";
 
@@ -15,26 +17,25 @@ export default function RequireAuth({ children }: { children: React.ReactNode })
 
   if (status === "checking") {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-black text-sm text-zinc-400">
-        Checking your session…
-      </div>
+      <LoadingScreen message="กำลังตรวจสอบการเข้าสู่ระบบ…" />
     );
   }
 
   if (status === "unreachable") {
     return (
-      <div className="flex min-h-screen flex-col items-center justify-center gap-4 bg-black px-4 text-center">
-        <p className="text-sm text-zinc-400">
+      <div className="state-page">
+        <div className="state-card"><WifiOff size={30} className="text-teal-300" /><h1 className="panel-title">เชื่อมต่อบริการไม่ได้</h1>
+        <p className="text-sm text-navy-300 leading-relaxed">
           Couldn't reach the server to confirm your session. You're still signed
           in — this is a connection problem, not a login problem.
         </p>
         <button
           type="button"
           onClick={refresh}
-          className="rounded-xl border border-white/10 bg-white/5 px-5 py-2.5 text-sm font-medium text-zinc-200 transition-colors hover:border-white/20 hover:bg-white/10 hover:text-white"
+          className="primary-button"
         >
           Try again
-        </button>
+        </button></div>
       </div>
     );
   }

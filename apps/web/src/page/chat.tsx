@@ -7,6 +7,7 @@ import {
   type KeyboardEvent,
 } from "react";
 import { UploadCloud, FileText, X, CheckCircle2, AlertTriangle } from "lucide-react";
+import PageIntro from "../component/PageIntro";
 import type { ContractReport } from "../component/contract/types";
 import {
   ACCEPTED_EXTENSIONS,
@@ -121,34 +122,30 @@ export default function FileUploadPage({
   const removeEntry = (id: number) => setEntries((prev) => prev.filter((e) => e.id !== id));
 
   return (
-    <div className="h-full w-full bg-navy-950 text-white font-sans flex flex-col items-center justify-center px-6 py-8 overflow-y-auto">
-      <style>{`
-        .font-sans { font-family: 'Inter', ui-sans-serif, system-ui, sans-serif; }
-        .font-mono-tix { font-family: ui-monospace, SFMono-Regular, monospace; }
-        .manifest-item { animation: slideIn 0.35s ease both; }
-        @keyframes slideIn {
-          from { opacity: 0; transform: translateY(-6px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-      `}</style>
-
-      <div className="w-full max-w-[560px] flex flex-col items-center">
+    <div className="upload-page h-full w-full text-white flex flex-col px-10 py-8 overflow-y-auto">
+      <PageIntro eyebrow="YOUR REVIEW WORKSPACE" title="ตรวจสัญญาใหม่" description="เริ่มจากอัปโหลดเอกสาร แล้วให้ AI ช่วยแยกข้อสัญญาและประเมินความเสี่ยง" />
+      <div className="upload-body">
+      <div className="w-full max-w-[720px] flex flex-col items-center">
         {/* Upload zone */}
         <div
           role="button"
           tabIndex={0}
           onClick={() => inputRef.current?.click()}
-          onKeyDown={(e: KeyboardEvent<HTMLDivElement>) =>
-            (e.key === "Enter" || e.key === " ") && inputRef.current?.click()
-          }
+          onKeyDown={(e: KeyboardEvent<HTMLDivElement>) => {
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault();
+              inputRef.current?.click();
+            }
+          }}
+          aria-label="เลือกไฟล์สัญญาเพื่อเริ่มตรวจ"
           onDragOver={(e: DragEvent<HTMLDivElement>) => {
             e.preventDefault();
             setDragging(true);
           }}
           onDragLeave={() => setDragging(false)}
           onDrop={onDrop}
-          className={`w-full shrink-0 rounded-2xl border-2 border-dashed px-8 py-10 text-center cursor-pointer transition-colors duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-navy-500
-            ${dragging ? "border-navy-500 bg-navy-500/10" : "border-navy-700 bg-navy-900 hover:border-navy-600"}`}
+          className={`w-full shrink-0 upload-zone rounded-2xl border border-dashed px-8 py-14 text-center cursor-pointer transition-colors duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-navy-500
+            ${dragging ? "border-teal-300 bg-teal-400/10" : "border-navy-600 bg-navy-900/60 hover:border-teal-400/60 hover:bg-teal-400/5"}`}
         >
           <input
             ref={inputRef}
@@ -163,15 +160,15 @@ export default function FileUploadPage({
               e.target.value = "";
             }}
           />
-          <div className="w-11 h-11 mx-auto mb-4 rounded-[10px] bg-navy-800 border border-navy-700 flex items-center justify-center">
+          <div className="w-16 h-16 mx-auto mb-6 rounded-2xl bg-teal-400/10 border border-teal-400/20 flex items-center justify-center">
             <UploadCloud
-              size={20}
-              className={dragging ? "text-navy-400" : "text-slate-400"}
+              size={29}
+              className={dragging ? "text-teal-200" : "text-teal-300"}
               strokeWidth={1.75}
             />
           </div>
-          <div className="text-[15px]">
-            <span className="text-navy-300 font-semibold">คลิกเพื่อเลือกไฟล์</span>
+          <div className="text-lg">
+            <span className="text-teal-300 font-semibold">คลิกเพื่อเลือกไฟล์</span>
             <span className="text-white"> หรือลากมาวางตรงนี้</span>
           </div>
           <div className="text-[13px] text-slate-400 mt-1.5">
@@ -182,7 +179,7 @@ export default function FileUploadPage({
         {/* Manifest list */}
         {entries.length > 0 && (
           <div className="w-full mt-6 max-h-[40vh] overflow-y-auto pr-1">
-            <div className="font-mono-tix text-[11px] tracking-[0.1em] text-slate-400 uppercase mb-3 flex justify-between">
+            <div className="font-mono text-[11px] tracking-[0.1em] text-slate-400 uppercase mb-3 flex justify-between">
               <span>Manifest</span>
               <span>
                 {entries.length} item{entries.length > 1 ? "s" : ""}
@@ -199,7 +196,7 @@ export default function FileUploadPage({
                   } ${entry.report ? "cursor-pointer hover:border-navy-600" : ""}`}
                 >
                   {/* sequence stub */}
-                  <div className="w-11 self-stretch flex items-center justify-center font-mono-tix text-xs text-slate-500 border-r border-dashed border-navy-800">
+                  <div className="w-11 self-stretch flex items-center justify-center font-mono text-xs text-slate-500 border-r border-dashed border-navy-800">
                     {String(entries.length - idx).padStart(2, "0")}
                   </div>
 
@@ -212,7 +209,7 @@ export default function FileUploadPage({
                     <div className="text-sm font-medium text-white overflow-hidden text-ellipsis whitespace-nowrap">
                       {entry.name}
                     </div>
-                    <div className="font-mono-tix text-[11.5px] text-slate-400 mt-0.5">
+                    <div className="font-mono text-[11.5px] text-slate-400 mt-0.5">
                       {formatBytes(entry.size)}
                       {entry.status === "reviewing" && " · กำลังตรวจ…"}
                       {entry.status === "done" &&
@@ -253,6 +250,12 @@ export default function FileUploadPage({
             </div>
           </div>
         )}
+        <div className="upload-steps">
+          <div><span>01</span><p>อัปโหลดเอกสาร<small>เลือกไฟล์สัญญาที่ต้องการตรวจ</small></p></div>
+          <div><span>02</span><p>วิเคราะห์รายข้อ<small>ตรวจความเสี่ยงเทียบ Playbook</small></p></div>
+          <div><span>03</span><p>ทบทวนผลการตรวจ<small>อ่านเหตุผลและรับรองผลด้วยตัวเอง</small></p></div>
+        </div>
+      </div>
       </div>
     </div>
   );

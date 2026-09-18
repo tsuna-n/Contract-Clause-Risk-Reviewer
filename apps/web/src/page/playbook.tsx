@@ -1,5 +1,6 @@
+import WorkspaceHeader from "../component/WorkspaceHeader";
+import PageIntro from "../component/PageIntro";
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
 import {
   fetchPlaybookPositions,
   createPlaybookPosition,
@@ -32,6 +33,10 @@ const CLAUSE_TYPES: ClauseType[] = [
 
 // ระดับความเสี่ยงที่สามารถตั้งให้กับ playbook position ได้
 const RISK_LEVELS: RiskLevel[] = ["low", "medium", "high", "unknown"];
+
+function clauseTypeLabel(value: string) {
+  return value.replaceAll("_", " ").replace(/\b\w/g, char => char.toUpperCase());
+}
 
 export default function PlaybookPage() {
   // รายการ playbook ที่ดึงมาจาก backend เพื่อแสดงบนตาราง
@@ -225,49 +230,30 @@ export default function PlaybookPage() {
   });
 
   return (
-    <div className="min-h-screen bg-neutral-950 text-neutral-100 flex flex-col font-sans">
+    <div className="tool-page min-h-screen text-slate-100 flex flex-col">
       {/* --- Top bar: header ของหน้า + ปุ่มกลับสู่ app + ปุ่มเพิ่ม position --- */}
-      <header className="border-b border-neutral-800 bg-neutral-900/80 backdrop-blur px-6 py-4 flex items-center justify-between">
-        <div className="flex items-center space-x-4">
-          <Link to="/manual" className="text-amber-500 font-serif text-xl font-bold tracking-wide">
-            Contract Risk Reviewer
-          </Link>
-          <span className="text-neutral-600">/</span>
-          <h1 className="text-neutral-200 text-lg font-medium">Playbook Management (CRUD)</h1>
-        </div>
-        <div className="flex items-center space-x-3">
-          <Link
-            to="/manual"
-            className="px-3 py-1.5 text-xs font-medium rounded-lg bg-neutral-800 text-neutral-300 hover:bg-neutral-700 transition"
-          >
-            ← Back to App
-          </Link>
-          <button
-            onClick={openCreateModal}
-            className="px-4 py-2 text-sm font-medium rounded-lg bg-amber-500 text-neutral-950 hover:bg-amber-400 font-semibold transition"
-          >
-            + Add Position
-          </button>
-        </div>
-      </header>
+      <WorkspaceHeader actions={
+        <button onClick={openCreateModal} className="primary-button">+ Add Position</button>
+      } />
 
       {/* --- Main content container: toolbar + table/list + semantic search --- */}
-      <main className="flex-1 max-w-7xl w-full mx-auto p-6 space-y-6">
+      <main className="flex-1 max-w-[1440px] w-full mx-auto px-8 py-10 space-y-6">
+        <PageIntro eyebrow="KNOWLEDGE LIBRARY" title="Playbook" description="จัดการมาตรฐานข้อสัญญาและค้นหาแนวทางที่เหมาะกับการตรวจของคุณ" aside={<span className="count-chip">{loading ? "กำลังโหลด…" : `${positions.length} positions`}</span>} />
         {/* --- Toolbar สำหรับกำหนด category filter และ text search ของรายการที่แสดงอยู่ --- */}
-        <div className="bg-neutral-900 border border-neutral-800 rounded-xl p-4 flex flex-col sm:flex-row gap-4 items-center justify-between">
+        <div className="bg-navy-900 border border-navy-800 rounded-xl p-4 flex flex-col sm:flex-row gap-4 items-center justify-between">
           <div className="flex items-center gap-3 w-full sm:w-auto">
-            <label className="text-xs uppercase tracking-wider text-neutral-400 font-medium">
+            <label className="text-xs uppercase tracking-wider text-navy-400 font-medium">
               Category:
             </label>
             <select
               value={selectedType}
               onChange={(e) => setSelectedType(e.target.value)}
-              className="bg-neutral-800 border border-neutral-700 text-neutral-200 text-sm rounded-lg px-3 py-2 focus:outline-none focus:border-amber-500"
+              className="bg-navy-800 border border-navy-700 text-navy-200 text-sm rounded-lg px-3 py-2 focus:outline-none focus:border-teal-400"
             >
               <option value="">All Categories ({positions.length})</option>
               {CLAUSE_TYPES.map((t) => (
                 <option key={t} value={t}>
-                  {t}
+                  {clauseTypeLabel(t)}
                 </option>
               ))}
             </select>
@@ -279,7 +265,7 @@ export default function PlaybookPage() {
               placeholder="Search title, ID, text..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-neutral-800 border border-neutral-700 text-neutral-200 text-sm rounded-lg px-4 py-2 placeholder-neutral-500 focus:outline-none focus:border-amber-500"
+              className="w-full bg-navy-800 border border-navy-700 text-navy-200 text-sm rounded-lg px-4 py-2 placeholder-navy-500 focus:outline-none focus:border-teal-400"
             />
           </div>
         </div>
@@ -287,9 +273,9 @@ export default function PlaybookPage() {
         {/* --- Semantic search panel: ค้นหาตามความหมายเต็ม playbook ไม่ใช่แค่ filter local --- */}
         <form
           onSubmit={runSemanticSearch}
-          className="bg-neutral-900 border border-neutral-800 rounded-xl p-4 flex flex-col sm:flex-row gap-3 items-stretch sm:items-center"
+          className="bg-navy-900 border border-navy-800 rounded-xl p-4 flex flex-col sm:flex-row gap-3 items-stretch sm:items-center"
         >
-          <label className="text-xs uppercase tracking-wider text-neutral-400 font-medium sm:w-32">
+          <label className="text-xs uppercase tracking-wider text-navy-400 font-medium sm:w-32">
             Semantic:
           </label>
           <input
@@ -297,12 +283,12 @@ export default function PlaybookPage() {
             value={semanticQ}
             onChange={(e) => setSemanticQ(e.target.value)}
             placeholder="Search by meaning across all positions (e.g. 'who pays if data leaks')"
-            className="flex-1 bg-neutral-800 border border-neutral-700 text-neutral-200 text-sm rounded-lg px-4 py-2 placeholder-neutral-500 focus:outline-none focus:border-amber-500"
+            className="flex-1 bg-navy-800 border border-navy-700 text-navy-200 text-sm rounded-lg px-4 py-2 placeholder-navy-500 focus:outline-none focus:border-teal-400"
           />
           <button
             type="submit"
             disabled={semanticLoading || !semanticQ.trim()}
-            className="px-4 py-2 text-sm font-medium rounded-lg bg-neutral-800 text-neutral-200 hover:bg-neutral-700 disabled:opacity-50 disabled:cursor-not-allowed transition"
+            className="px-4 py-2 text-sm font-medium rounded-lg bg-navy-800 text-navy-200 hover:bg-navy-700 disabled:opacity-50 disabled:cursor-not-allowed transition"
           >
             {semanticLoading ? "Searching…" : "Search"}
           </button>
@@ -310,7 +296,7 @@ export default function PlaybookPage() {
             <button
               type="button"
               onClick={clearSemanticSearch}
-              className="px-4 py-2 text-sm font-medium rounded-lg bg-neutral-800 text-neutral-400 hover:text-neutral-200 transition"
+              className="px-4 py-2 text-sm font-medium rounded-lg bg-navy-800 text-navy-400 hover:text-navy-200 transition"
             >
               ← Back to list
             </button>
@@ -325,7 +311,7 @@ export default function PlaybookPage() {
         {/* --- เนื้อหาหลัก: แสดงผลลัพธ์ semantic search หรือตาราง playbook ปกติ --- */}
         {semanticResults !== null ? (
           semanticResults.length === 0 ? (
-            <div className="bg-neutral-900/60 border border-dashed border-neutral-800 rounded-xl py-16 text-center text-neutral-500">
+            <div className="bg-navy-900/60 border border-dashed border-navy-800 rounded-xl py-16 text-center text-navy-400">
               No matching positions.
             </div>
           ) : (
@@ -333,48 +319,48 @@ export default function PlaybookPage() {
               {semanticResults.map((hit, i) => (
                 <div
                   key={hit.position.id}
-                  className="bg-neutral-900 border border-neutral-800 rounded-xl p-4"
+                  className="bg-navy-900 border border-navy-800 rounded-xl p-4"
                 >
                   <div className="flex items-center justify-between mb-2 gap-3">
                     <div className="flex items-center gap-3 min-w-0">
-                      <span className="text-xs font-mono text-neutral-500 flex-shrink-0">#{i + 1}</span>
-                      <span className="px-2.5 py-1 rounded-full text-xs font-medium bg-amber-500/10 text-amber-300 border border-amber-500/20 flex-shrink-0">
-                        {hit.position.clause_type}
+                      <span className="text-xs font-mono text-navy-400 flex-shrink-0">#{i + 1}</span>
+                      <span className="px-2.5 py-1 rounded-full text-xs font-medium bg-teal-400/5 text-teal-200 border border-teal-400/15 flex-shrink-0">
+                        {clauseTypeLabel(hit.position.clause_type)}
                       </span>
-                      <h3 className="text-sm font-medium text-neutral-100 truncate">
+                      <h3 className="text-sm font-medium text-navy-100 truncate">
                         {hit.position.title}
                       </h3>
                     </div>
                     <div className="flex items-center gap-2 text-xs flex-shrink-0">
-                      <span className="text-neutral-400">score {hit.score.toFixed(3)}</span>
-                      <span className="px-2 py-0.5 rounded bg-neutral-800 text-neutral-400 uppercase">
+                      <span className="text-navy-400">score {hit.score.toFixed(3)}</span>
+                      <span className="px-2 py-0.5 rounded bg-navy-800 text-navy-400 uppercase">
                         {hit.source}
                       </span>
                     </div>
                   </div>
-                  <p className="text-xs text-neutral-400 line-clamp-2">
+                  <p className="text-xs text-navy-400 line-clamp-2">
                     {hit.position.preferred_language}
                   </p>
-                  <p className="text-[11px] text-neutral-600 mt-1 font-mono">{hit.position.id}</p>
+                  <p className="text-[11px] text-navy-400 mt-1 font-mono">{hit.position.id}</p>
                 </div>
               ))}
             </div>
           )
         ) : loading ? (
-          <div className="text-center py-20 text-neutral-500">Loading playbook positions...</div>
+          <div className="text-center py-20 text-navy-400">Loading playbook positions...</div>
         ) : error ? (
           <div className="bg-red-950/40 border border-red-800/60 text-red-300 p-4 rounded-xl text-center">
             {error}
           </div>
         ) : filteredPositions.length === 0 ? (
-          <div className="bg-neutral-900/60 border border-dashed border-neutral-800 rounded-xl py-16 text-center text-neutral-500">
+          <div className="bg-navy-900/60 border border-dashed border-navy-800 rounded-xl py-16 text-center text-navy-400">
             No playbook positions found.
           </div>
         ) : (
-          <div className="overflow-x-auto border border-neutral-800 rounded-xl bg-neutral-900">
-            <table className="w-full text-left border-collapse text-sm text-neutral-300">
+          <div className="overflow-x-auto border border-navy-800 rounded-xl bg-navy-900">
+            <table className="w-full text-left border-collapse text-sm text-navy-300">
               <thead>
-                <tr className="border-b border-neutral-800 bg-neutral-950/50 text-xs uppercase tracking-wider text-neutral-400">
+                <tr className="border-b border-navy-800 bg-navy-950/50 text-xs uppercase tracking-wider text-navy-400">
                   <th className="py-3.5 px-4 font-semibold">ID</th>
                   <th className="py-3.5 px-4 font-semibold">Clause Type</th>
                   <th className="py-3.5 px-4 font-semibold">Title</th>
@@ -385,16 +371,16 @@ export default function PlaybookPage() {
                   <th className="py-3.5 px-4 font-semibold text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-neutral-800">
+              <tbody className="divide-y divide-navy-800">
                 {filteredPositions.map((pos) => (
-                  <tr key={pos.id} className="hover:bg-neutral-850 transition align-top">
-                    <td className="py-3.5 px-4 font-mono text-xs text-neutral-400">{pos.id}</td>
+                  <tr key={pos.id} className="hover:bg-navy-800/50 transition align-top">
+                    <td className="py-3.5 px-4 font-mono text-xs text-navy-400">{pos.id}</td>
                     <td className="py-3.5 px-4">
-                      <span className="px-2.5 py-1 rounded-full text-xs font-medium bg-amber-500/10 text-amber-300 border border-amber-500/20">
-                        {pos.clause_type}
+                      <span className="px-2.5 py-1 rounded-full text-xs font-medium bg-teal-400/5 text-teal-200 border border-teal-400/15">
+                        {clauseTypeLabel(pos.clause_type)}
                       </span>
                     </td>
-                    <td className="py-3.5 px-4 font-medium text-neutral-100 max-w-[220px]">
+                    <td className="py-3.5 px-4 font-medium text-navy-100 max-w-[220px]">
                       {pos.title}
                     </td>
                     <td className="py-3.5 px-4">
@@ -410,10 +396,10 @@ export default function PlaybookPage() {
                         {pos.risk_if_absent}
                       </span>
                     </td>
-                    <td className="py-3.5 px-4 text-xs text-neutral-400 max-w-[240px] align-top">
+                    <td className="py-3.5 px-4 text-xs text-navy-400 max-w-[240px] align-top">
                       <div className="line-clamp-3">{pos.preferred_language}</div>
                     </td>
-                    <td className="py-3.5 px-4 text-xs text-neutral-400 max-w-[240px] align-top">
+                    <td className="py-3.5 px-4 text-xs text-navy-400 max-w-[240px] align-top">
                       <div className="line-clamp-3">{pos.fallback_language}</div>
                     </td>
                     <td className="py-3.5 px-4 align-top">
@@ -422,20 +408,20 @@ export default function PlaybookPage() {
                           {pos.tags.map((tag) => (
                             <span
                               key={`${pos.id}-${tag}`}
-                              className="px-2 py-0.5 rounded-full text-[10px] bg-neutral-800 text-neutral-300 border border-neutral-700"
+                              className="px-2 py-0.5 rounded-full text-[10px] bg-navy-800 text-navy-300 border border-navy-700"
                             >
                               {tag}
                             </span>
                           ))}
                         </div>
                       ) : (
-                        <span className="text-[11px] text-neutral-500">—</span>
+                        <span className="text-[11px] text-navy-400">—</span>
                       )}
                     </td>
                     <td className="py-3.5 px-4 text-right space-x-2 align-top">
                       <button
                         onClick={() => openEditModal(pos)}
-                        className="px-3 py-1 text-xs font-medium bg-neutral-800 text-neutral-200 hover:bg-neutral-700 rounded transition"
+                        className="px-3 py-1 text-xs font-medium bg-navy-800 text-navy-200 hover:bg-navy-700 rounded transition"
                       >
                         Edit
                       </button>
@@ -457,15 +443,15 @@ export default function PlaybookPage() {
       {/* --- Modal สำหรับสร้าง/แก้ไข playbook position --- */}
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
-          <div className="bg-neutral-900 border border-neutral-800 rounded-2xl max-w-lg w-full p-6 shadow-2xl space-y-4">
-            <h2 className="text-xl font-semibold text-neutral-100 border-b border-neutral-800 pb-3">
+          <div role="dialog" aria-modal="true" aria-labelledby="playbook-dialog-title" className="bg-navy-900 border border-navy-700 rounded-2xl max-w-xl w-full max-h-[90vh] overflow-y-auto p-7 shadow-2xl space-y-4">
+            <h2 id="playbook-dialog-title" className="text-xl font-semibold text-navy-100 border-b border-navy-800 pb-3">
               {editingPosition ? "Edit Playbook Position" : "Create Playbook Position"}
             </h2>
             <form onSubmit={handleSubmit} className="space-y-4">
               {formError && <p role="alert" className="text-sm text-rose-400">{formError}</p>}
               {!editingPosition && (
                 <div>
-                  <label className="block text-xs font-medium text-neutral-400 mb-1">
+                  <label className="block text-xs font-medium text-navy-400 mb-1">
                     ID (Optional, auto-generated if empty)
                   </label>
                   <input
@@ -473,37 +459,37 @@ export default function PlaybookPage() {
                     value={formId}
                     onChange={(e) => setFormId(e.target.value)}
                     placeholder="e.g. pb_confidentiality_01"
-                    className="w-full bg-neutral-800 border border-neutral-700 text-neutral-200 text-sm rounded-lg px-3 py-2 focus:outline-none focus:border-amber-500 font-mono"
+                    className="w-full bg-navy-800 border border-navy-700 text-navy-200 text-sm rounded-lg px-3 py-2 focus:outline-none focus:border-teal-400 font-mono"
                   />
                 </div>
               )}
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-medium text-neutral-400 mb-1">
+                  <label className="block text-xs font-medium text-navy-400 mb-1">
                     Clause Category
                   </label>
                   <select
                     value={formClauseType}
                     onChange={(e) => setFormClauseType(e.target.value as ClauseType)}
-                    className="w-full bg-neutral-800 border border-neutral-700 text-neutral-200 text-sm rounded-lg px-3 py-2 focus:outline-none focus:border-amber-500"
+                    className="w-full bg-navy-800 border border-navy-700 text-navy-200 text-sm rounded-lg px-3 py-2 focus:outline-none focus:border-teal-400"
                   >
                     {CLAUSE_TYPES.map((t) => (
                       <option key={t} value={t}>
-                        {t}
+                        {clauseTypeLabel(t)}
                       </option>
                     ))}
                   </select>
                 </div>
 
                 <div>
-                  <label className="block text-xs font-medium text-neutral-400 mb-1">
+                  <label className="block text-xs font-medium text-navy-400 mb-1">
                     Risk If Absent
                   </label>
                   <select
                     value={formRisk}
                     onChange={(e) => setFormRisk(e.target.value as RiskLevel)}
-                    className="w-full bg-neutral-800 border border-neutral-700 text-neutral-200 text-sm rounded-lg px-3 py-2 focus:outline-none focus:border-amber-500 uppercase"
+                    className="w-full bg-navy-800 border border-navy-700 text-navy-200 text-sm rounded-lg px-3 py-2 focus:outline-none focus:border-teal-400 uppercase"
                   >
                     {RISK_LEVELS.map((r) => (
                       <option key={r} value={r}>
@@ -515,19 +501,19 @@ export default function PlaybookPage() {
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-neutral-400 mb-1">Title</label>
+                <label className="block text-xs font-medium text-navy-400 mb-1">Title</label>
                 <input
                   type="text"
                   required
                   value={formTitle}
                   onChange={(e) => setFormTitle(e.target.value)}
                   placeholder="e.g. Standard Confidentiality Clause"
-                  className="w-full bg-neutral-800 border border-neutral-700 text-neutral-200 text-sm rounded-lg px-3 py-2 focus:outline-none focus:border-amber-500"
+                  className="w-full bg-navy-800 border border-navy-700 text-navy-200 text-sm rounded-lg px-3 py-2 focus:outline-none focus:border-teal-400"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-neutral-400 mb-1">
+                <label className="block text-xs font-medium text-navy-400 mb-1">
                   Preferred Standard Language
                 </label>
                 <textarea
@@ -536,12 +522,12 @@ export default function PlaybookPage() {
                   value={formPreferred}
                   onChange={(e) => setFormPreferred(e.target.value)}
                   placeholder="Ideal clause text..."
-                  className="w-full bg-neutral-800 border border-neutral-700 text-neutral-200 text-sm rounded-lg px-3 py-2 focus:outline-none focus:border-amber-500"
+                  className="w-full bg-navy-800 border border-navy-700 text-navy-200 text-sm rounded-lg px-3 py-2 focus:outline-none focus:border-teal-400"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-neutral-400 mb-1">
+                <label className="block text-xs font-medium text-navy-400 mb-1">
                   Fallback Language
                 </label>
                 <textarea
@@ -550,12 +536,12 @@ export default function PlaybookPage() {
                   value={formFallback}
                   onChange={(e) => setFormFallback(e.target.value)}
                   placeholder="Acceptable fallback text..."
-                  className="w-full bg-neutral-800 border border-neutral-700 text-neutral-200 text-sm rounded-lg px-3 py-2 focus:outline-none focus:border-amber-500"
+                  className="w-full bg-navy-800 border border-navy-700 text-navy-200 text-sm rounded-lg px-3 py-2 focus:outline-none focus:border-teal-400"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-neutral-400 mb-1">
+                <label className="block text-xs font-medium text-navy-400 mb-1">
                   Tags (Comma separated)
                 </label>
                 <input
@@ -563,22 +549,22 @@ export default function PlaybookPage() {
                   value={formTags}
                   onChange={(e) => setFormTags(e.target.value)}
                   placeholder="e.g. standard, strict, high-risk"
-                  className="w-full bg-neutral-800 border border-neutral-700 text-neutral-200 text-sm rounded-lg px-3 py-2 focus:outline-none focus:border-amber-500"
+                  className="w-full bg-navy-800 border border-navy-700 text-navy-200 text-sm rounded-lg px-3 py-2 focus:outline-none focus:border-teal-400"
                 />
               </div>
 
-              <div className="flex items-center justify-end space-x-3 pt-3 border-t border-neutral-800">
+              <div className="flex items-center justify-end space-x-3 pt-3 border-t border-navy-800">
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
-                  className="px-4 py-2 text-sm text-neutral-400 hover:text-neutral-200 transition"
+                  className="px-4 py-2 text-sm text-navy-400 hover:text-navy-200 transition"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="px-5 py-2 text-sm font-medium bg-amber-500 text-neutral-950 hover:bg-amber-400 font-semibold rounded-lg transition"
+                  className="px-5 py-2 text-sm font-medium bg-teal-300 text-navy-950 hover:bg-teal-200 font-semibold rounded-lg transition"
                 >
                   {submitting ? "Saving..." : editingPosition ? "Update Position" : "Create Position"}
                 </button>

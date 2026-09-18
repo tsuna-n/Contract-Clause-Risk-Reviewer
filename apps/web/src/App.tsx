@@ -1,3 +1,4 @@
+import LoadingScreen from "./component/LoadingScreen";
 import { lazy, Suspense } from "react";
 import { createBrowserRouter, Navigate, RouterProvider } from "react-router-dom";
 import Login from "./page/login";
@@ -107,9 +108,7 @@ export default function App() {
   return (
     <AuthProvider>
       <Suspense fallback={
-        <div role="status" className="flex min-h-screen items-center justify-center bg-navy-950 text-slate-300">
-          กำลังโหลดหน้า…
-        </div>
+        <LoadingScreen message="กำลังโหลดหน้า…" />
       }>
         <RouterProvider router={router} />
       </Suspense>

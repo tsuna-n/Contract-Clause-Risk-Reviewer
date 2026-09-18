@@ -1,5 +1,6 @@
+import WorkspaceHeader from "../component/WorkspaceHeader";
+import PageIntro from "../component/PageIntro";
 import { useCallback, useEffect, useState } from "react";
-import { Link } from "react-router-dom";
 import { checkHealth, checkHealthDb, checkRoot } from "../lib/system";
 
 type ProbeState = "pending" | "up" | "down";
@@ -85,44 +86,24 @@ export default function SystemPage() {
   }, [probeAll]);
 
   return (
-    <div className="min-h-screen bg-neutral-950 text-neutral-100 flex flex-col font-sans">
-      <header className="border-b border-neutral-800 bg-neutral-900/80 backdrop-blur px-6 py-4 flex items-center justify-between">
-        <div className="flex items-center space-x-4">
-          <Link to="/manual" className="text-amber-500 font-serif text-xl font-bold tracking-wide">
-            Contract Risk Reviewer
-          </Link>
-          <span className="text-neutral-600">/</span>
-          <h1 className="text-neutral-200 text-lg font-medium">System Status</h1>
-        </div>
-        <div className="flex items-center gap-3">
-          <button
-            onClick={() => void run()}
-            disabled={checking}
-            className="px-3 py-1.5 text-xs font-medium rounded-lg bg-neutral-800 text-neutral-300 hover:bg-neutral-700 disabled:opacity-50 transition"
-          >
-            {checking ? "Checking…" : "Refresh"}
-          </button>
-          <Link
-            to="/manual"
-            className="px-3 py-1.5 text-xs font-medium rounded-lg bg-neutral-800 text-neutral-300 hover:bg-neutral-700 transition"
-          >
-            ← Back to App
-          </Link>
-        </div>
-      </header>
+    <div className="tool-page min-h-screen text-slate-100 flex flex-col">
+      <WorkspaceHeader actions={
+        <button onClick={run} disabled={checking} className="secondary-button">{checking ? "Checking…" : "↻ Refresh"}</button>
+      } />
 
-      <main className="flex-1 max-w-3xl w-full mx-auto p-6 space-y-4">
+      <main className="flex-1 max-w-6xl w-full mx-auto px-8 py-10 space-y-6">
+        <PageIntro eyebrow="SERVICE MONITOR" title="System status" description="ตรวจสอบความพร้อมของบริการและการเชื่อมต่อฐานข้อมูล" aside={<span className="count-chip">{checking ? "กำลังตรวจสอบ…" : `${probes.filter(p => p.state === "up").length} / ${probes.length} services online`}</span>} />
         <div className="grid gap-4">
           {probes.map((probe) => (
             <div
               key={probe.label}
-              className="bg-neutral-900 border border-neutral-800 rounded-xl p-4 flex items-center justify-between gap-4"
+              className="bg-navy-900 border border-navy-800 rounded-2xl p-6 flex items-center justify-between gap-4"
             >
               <div className="min-w-0">
-                <p className="text-sm font-medium text-neutral-100">{probe.label}</p>
-                <p className="text-xs text-neutral-500 font-mono">{probe.path}</p>
+                <p className="text-sm font-medium text-navy-100">{probe.label}</p>
+                <p className="text-xs text-navy-400 font-mono">{probe.path}</p>
                 {probe.detail && (
-                  <p className="text-[11px] text-neutral-600 mt-1 font-mono truncate">
+                  <p className="text-xs text-navy-300 mt-3 font-mono break-all">
                     {probe.detail}
                   </p>
                 )}
@@ -133,7 +114,7 @@ export default function SystemPage() {
                     ? "bg-emerald-500/20 text-emerald-300 border border-emerald-500/30"
                     : probe.state === "down"
                       ? "bg-red-500/20 text-red-400 border border-red-500/30"
-                      : "bg-neutral-800 text-neutral-400 border border-neutral-700"
+                      : "bg-navy-800 text-navy-400 border border-navy-700"
                 }`}
               >
                 {probe.state === "pending" ? "…" : probe.state}

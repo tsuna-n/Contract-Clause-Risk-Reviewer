@@ -1,5 +1,5 @@
 import { useState, type MouseEvent } from 'react';
-import { Trash2, Plus, LogOut, BookOpen, ShieldCheck, Cpu, Loader2 } from 'lucide-react';
+import { Trash2, Plus, LogOut, BookOpen, ShieldCheck, Cpu, Loader2, FileSearch, FolderClock } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import type { ReportSummary } from '../contract/types';
 import { riskAccent, riskBadge } from '../contract/riskStyles';
@@ -89,24 +89,14 @@ function Sidebar({
   }
 
   return (
-    <div className="h-screen bg-navy-950 flex justify-center px-4 overflow-hidden">
-      <div className="w-full max-w-2xl flex flex-col h-full py-10">
-        <div className="mb-8 flex items-end justify-between border-b border-navy-800 pb-5 flex-shrink-0">
-          <div>
-            <p className="text-xs uppercase tracking-[0.2em] text-navy-300 mb-1 font-mono">Legal desk</p>
-            <h1 className="text-2xl font-semibold text-white" style={{ fontFamily: 'Georgia, "Noto Serif Thai", serif' }}>
-              UrRISK
-            </h1>
-          </div>
-          <span className="text-xs text-slate-400 font-medium">
-            {loading ? '' : `${reports.length} ฉบับ`}
-          </span>
-        </div>
+    <div className="h-full flex justify-center px-5 overflow-hidden">
+      <div className="w-full flex flex-col h-full py-7">
+        <div className="brand-lockup mb-8"><span className="brand-icon"><FileSearch size={22} /></span><span>UrRisk<span className="brand-subtitle">LEGAL WORKSPACE</span></span></div>
 
-        <div className="mb-6 flex-shrink-0 flex items-center justify-between">
+        <div className="mb-5 flex-shrink-0 flex items-center justify-between">
           <button
             onClick={onNewReview}
-            className="px-4 py-2 text-sm font-medium bg-navy-600 text-white rounded-lg hover:bg-navy-500 active:scale-[0.98] transition-all flex items-center gap-2 shadow-sm font-sans"
+            className="primary-button w-full justify-center"
           >
             <Plus className="w-4 h-4 stroke-[2.5]" />
             <span>ตรวจสัญญาใหม่</span>
@@ -137,6 +127,7 @@ function Sidebar({
           </Link>
         </div>
 
+        <div className="mb-4 flex items-center justify-between text-xs text-slate-400"><span className="flex items-center gap-2"><FolderClock size={14} /> ประวัติการตรวจ</span><span className="tabular-nums">{loading ? "…" : `${reports.length} ฉบับ`}</span></div>
         <div
           className="space-y-3 flex-1 min-h-0 overflow-y-auto pr-2 -mr-2
             [&::-webkit-scrollbar]:w-1.5
@@ -166,16 +157,16 @@ function Sidebar({
             <div className="text-center text-slate-500 py-16 text-sm border border-dashed border-navy-800 rounded-xl px-6 leading-relaxed">
               ยังไม่มีสัญญาที่ตรวจ
               <br />
-              อัปโหลดไฟล์ {ACCEPTED_EXTENSIONS.join(' / ')} ทางขวาเพื่อเริ่ม
+              เริ่มด้วยไฟล์ {ACCEPTED_EXTENSIONS.join(' / ')}
             </div>
           ) : (
             reports.map((report) => (
               <div
                 key={report.reportId}
                 onClick={() => onSelectReport?.(report)}
-                className={`rounded-xl bg-navy-900 border transition-all px-5 py-4 cursor-pointer relative group ${
+                className={`rounded-xl bg-navy-900 border transition-all px-4 py-4 cursor-pointer relative group ${
                   report.reportId === selectedReportId
-                    ? 'border-navy-500/60 bg-navy-800/80 shadow-sm'
+                    ? 'border-teal-400/40 bg-teal-400/5 shadow-sm'
                     : 'border-navy-800 hover:border-navy-700 hover:bg-navy-900/60'
                 }`}
               >

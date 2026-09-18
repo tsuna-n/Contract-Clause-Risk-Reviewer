@@ -78,10 +78,10 @@ function Detail({ report, loading = false, error = null, onBack, onRetry }: Deta
   }
 
   return (
-    <div className="relative h-full bg-navy-950 overflow-hidden">
+    <div className="relative h-full bg-[#0e1828] overflow-hidden">
       {/* ส่วนเนื้อหา — scroll ได้อิสระ ไม่กระทบตำแหน่งปุ่มด้านล่าง */}
-      <div className="h-full overflow-y-auto flex justify-center py-10 px-4">
-        <div className="w-full max-w-2xl pb-28">
+      <div className="h-full overflow-y-auto flex justify-center py-9 px-8">
+        <div className="w-full max-w-4xl pb-28">
           {/* หัวข้อ + ปุ่มย้อนกลับ */}
           <div className="mb-8 border-b border-navy-800 pb-5">
             {onBack && (
@@ -98,7 +98,7 @@ function Detail({ report, loading = false, error = null, onBack, onRetry }: Deta
               </p>
               <h1
                 className="text-2xl font-semibold text-white leading-snug break-words"
-                style={{ fontFamily: 'Georgia, "Noto Serif Thai", serif' }}
+
               >
                 {report.filename || report.contractId}
               </h1>
@@ -250,7 +250,7 @@ function Detail({ report, loading = false, error = null, onBack, onRetry }: Deta
             {/* override ต้องดูคู่กับสัญญาต้นฉบับ จึงส่งต่อไปหน้า workspace */}
             <Link
               to={`/contract?report=${encodeURIComponent(report.reportId)}`}
-              className="pointer-events-auto rounded-full bg-navy-600 px-5 py-3 text-xs font-semibold text-white whitespace-nowrap text-center hover:bg-navy-500 transition-colors"
+              className="pointer-events-auto rounded-full bg-teal-300 px-5 py-3 text-xs font-semibold text-navy-950 whitespace-nowrap text-center hover:bg-teal-200 transition-colors"
             >
               แก้ระดับความเสี่ยง
             </Link>

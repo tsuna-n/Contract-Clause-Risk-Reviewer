@@ -56,11 +56,11 @@ export default function GoogleButton({
       }
       className={[
         "group relative flex w-full items-center justify-center gap-3",
-        "rounded-xl border border-navy-600 bg-navy-800/60 px-6 py-3.5",
-        "text-sm font-medium text-navy-100 backdrop-blur-sm",
+        "rounded-xl border border-teal-300 bg-teal-300 px-6 py-3.5",
+        "text-sm font-semibold text-navy-950",
         "transition-all duration-200",
-        "hover:border-navy-400 hover:bg-navy-700/60 hover:text-white",
-        "hover:-translate-y-0.5 hover:shadow-lg hover:shadow-navy-950/70",
+        "enabled:hover:border-teal-200 enabled:hover:bg-teal-200",
+        "enabled:hover:-translate-y-0.5 hover:shadow-lg hover:shadow-navy-950/70",
         "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-navy-400/40 focus-visible:ring-offset-2 focus-visible:ring-offset-navy-950",
         "active:translate-y-0 active:shadow-none",
         inert ? "cursor-not-allowed opacity-50" : "",

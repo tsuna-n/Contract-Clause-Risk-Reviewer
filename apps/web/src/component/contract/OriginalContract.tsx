@@ -61,7 +61,7 @@ export default function OriginalContract({
   }
 
   return (
-    <div className="flex h-full flex-col overflow-hidden rounded-3xl border border-navy-800 bg-navy-900/60 shadow-2xl shadow-navy-950/40 backdrop-blur-sm">
+    <div className="flex h-full flex-col overflow-hidden rounded-2xl bg-navy-900/60">
       {/* Panel Header */}
       <div className="flex items-center justify-between border-b border-navy-800 bg-navy-900/80 px-6 py-4">
         <h2 className="text-base font-semibold tracking-wide text-white">
@@ -101,7 +101,7 @@ export default function OriginalContract({
                 }}
                 aria-current={isSelected}
                 className={`
-                  group block w-full text-left relative rounded-r-2xl p-4 cursor-pointer
+                  group block w-full text-left relative rounded-xl p-5 cursor-pointer
                   transition-all duration-200 ease-in-out
                   ${isSelected ? riskRowSelected[clause.riskLevel] : riskRow[clause.riskLevel]}
                   hover:brightness-110 hover:shadow-lg
@@ -151,7 +151,7 @@ export default function OriginalContract({
                     )}
                   </div>
                 </div>
-                <p className="line-clamp-4 text-sm leading-relaxed text-slate-300">
+                <p className="line-clamp-4 text-sm leading-[1.9] text-slate-300">
                   {clause.text}
                 </p>
               </button>

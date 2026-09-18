@@ -1,3 +1,4 @@
+import { FileSearch, ArrowLeft } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { getToken } from "../lib/auth";
 
@@ -18,27 +19,25 @@ export default function NotFoundPage() {
   const signedIn = getToken() !== null;
 
   return (
-    <div className="min-h-screen bg-neutral-950 text-neutral-100 flex items-center justify-center p-6 font-sans">
-      <div className="max-w-md w-full text-center space-y-5">
-        <p className="text-amber-500 font-serif text-xl font-bold tracking-wide">
-          Contract Risk Reviewer
-        </p>
+    <div className="state-page">
+      <div className="state-card">
+        <span className="brand-icon"><FileSearch size={24} /></span><p className="eyebrow">URRISK WORKSPACE</p>
 
         <div className="space-y-2">
-          <p className="text-6xl font-semibold text-neutral-700 tabular-nums">404</p>
-          <h1 className="text-lg font-medium text-neutral-200">ไม่พบหน้านี้</h1>
-          <p className="text-sm text-neutral-500">
+          <p className="text-7xl font-semibold text-teal-300/70 tracking-tight tabular-nums">404</p>
+          <h1 className="text-lg font-medium text-navy-200">ไม่พบหน้านี้</h1>
+          <p className="text-sm text-navy-400">
             ไม่มีหน้าที่อยู่ตรง{" "}
-            <span className="font-mono text-neutral-400 break-all">{pathname}</span>{" "}
+            <span className="font-mono text-navy-400 break-all">{pathname}</span>{" "}
             — ลิงก์อาจเก่า หรือพิมพ์ URL คลาดไป
           </p>
         </div>
 
         <Link
           to={signedIn ? "/manual" : "/login"}
-          className="inline-block px-4 py-2 text-sm font-medium rounded-lg bg-neutral-800 text-neutral-200 hover:bg-neutral-700 transition"
+          className="primary-button"
         >
-          {signedIn ? "← กลับไปหน้าหลัก" : "← ไปหน้าเข้าสู่ระบบ"}
+          <ArrowLeft size={16} />{signedIn ? "กลับไปหน้าหลัก" : "ไปหน้าเข้าสู่ระบบ"}
         </Link>
       </div>
     </div>
