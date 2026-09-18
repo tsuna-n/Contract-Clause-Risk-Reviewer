@@ -1,7 +1,8 @@
 import WorkspaceHeader from "../component/WorkspaceHeader";
 import PageIntro from "../component/PageIntro";
-import { useState } from "react";
-import { runEvaluation, type EvalMetrics } from "../lib/evaluate";
+import { useEffect, useState } from "react";
+import { startEvaluation, getEvaluation, type EvalJob, type EvalMetrics } from "../lib/evaluate";
+import { getToken } from "../lib/api";
 
 /** 0.0–1.0 → "83%", kept readable for a perfect 1.0 ("100%" not "100.0%"). */
 function pct(value: number): string {
@@ -16,10 +17,57 @@ interface MetricCard {
 
 export default function EvaluatePage() {
   const [goldSetPath, setGoldSetPath] = useState<string>("data/gold/annotations.jsonl");
-  const [limit, setLimit] = useState<string>("");
-  const [loading, setLoading] = useState<boolean>(false);
+  const [limit, setLimit] = useState<string>("1");
+  const [order, setOrder] = useState<"file" | "shortest">("shortest");
+  const [jobId, setJobId] = useState<string | null>(() => {
+    const saved = localStorage.getItem("evaluation_job");
+    if (!saved) return null;
+    try {
+      const value = JSON.parse(saved);
+      return value.token === getToken() ? value.jobId : null;
+    } catch { return null; }
+  });
+  const [progress, setProgress] = useState<EvalJob | null>(null);
+  const [loading, setLoading] = useState<boolean>(Boolean(jobId));
   const [error, setError] = useState<string | null>(null);
   const [metrics, setMetrics] = useState<EvalMetrics | null>(null);
+
+  useEffect(() => {
+    if (!jobId) return;
+    const controller = new AbortController();
+    let timer: ReturnType<typeof setTimeout>;
+    const poll = async () => {
+      try {
+        const job = await getEvaluation(jobId, controller.signal);
+        if (controller.signal.aborted) return;
+        setProgress(job);
+        setError(null);
+        if (job.status === "running") {
+          timer = setTimeout(poll, 1500);
+          return;
+        }
+        setMetrics(job.metrics);
+        setError(job.error);
+        setLoading(false);
+        setJobId(null);
+        localStorage.removeItem("evaluation_job");
+      } catch (err) {
+        if (controller.signal.aborted) return;
+        setError(err instanceof Error ? err.message : "Cannot fetch evaluation progress");
+        // A missing/expired job cannot resume. A temporary connection failure can.
+        if (err && typeof err === "object" && "status" in err &&
+            (err.status === 404 || err.status === 401)) {
+          setLoading(false);
+          setJobId(null);
+          localStorage.removeItem("evaluation_job");
+          return;
+        }
+        timer = setTimeout(poll, 5000);
+      }
+    };
+    void poll();
+    return () => { controller.abort(); clearTimeout(timer); };
+  }, [jobId]);
 
   const run = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -28,14 +76,20 @@ export default function EvaluatePage() {
       setError(null);
       setMetrics(null);
       const parsedLimit = limit.trim() ? Number(limit) : undefined;
-      const result = await runEvaluation({
+      setProgress(null);
+      if (parsedLimit !== undefined && (!Number.isInteger(parsedLimit) || parsedLimit < 1)) {
+        throw new Error("จำนวนสัญญาต้องเป็นจำนวนเต็มตั้งแต่ 1 ขึ้นไป");
+      }
+      const result = await startEvaluation({
         gold_set_path: goldSetPath.trim() || undefined,
-        limit: parsedLimit !== undefined && Number.isFinite(parsedLimit) ? parsedLimit : undefined,
+        limit: parsedLimit,
+        order,
       });
-      setMetrics(result);
+      localStorage.setItem("evaluation_job", JSON.stringify({ jobId: result.job_id, token: getToken() }));
+      setProgress(result);
+      setJobId(result.job_id);
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Evaluation failed");
-    } finally {
       setLoading(false);
     }
   };
@@ -62,7 +116,7 @@ export default function EvaluatePage() {
           <h2 className="panel-title">Configure evaluation</h2>
           <p className="text-sm text-navy-300 leading-relaxed">
             Run the review pipeline against a gold-set annotation file and report accuracy metrics.
-            Each evaluation may take several minutes.
+            1 รายการคือ 1 สัญญาทั้งฉบับ ซึ่งอาจมีหลายสิบข้อและใช้เวลาหลายนาที เลือกสัญญาสั้นก่อนเพื่อลองได้เร็วขึ้น
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-[1fr_180px] gap-4">
             <div>
@@ -79,11 +133,12 @@ export default function EvaluatePage() {
             </div>
             <div>
               <label className="block text-xs font-medium text-navy-400 mb-1">
-                Limit (optional)
+                จำนวนสัญญา (เว้นว่าง = ทั้งหมด)
               </label>
               <input
                 type="number"
                 min={1}
+                step={1}
                 value={limit}
                 onChange={(e) => setLimit(e.target.value)}
                 placeholder="all"
@@ -91,6 +146,15 @@ export default function EvaluatePage() {
               />
             </div>
           </div>
+          <label className="block text-xs text-navy-400">
+            ลำดับสัญญา
+            <select value={order} disabled={loading}
+              onChange={(e) => setOrder(e.target.value as "file" | "shortest")}
+              className="ml-3 bg-navy-800 border border-navy-700 text-navy-200 rounded-lg px-3 py-2">
+              <option value="shortest">สัญญาที่มีข้อน้อยที่สุดก่อน</option>
+              <option value="file">ตามลำดับในชุดข้อมูล</option>
+            </select>
+          </label>
           <div className="flex items-center gap-3">
             <button
               type="submit"
@@ -101,11 +165,25 @@ export default function EvaluatePage() {
             </button>
             {loading && (
               <span className="text-xs text-navy-400">
-                The pipeline runs serially per item — please keep this tab open.
+                กำลังตรวจสัญญา สามารถออกจากหน้านี้แล้วกลับมาดูความคืบหน้าได้
               </span>
             )}
           </div>
         </form>
+
+        {progress && (
+          <div role="status" aria-live="polite" className="bg-navy-900 border border-navy-800 rounded-xl p-4 space-y-2">
+            <p className="text-sm text-navy-200">
+              สัญญาที่เสร็จ {progress.completed_contracts}/{progress.total_contracts} ·
+              ข้อที่ตรวจเสร็จ {progress.completed_clauses}/{progress.total_clauses} ·
+              ใช้เวลา {Math.floor(progress.elapsed_seconds / 60)} นาที {Math.floor(progress.elapsed_seconds % 60)} วินาที
+            </p>
+            {progress.contract_id && <p className="text-xs text-navy-400 break-all">{progress.contract_id}</p>}
+            <progress className="w-full accent-teal-300" value={progress.completed_clauses} max={Math.max(1, progress.total_clauses)} />
+            {progress.status === "running" && progress.total_clauses === 0 && <p className="text-xs text-navy-400">กำลังเตรียมข้อมูลสัญญา…</p>}
+            {progress.status === "completed" && <p className="text-xs text-teal-300">ประเมินเสร็จแล้ว</p>}
+          </div>
+        )}
 
         {error && (
           <div className="bg-red-950/40 border border-red-800/60 text-red-300 p-4 rounded-xl text-sm">

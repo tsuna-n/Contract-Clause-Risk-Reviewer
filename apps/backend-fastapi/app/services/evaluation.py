@@ -8,6 +8,7 @@ regression gate in ``tests/eval``.
 from __future__ import annotations
 
 import json
+from collections.abc import Callable
 from pathlib import Path
 
 from app.ai.pipeline import Orchestrator
@@ -110,8 +111,29 @@ def load_gold(path: str | Path) -> list[dict]:
 def _load_contract_text(gold_path: str | Path, contract_id: str) -> str | None:
     """Return the raw fixture text for ``contract_id``, or ``None`` if missing."""
     contracts_dir = Path(gold_path).resolve().parent.parent / "contracts"
-    contract_path = contracts_dir / f"{contract_id}.txt"
+    contract_path = (contracts_dir / f"{contract_id}.txt").resolve()
+    if contracts_dir not in contract_path.parents:
+        raise InvalidInputError("contract_id must name a fixture inside data/contracts/")
     return contract_path.read_text() if contract_path.exists() else None
+
+
+def select_records(
+    gold_path: str | Path,
+    *,
+    limit: int | None = None,
+    contract_ids: set[str] | None = None,
+    order: str = "file",
+) -> list[dict]:
+    records = load_gold(gold_path)
+    if contract_ids is not None:
+        records = [record for record in records if record["contract_id"] in contract_ids]
+    if order == "shortest":
+        records.sort(key=lambda record: len(record.get("clauses", [])))
+    if limit is not None:
+        if limit < 1:
+            raise InvalidInputError("limit must be a positive integer")
+        records = records[:limit]
+    return records
 
 
 def run_eval(
@@ -121,6 +143,8 @@ def run_eval(
     known_position_ids: set[str],
     limit: int | None = None,
     contract_ids: set[str] | None = None,
+    order: str = "file",
+    on_progress: Callable[[dict], None] | None = None,
 ) -> EvalMetrics:
     """Run ``orchestrator`` over the gold set and return aggregate metrics.
 
@@ -133,11 +157,7 @@ def run_eval(
     ``contract_ids`` picks named ones — which is how you run the *cheap*
     contracts rather than whichever happen to be first in the file.
     """
-    records = load_gold(gold_path)
-    if contract_ids is not None:
-        records = [record for record in records if record["contract_id"] in contract_ids]
-    if limit is not None:
-        records = records[:limit]
+    records = select_records(gold_path, limit=limit, contract_ids=contract_ids, order=order)
 
     pred_spans: list[Span] = []
     gold_spans: list[Span] = []
@@ -148,7 +168,7 @@ def run_eval(
     valid_citations = 0
     total_citations = 0
 
-    for record in records:
+    for record_index, record in enumerate(records):
         contract_id = record["contract_id"]
         raw_text = _load_contract_text(gold_path, contract_id)
         if raw_text is None:
@@ -161,7 +181,34 @@ def run_eval(
             spans=[TextSpan(start=0, end=len(text), page=1)],
             page_map={1: (0, len(text))},
         )
-        report = orchestrator.review(document, contract_id=contract_id, session_id="eval")
+        if on_progress:
+
+            def clause_progress(
+                completed: int,
+                total: int,
+                *,
+                record_index: int = record_index,
+                contract_id: str = contract_id,
+            ) -> None:
+                on_progress(
+                    {
+                        "total_contracts": len(records),
+                        "completed_contracts": record_index,
+                        "contract_id": contract_id,
+                        "completed_clauses": completed,
+                        "total_clauses": total,
+                    }
+                )
+
+            report = orchestrator.review(
+                document,
+                contract_id=contract_id,
+                session_id="eval",
+                on_progress=clause_progress,
+                extract_metadata=False,
+            )
+        else:
+            report = orchestrator.review(document, contract_id=contract_id, session_id="eval")
 
         gold_clauses = record.get("clauses", [])
         record_gold_spans = [Span(**clause["span"]) for clause in gold_clauses]
@@ -198,6 +245,8 @@ def run_eval(
                 total_citations += 1
                 if citation.playbook_position_id in known_position_ids:
                     valid_citations += 1
+        if on_progress:
+            on_progress({"completed_contracts": record_index + 1})
 
     per_type_hits: dict[str, list[bool]] = {}
     for gold_type, pred_type in zip(gold_types, pred_types, strict=True):
@@ -272,11 +321,18 @@ class EvalService:
         self.orchestrator = orchestrator
         self.known_position_ids = known_position_ids
 
-    def run(self, request: EvalRequest) -> EvalMetrics:
+    def run(
+        self,
+        request: EvalRequest,
+        *,
+        on_progress: Callable[[dict], None] | None = None,
+    ) -> EvalMetrics:
         """Evaluate the pipeline against a gold set."""
         return run_eval(
             resolve_gold_set_path(request.gold_set_path),
             orchestrator=self.orchestrator,
             known_position_ids=self.known_position_ids,
             limit=request.limit,
+            order=request.order,
+            on_progress=on_progress,
         )

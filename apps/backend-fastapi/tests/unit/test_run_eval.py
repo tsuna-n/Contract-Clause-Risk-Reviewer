@@ -25,7 +25,7 @@ from app.schemas import (
     RiskLevel,
     Span,
 )
-from app.services.evaluation import run_eval
+from app.services.evaluation import run_eval, select_records
 
 CONTRACT_TEXT = (
     "1. Termination. Either party may terminate on thirty (30) days' notice.\n\n"
@@ -157,6 +157,17 @@ def test_missing_contract_fixture_is_skipped_not_fatal(tmp_path: Path) -> None:
     metrics = run_eval(gold, orchestrator=StubOrchestrator([], []), known_position_ids=set())
 
     assert metrics.classification_accuracy == 0.0
+
+
+def test_shortest_order_limits_after_sorting(tmp_path: Path) -> None:
+    gold = tmp_path / "annotations.jsonl"
+    records = [
+        {"contract_id": "long", "clauses": [{}, {}, {}]},
+        {"contract_id": "short", "clauses": [{}]},
+    ]
+    gold.write_text("\n".join(json.dumps(record) for record in records))
+    assert select_records(gold, limit=1)[0]["contract_id"] == "long"
+    assert select_records(gold, limit=1, order="shortest")[0]["contract_id"] == "short"
 
 
 @pytest.mark.parametrize("wrong_span", [None, Span(start=500, end=600)])

@@ -11,6 +11,7 @@ from __future__ import annotations
 
 from datetime import UTC, datetime
 from enum import StrEnum
+from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -321,7 +322,8 @@ class EvalRequest(BaseModel):
     """Request to run the evaluation harness against a gold set."""
 
     gold_set_path: str = "data/gold/annotations.jsonl"
-    limit: int | None = None
+    limit: int | None = Field(default=None, ge=1)
+    order: Literal["file", "shortest"] = "file"
 
 
 class PerTypeMetrics(BaseModel):
@@ -347,6 +349,21 @@ class EvalMetrics(BaseModel):
     #: the accuracy figure alone cannot distinguish "the classifier is wrong"
     #: from "the gold label is" — and with CUAD-derived labels, both happen.
     classification_confusion: dict[str, dict[str, int]] = Field(default_factory=dict)
+
+
+class EvalJob(BaseModel):
+    """Polling response for a background evaluation owned by one user."""
+
+    job_id: str
+    status: Literal["running", "completed", "failed"] = "running"
+    total_contracts: int = 0
+    completed_contracts: int = 0
+    contract_id: str | None = None
+    total_clauses: int = 0
+    completed_clauses: int = 0
+    elapsed_seconds: float = 0
+    metrics: EvalMetrics | None = None
+    error: str | None = None
 
 
 # --- users -------------------------------------------------------------------

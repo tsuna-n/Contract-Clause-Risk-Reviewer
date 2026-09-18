@@ -10,6 +10,8 @@ from __future__ import annotations
 import threading
 import time
 
+import pytest
+
 from app.ai.agents import Verdict
 from app.ai.pipeline import Orchestrator
 from app.config import get_settings
@@ -125,3 +127,30 @@ def test_metadata_extraction_overlaps_clause_review_instead_of_waiting() -> None
     # Sequential would be >= 0.2s (0.1 for the clause + 0.1 for metadata);
     # overlapped, it should land close to the slower one alone.
     assert elapsed < 0.18
+
+
+def test_progress_reports_finished_clauses_and_preserves_order(monkeypatch) -> None:
+    clauses = _clauses(3)
+    orchestrator = Orchestrator(
+        segmenter=_FixedAgent(clauses),
+        classifier=_FixedAgent(ClauseType.OTHER),
+        matcher=_FixedAgent([]),
+        risk_scorer=_SlowTrackingScorer(0),
+        judge=_FixedAgent(Verdict(grounded=True)),
+        metadata_extractor=_FixedAgent(None),
+    )
+    monkeypatch.setattr(
+        orchestrator,
+        "_extract_metadata",
+        lambda _: pytest.fail("Evaluation does not use metadata"),
+    )
+    updates = []
+    report = orchestrator.review(
+        _document(),
+        contract_id="c1",
+        session_id="eval",
+        extract_metadata=False,
+        on_progress=lambda completed, total: updates.append((completed, total)),
+    )
+    assert updates == [(0, 3), (1, 3), (2, 3), (3, 3)]
+    assert [review.clause.id for review in report.reviews] == [clause.id for clause in clauses]

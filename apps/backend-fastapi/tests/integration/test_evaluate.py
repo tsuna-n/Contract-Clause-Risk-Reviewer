@@ -57,3 +57,21 @@ def test_a_gold_set_path_outside_the_gold_directory_is_refused(client: TestClien
 
     assert response.status_code == 400
     assert response.json()["error"] == "invalid_input"
+
+
+@pytest.mark.parametrize("endpoint", ["/evaluate", "/evaluate/jobs"])
+@pytest.mark.parametrize("limit", [0, -1, 1.5])
+def test_limit_requires_a_positive_integer(client: TestClient, endpoint: str, limit) -> None:
+    response = client.post(endpoint, json={"limit": limit})
+    assert response.status_code == 422
+
+
+def test_background_evaluation_requires_auth(anonymous_client: TestClient) -> None:
+    assert anonymous_client.post("/evaluate/jobs", json={"limit": 1}).status_code == 401
+    assert anonymous_client.get("/evaluate/jobs/unknown").status_code == 401
+
+
+def test_background_evaluation_refuses_outside_gold_path(client: TestClient) -> None:
+    response = client.post("/evaluate/jobs", json={"gold_set_path": ".env", "limit": 1})
+    assert response.status_code == 400
+    assert response.json()["error"] == "invalid_input"

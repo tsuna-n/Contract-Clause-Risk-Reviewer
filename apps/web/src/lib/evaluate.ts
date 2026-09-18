@@ -18,27 +18,33 @@ export interface EvalMetrics {
 export interface EvalRequest {
   gold_set_path?: string;
   limit?: number;
+  order?: "file" | "shortest";
 }
 
-/**
- * How long to wait for an evaluation run. The harness runs the full pipeline
- * (segment → classify → match → score → judge) over every item in the gold
- * set, so it's at least as slow as reviewing one contract times the set size.
- * Same reasoning as REVIEW_TIMEOUT_MS: aborting loses spent tokens and work.
- */
-const EVAL_TIMEOUT_MS = 30 * 60_000;
+export interface EvalJob {
+  job_id: string;
+  status: "running" | "completed" | "failed";
+  total_contracts: number;
+  completed_contracts: number;
+  contract_id: string | null;
+  total_clauses: number;
+  completed_clauses: number;
+  elapsed_seconds: number;
+  metrics: EvalMetrics | null;
+  error: string | null;
+}
 
-/**
- * Run the evaluation harness against a gold set.
- *
- * Goes out with the bearer token: the backend's evaluate router declares
- * `Depends(get_current_user)`. Anonymous would 401, and apiFetch clears the
- * stored token on a 401 — so a failed run would also sign the user out.
- */
+export function startEvaluation(request: EvalRequest): Promise<EvalJob> {
+  return apiFetch<EvalJob>("/evaluate/jobs", { method: "POST", json: request });
+}
+
+export function getEvaluation(jobId: string, signal?: AbortSignal): Promise<EvalJob> {
+  return apiFetch<EvalJob>(`/evaluate/jobs/${encodeURIComponent(jobId)}`, { signal });
+}
+
+// Retained for callers that explicitly need the blocking endpoint.
 export function runEvaluation(request: EvalRequest = {}): Promise<EvalMetrics> {
   return apiFetch<EvalMetrics>("/evaluate", {
-    method: "POST",
-    json: request,
-    timeoutMs: EVAL_TIMEOUT_MS,
+    method: "POST", json: request, timeoutMs: 30 * 60_000,
   });
 }

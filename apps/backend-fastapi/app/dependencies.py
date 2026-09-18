@@ -258,7 +258,6 @@ def get_playbook_service(db: Session = Depends(get_db)) -> PlaybookService:
     return PlaybookService(PlaybookRepository(db), get_embedder())
 
 
-@lru_cache
 def get_eval_service() -> EvalService:
-    """Return the shared evaluation service."""
+    """Use the current playbook IDs for each evaluation."""
     return EvalService(get_orchestrator(), set(get_known_positions()))

@@ -3,7 +3,8 @@
 from __future__ import annotations
 
 import uuid
-from concurrent.futures import ThreadPoolExecutor
+from collections.abc import Callable
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 from app.ai.agents import (
     Classifier,
@@ -90,6 +91,8 @@ class Orchestrator:
         contract_id: str,
         session_id: str,
         max_clauses: int | None = None,
+        on_progress: Callable[[int, int], None] | None = None,
+        extract_metadata: bool = True,
     ) -> ContractReviewReport:
         """Review a parsed contract and return a report.
 
@@ -106,8 +109,12 @@ class Orchestrator:
                 f"document has {len(clauses)} clauses, above the {max_clauses}-clause "
                 "limit for one review"
             )
+        if on_progress:
+            on_progress(0, len(clauses))
         self._prewarm_embeddings(clauses)
-        reviews, metadata = self._run_clauses_and_metadata(clauses, document)
+        reviews, metadata = self._run_clauses_and_metadata(
+            clauses, document, on_progress=on_progress, extract_metadata=extract_metadata
+        )
         summary, overall = aggregate(reviews)
 
         return ContractReviewReport(
@@ -122,7 +129,12 @@ class Orchestrator:
         )
 
     def _run_clauses_and_metadata(
-        self, clauses: list[Clause], document: ParsedDocument
+        self,
+        clauses: list[Clause],
+        document: ParsedDocument,
+        *,
+        on_progress: Callable[[int, int], None] | None = None,
+        extract_metadata: bool = True,
     ) -> tuple[list[ClauseReview], ContractMetadata]:
         """Review every clause and extract document metadata concurrently.
 
@@ -135,22 +147,30 @@ class Orchestrator:
         with ``clauses``.
         """
         if not clauses:
-            return [], self._extract_metadata(document)
+            return [], self._extract_metadata(document) if extract_metadata else ContractMetadata()
 
         concurrency = max(1, get_settings().review_concurrency)
         context = ContractContext(document, clauses)
-        workers = min(concurrency, len(clauses)) + (1 if self.metadata_extractor else 0)
+        workers = min(concurrency, len(clauses)) + (
+            1 if self.metadata_extractor and extract_metadata else 0
+        )
         with ThreadPoolExecutor(max_workers=workers) as executor:
-            metadata_future = executor.submit(self._extract_metadata, document)
-            reviews = list(
-                executor.map(
-                    lambda clause: self._review_clause(
-                        clause, contract_sources=context.sources_for(clause)
-                    ),
-                    clauses,
-                )
+            metadata_future = (
+                executor.submit(self._extract_metadata, document) if extract_metadata else None
             )
-            metadata = metadata_future.result()
+            futures = {
+                executor.submit(
+                    self._review_clause, clause, contract_sources=context.sources_for(clause)
+                ): index
+                for index, clause in enumerate(clauses)
+            }
+            ordered: dict[int, ClauseReview] = {}
+            for future in as_completed(futures):
+                ordered[futures[future]] = future.result()
+                if on_progress:
+                    on_progress(len(ordered), len(clauses))
+            reviews = [ordered[index] for index in range(len(clauses))]
+            metadata = metadata_future.result() if metadata_future else ContractMetadata()
         return reviews, metadata
 
     def _prewarm_embeddings(self, clauses: list[Clause]) -> None:

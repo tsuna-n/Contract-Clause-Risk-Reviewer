@@ -223,6 +223,8 @@ return 404 rather than revealing their existence with 403.
 | PUT | `/playbook/{position_id}` | Update position and embedding; write authorization applies |
 | DELETE | `/playbook/{position_id}` | Delete a position; write authorization applies |
 | POST | `/evaluate` | Evaluate a gold set inside `data/gold/` |
+| POST | `/evaluate/jobs` | Start/resume an owned background evaluation; returns 202 |
+| GET | `/evaluate/jobs/{job_id}` | Poll progress and completed metrics |
 
 ### Request examples
 
@@ -259,6 +261,21 @@ Evaluation body:
 
 The API resolves the supplied path and rejects locations outside `data/gold/`,
 including traversal through otherwise valid-looking paths.
+
+The web page uses `/evaluate/jobs` with `limit:1` and `order:"shortest"` by
+default. The limit counts whole contracts, not clauses: the first fixture in
+file order has 47 clauses, while the shortest has 8. Use `order:"file"` for
+the original ordering, or omit `limit` to evaluate the whole gold set.
+Background evaluations skip metadata extraction because none of the metrics
+use it; classification, retrieval, scoring, and judging still run on every clause.
+
+Poll the returned `job_id` for completed/total contracts, progress within the
+current contract, elapsed seconds, and terminal metrics or an error. Redis
+retains job state for two hours after the latest update. The page remembers
+the current job across navigation and refresh. Only one background evaluation
+runs at a time: another start by its owner resumes it, while other users receive
+409. Results are visible only to their owner. A worker heartbeat expires within
+60 seconds of a stopped backend; polling then reports failure so a new run can start.
 
 Common responses: 401 for missing/invalid bearer tokens, 403 for unauthorized
 playbook writes, 404 for missing/unowned resources, 413 for upload/clause limits,
